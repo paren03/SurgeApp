@@ -1,0 +1,8 @@
+Windows Registry Editor Version 5.00
+
+; Remove Surge context menu entries
+
+[-HKEY_CLASSES_ROOT\*\shell\SurgeShred]
+[-HKEY_CLASSES_ROOT\Directory\shell\SurgeShred]
+[-HKEY_CLASSES_ROOT\Directory\Background\shell\SurgeShred]
+[-HKEY_CLASSES_ROOT\Drive\shell\SurgeShred]

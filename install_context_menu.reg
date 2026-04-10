@@ -1,0 +1,40 @@
+Windows Registry Editor Version 5.00
+
+; =====================================================================
+; Surge — "Secure Shred with Surge" in Windows Explorer right-click
+; =====================================================================
+; Run this file as Administrator to install.
+; Run uninstall_context_menu.reg to remove.
+; =====================================================================
+
+; --- Right-click on files ---
+[HKEY_CLASSES_ROOT\*\shell\SurgeShred]
+@="Secure Shred with Surge"
+"Icon"="D:\\SurgeApp\\dist\\Surge.exe,0"
+
+[HKEY_CLASSES_ROOT\*\shell\SurgeShred\command]
+@="\"D:\\SurgeApp\\dist\\Surge.exe\" --shred \"%1\""
+
+; --- Right-click on folders ---
+[HKEY_CLASSES_ROOT\Directory\shell\SurgeShred]
+@="Secure Shred with Surge"
+"Icon"="D:\\SurgeApp\\dist\\Surge.exe,0"
+
+[HKEY_CLASSES_ROOT\Directory\shell\SurgeShred\command]
+@="\"D:\\SurgeApp\\dist\\Surge.exe\" --shred \"%1\""
+
+; --- Right-click on folder background (empty space inside a folder) ---
+[HKEY_CLASSES_ROOT\Directory\Background\shell\SurgeShred]
+@="Secure Shred with Surge"
+"Icon"="D:\\SurgeApp\\dist\\Surge.exe,0"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\SurgeShred\command]
+@="\"D:\\SurgeApp\\dist\\Surge.exe\" --shred \"%V\""
+
+; --- Right-click on drives ---
+[HKEY_CLASSES_ROOT\Drive\shell\SurgeShred]
+@="Secure Shred with Surge"
+"Icon"="D:\\SurgeApp\\dist\\Surge.exe,0"
+
+[HKEY_CLASSES_ROOT\Drive\shell\SurgeShred\command]
+@="\"D:\\SurgeApp\\dist\\Surge.exe\" --shred \"%1\""

@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+
+# PyInstaller build output
+build/
+dist/
+dist2/
+*.spec.bak
+
+# Installer output
+installer/
+
+# Certificate files (keep .cer public cert, exclude private key)
+*.pfx
+
+# Test artifacts
+test_stderr.txt
+test2_locked.txt
+
+# OS
+Thumbs.db
+Desktop.ini
+
+shred_test_document.txt
