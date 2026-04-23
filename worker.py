@@ -1,5 +1,16 @@
+
+from luna_modules.luna_missions import start_new_mission, update_mission_status
 import luna_synthesis
 import os
+from luna_modules.luna_metacog import (
+    evaluate_evolution_integrity,
+    can_proceed_with_evolution,
+    run_metacognitive_reflection,
+    recursive_belief_revision,
+    run_self_audit,
+    build_evolution_gate_report,
+    persist_evolution_state
+)
 # MANUALLY UNLOCKED FOR PHASE 2
 ACTIVE_SOVEREIGN_INTENT = True
 
@@ -8405,8 +8416,10 @@ class SovereignTaskRouter:
             return gate_result, "metacog gate blocked evolution"
         return bool(gate_result), "metacog gate blocked evolution"
 
-    def _safe_start_new_mission(self, objective: str, lane: str, cache_tag: str, task_name: str) -> Dict[str, Any]:
+    def _safe_start_new_mission(self, title: str, objective: str, lane: str, cache_tag: str, task_name: str) -> Dict[str, Any]:
         attempts = [
+            lambda: start_new_mission(title, objective),
+            lambda: start_new_mission(title=title, objective=objective),
             lambda: start_new_mission(objective=objective, lane=lane, cache_tag=cache_tag, task_name=task_name),
             lambda: start_new_mission(objective=objective, lane=lane),
             lambda: start_new_mission(objective),
@@ -8419,15 +8432,17 @@ class SovereignTaskRouter:
                 if isinstance(payload, dict):
                     mission_id = str(payload.get("mission_id") or payload.get("id") or payload.get("uuid") or f"MISSION-{uuid.uuid4().hex[:8].upper()}")
                     payload.setdefault("mission_id", mission_id)
+                    payload.setdefault("title", title)
+                    payload.setdefault("objective", objective)
                     return payload
-                return {"mission_id": str(payload or f"MISSION-{uuid.uuid4().hex[:8].upper()}")}
+                return {"mission_id": str(payload or f"MISSION-{uuid.uuid4().hex[:8].upper()}"), "title": title, "objective": objective}
             except TypeError as exc:
                 last_exc = exc
                 continue
             except Exception as exc:
                 last_exc = exc
                 break
-        return {"mission_id": f"MISSION-{uuid.uuid4().hex[:8].upper()}", "warning": str(last_exc or "mission start fallback")}
+        return {"mission_id": f"MISSION-{uuid.uuid4().hex[:8].upper()}", "warning": str(last_exc or "mission start fallback"), "title": title, "objective": objective}
 
     def _safe_update_mission_status(self, mission_id: str, status: str, detail: str = "") -> None:
         attempts = [
@@ -8449,15 +8464,19 @@ class SovereignTaskRouter:
     def _maybe_begin_mission(self, task_name: str, lane: str, cache_tag: str, args: tuple, kwargs: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         if not self._should_begin_mission(task_name, lane, cache_tag, args, kwargs):
             return None
+        objective = self._mission_objective(task_name, cache_tag, args, kwargs)
+        title = normalize_prompt_text(cache_tag or task_name or lane or "mission").replace(" ", "_") or "mission"
+        # Mission tracking must start before the thinking gate so a missions/ record exists even when aborted.
+        mission_payload = self._safe_start_new_mission(title, objective, lane, cache_tag, task_name)
+        mission_id = str(mission_payload.get("mission_id") or f"MISSION-{uuid.uuid4().hex[:8].upper()}")
         gate_result = can_proceed_with_evolution()
         ok, reason = self._gate_reason(gate_result)
         if not ok:
-            _diag(f"[MISSION] blocked before start: {reason}")
-            return {"ok": False, "reason": reason, "mission_id": ""}
-        objective = self._mission_objective(task_name, cache_tag, args, kwargs)
-        mission_payload = self._safe_start_new_mission(objective, lane, cache_tag, task_name)
-        mission_id = str(mission_payload.get("mission_id") or f"MISSION-{uuid.uuid4().hex[:8].upper()}")
-        mission_payload.update({"ok": True, "mission_id": mission_id, "objective": objective, "gate_reason": reason})
+            _diag(f"[MISSION] ABORTED immediately: {reason}")
+            mission_payload.update({"ok": False, "reason": reason, "mission_id": mission_id, "title": title, "objective": objective, "gate_reason": reason})
+            self._safe_update_mission_status(mission_id, "ABORTED", reason)
+            return mission_payload
+        mission_payload.update({"ok": True, "mission_id": mission_id, "title": title, "objective": objective, "gate_reason": reason})
         self._safe_update_mission_status(mission_id, "queued", objective)
         return mission_payload
 
