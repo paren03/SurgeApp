@@ -17,14 +17,17 @@ from PyQt6.QtWidgets import (
     QLabel, QPushButton, QTreeView, QFrame, QProgressBar, QSplitter,
     QStatusBar, QHeaderView, QMessageBox, QAbstractItemView,
     QLineEdit, QStackedWidget, QMenu, QFileDialog, QInputDialog,
-    QDialog, QDialogButtonBox, QTextEdit
+    QDialog, QDialogButtonBox, QTextEdit, QScrollArea, QSizePolicy,
+    QToolButton, QToolBar, QFileIconProvider
 )
 from PyQt6.QtGui import (
     QStandardItemModel, QStandardItem, QColor, QFont, QPalette,
-    QAction, QShortcut, QKeySequence
+    QAction, QShortcut, QKeySequence, QFileSystemModel as _QFSMGui,
+    QIcon, QPainter, QPixmap, QLinearGradient, QBrush, QPen
 )
 from PyQt6.QtCore import (
-    Qt, QThread, pyqtSignal, QDir, QSortFilterProxyModel, QModelIndex, QTimer
+    Qt, QThread, pyqtSignal, QDir, QSortFilterProxyModel, QModelIndex,
+    QTimer, QSize, QFileInfo
 )
 
 try:
@@ -897,6 +900,10 @@ class SurgeWindow(QMainWindow):
 
         vbox.addWidget(self._build_header())
 
+        # Breadcrumb bar (below header)
+        self.breadcrumb_bar = self._build_breadcrumb_bar()
+        vbox.addWidget(self.breadcrumb_bar)
+
         # Command bar (Explorer-only)
         self.cmd_bar = self._build_command_bar()
         vbox.addWidget(self.cmd_bar)
@@ -1059,6 +1066,17 @@ class SurgeWindow(QMainWindow):
         view_menu = QMenu(self)
         view_menu.addAction("Details",       lambda: self._set_view_mode("details"))
         view_menu.addAction("Compact List",  lambda: self._set_view_mode("compact"))
+        view_menu.addSeparator()
+        self._show_hidden_action = QAction("Show Hidden Files", self)
+        self._show_hidden_action.setCheckable(True)
+        self._show_hidden_action.setChecked(False)
+        self._show_hidden_action.toggled.connect(self._toggle_hidden_files)
+        view_menu.addAction(self._show_hidden_action)
+        self._show_details_action = QAction("Details Pane", self)
+        self._show_details_action.setCheckable(True)
+        self._show_details_action.setChecked(True)
+        self._show_details_action.toggled.connect(self._toggle_details_pane)
+        view_menu.addAction(self._show_details_action)
         view_btn = QPushButton("⊞  View  ▾")
         view_btn.setStyleSheet(BTN_CMD)
         view_btn.setMenu(view_menu)
@@ -1164,9 +1182,10 @@ class SurgeWindow(QMainWindow):
             lambda: self._update_command_state()
         )
 
-        splitter.addWidget(self.folder_tree)
+        splitter.addWidget(self._build_nav_panel())
         splitter.addWidget(self.file_view)
-        splitter.setSizes([220, 980])
+        splitter.addWidget(self._build_details_pane())
+        splitter.setSizes([220, 760, 200])
         lay.addWidget(splitter)
         return page
 
@@ -1423,6 +1442,7 @@ class SurgeWindow(QMainWindow):
         QShortcut(QKeySequence("Alt+Right"),       self).activated.connect(self._go_forward)
         QShortcut(QKeySequence("Alt+Up"),          self).activated.connect(self._go_up)
         QShortcut(QKeySequence("Ctrl+L"),          self).activated.connect(self.addr_bar.setFocus)
+        QShortcut(QKeySequence.StandardKey.SelectAll, self).activated.connect(self._select_all)
 
     # -----------------------------------------------------------------------
     # Mode switching
@@ -1595,6 +1615,8 @@ class SurgeWindow(QMainWindow):
                 self.folder_tree.scrollTo(nav_idx)
 
         self.addr_bar.setText(path)
+        if hasattr(self, '_breadcrumb_layout'):
+            self._update_breadcrumb(path)
         self.back_btn.setEnabled(self._hist_idx > 0)
         self.fwd_btn.setEnabled(self._hist_idx < len(self._history) - 1)
         parent = Path(path).parent if path else None
@@ -1719,6 +1741,7 @@ class SurgeWindow(QMainWindow):
             self.shred_btn.setEnabled(has_sel)
             n = len(entries)
             self.lbl_sel.setText(f"{n} item(s) selected" if n else "Nothing selected")
+            self._update_details_pane()
         else:
             dupes = self._get_dup_selected_paths()
             n     = len(dupes)
@@ -2017,13 +2040,16 @@ class SurgeWindow(QMainWindow):
                 menu.addAction("Open",                lambda: self._navigate_to(path))
                 menu.addAction("Scan for Duplicates", lambda p=path: self._scan_from_explorer(p))
             else:
-                menu.addAction("Open", lambda p=path: os.startfile(p))
+                menu.addAction("Open",         lambda p=path: os.startfile(p))
+                menu.addAction("Open With...", lambda p=path: self._open_with(p))
             menu.addSeparator()
             menu.addAction("Cut",    self._cut_items)
             menu.addAction("Copy",   self._copy_items)
             menu.addSeparator()
-            menu.addAction("Rename", self._rename_item)
+            menu.addAction("Rename",    self._rename_item)
             menu.addAction("Copy Path", lambda p=path: QApplication.clipboard().setText(p))
+            menu.addSeparator()
+            menu.addAction("Properties", self._show_properties)
             menu.addSeparator()
 
         all_paths = [p for p, _ in entries]
@@ -2528,6 +2554,275 @@ class SurgeWindow(QMainWindow):
         if shredded:
             _shell_notify_deleted(shredded)
         self._shredded_paths = []
+
+    # -----------------------------------------------------------------------
+    # File Explorer additions
+    # -----------------------------------------------------------------------
+
+    def _build_breadcrumb_bar(self) -> QFrame:
+        """Clickable breadcrumb path bar shown below the header."""
+        bar = QFrame()
+        bar.setFixedHeight(26)
+        bar.setStyleSheet(
+            f"QFrame{{background:{DARK_BG};border-bottom:1px solid {BORDER};}}"
+        )
+        self._breadcrumb_layout = QHBoxLayout(bar)
+        self._breadcrumb_layout.setContentsMargins(14, 0, 14, 0)
+        self._breadcrumb_layout.setSpacing(0)
+        lbl = QLabel("This PC")
+        lbl.setStyleSheet(
+            f"color:{SUB};font-size:11px;background:transparent;border:none;"
+        )
+        self._breadcrumb_layout.addWidget(lbl)
+        self._breadcrumb_layout.addStretch()
+        return bar
+
+    def _update_breadcrumb(self, path: str):
+        lay = self._breadcrumb_layout
+        while lay.count() > 1:
+            item = lay.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        if not path:
+            lbl = QLabel("This PC")
+            lbl.setStyleSheet(
+                f"color:{SUB};font-size:11px;background:transparent;border:none;"
+            )
+            lay.insertWidget(0, lbl)
+            return
+
+        parts = list(Path(path).parts)
+        widgets = []
+        accumulated = ""
+        for i, part in enumerate(parts):
+            accumulated = str(Path(accumulated) / part) if accumulated else part
+            is_last = (i == len(parts) - 1)
+            target = accumulated
+            label_text = part.rstrip("\\") or part
+            btn = QPushButton(label_text)
+            btn.setStyleSheet(
+                f"QPushButton{{background:transparent;border:none;"
+                f"color:{'#ccc' if is_last else SUB};"
+                f"font-size:11px;padding:0 4px;}}"
+                f"QPushButton:hover{{color:{TEXT};}}"
+            )
+            btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            btn.clicked.connect(lambda _, t=target: self._navigate_to(t))
+            widgets.append(btn)
+            if not is_last:
+                sep = QLabel(" ›")
+                sep.setStyleSheet(
+                    f"color:{BORDER};font-size:11px;background:transparent;border:none;"
+                )
+                widgets.append(sep)
+        for j, w in enumerate(widgets):
+            lay.insertWidget(j, w)
+
+    def _build_nav_panel(self) -> QWidget:
+        """Left panel: Quick Access section + folder tree."""
+        container = QWidget()
+        container.setMinimumWidth(190)
+        container.setMaximumWidth(300)
+        container.setStyleSheet("QWidget{background:transparent;}")
+        vlay = QVBoxLayout(container)
+        vlay.setContentsMargins(0, 0, 0, 0)
+        vlay.setSpacing(0)
+        vlay.addWidget(self._build_quick_access())
+        vlay.addWidget(self.folder_tree, stretch=1)
+        return container
+
+    def _build_quick_access(self) -> QFrame:
+        """Quick Access shortcuts panel above the folder tree."""
+        frame = QFrame()
+        frame.setStyleSheet(
+            f"QFrame{{background:{PANEL_BG};border:none;"
+            f"border-right:1px solid {BORDER};}}"
+        )
+        vlay = QVBoxLayout(frame)
+        vlay.setContentsMargins(0, 6, 0, 4)
+        vlay.setSpacing(0)
+
+        hdr = QLabel("  Quick Access")
+        hdr.setFixedHeight(22)
+        hdr.setStyleSheet(
+            f"color:{SUB};font-size:10px;font-weight:bold;letter-spacing:1px;"
+            f"background:transparent;border:none;padding-left:10px;"
+        )
+        vlay.addWidget(hdr)
+
+        qa_items = [
+            ("🖥  Desktop",    str(Path.home() / "Desktop")),
+            ("⬇  Downloads",  str(Path.home() / "Downloads")),
+            ("📄  Documents",  str(Path.home() / "Documents")),
+            ("🖼  Pictures",   str(Path.home() / "Pictures")),
+            ("🎬  Videos",     str(Path.home() / "Videos")),
+            ("🎵  Music",      str(Path.home() / "Music")),
+        ]
+        for label, folder in qa_items:
+            btn = QPushButton(label)
+            btn.setFixedHeight(26)
+            btn.setStyleSheet(
+                f"QPushButton{{background:transparent;border:none;color:{TEXT};"
+                f"text-align:left;padding:0 0 0 14px;font-size:12px;border-radius:0;}}"
+                f"QPushButton:hover{{background:#1e1e1e;}}"
+            )
+            btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            target = folder
+            btn.clicked.connect(lambda _, t=target: self._navigate_to(t))
+            vlay.addWidget(btn)
+
+        sep = QFrame()
+        sep.setFrameShape(QFrame.Shape.HLine)
+        sep.setFixedHeight(1)
+        sep.setStyleSheet(f"background:{BORDER};")
+        vlay.addWidget(sep)
+
+        lbl2 = QLabel("  This PC")
+        lbl2.setFixedHeight(20)
+        lbl2.setStyleSheet(
+            f"color:{SUB};font-size:10px;font-weight:bold;letter-spacing:1px;"
+            f"background:transparent;border:none;padding-left:10px;"
+        )
+        vlay.addWidget(lbl2)
+        return frame
+
+    def _build_details_pane(self) -> QFrame:
+        """Right details panel — shows icon + properties of selected item."""
+        pane = QFrame()
+        pane.setMinimumWidth(180)
+        pane.setMaximumWidth(240)
+        pane.setStyleSheet(
+            f"QFrame{{background:{PANEL_BG};border:none;border-left:1px solid {BORDER};}}"
+        )
+        vlay = QVBoxLayout(pane)
+        vlay.setContentsMargins(12, 12, 12, 12)
+        vlay.setSpacing(6)
+
+        hdr = QLabel("Details")
+        hdr.setStyleSheet(
+            f"color:{SUB};font-size:10px;font-weight:bold;letter-spacing:1px;"
+            f"background:transparent;border:none;"
+        )
+        vlay.addWidget(hdr)
+
+        self._detail_icon = QLabel()
+        self._detail_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._detail_icon.setFixedHeight(56)
+        self._detail_icon.setStyleSheet("background:transparent;border:none;")
+        vlay.addWidget(self._detail_icon)
+
+        self._detail_name = QLabel("Select a file")
+        self._detail_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._detail_name.setWordWrap(True)
+        self._detail_name.setStyleSheet(
+            f"color:{TEXT};font-weight:bold;font-size:12px;"
+            f"background:transparent;border:none;"
+        )
+        vlay.addWidget(self._detail_name)
+
+        sep = QFrame()
+        sep.setFrameShape(QFrame.Shape.HLine)
+        sep.setFixedHeight(1)
+        sep.setStyleSheet(f"background:{BORDER};margin:2px 0;")
+        vlay.addWidget(sep)
+
+        self._detail_props = QLabel("")
+        self._detail_props.setWordWrap(True)
+        self._detail_props.setTextFormat(Qt.TextFormat.RichText)
+        self._detail_props.setAlignment(
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop
+        )
+        self._detail_props.setStyleSheet(
+            f"color:{SUB};font-size:11px;background:transparent;border:none;"
+        )
+        vlay.addWidget(self._detail_props)
+        vlay.addStretch()
+
+        self._details_pane_widget = pane
+        return pane
+
+    def _update_details_pane(self):
+        if not hasattr(self, '_detail_name'):
+            return
+        entries = self._get_selected_entries()
+        if not entries:
+            self._detail_name.setText("No selection")
+            self._detail_icon.clear()
+            self._detail_props.setText("")
+            return
+        if len(entries) > 1:
+            self._detail_name.setText(f"{len(entries)} items")
+            self._detail_icon.clear()
+            total = 0
+            for p in entries:
+                try:
+                    if os.path.isfile(p):
+                        total += os.path.getsize(p)
+                except OSError:
+                    pass
+            self._detail_props.setText(f"<b>Total size:</b> {_human_size(total)}")
+            return
+        path = entries[0]
+        name = os.path.basename(path) or path
+        self._detail_name.setText(name)
+        try:
+            provider = QFileIconProvider()
+            icon = provider.icon(QFileInfo(path))
+            self._detail_icon.setPixmap(icon.pixmap(48, 48))
+        except Exception:
+            self._detail_icon.clear()
+        try:
+            import datetime
+            st = os.stat(path)
+            mtime = datetime.datetime.fromtimestamp(st.st_mtime)
+            is_dir = os.path.isdir(path)
+            if is_dir:
+                try:
+                    n = sum(1 for _ in os.scandir(path))
+                    size_str = f"{n} items"
+                except Exception:
+                    size_str = "Folder"
+                kind = "Folder"
+            else:
+                size_str = _human_size(st.st_size)
+                ext = os.path.splitext(name)[1].upper()
+                kind = f"{ext[1:]} File" if ext else "File"
+            props = (
+                f"<b>Type:</b> {kind}<br>"
+                f"<b>Size:</b> {size_str}<br>"
+                f"<b>Modified:</b><br>&nbsp;{mtime:%Y-%m-%d %H:%M}"
+            )
+            self._detail_props.setText(props)
+        except Exception:
+            self._detail_props.setText("")
+
+    def _toggle_hidden_files(self, show: bool):
+        base = QDir.Filter.AllEntries | QDir.Filter.NoDotAndDotDot | QDir.Filter.System
+        nav_base = QDir.Filter.Drives | QDir.Filter.AllDirs | QDir.Filter.NoDotAndDotDot
+        if show:
+            self.file_model.setFilter(base | QDir.Filter.Hidden)
+            self.nav_model.setFilter(nav_base | QDir.Filter.Hidden)
+        else:
+            self.file_model.setFilter(base)
+            self.nav_model.setFilter(nav_base)
+
+    def _toggle_details_pane(self, visible: bool):
+        if hasattr(self, '_details_pane_widget'):
+            self._details_pane_widget.setVisible(visible)
+
+    def _select_all(self):
+        if self.stack.currentIndex() == 0:
+            self.file_view.selectAll()
+
+    def _open_with(self, path: str):
+        try:
+            import subprocess
+            subprocess.Popen(
+                ["rundll32.exe", "shell32.dll,OpenAs_RunDLL", os.path.normpath(path)]
+            )
+        except Exception as exc:
+            self.status_bar.showMessage(f"Open With failed: {exc}")
 
     # -----------------------------------------------------------------------
     # Helpers

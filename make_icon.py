@@ -2,9 +2,9 @@
 Generate surge.ico — redesigned icon.
 
 Visual design:
-  • Deep charcoal rounded-square background with a subtle red glow border
-  • Bold red lightning bolt with a white specular highlight on the top-left edge
-  • Soft red radial glow behind the bolt
+  • Deep charcoal rounded-square background with a subtle purple glow border
+  • Bold purple lightning bolt with a white specular highlight on the top-left edge
+  • Soft purple radial glow behind the bolt
   • Drop shadow layer for depth at large sizes
   • All 7 standard Windows icon sizes: 16 24 32 48 64 128 256
 """
@@ -16,10 +16,10 @@ SIZES = [16, 24, 32, 48, 64, 128, 256]
 # ── Palette ───────────────────────────────────────────────────────────────────
 BG_OUTER   = (10,  10,  12, 255)   # very dark background
 BG_INNER   = (20,  20,  24, 255)   # slightly lighter centre
-ACCENT     = (230, 57,  70, 255)   # surge red
-ACCENT_LT  = (255, 100, 110, 255)  # lighter red for highlight edge
-GLOW_CLR   = (230, 57,  70,  55)   # semi-transparent red for glow
-BORDER_CLR = (200, 40,  55, 160)   # border ring
+ACCENT     = (108,  99, 255, 255)  # surge purple #6C63FF
+ACCENT_LT  = (155, 148, 255, 255)  # lighter purple for highlight edge
+GLOW_CLR   = (108,  99, 255,  55)  # semi-transparent purple for glow
+BORDER_CLR = ( 90,  80, 220, 160)  # border ring
 WHITE_HI   = (255, 255, 255, 180)  # specular highlight on bolt
 
 
@@ -45,12 +45,12 @@ def _bolt_pts(size: int):
       *     ← bottom-left tip
     """
     raw = [
-        (0.62, 0.03),   # top tip
-        (0.28, 0.48),   # mid-left top
-        (0.50, 0.46),   # mid-right top (inner notch)
-        (0.36, 0.97),   # bottom tip
-        (0.72, 0.52),   # mid-right bottom
-        (0.50, 0.54),   # mid-left bottom (inner notch)
+        (0.68, 0.02),   # top tip — pushed up and right
+        (0.22, 0.52),   # mid-left top — wider spread
+        (0.48, 0.49),   # mid-right top (inner notch)
+        (0.32, 0.98),   # bottom tip — pushed to bottom edge
+        (0.78, 0.51),   # mid-right bottom — wider spread
+        (0.52, 0.53),   # mid-left bottom (inner notch)
     ]
     return [(x * size, y * size) for x, y in raw]
 
@@ -58,10 +58,10 @@ def _bolt_pts(size: int):
 def _highlight_pts(size: int):
     """Thin bright strip on the top-left face of the bolt."""
     raw = [
-        (0.62, 0.03),
-        (0.28, 0.48),
-        (0.34, 0.48),
-        (0.66, 0.06),
+        (0.68, 0.02),
+        (0.22, 0.52),
+        (0.30, 0.52),
+        (0.72, 0.05),
     ]
     return [(x * size, y * size) for x, y in raw]
 
@@ -70,7 +70,7 @@ def make_frame(size: int) -> Image.Image:
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    r = max(3, size // 6)
+    r = max(2, size // 8)
 
     # ── 1. Background rounded square ─────────────────────────────────────
     draw.rounded_rectangle([0, 0, size - 1, size - 1], radius=r, fill=BG_OUTER)
