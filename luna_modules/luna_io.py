@@ -9,11 +9,19 @@ import json
 import os
 import py_compile
 import shutil
+import sys
 import tempfile
+import time
 import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Tuple
+
+# On Windows, os.replace() can fail with PermissionError (WinError 5) when
+# antivirus software or another process briefly holds the destination file.
+# _ATOMIC_REPLACE_RETRIES controls how many times we retry before giving up.
+_ATOMIC_REPLACE_RETRIES = 3 if sys.platform == "win32" else 1
+_ATOMIC_REPLACE_DELAY = 0.05  # seconds between retries
 
 from luna_modules.luna_logging import _diag, ensure_layout
 from luna_modules.luna_paths import LUNA_MASTER_CODEX_PATH
@@ -26,12 +34,38 @@ def safe_read_text(path: Path) -> str:
         return ""
 
 
+def _atomic_replace(temp_path: Path, dest_path: Path) -> None:
+    """Replace dest_path with temp_path atomically, with retry on Windows lock contention.
+
+    Always removes temp_path on failure so orphaned .tmp files cannot accumulate.
+    """
+    last_exc: Exception = OSError("unknown")
+    for attempt in range(_ATOMIC_REPLACE_RETRIES):
+        try:
+            os.replace(str(temp_path), str(dest_path))
+            return
+        except PermissionError as exc:
+            last_exc = exc
+            if attempt < _ATOMIC_REPLACE_RETRIES - 1:
+                time.sleep(_ATOMIC_REPLACE_DELAY)
+        except Exception as exc:
+            last_exc = exc
+            break
+    # Cleanup orphaned temp file before propagating
+    try:
+        temp_path.unlink(missing_ok=True)
+    except Exception:
+        pass
+    raise last_exc
+
+
 def safe_write_text(path: Path, text: str) -> None:
+    temp_path: Path | None = None
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         temp_path = path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
         temp_path.write_text(text, encoding="utf-8")
-        os.replace(str(temp_path), str(path))
+        _atomic_replace(temp_path, path)
     except Exception as exc:
         _diag(f"safe_write_text failed for {path}: {exc}")
 
@@ -65,11 +99,12 @@ def safe_read_json(path: Path, default=None):
 
 
 def write_json_atomic(path: Path, data: Any) -> None:
+    temp_path: Path | None = None
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         temp_path = path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
         temp_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
-        os.replace(str(temp_path), str(path))
+        _atomic_replace(temp_path, path)
     except Exception as exc:
         _diag(f"write_json_atomic failed for {path}: {exc}")
 
