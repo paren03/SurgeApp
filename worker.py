@@ -12,7 +12,7 @@ from luna_modules.luna_metacog import (
     persist_evolution_state
 )
 # MANUALLY UNLOCKED FOR PHASE 2
-ACTIVE_SOVEREIGN_INTENT = True
+ACTIVE_SOVEREIGN_INTENT = False
 
 import ast
 import json
