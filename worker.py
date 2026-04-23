@@ -392,6 +392,14 @@ def publish_worker_heartbeat() -> None:
         CORE_STATE.heartbeat_failure_count += 1
         _diag(f"publish_worker_heartbeat failed #{CORE_STATE.heartbeat_failure_count}: {exc}")
 
+
+def _sync_task_counters() -> Dict[str, int]:
+    done_count = len(list(DONE_DIR.glob("*.json")))
+    failed_count = len(list(FAILED_DIR.glob("*.json")))
+    setattr(CORE_STATE, "done_tasks_count", done_count)
+    setattr(CORE_STATE, "failed_tasks_count", failed_count)
+    return {"done": done_count, "failed": failed_count}
+
 def heartbeat_loop() -> None:
     """Continuously publish liveness from an isolated daemon thread."""
     while not CORE_STATE.stop_requested:
@@ -415,6 +423,7 @@ def ensure_recent_worker_heartbeat(context: str = "worker-loop", force: bool = F
         _diag(f"ensure_recent_worker_heartbeat failed: {exc}")
 
 from luna_modules.luna_metacog import can_proceed_with_evolution
+from luna_modules.luna_missions import start_new_mission, update_mission_status
 
 from luna_modules.luna_tasks import (
     _complete_task_mode,
@@ -2552,8 +2561,10 @@ def _run_claimed_task(claimed: Path) -> bool:
     should_continue = True
     try:
         should_continue = process_task(claimed)
+        _sync_task_counters()
     except Exception as exc:
         _handle_worker_task_exception(claimed, task_id, exc)
+        _sync_task_counters()
     set_heartbeat(state="idle", task_id="", phase="idle", mood="awake")
     ensure_recent_worker_heartbeat("task-complete")
     return should_continue
@@ -2612,6 +2623,7 @@ def worker_loop() -> None:
         log(f"[BOOT] recovered orphaned tasks: {recovered}")
     set_heartbeat(state="idle", phase="boot", mood="awake", last_message="Luna Online • Awake")
     publish_worker_heartbeat()
+    _sync_task_counters()
     hb_thread = _start_worker_background_threads()
     try:
         omega_plus_last = 0.0
@@ -2706,8 +2718,8 @@ def rebuild_world_model(reason: str = "scan") -> Dict[str, Any]:
         },
         "inventory": {
             "active_tasks": len(list(ACTIVE_DIR.glob("*.json"))) + len(list(ACTIVE_DIR.glob("*.working.json"))),
-            "done_tasks": len(list(DONE_DIR.glob("*.json"))),
-            "failed_tasks": len(list(FAILED_DIR.glob("*.json"))),
+            "done_tasks": int(getattr(CORE_STATE, "done_tasks_count", len(list(DONE_DIR.glob("*.json"))))),
+            "failed_tasks": int(getattr(CORE_STATE, "failed_tasks_count", len(list(FAILED_DIR.glob("*.json"))))),
             "acquisition_receipts": len(safe_read_json(ACQUISITION_RECEIPTS_PATH, default={"receipts": []}).get("receipts", [])),
             "logic_updates": len([p for p in LOGIC_UPDATES_DIR.iterdir() if p.is_dir()]) if LOGIC_UPDATES_DIR.exists() else 0,
             "thread_health_entries": len(thread_health_snapshot()),
@@ -8284,49 +8296,218 @@ class SovereignTaskHandle:
 class SovereignTaskRouter:
     """
     Orchestrates the flow of directives between the user and the autonomous
-    synthesis engine. Thread-safe, priority-queued, and cache-backed.
+    synthesis engine. Thread-safe, priority-queued, cache-backed, and
+    mission-aware for evolution batches.
     """
     _VAULT_INDEX = Path(r"D:\SurgeApp\memory\vector_store\luna_vector_vault.index")
 
     def __init__(self, worker_count: int = 4, ttl_seconds: float = 300.0) -> None:
-        self.worker_count = worker_count
-        self.ttl_seconds = ttl_seconds
+        self.worker_count = max(1, int(worker_count))
+        self.ttl_seconds = float(ttl_seconds)
         self._queue: PriorityQueue = PriorityQueue()
-        self._cache: Dict[str, Any] = {}
+        self._cache: Dict[str, Dict[str, Any]] = {}
         self._lock = threading.Lock()
         self._sequence = 0
         self.active_tasks: Dict[str, SovereignTaskHandle] = {}
-        for _ in range(worker_count):
-            t = threading.Thread(target=self._worker_loop, daemon=True)
-            t.start()
+        self.active_missions: Dict[str, Dict[str, Any]] = {}
+        for index in range(self.worker_count):
+            thread = threading.Thread(target=self._worker_loop, name=f"sovereign-router-{index}", daemon=True)
+            thread.start()
 
     def route_directive(self, directive_text: str) -> SovereignTaskHandle:
         handle = SovereignTaskHandle()
         task_id = f"EVO-{uuid.uuid4().hex[:6].upper()}"
         self.active_tasks[task_id] = handle
+        mission_meta = self._maybe_begin_mission(
+            task_name="route_directive",
+            lane="system",
+            cache_tag="directive",
+            args=(directive_text,),
+            kwargs={},
+        )
+        if mission_meta and not mission_meta.get("ok", False):
+            handle.set_exception(RuntimeError(str(mission_meta.get("reason", "mission gate blocked"))))
+            return handle
+        if mission_meta and mission_meta.get("mission_id"):
+            self.active_missions[task_id] = mission_meta
         return handle
 
     def _priority(self, lane: str) -> int:
         normalized = normalize_prompt_text(lane).replace(" ", "_")
-        if normalized == "serge": return 1
-        if normalized == "research": return 2
+        if normalized == "serge":
+            return 1
+        if normalized == "research":
+            return 2
         return 0
 
-    def submit(self, func, *args: Any, lane: str = "system", **kwargs: Any) -> SovereignTaskHandle:
+    def _cache_key(self, func, args: tuple, kwargs: Dict[str, Any], cache_tag: str) -> str:
+        pieces = [cache_tag or getattr(func, "__name__", "task")]
+        pieces.extend(repr(item)[:200] for item in args)
+        pieces.extend(f"{key}={repr(value)[:200]}" for key, value in sorted(kwargs.items()))
+        return "||".join(pieces)
+
+    def _pull_cached(self, cache_key: str, ttl_seconds: Optional[float]) -> Optional[Any]:
+        ttl = self.ttl_seconds if ttl_seconds is None else float(ttl_seconds)
+        cached = self._cache.get(cache_key)
+        if not cached:
+            return None
+        if time.monotonic() - float(cached.get("ts", 0.0)) > ttl:
+            self._cache.pop(cache_key, None)
+            return None
+        return cached.get("value")
+
+    def _should_begin_mission(self, task_name: str, lane: str, cache_tag: str, args: tuple, kwargs: Dict[str, Any]) -> bool:
+        normalized_lane = normalize_prompt_text(lane).replace(" ", "_")
+        if normalized_lane == "research":
+            return False
+        evidence = " ".join(
+            [
+                task_name or "",
+                cache_tag or "",
+                " ".join(str(item) for item in args[:3]),
+                " ".join(f"{key}={value}" for key, value in list(kwargs.items())[:6]),
+            ]
+        ).lower()
+        mission_tokens = (
+            "mission",
+            "evolution",
+            "upgrade",
+            "self_fix",
+            "self-fix",
+            "guided_loop",
+            "guided-loop",
+            "improvement",
+            "refactor",
+            "patch",
+            "autonomy",
+        )
+        return any(token in evidence for token in mission_tokens)
+
+    def _mission_objective(self, task_name: str, cache_tag: str, args: tuple, kwargs: Dict[str, Any]) -> str:
+        prompt = str(kwargs.get("prompt") or kwargs.get("objective") or "").strip()
+        if prompt:
+            return prompt[:300]
+        if args:
+            return str(args[0])[:300]
+        label = cache_tag or task_name or "sovereign_evolution_batch"
+        return f"Luna mission batch :: {label}"
+
+    def _gate_reason(self, gate_result: Any) -> Tuple[bool, str]:
+        if isinstance(gate_result, dict):
+            ok = bool(gate_result.get("ok", False))
+            reason = str(gate_result.get("reason") or gate_result.get("summary") or gate_result.get("detail") or "evolution blocked")
+            return ok, reason
+        if isinstance(gate_result, tuple) and gate_result:
+            ok = bool(gate_result[0])
+            reason = str(gate_result[1] if len(gate_result) > 1 else "evolution blocked")
+            return ok, reason
+        if isinstance(gate_result, bool):
+            return gate_result, "metacog gate blocked evolution"
+        return bool(gate_result), "metacog gate blocked evolution"
+
+    def _safe_start_new_mission(self, objective: str, lane: str, cache_tag: str, task_name: str) -> Dict[str, Any]:
+        attempts = [
+            lambda: start_new_mission(objective=objective, lane=lane, cache_tag=cache_tag, task_name=task_name),
+            lambda: start_new_mission(objective=objective, lane=lane),
+            lambda: start_new_mission(objective),
+            lambda: start_new_mission(),
+        ]
+        last_exc = None
+        for attempt in attempts:
+            try:
+                payload = attempt()
+                if isinstance(payload, dict):
+                    mission_id = str(payload.get("mission_id") or payload.get("id") or payload.get("uuid") or f"MISSION-{uuid.uuid4().hex[:8].upper()}")
+                    payload.setdefault("mission_id", mission_id)
+                    return payload
+                return {"mission_id": str(payload or f"MISSION-{uuid.uuid4().hex[:8].upper()}")}
+            except TypeError as exc:
+                last_exc = exc
+                continue
+            except Exception as exc:
+                last_exc = exc
+                break
+        return {"mission_id": f"MISSION-{uuid.uuid4().hex[:8].upper()}", "warning": str(last_exc or "mission start fallback")}
+
+    def _safe_update_mission_status(self, mission_id: str, status: str, detail: str = "") -> None:
+        attempts = [
+            lambda: update_mission_status(mission_id=mission_id, status=status, detail=detail),
+            lambda: update_mission_status(mission_id=mission_id, status=status),
+            lambda: update_mission_status(mission_id, status, detail),
+            lambda: update_mission_status(mission_id, status),
+        ]
+        for attempt in attempts:
+            try:
+                attempt()
+                return
+            except TypeError:
+                continue
+            except Exception as exc:
+                _diag(f"[MISSION] update failed for {mission_id}: {exc}")
+                return
+
+    def _maybe_begin_mission(self, task_name: str, lane: str, cache_tag: str, args: tuple, kwargs: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        if not self._should_begin_mission(task_name, lane, cache_tag, args, kwargs):
+            return None
+        gate_result = can_proceed_with_evolution()
+        ok, reason = self._gate_reason(gate_result)
+        if not ok:
+            _diag(f"[MISSION] blocked before start: {reason}")
+            return {"ok": False, "reason": reason, "mission_id": ""}
+        objective = self._mission_objective(task_name, cache_tag, args, kwargs)
+        mission_payload = self._safe_start_new_mission(objective, lane, cache_tag, task_name)
+        mission_id = str(mission_payload.get("mission_id") or f"MISSION-{uuid.uuid4().hex[:8].upper()}")
+        mission_payload.update({"ok": True, "mission_id": mission_id, "objective": objective, "gate_reason": reason})
+        self._safe_update_mission_status(mission_id, "queued", objective)
+        return mission_payload
+
+    def submit(
+        self,
+        func,
+        *args: Any,
+        lane: str = "system",
+        cache_tag: str = "",
+        ttl_seconds: Optional[float] = None,
+        **kwargs: Any,
+    ) -> SovereignTaskHandle:
         handle = SovereignTaskHandle()
+        task_name = getattr(func, "__name__", "task")
+        cache_key = self._cache_key(func, args, kwargs, cache_tag)
+        cached_value = self._pull_cached(cache_key, ttl_seconds)
+        if cached_value is not None:
+            handle.set_result(cached_value)
+            return handle
+
+        mission_meta = self._maybe_begin_mission(task_name, lane, cache_tag, args, kwargs)
+        if mission_meta and not mission_meta.get("ok", False):
+            handle.set_exception(RuntimeError(str(mission_meta.get("reason", "mission gate blocked"))))
+            return handle
+
         with self._lock:
             self._sequence += 1
             sequence = self._sequence
-        self._queue.put((self._priority(lane), sequence, func, args, kwargs, handle))
+        self._queue.put((self._priority(lane), sequence, cache_key, ttl_seconds, func, args, kwargs, handle, mission_meta))
         return handle
 
     def _worker_loop(self) -> None:
         while True:
-            _, _, func, args, kwargs, handle = self._queue.get()
+            _, _, cache_key, ttl_seconds, func, args, kwargs, handle, mission_meta = self._queue.get()
+            mission_id = str((mission_meta or {}).get("mission_id") or "")
             try:
+                if mission_id:
+                    self._safe_update_mission_status(mission_id, "running", getattr(func, "__name__", "task"))
                 result = func(*args, **kwargs)
+                self._cache[cache_key] = {
+                    "ts": time.monotonic(),
+                    "value": result,
+                    "ttl": self.ttl_seconds if ttl_seconds is None else float(ttl_seconds),
+                }
+                if mission_id:
+                    self._safe_update_mission_status(mission_id, "completed", getattr(func, "__name__", "task"))
                 handle.set_result(result)
             except BaseException as exc:
+                if mission_id:
+                    self._safe_update_mission_status(mission_id, "failed", str(exc))
                 handle.set_exception(exc)
             finally:
                 self._queue.task_done()
@@ -8339,7 +8520,6 @@ class SovereignTaskRouter:
             import numpy as np
             import faiss
             index = faiss.read_index(str(index_path))
-            # ... (Continue with existing vector search logic)
             return {"status": "ready", "engine": "faiss", "results": []}
         except Exception as exc:
             return {"status": "degraded", "reason": str(exc), "results": []}
