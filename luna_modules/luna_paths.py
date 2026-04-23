@@ -86,6 +86,36 @@ INTENT_LEDGER_PATH = MEMORY_DIR / "luna_intent_ledger.json"
 TECHNICAL_DEBT_BACKLOG_PATH = MEMORY_DIR / "luna_technical_debt_backlog.json"
 UNATTENDED_SELF_EDIT_INTERVAL_SECONDS = 180.0
 
+# Refactor / negative-growth constants
+NEGATIVE_GROWTH_LINE_BUFFER = 15
+NEGATIVE_GROWTH_MAX_HELPER_DELTA = 3
+NEGATIVE_GROWTH_MAX_LONG_FUNCTION_DELTA = 0
+STRICT_REFACTOR_NEGATIVE_CONSTRAINT = (
+    "CRITICAL ARCHITECTURAL CONSTRAINT: You are performing an unattended refactor. "
+    "You are strictly forbidden from writing code-inside-strings or using variables ending in '_patch', '_text', '_code', '_payload', '_template', '_source', or '_str'. "
+    "You are forbidden from using exec() or eval(). You must write direct, native Python functions only. "
+    "Your absolute objective is NEGATIVE GROWTH. You must reduce or preserve the overall line count and reduce or preserve complexity. "
+    "If your patch makes the file meaningfully longer, it will be automatically rejected and rolled back."
+)
+STRICT_REFACTOR_CATALOG: dict = {
+    "EXTRACT_HELPERS": "Extract discrete, perfectly-named helper functions. Do not wrap the original function. Replace the logic in the original function with calls to the new helpers.",
+    "DEAD_CODE_REMOVAL": "Remove unused imports and uncalled internal functions.",
+    "MODULE_EXTRACTION": "Move a stable domain into luna_modules and replace the worker body with secure imports and thin orchestration wrappers.",
+}
+ORCHESTRATOR_REFACTOR_CONSTRAINT = (
+    "CRITICAL: You are refactoring a high-level orchestration loop. DO NOT return the function unmodified. "
+    "You MUST extract the phases of the loop. Pattern: Extract setup variables to `_orchestrator_setup()`, "
+    "core execution to `_execute_orchestrator_step()`, and state cleanup to `_orchestrator_cleanup()`. "
+    "Replace the massive body with 3-4 clean helper calls."
+)
+ORCHESTRATOR_REFACTOR_TARGETS = {
+    "run_mission_orchestration",
+    "run_sovereign_evolution_engine",
+}
+ANTI_PARALYSIS_VIOLATION = (
+    "anti_paralysis_violation: Candidate returned unmodified code. Decompose the logic into helpers."
+)
+
 # Hygiene/refactor whitelist lookups (constants kept here because the
 # hygiene module imports them; full hygiene rules live in luna_hygiene.py).
 LEGACY_HYGIENE_WHITELIST_BY_FILE = {
