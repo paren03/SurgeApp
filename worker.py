@@ -46,6 +46,7 @@ from luna_modules.luna_logging import (
 from typing import Any, Deque, Dict, List, Optional, Tuple
 
 # ── Path & config constants (extracted to luna_modules.luna_paths) ────────
+from luna_modules.luna_state import CORE_STATE
 from luna_modules.luna_paths import (
     DEFAULT_OWNER,
     DEFAULT_LUNA_NAME,
@@ -181,7 +182,7 @@ from luna_modules.luna_heartbeat import (
 
 LAST_HEARTBEAT_WRITE_MONO = time.monotonic()
 BACKGROUND_THREADS: Dict[str, threading.Thread] = {}
-WARM_RESET_COUNT = 0
+# (default set by CORE_STATE dataclass)
 
 from luna_modules.luna_paths import (
     VERIFY_TIMEOUT_SECONDS,
@@ -191,8 +192,8 @@ from luna_modules.luna_paths import (
     AUTONOMY_INTERVAL_SECONDS,
     MAX_SELF_HEAL_ATTEMPTS,
 )
-STOP_REQUESTED = False
-HEARTBEAT_FAILURE_COUNT = 0
+# (default set by CORE_STATE dataclass)
+# (default set by CORE_STATE dataclass)
 
 from luna_modules.luna_paths import (
     DIAGNOSTIC_PREFIX,
@@ -247,15 +248,14 @@ def persist_supervisor_state(reason: str = "") -> None:
     payload = {
         "ts": now_iso(),
         "reason": reason,
-        "warm_reset_count": WARM_RESET_COUNT,
+        "warm_reset_count": CORE_STATE.warm_reset_count,
         "threads": thread_health_snapshot(),
         "heartbeat_age_seconds": round(max(0.0, time.monotonic() - LAST_HEARTBEAT_WRITE_MONO), 2),
     }
     write_json_atomic(SUPERVISOR_STATE_PATH, payload)
 
 def warm_reset(reason: str) -> Dict[str, Any]:
-    global WARM_RESET_COUNT
-    WARM_RESET_COUNT += 1
+    CORE_STATE.warm_reset_count += 1
     recovered = recover_orphaned_tasks()
     # --- OMEGA+ init snapshot (auto) ---
     try:
@@ -275,7 +275,7 @@ def warm_reset(reason: str) -> Dict[str, Any]:
     publish_worker_heartbeat()
     persist_supervisor_state(reason)
     append_codex_note("Warm reset", f"Reason: {reason}\nRecovered tasks: {recovered}")
-    return {"ok": True, "reason": reason, "recovered_tasks": recovered, "warm_reset_count": WARM_RESET_COUNT}
+    return {"ok": True, "reason": reason, "recovered_tasks": recovered, "warm_reset_count": CORE_STATE.warm_reset_count}
 
 def review_supervisor_state() -> Dict[str, Any]:
     state = safe_read_json(SUPERVISOR_STATE_PATH, default={})
@@ -312,7 +312,7 @@ def specialist_upgrade_agent() -> Dict[str, Any]:
 
 
 def proactive_strategy_engine() -> None:
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-strategy", "ok", "scanning")
             thermal = update_thermal_guard_state(force=False)
@@ -347,7 +347,7 @@ def proactive_strategy_engine() -> None:
         time.sleep(1.0)
 
 def supervisor_loop() -> None:
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-supervisor", "ok", "monitoring")
             stale_age = time.monotonic() - LAST_HEARTBEAT_WRITE_MONO
@@ -382,19 +382,19 @@ def heartbeat_payload() -> Dict[str, Any]:
     return payload
 
 def publish_worker_heartbeat() -> None:
-    global HEARTBEAT_FAILURE_COUNT, LAST_HEARTBEAT_WRITE_MONO
+    global LAST_HEARTBEAT_WRITE_MONO
     try:
         write_json_atomic(WORKER_HEARTBEAT_PATH, heartbeat_payload())
         LAST_HEARTBEAT_WRITE_MONO = time.monotonic()
-        HEARTBEAT_FAILURE_COUNT = 0
+        # (default set by CORE_STATE dataclass)
         register_thread_heartbeat("luna-heartbeat", "ok", "published")
     except Exception as exc:
-        HEARTBEAT_FAILURE_COUNT += 1
-        _diag(f"publish_worker_heartbeat failed #{HEARTBEAT_FAILURE_COUNT}: {exc}")
+        CORE_STATE.heartbeat_failure_count += 1
+        _diag(f"publish_worker_heartbeat failed #{CORE_STATE.heartbeat_failure_count}: {exc}")
 
 def heartbeat_loop() -> None:
     """Continuously publish liveness from an isolated daemon thread."""
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-heartbeat", "ok", "loop")
             publish_worker_heartbeat()
@@ -440,8 +440,7 @@ from luna_modules.luna_tasks import (
 def _finish_quit_request(task_path: Path, ctx: Dict[str, Any]) -> bool:
     body = "[LUNA] worker stop requested.\n"
     _finish_task(task_path, ctx["solution_path"], build_solution_header("quit", ctx["task_id"], ctx["target_file"]), body, True)
-    global STOP_REQUESTED
-    STOP_REQUESTED = True
+    CORE_STATE.stop_requested = True
     return False
 
 def _run_standard_mode_action(mode_label: str, task: Dict[str, Any], task_id: str, target_file: str):
@@ -2409,7 +2408,7 @@ def _maybe_run_unattended_cycle(state: Dict[str, Any]) -> Optional[Dict[str, Any
     return report
 
 def autonomous_maintenance_cycle() -> None:
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-autonomy", "ok", "maintenance")
             if is_kill_switch_active():
@@ -2479,8 +2478,7 @@ def process_task(task_path: Path) -> bool:
     return _finish_blocked_mode(task_path, ctx)
 
 def _handle_signal(signum, _frame) -> None:
-    global STOP_REQUESTED
-    STOP_REQUESTED = True
+    CORE_STATE.stop_requested = True
     log(f"[LUNA] shutdown signal received: {signum}")
 
 def _log_worker_boot() -> None:
@@ -2609,7 +2607,7 @@ def worker_loop() -> None:
     try:
         omega_plus_last = 0.0
         omega_plus_interval_s = 60.0
-        while not STOP_REQUESTED:
+        while not CORE_STATE.stop_requested:
             try:
                 hb_thread, omega_plus_last, should_continue = _run_worker_cycle(hb_thread, omega_plus_last, omega_plus_interval_s)
                 if not should_continue:
@@ -2988,7 +2986,7 @@ def run_sovereign_evolution_engine(force: bool = False) -> str:
 
 _ORIGINAL_PROACTIVE_STRATEGY_ENGINE = proactive_strategy_engine
 def proactive_strategy_engine_sovereign() -> None:
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-strategy", "ok", "scanning")
             if is_kill_switch_active():
@@ -3126,7 +3124,7 @@ def throttle_engine_snapshot() -> Dict[str, Any]:
         pending = count_pending_approvals()
     except Exception:
         pending = 0
-    return {"ts": now_iso(), "active_tasks": active, "pending_approvals": pending, "warm_resets": WARM_RESET_COUNT}
+    return {"ts": now_iso(), "active_tasks": active, "pending_approvals": pending, "warm_resets": CORE_STATE.warm_reset_count}
 
 def plan_decompose_goal(goal: str, max_nodes: int = 24) -> Dict[str, Any]:
     goal = (goal or "").strip()
@@ -3525,7 +3523,7 @@ def webhook_observer_tick() -> Dict[str, Any]:
     return {"ts": now_iso(), "processed": processed}
 
 def webhook_observer_loop() -> None:
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-webhooks", "ok", "observing")
             webhook_observer_tick()
@@ -3700,7 +3698,7 @@ def sovereign_pulse_signals() -> Dict[str, Any]:
 
 def sovereign_pulse_loop() -> None:
     # Event-driven-ish: fast tick + observers (no busy polling)
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-pulse", "ok", "observing")
             sig = sovereign_pulse_signals()
@@ -4618,7 +4616,7 @@ run_meta_decision = run_meta_decision_batch2
 _BATCH2_PREVIOUS_PROACTIVE_STRATEGY_ENGINE = proactive_strategy_engine
 
 def proactive_strategy_engine_batch2() -> None:
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-strategy", "ok", "planning+tool arc scanning")
             if is_kill_switch_active():
@@ -4887,7 +4885,7 @@ def metacognitive_loop() -> None:
     """Background thread: runs a metacognitive reflection cycle every 90 seconds when idle."""
     METACOGNITION_INTERVAL = 90.0
     last_run_mono = 0.0
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-metacognition", "ok", "idle reflection")
             if is_kill_switch_active():
@@ -5150,7 +5148,7 @@ def _execute_level5_goal(metrics: Dict[str, Any]) -> None:
 def level5_continuous_optimizer() -> None:
     interval_seconds = 120.0
     last_run_mono = 0.0
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-level5", "ok", "self-directed optimizer")
             if _level5_should_pause(last_run_mono, interval_seconds):
@@ -5544,7 +5542,7 @@ def recursive_self_improvement_loop() -> None:
     """
     RSI_INTERVAL = 180.0
     last_run_mono = 0.0
-    while not STOP_REQUESTED:
+    while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-rsi", "ok", "recursive self-improvement idle")
             if is_kill_switch_active():
