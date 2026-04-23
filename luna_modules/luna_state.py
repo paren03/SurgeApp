@@ -18,5 +18,5 @@ class LunaState:
     # Threading
     lock: threading.Lock = field(default_factory=threading.Lock)
 
-# Global singleton for the worker and modules
+# Global singleton
 CORE_STATE = LunaState()
