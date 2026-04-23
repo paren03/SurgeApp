@@ -85,6 +85,7 @@ SOVEREIGN_JOURNAL_PATH = MEMORY_DIR / "luna_sovereign_journal.json"
 INTENT_LEDGER_PATH = MEMORY_DIR / "luna_intent_ledger.json"
 TECHNICAL_DEBT_BACKLOG_PATH = MEMORY_DIR / "luna_technical_debt_backlog.json"
 UNATTENDED_SELF_EDIT_INTERVAL_SECONDS = 180.0
+MISSIONS_DIR = PROJECT_DIR / "missions"
 
 # Refactor / negative-growth constants
 NEGATIVE_GROWTH_LINE_BUFFER = 15
