@@ -414,6 +414,8 @@ def ensure_recent_worker_heartbeat(context: str = "worker-loop", force: bool = F
     except Exception as exc:
         _diag(f"ensure_recent_worker_heartbeat failed: {exc}")
 
+from luna_modules.luna_metacog import can_proceed_with_evolution
+
 from luna_modules.luna_tasks import (
     _complete_task_mode,
     _evaluate_standard_mode_success,
@@ -2392,6 +2394,9 @@ def _maintain_low_risk_state() -> None:
         speak("Verification cache is healthy. My local logs look clean.", mood="steady")
 
 def _maybe_run_unattended_cycle(state: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    if not can_proceed_with_evolution():
+        _diag("[METACOG] _maybe_run_unattended_cycle: evolution integrity gate blocked the cycle.")
+        return None
     last_unattended = str(state.get("last_unattended_self_edit_at") or "").strip()
     should_run = True
     if last_unattended:
@@ -2414,6 +2419,10 @@ def autonomous_maintenance_cycle() -> None:
             if is_kill_switch_active():
                 speak("Kill switch detected. I am pausing autonomous activity until you clear it.", mood="paused")
                 time.sleep(2.0)
+                continue
+            if not can_proceed_with_evolution():
+                register_thread_heartbeat("luna-autonomy", "gated", "metacog: evolution blocked")
+                time.sleep(5.0)
                 continue
             if any(ACTIVE_DIR.glob("*.json")) or any(ACTIVE_DIR.glob("*.working.json")):
                 time.sleep(2.0)
@@ -4621,6 +4630,10 @@ def proactive_strategy_engine_batch2() -> None:
             register_thread_heartbeat("luna-strategy", "ok", "planning+tool arc scanning")
             if is_kill_switch_active():
                 time.sleep(2.0)
+                continue
+            if not can_proceed_with_evolution():
+                register_thread_heartbeat("luna-strategy", "gated", "metacog: evolution blocked")
+                time.sleep(5.0)
                 continue
             if any(ACTIVE_DIR.glob("*.json")) or any(ACTIVE_DIR.glob("*.working.json")):
                 time.sleep(1.0)
