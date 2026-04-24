@@ -7318,7 +7318,10 @@ def query_llm(messages: Optional[List[Dict[str, str]]] = None, prompt: str = "",
         prepared_messages = [{"role": "user", "text": prompt_text}]
     route = normalize_prompt_text(provider or "")
     # Build ordered sequence — preferred provider first, others as fallback.
-    _openrouter = lambda: _query_openrouter_chat(prepared_messages, model=model or "anthropic/claude-3.5-sonnet-20241022")
+    # OpenRouter: use LLaMA 3.3 70B as default — adds a 3rd distinct model
+    # (GPT-4o comes direct; Grok-3 comes direct; LLaMA only via OpenRouter).
+    # Override with model= for Claude or others when account credits allow.
+    _openrouter = lambda: _query_openrouter_chat(prepared_messages, model=model or "meta-llama/llama-3.3-70b-instruct")
     _openai     = lambda: _query_openai_chat(prepared_messages, model=model or "gpt-4o")
     _grok       = lambda: _query_xai_chat(prepared_messages, model=model or "grok-3")
     _anthropic  = lambda: _query_anthropic_chat(prepared_messages)
