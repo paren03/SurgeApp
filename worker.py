@@ -7261,11 +7261,12 @@ def _query_openai_chat(messages: List[Dict[str, str]], model: str = "gpt-4o") ->
     return ""
 
 
-def _query_xai_chat(messages: List[Dict[str, str]], model: str = "grok-3") -> str:
+def _query_xai_chat(messages: List[Dict[str, str]], model: str = "grok-4-0709") -> str:
     """Call the Grok / xAI Chat API (OpenAI-compatible endpoint).
 
     Available models on this key: grok-3, grok-3-mini, grok-4-0709,
     grok-4-fast-non-reasoning, grok-4-fast-reasoning (use model= to override).
+    Default is grok-4-0709 — most capable and reliably returns content.
     """
     vault = load_api_vault()
     key = str(vault.get("XAI_API_KEY") or "").strip()
@@ -7323,7 +7324,7 @@ def query_llm(messages: Optional[List[Dict[str, str]]] = None, prompt: str = "",
     # Override with model= for Claude or others when account credits allow.
     _openrouter = lambda: _query_openrouter_chat(prepared_messages, model=model or "meta-llama/llama-3.3-70b-instruct")
     _openai     = lambda: _query_openai_chat(prepared_messages, model=model or "gpt-4o")
-    _grok       = lambda: _query_xai_chat(prepared_messages, model=model or "grok-3")
+    _grok       = lambda: _query_xai_chat(prepared_messages, model=model or "grok-4-0709")
     _anthropic  = lambda: _query_anthropic_chat(prepared_messages)
     if route in {"openai", "gpt", "chatgpt"}:
         sequence = [_openai, _openrouter, _grok, _anthropic]
