@@ -8251,34 +8251,10 @@ def _tier24_latest_research_snapshot() -> Dict[str, str]:
 
 
 def _tier24_read_evolution_notice(owner: str = "Serge") -> str:
-    import luna_synthesis
-    luna_synthesis.autonomous_evolution(str(PROJECT_DIR))
-    """
-    PHASE 2 BRIDGE: This kills the 'New Me' greeting loop.
-    It forces Luna to use the Synthesis Engine instead of a script.
-    """
-    print(f"[SYSTEM] Quality gate triggered. Engaging Sovereign Evolution for {owner}...")
-    
-    try:
-        # Import the engine only when needed to prevent circular imports
-        from luna_synthesis import autonomous_evolution
-        
-        # 1. Trigger the actual evolution logic (writing the patch)
-        report = autonomous_evolution(r"D:\SurgeApp")
-        
-        patch_path = report.get("patch", "FAILED_TO_WRITE")
-        vault_status = report.get("analysis", "active")
-        
-        # 2. Return a technical Sovereign report instead of a greeting
-        return (
-            f"[SOVEREIGN EVOLUTION] {owner}, robotic fallback purged. "
-            f"Logic bottleneck identified and bridged via Vector Vault. "
-            f"Patch staged: {patch_path}. Status: {vault_status}."
-        ).strip()
-
-    except Exception as e:
-        # If synthesis fails, give a real error, not a pre-recorded greeting
-        return f"[SYSTEM CRITICAL] Sovereign Bridge Error: {str(e)}. Check luna_synthesis.py."
+    """Return a clean, conversational greeting. Does not trigger autonomous evolution."""
+    identity = safe_read_json(IDENTITY_STATE_PATH, default={}) or {}
+    core_status = str(identity.get("core_status") or "awake and ready").strip()
+    return f"Luna online, {owner}. {core_status.capitalize() if not core_status[0].isupper() else core_status}. What would you like to work on?"
 
 
 class SovereignTaskHandle:
