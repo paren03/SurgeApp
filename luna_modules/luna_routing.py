@@ -8,13 +8,14 @@ with their respective domain modules in later steps.
 
 from __future__ import annotations
 
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from luna_modules.luna_paths import (
     GUIDED_IMPROVEMENT_TRIGGERS,
     IMPROVEMENT_MODE_TRIGGERS,
     MCP_ADOPTION_TRIGGERS,
     MODE_ALIASES,
+    PROJECT_DIR,
     SELF_FIX_TRIGGERS,
     SUPPORTED_TASK_TYPES,
 )
@@ -133,3 +134,109 @@ def classify_extended_prompt_route(prompt: str) -> str:
     if is_mcp_adoption_command(prompt):
         return "mcp_adoption"
     return "standard"
+
+
+# ── Natural-language intent registry ─────────────────────────────────────────
+
+# Maps informal names the user might use to refer to files Luna can edit.
+_FILE_NICKNAMES: Dict[str, str] = {
+    # Terminal / UI file
+    "banner":      str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "terminal":    str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "ui":          str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "interface":   str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "app":         str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "frontend":    str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "surge":       str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "chat ui":     str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "chat window": str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "sidebar":     str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "panel":       str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "window":      str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "screen":      str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    "display":     str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
+    # Worker / core file
+    "worker":      str(PROJECT_DIR / "worker.py"),
+    "luna":        str(PROJECT_DIR / "worker.py"),
+    "core":        str(PROJECT_DIR / "worker.py"),
+    "brain":       str(PROJECT_DIR / "worker.py"),
+    "engine":      str(PROJECT_DIR / "worker.py"),
+    "backend":     str(PROJECT_DIR / "worker.py"),
+    "herself":     str(PROJECT_DIR / "worker.py"),
+    "itself":      str(PROJECT_DIR / "worker.py"),
+}
+
+# Maps action verbs → worker mode labels.
+_OPERATION_VERBS: Dict[str, str] = {
+    # self-fix: syntax / runtime error repair
+    "fix":      "self-fix",
+    "repair":   "self-fix",
+    "patch":    "self-fix",
+    "debug":    "self-fix",
+    "correct":  "self-fix",
+    "heal":     "self-fix",
+    "resolve":  "self-fix",
+    # guided-loop: safe guided code improvement
+    "improve":  "guided-loop",
+    "enhance":  "guided-loop",
+    "optimize": "guided-loop",
+    "refactor": "guided-loop",
+    "upgrade":  "guided-loop",
+    "clean":    "guided-loop",
+    "update":   "guided-loop",
+    "rewrite":  "guided-loop",
+    # improvement: analysis / read-only review
+    "analyze":  "improvement",
+    "analyse":  "improvement",
+    "review":   "improvement",
+    "check":    "improvement",
+    "inspect":  "improvement",
+    "audit":    "improvement",
+    "scan":     "improvement",
+}
+
+
+def parse_natural_language_task(prompt: str) -> Optional[Dict[str, Any]]:
+    """Parse casual natural language into a structured task intent.
+
+    Examples::
+
+        "fix the banner"   -> {"mode": "self-fix",   "target_file": "...SurgeApp_Claude_Terminal.py"}
+        "improve the ui"   -> {"mode": "guided-loop", "target_file": "...SurgeApp_Claude_Terminal.py"}
+        "analyze worker"   -> {"mode": "improvement", "target_file": "...worker.py"}
+        "fix herself"      -> {"mode": "self-fix",   "target_file": "...worker.py"}
+
+    Returns ``None`` when no actionable code-operation intent is detected so
+    the caller can fall through to normal chat routing.
+    """
+    if not (prompt or "").strip():
+        return None
+    normalized = normalize_prompt_text(prompt)
+
+    # Detect file target — multi-word nicknames checked first for precision.
+    detected_file: Optional[str] = None
+    for nickname, path in _FILE_NICKNAMES.items():
+        if " " in nickname and nickname in normalized:
+            detected_file = path
+            break
+    if detected_file is None:
+        for word in normalized.split():
+            if word in _FILE_NICKNAMES:
+                detected_file = _FILE_NICKNAMES[word]
+                break
+
+    # Detect operation verb — multi-word verbs checked first.
+    detected_mode: Optional[str] = None
+    for verb, mode in _OPERATION_VERBS.items():
+        if " " in verb and verb in normalized:
+            detected_mode = mode
+            break
+    if detected_mode is None:
+        for word in normalized.split():
+            if word in _OPERATION_VERBS:
+                detected_mode = _OPERATION_VERBS[word]
+                break
+
+    if detected_mode and detected_file:
+        return {"mode": detected_mode, "target_file": detected_file, "nlp_detected": True}
+    return None
