@@ -125,6 +125,7 @@ from luna_modules.luna_paths import (
     GUARDIAN_LOCK_PATH,
     THERMAL_GUARD_STATE_PATH,
     AUTONOMY_JOURNAL_PATH,
+    LUNA_UPGRADE_NOTIFICATIONS_PATH,
     SOVEREIGN_JOURNAL_PATH,
     INTENT_LEDGER_PATH,
     TECHNICAL_DEBT_BACKLOG_PATH,
@@ -2390,6 +2391,33 @@ def attempt_self_heal(task: Dict[str, Any], task_path: Path, exc: Exception) -> 
     append_task_memory(f"self_heal:{task.get('prompt', '')}", "\n".join(history_lines), False, category="self_heal")
     return "\n".join(history_lines)
 
+def _notify_self_upgrade(source: str, detail: str) -> None:
+    """Persist and broadcast a self-upgrade event so Serge always knows what changed.
+
+    Writes a timestamped entry to ``LUNA_UPGRADE_NOTIFICATIONS_PATH`` (a JSONL
+    file in ``memory/``), emits a ``speak()`` broadcast visible in the terminal,
+    and writes a codex note for long-term traceability.
+    """
+    entry = {
+        "ts": now_iso(),
+        "source": source,
+        "detail": str(detail)[:1200],
+    }
+    try:
+        append_jsonl(LUNA_UPGRADE_NOTIFICATIONS_PATH, entry)
+    except Exception as _exc:
+        _diag(f"_notify_self_upgrade jsonl write failed: {_exc}")
+    speak(
+        f"\U0001f527 SELF-UPGRADE [{source}]: {str(detail)[:180]}",
+        mood="ambitious",
+    )
+    log(f"[LUNA SELF-UPGRADE] {source}: {detail[:400]}")
+    try:
+        append_codex_note("Self-upgrade", f"Source: {source}\n{detail[:600]}")
+    except Exception:
+        pass
+
+
 def _autonomy_cycle_due(state: Dict[str, Any]) -> bool:
     last_run = str(state.get("last_cycle_at") or "").strip()
     if not last_run:
@@ -2438,7 +2466,7 @@ def _maybe_run_self_upgrade(state: Dict[str, Any]) -> Optional[str]:
 
     Picks up proposals staged in ``LOGIC_UPDATES_DIR`` that have already been
     awarded ``AUTO_APPLY`` or ``READY_FOR_DEPLOY`` status by the council pipeline,
-    runs 50-cycle shadow verification, then live-applies and speaks to the user.
+    runs 50-cycle shadow verification, then live-applies and notifies Serge.
     """
     _UPGRADE_COOLDOWN_SECONDS = 4 * 3600
     last_upgrade = str(state.get("last_self_upgrade_at") or "").strip()
@@ -2452,14 +2480,58 @@ def _maybe_run_self_upgrade(state: Dict[str, Any]) -> Optional[str]:
     report = run_self_upgrade_pipeline({"id": f"auto_upgrade_{int(time.time())}"})
     if "APPLIED" in report:
         state["last_self_upgrade_at"] = now_iso()
-        speak(
-            "I applied a staged self-upgrade that cleared council review and shadow-test verification.",
-            mood="ambitious",
+        _notify_self_upgrade(
+            "staged_upgrade_pipeline",
+            f"Council-approved upgrade applied and verified.\n{report[:600]}",
         )
         append_autonomy_journal("auto_self_upgrade", report[:500], True)
     elif "NO_PROPOSALS" not in report and "STAGED_ONLY" not in report:
         _diag(f"auto self-upgrade: {report[:200]}")
     return report
+
+
+def _maybe_generate_upgrade_proposal(state: Dict[str, Any]) -> Optional[str]:
+    """Autonomously stage an upgrade proposal for council review every 2 hours.
+
+    Calls ``run_upgrade_proposal`` on ``worker.py``.  Without a ``proposed_code``
+    override this stages the current source and runs the full research → shadow →
+    council → rebuttal pipeline.  If the council awards ``AUTO_APPLY``, the next
+    call to ``_maybe_run_self_upgrade`` will apply it.  The council artifacts are
+    always written to ``LOGIC_UPDATES_DIR`` for Serge to inspect at any time.
+    """
+    _PROPOSAL_COOLDOWN_SECONDS = 2 * 3600
+    last_proposal = str(state.get("last_upgrade_proposal_at") or "").strip()
+    if last_proposal:
+        try:
+            elapsed = (datetime.now() - datetime.fromisoformat(last_proposal)).total_seconds()
+            if elapsed < _PROPOSAL_COOLDOWN_SECONDS:
+                return None
+        except Exception:
+            pass
+    try:
+        target_path = PROJECT_DIR / "worker.py"
+        task = {
+            "id": f"auto_proposal_{int(time.time())}",
+            "target_file": str(target_path),
+            "research_query": (
+                "Luna autonomous self-improvement: validate current code posture, "
+                "detect technical debt and reduction opportunities, "
+                "score deployment readiness for shadow and council review."
+            ),
+        }
+        report = run_upgrade_proposal(task)
+        state["last_upgrade_proposal_at"] = now_iso()
+        decision_line = next((ln for ln in report.splitlines() if "deployment_decision" in ln), "")
+        _diag(f"[AUTO-PROPOSAL] {decision_line or report[:120]}")
+        if "AUTO_APPLY" in report:
+            _notify_self_upgrade(
+                "upgrade_proposal_auto_apply",
+                f"Council scored this proposal AUTO_APPLY. Staging for next upgrade cycle.\n{report[:400]}",
+            )
+        return report
+    except Exception as exc:
+        _diag(f"_maybe_generate_upgrade_proposal failed: {exc}")
+        return None
 
 
 def autonomous_maintenance_cycle() -> None:
@@ -2500,8 +2572,24 @@ def autonomous_maintenance_cycle() -> None:
             speak("Online and awake. I checked my worker heartbeat, task queue, and guardian rules.", mood="awake")
             state["active_system_prompt_excerpt"] = str(knowledge.get("system_prompt_excerpt", ""))[-400:]
             _maintain_low_risk_state()
-            _maybe_run_unattended_cycle(state)
+            _unattended_report = _maybe_run_unattended_cycle(state)
+            # Notify Serge whenever the unattended cycle actually writes changes.
+            if (
+                isinstance(_unattended_report, dict)
+                and _unattended_report.get("attempted")
+                and _unattended_report.get("ok")
+                and _unattended_report.get("reason") == "applied"
+            ):
+                _notify_self_upgrade(
+                    "unattended_self_edit",
+                    (
+                        f"Applied refactor to {_unattended_report.get('target_file', 'worker.py')}: "
+                        f"{_unattended_report.get('function_name', 'unknown')} "
+                        f"via {_unattended_report.get('catalog_action', 'refactor')}"
+                    ),
+                )
             _maybe_run_self_upgrade(state)
+            _maybe_generate_upgrade_proposal(state)
             prompt_optimizer = optimize_core_personality(force=False, reason="autonomy_cycle")
             if prompt_optimizer.get("updated"):
                 state["last_prompt_optimization"] = prompt_optimizer

@@ -82,6 +82,7 @@ GUARDIAN_LOCK_PATH = MEMORY_DIR / "luna_guardian.lock.json"
 THERMAL_GUARD_STATE_PATH = MEMORY_DIR / "luna_thermal_guard_state.json"
 AUTONOMY_JOURNAL_PATH = MEMORY_DIR / "luna_autonomy_journal.jsonl"
 SOVEREIGN_JOURNAL_PATH = MEMORY_DIR / "luna_sovereign_journal.json"
+LUNA_UPGRADE_NOTIFICATIONS_PATH = MEMORY_DIR / "luna_upgrade_notifications.jsonl"
 INTENT_LEDGER_PATH = MEMORY_DIR / "luna_intent_ledger.json"
 TECHNICAL_DEBT_BACKLOG_PATH = MEMORY_DIR / "luna_technical_debt_backlog.json"
 UNATTENDED_SELF_EDIT_INTERVAL_SECONDS = 180.0
