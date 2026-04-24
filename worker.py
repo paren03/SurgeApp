@@ -819,8 +819,11 @@ def validate_execution_target(task: dict, resolved_mode: str, target_file: str) 
         return False, TARGET_FILE_DOES_NOT_EXIST
 
     allowed_files = {str(Path(item)) for item in (task.get("allowed_files") or ALLOWED_FILES)}
+    # Also permit any .py file that lives inside the project directory jail.
+    _tgt_path = Path(norm_target)
+    is_project_python = path_in_jail(_tgt_path) and _tgt_path.suffix.lower() == ".py"
 
-    if resolved_mode in {"self-fix", "guided-loop", "mission-kernel", "improvement"} and norm_target not in allowed_files:
+    if resolved_mode in {"self-fix", "guided-loop", "mission-kernel", "improvement"} and norm_target not in allowed_files and not is_project_python:
         return False, "target file is not in allowed_files"
 
     if resolved_mode in {"self-fix", "guided-loop", "mission-kernel", "improvement"} and Path(norm_target).suffix.lower() != ".py":
@@ -1220,31 +1223,39 @@ def create_pre_upgrade_backup(target_path: Path, proposal_dir: Path) -> Path:
     return archive_path
 
 def research_internet(query: str, proposal_dir: Path) -> Dict[str, Any]:
+    """Search the web for research citations using Brave Search.
+
+    Falls back to a curated best-practice pack when the Brave key is
+    unavailable or the request fails.
+    """
     proposal_dir.mkdir(parents=True, exist_ok=True)
-    citations = [
-        {
-            "title": "Python Packaging User Guide",
-            "source": "official docs",
-            "note": "Prefer isolated environments, reproducible packaging, and explicit dependency management.",
-        },
-        {
-            "title": "Python Documentation - Logging HOWTO",
-            "source": "official docs",
-            "note": "Use structured logging, rotation, and clear severity levels for long-running services.",
-        },
-        {
-            "title": "Python Documentation - threading",
-            "source": "official docs",
-            "note": "Keep daemon threads isolated and fail-safe when supervising liveness signals.",
-        },
+    _FALLBACK_CITATIONS = [
+        {"title": "Python Packaging User Guide", "source": "official docs",
+         "note": "Prefer isolated environments, reproducible packaging, and explicit dependency management."},
+        {"title": "Python Documentation - Logging HOWTO", "source": "official docs",
+         "note": "Use structured logging, rotation, and clear severity levels for long-running services."},
+        {"title": "Python Documentation - threading", "source": "official docs",
+         "note": "Keep daemon threads isolated and fail-safe when supervising liveness signals."},
     ]
-    payload = {
-        "query": query,
-        "ts": now_iso(),
-        "mode": "local_best_practice_pack",
-        "citations": citations,
-    }
-    lines = [f"Query: {query}", f"Generated: {payload['ts']}"]
+    # ── Live Brave Search ────────────────────────────────────────────────────
+    live = _brave_search_json(query)
+    if live.get("ok"):
+        raw_results = (live.get("data") or {}).get("web", {}).get("results") or []
+        citations = [
+            {
+                "title":  str(item.get("title", ""))[:200],
+                "source": str(item.get("url", ""))[:200],
+                "note":   str(item.get("description") or (item.get("extra_snippets") or [""])[0])[:400],
+            }
+            for item in raw_results[:5]
+        ] or _FALLBACK_CITATIONS
+        provider = "brave_live"
+    else:
+        citations = _FALLBACK_CITATIONS
+        provider = "local_best_practice_pack"
+    # ── Write to proposal_dir ────────────────────────────────────────────────
+    payload = {"query": query, "ts": now_iso(), "mode": provider, "citations": citations}
+    lines = [f"Query: {query}", f"Generated: {payload['ts']}", f"Provider: {provider}", ""]
     for item in citations:
         lines.append(f"- {item['title']} ({item['source']}): {item['note']}")
     safe_write_text(proposal_dir / "research_citations.txt", "\n".join(lines) + "\n")
@@ -1736,6 +1747,8 @@ def normalize_system_operation(operation: str, prompt: str = "") -> str:
         return "touch_file"
     if raw in {"diagnostic sleep"}:
         return "diagnostic_sleep"
+    if raw in {"run shell", "shell", "exec shell", "run command", "shell command"}:
+        return "run_shell"
     prompt_norm = normalize_prompt_text(prompt)
     if any(item in prompt_norm for item in ("rotate logs", "clean logs", "rotate_log", "rotate logs now")):
         return "rotate_logs"
@@ -1793,15 +1806,28 @@ def extract_repo_identifier(text: str) -> str:
     return ""
 
 def github_headers() -> Dict[str, str]:
-    token = (os.environ.get("GITHUB_TOKEN") or os.environ.get("LUNA_GITHUB_TOKEN") or "[PLACE API HERE]").strip()
+    """Build GitHub API headers, reading the token from API.txt first."""
+    vault = load_api_vault()
+    token = (
+        vault.get("GITHUB_TOKEN")
+        or os.environ.get("GITHUB_TOKEN")
+        or os.environ.get("LUNA_GITHUB_TOKEN")
+        or ""
+    ).strip()
     headers = {"Accept": "application/vnd.github+json", "User-Agent": "Luna-Command-Center"}
-    if token and token != "[PLACE API HERE]":
+    if token:
         headers["Authorization"] = f"Bearer {token}"
     return headers
 
 def github_enabled() -> bool:
-    token = (os.environ.get("GITHUB_TOKEN") or os.environ.get("LUNA_GITHUB_TOKEN") or "[PLACE API HERE]").strip()
-    return bool(token and token != "[PLACE API HERE]")
+    vault = load_api_vault()
+    token = (
+        vault.get("GITHUB_TOKEN")
+        or os.environ.get("GITHUB_TOKEN")
+        or os.environ.get("LUNA_GITHUB_TOKEN")
+        or ""
+    ).strip()
+    return bool(token)
 
 def github_download_zip(repo: str, dest_path: Path) -> Dict[str, Any]:
     if not github_enabled():
@@ -2315,6 +2341,25 @@ def _builtin_system_action(operation: str, task: Dict[str, Any], target_file: st
         return _rotate_logs_action()
     if operation == "compact_memory":
         return _compact_memory_action()
+    if operation == "run_shell":
+        from luna_modules.luna_tools import run_project_shell
+        cmd = str(task.get("shell_command") or task.get("prompt") or "").strip()
+        if not cmd:
+            return system_action_report(["status  : FAILED", "reason  : missing shell_command in task payload"])
+        result = run_project_shell(cmd, timeout=int(task.get("timeout") or 30))
+        lines = [
+            f"action  : run_shell",
+            f"cmd     : {cmd}",
+            f"ok      : {result.get('ok')}",
+            f"rc      : {result.get('returncode', '?')}",
+        ]
+        if result.get("stdout"):
+            lines += ["stdout  :"] + [f"  {l}" for l in result["stdout"].splitlines()[:20]]
+        if result.get("stderr"):
+            lines += ["stderr  :"] + [f"  {l}" for l in result["stderr"].splitlines()[:10]]
+        if result.get("reason"):
+            lines.append(f"reason  : {result['reason']}")
+        return system_action_report(lines)
     if operation == "touch_file":
         path = Path(target_file)
         path.parent.mkdir(parents=True, exist_ok=True)
