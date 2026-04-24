@@ -2493,9 +2493,10 @@ def _maybe_run_unattended_cycle(state: Dict[str, Any]) -> Optional[Dict[str, Any
 def _maybe_run_self_upgrade(state: Dict[str, Any]) -> Optional[str]:
     """Apply any council-approved staged upgrade proposals; rate-limited to 4-hour windows.
 
-    Picks up proposals staged in ``LOGIC_UPDATES_DIR`` that have already been
-    awarded ``AUTO_APPLY`` or ``READY_FOR_DEPLOY`` status by the council pipeline,
-    runs 50-cycle shadow verification, then live-applies and notifies Serge.
+    Only considers proposals whose staged file is a ``.py`` file so that
+    non-Python sovereign notes proposals are silently skipped.  The cooldown
+    is stamped on every invocation (not just APPLIED) to prevent the function
+    from hammering the pipeline every 20 seconds when no eligible proposals exist.
     """
     _UPGRADE_COOLDOWN_SECONDS = 4 * 3600
     last_upgrade = str(state.get("last_self_upgrade_at") or "").strip()
@@ -2506,15 +2507,16 @@ def _maybe_run_self_upgrade(state: Dict[str, Any]) -> Optional[str]:
                 return None
         except Exception:
             pass
+    # Always stamp the cooldown so we don't retry every cycle when nothing is eligible.
+    state["last_self_upgrade_at"] = now_iso()
     report = run_self_upgrade_pipeline({"id": f"auto_upgrade_{int(time.time())}"})
     if "APPLIED" in report:
-        state["last_self_upgrade_at"] = now_iso()
         _notify_self_upgrade(
             "staged_upgrade_pipeline",
             f"Council-approved upgrade applied and verified.\n{report[:600]}",
         )
         append_autonomy_journal("auto_self_upgrade", report[:500], True)
-    elif "NO_PROPOSALS" not in report and "STAGED_ONLY" not in report:
+    elif "NO_PROPOSALS" not in report and "STAGED_ONLY" not in report and "ROLLBACK" not in report:
         _diag(f"auto self-upgrade: {report[:200]}")
     return report
 
