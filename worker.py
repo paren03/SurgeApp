@@ -7184,7 +7184,7 @@ def _query_openrouter_chat(messages: List[Dict[str, str]], model: str = "anthrop
         _diag(f"openrouter transport failed: {exc}")
     return ""
 
-def _query_anthropic_chat(messages: List[Dict[str, str]], model: str = "claude-3-5-sonnet-latest") -> str:
+def _query_anthropic_chat(messages: List[Dict[str, str]], model: str = "claude-opus-4-5-20251101") -> str:
     vault = load_api_vault()
     key = str(vault.get("ANTHROPIC_API_KEY") or "").strip()
     if not key:
@@ -7203,7 +7203,7 @@ def _query_anthropic_chat(messages: List[Dict[str, str]], model: str = "claude-3
     if not chat_messages:
         return ""
     body = {
-        "model": model or "claude-3-5-sonnet-latest",
+        "model": model or "claude-opus-4-5-20251101",
         "max_tokens": 700,
         "temperature": 0.25,
         "system": "\n\n".join(system_chunks).strip(),
