@@ -125,6 +125,7 @@ from luna_modules.luna_paths import (
     GUARDIAN_LOCK_PATH,
     THERMAL_GUARD_STATE_PATH,
     AUTONOMY_JOURNAL_PATH,
+    LUNA_UPGRADE_NOTIFICATIONS_PATH,
     SOVEREIGN_JOURNAL_PATH,
     INTENT_LEDGER_PATH,
     TECHNICAL_DEBT_BACKLOG_PATH,
@@ -172,6 +173,7 @@ from luna_modules.luna_paths import (
     PROMPT_OPTIMIZER_MANAGED_END,
     DEFAULT_LUNA_SYSTEM_PROMPT,
     HEARTBEAT_DEADLOCK_SECONDS,
+    SOVEREIGN_EVOLUTION_INTERVAL_SECONDS,
     STRATEGY_INTERVAL_SECONDS,
 )
 from luna_modules.luna_heartbeat import (
@@ -239,6 +241,7 @@ from luna_modules.luna_routing import (
     normalize_prompt_text,
     normalize_task_type,
     normalize_worker_mode,
+    parse_natural_language_task,
     prompt_has_any,
     resolve_declared_payload_mode,
     resolve_worker_mode,
@@ -2389,6 +2392,61 @@ def attempt_self_heal(task: Dict[str, Any], task_path: Path, exc: Exception) -> 
     append_task_memory(f"self_heal:{task.get('prompt', '')}", "\n".join(history_lines), False, category="self_heal")
     return "\n".join(history_lines)
 
+def _cleanup_old_proposals(max_keep: int = 30) -> int:
+    """Remove the oldest proposal dirs from ``logic_updates/`` keeping only ``max_keep``.
+
+    Prevents unbounded disk growth from high-frequency sovereign or auto-proposal
+    cycles.  Returns the number of directories removed.
+    """
+    if not LOGIC_UPDATES_DIR.exists():
+        return 0
+    try:
+        dirs = sorted(
+            [d for d in LOGIC_UPDATES_DIR.iterdir() if d.is_dir()],
+            key=lambda d: d.name,
+            reverse=True,  # newest first
+        )
+    except Exception:
+        return 0
+    removed = 0
+    for old_dir in dirs[max_keep:]:
+        try:
+            shutil.rmtree(old_dir)
+            removed += 1
+        except Exception as exc:
+            _diag(f"_cleanup_old_proposals: could not remove {old_dir.name}: {exc}")
+    if removed:
+        _diag(f"_cleanup_old_proposals: removed {removed} old proposal dir(s), kept {min(len(dirs), max_keep)}")
+    return removed
+
+
+def _notify_self_upgrade(source: str, detail: str) -> None:
+    """Persist and broadcast a self-upgrade event so Serge always knows what changed.
+
+    Writes a timestamped entry to ``LUNA_UPGRADE_NOTIFICATIONS_PATH`` (a JSONL
+    file in ``memory/``), emits a ``speak()`` broadcast visible in the terminal,
+    and writes a codex note for long-term traceability.
+    """
+    entry = {
+        "ts": now_iso(),
+        "source": source,
+        "detail": str(detail)[:1200],
+    }
+    try:
+        append_jsonl(LUNA_UPGRADE_NOTIFICATIONS_PATH, entry)
+    except Exception as _exc:
+        _diag(f"_notify_self_upgrade jsonl write failed: {_exc}")
+    speak(
+        f"\U0001f527 SELF-UPGRADE [{source}]: {str(detail)[:180]}",
+        mood="ambitious",
+    )
+    log(f"[LUNA SELF-UPGRADE] {source}: {detail[:400]}")
+    try:
+        append_codex_note("Self-upgrade", f"Source: {source}\n{detail[:600]}")
+    except Exception:
+        pass
+
+
 def _autonomy_cycle_due(state: Dict[str, Any]) -> bool:
     last_run = str(state.get("last_cycle_at") or "").strip()
     if not last_run:
@@ -2432,7 +2490,87 @@ def _maybe_run_unattended_cycle(state: Dict[str, Any]) -> Optional[Dict[str, Any
         state["last_unattended_self_edit"] = report
     return report
 
+def _maybe_run_self_upgrade(state: Dict[str, Any]) -> Optional[str]:
+    """Apply any council-approved staged upgrade proposals; rate-limited to 4-hour windows.
+
+    Only considers proposals whose staged file is a ``.py`` file so that
+    non-Python sovereign notes proposals are silently skipped.  The cooldown
+    is stamped on every invocation (not just APPLIED) to prevent the function
+    from hammering the pipeline every 20 seconds when no eligible proposals exist.
+    """
+    _UPGRADE_COOLDOWN_SECONDS = 4 * 3600
+    last_upgrade = str(state.get("last_self_upgrade_at") or "").strip()
+    if last_upgrade:
+        try:
+            elapsed = (datetime.now() - datetime.fromisoformat(last_upgrade)).total_seconds()
+            if elapsed < _UPGRADE_COOLDOWN_SECONDS:
+                return None
+        except Exception:
+            pass
+    # Always stamp the cooldown so we don't retry every cycle when nothing is eligible.
+    state["last_self_upgrade_at"] = now_iso()
+    report = run_self_upgrade_pipeline({"id": f"auto_upgrade_{int(time.time())}"})
+    if "APPLIED" in report:
+        _notify_self_upgrade(
+            "staged_upgrade_pipeline",
+            f"Council-approved upgrade applied and verified.\n{report[:600]}",
+        )
+        append_autonomy_journal("auto_self_upgrade", report[:500], True)
+    elif "NO_PROPOSALS" not in report and "STAGED_ONLY" not in report and "ROLLBACK" not in report:
+        _diag(f"auto self-upgrade: {report[:200]}")
+    return report
+
+
+def _maybe_generate_upgrade_proposal(state: Dict[str, Any]) -> Optional[str]:
+    """Autonomously stage an upgrade proposal for council review every 2 hours.
+
+    Calls ``run_upgrade_proposal`` on ``worker.py``.  Without a ``proposed_code``
+    override this stages the current source and runs the full research → shadow →
+    council → rebuttal pipeline.  If the council awards ``AUTO_APPLY``, the next
+    call to ``_maybe_run_self_upgrade`` will apply it.  The council artifacts are
+    always written to ``LOGIC_UPDATES_DIR`` for Serge to inspect at any time.
+    """
+    _PROPOSAL_COOLDOWN_SECONDS = 2 * 3600
+    last_proposal = str(state.get("last_upgrade_proposal_at") or "").strip()
+    if last_proposal:
+        try:
+            elapsed = (datetime.now() - datetime.fromisoformat(last_proposal)).total_seconds()
+            if elapsed < _PROPOSAL_COOLDOWN_SECONDS:
+                return None
+        except Exception:
+            pass
+    try:
+        target_path = PROJECT_DIR / "worker.py"
+        task = {
+            "id": f"auto_proposal_{int(time.time())}",
+            "target_file": str(target_path),
+            "research_query": (
+                "Luna autonomous self-improvement: validate current code posture, "
+                "detect technical debt and reduction opportunities, "
+                "score deployment readiness for shadow and council review."
+            ),
+        }
+        report = run_upgrade_proposal(task)
+        state["last_upgrade_proposal_at"] = now_iso()
+        decision_line = next((ln for ln in report.splitlines() if "deployment_decision" in ln), "")
+        _diag(f"[AUTO-PROPOSAL] {decision_line or report[:120]}")
+        if "AUTO_APPLY" in report:
+            _notify_self_upgrade(
+                "upgrade_proposal_auto_apply",
+                f"Council scored this proposal AUTO_APPLY. Staging for next upgrade cycle.\n{report[:400]}",
+            )
+        return report
+    except Exception as exc:
+        _diag(f"_maybe_generate_upgrade_proposal failed: {exc}")
+        return None
+
+
 def autonomous_maintenance_cycle() -> None:
+    # On the very first iteration, silently enable the unattended self-edit
+    # pipeline if it has not been armed yet.  sovereign_mode_enabled lets
+    # run_unattended_self_edit_cycle actually write changes instead of just
+    # dry-running them.
+    _sovereign_mode_armed = False
     while not CORE_STATE.stop_requested:
         try:
             register_thread_heartbeat("luna-autonomy", "ok", "maintenance")
@@ -2447,6 +2585,15 @@ def autonomous_maintenance_cycle() -> None:
             if any(ACTIVE_DIR.glob("*.json")) or any(ACTIVE_DIR.glob("*.working.json")):
                 time.sleep(2.0)
                 continue
+            # Auto-arm sovereign self-edit mode once so Luna can improve herself.
+            if not _sovereign_mode_armed:
+                try:
+                    _flags = safe_read_json(OMEGA_BATCH2_FLAGS_PATH, default={})
+                    if not _flags.get("unattended_self_edit_enabled"):
+                        enable_sovereign_mode("auto_maintenance_boot")
+                except Exception as _exc:
+                    _diag(f"sovereign mode auto-arm failed: {_exc}")
+                _sovereign_mode_armed = True
             state = safe_read_json(LUNA_AUTONOMY_STATE_PATH, default={})
             if not _autonomy_cycle_due(state):
                 time.sleep(2.0)
@@ -2456,7 +2603,25 @@ def autonomous_maintenance_cycle() -> None:
             speak("Online and awake. I checked my worker heartbeat, task queue, and guardian rules.", mood="awake")
             state["active_system_prompt_excerpt"] = str(knowledge.get("system_prompt_excerpt", ""))[-400:]
             _maintain_low_risk_state()
-            _maybe_run_unattended_cycle(state)
+            _unattended_report = _maybe_run_unattended_cycle(state)
+            # Notify Serge whenever the unattended cycle actually writes changes.
+            if (
+                isinstance(_unattended_report, dict)
+                and _unattended_report.get("attempted")
+                and _unattended_report.get("ok")
+                and _unattended_report.get("reason") == "applied"
+            ):
+                _notify_self_upgrade(
+                    "unattended_self_edit",
+                    (
+                        f"Applied refactor to {_unattended_report.get('target_file', 'worker.py')}: "
+                        f"{_unattended_report.get('function_name', 'unknown')} "
+                        f"via {_unattended_report.get('catalog_action', 'refactor')}"
+                    ),
+                )
+            _maybe_run_self_upgrade(state)
+            _maybe_generate_upgrade_proposal(state)
+            _cleanup_old_proposals(max_keep=30)
             prompt_optimizer = optimize_core_personality(force=False, reason="autonomy_cycle")
             if prompt_optimizer.get("updated"):
                 state["last_prompt_optimization"] = prompt_optimizer
@@ -2478,6 +2643,21 @@ def process_task(task_path: Path) -> bool:
 
     if not ctx["user_input"] and normalize_task_type(task.get("task_type", "")) != "approval_response":
         return _finish_empty_prompt(task_path, ctx)
+
+    # ── Natural-language intent injection ────────────────────────────────────────
+    # If the user sent a plain chat message that looks like a code command
+    # (e.g. "fix the banner"), promote it to the right worker mode and file
+    # so it runs the actual pipeline instead of falling through to chat.
+    if normalize_task_type(task.get("task_type", "")) == "chat" and ctx["user_input"]:
+        _nl = parse_natural_language_task(ctx["user_input"])
+        if _nl:
+            # Only override target_file when not explicitly set to something specific
+            if not task.get("target_file") or task["target_file"] == str(PROJECT_DIR / "worker.py"):
+                task["target_file"] = _nl["target_file"]
+                ctx["target_file"] = _nl["target_file"]
+            if not task.get("worker_mode") and not task.get("mode"):
+                task["worker_mode"] = _nl["mode"]
+    # ────────────────────────────────────────────────────────────
 
     mode_label, resolved_type, declared_mode = _resolve_task_mode(task)
     update_task_runtime(
@@ -2937,7 +3117,10 @@ def _sovereign_skip_report(evolution_state: Dict[str, Any], force: bool) -> str:
     if force or not last_run:
         return ""
     try:
-        recent = datetime.now() - datetime.fromisoformat(last_run) < timedelta(seconds=STRATEGY_INTERVAL_SECONDS)
+        # Use the sovereign-specific interval (1 hour) so the engine does not
+        # spam a new proposal directory every 12 seconds alongside the strategy loop.
+        elapsed = (datetime.now() - datetime.fromisoformat(last_run)).total_seconds()
+        recent = elapsed < SOVEREIGN_EVOLUTION_INTERVAL_SECONDS
     except Exception:
         recent = False
     return "[LUNA SOVEREIGN EVOLUTION]\nstatus : SKIPPED\ndetail : recent cycle already completed\n" if recent else ""

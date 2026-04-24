@@ -82,6 +82,7 @@ GUARDIAN_LOCK_PATH = MEMORY_DIR / "luna_guardian.lock.json"
 THERMAL_GUARD_STATE_PATH = MEMORY_DIR / "luna_thermal_guard_state.json"
 AUTONOMY_JOURNAL_PATH = MEMORY_DIR / "luna_autonomy_journal.jsonl"
 SOVEREIGN_JOURNAL_PATH = MEMORY_DIR / "luna_sovereign_journal.json"
+LUNA_UPGRADE_NOTIFICATIONS_PATH = MEMORY_DIR / "luna_upgrade_notifications.jsonl"
 INTENT_LEDGER_PATH = MEMORY_DIR / "luna_intent_ledger.json"
 TECHNICAL_DEBT_BACKLOG_PATH = MEMORY_DIR / "luna_technical_debt_backlog.json"
 UNATTENDED_SELF_EDIT_INTERVAL_SECONDS = 180.0
@@ -150,6 +151,7 @@ DEFAULT_LUNA_SYSTEM_PROMPT = "I am Luna. I write deterministic, modular Python w
 
 HEARTBEAT_DEADLOCK_SECONDS = 10.0
 STRATEGY_INTERVAL_SECONDS = 12.0
+SOVEREIGN_EVOLUTION_INTERVAL_SECONDS = 3600.0  # sovereign engine runs at most once per hour
 
 VERIFY_TIMEOUT_SECONDS = 8
 WORKER_STALE_SECONDS = 12
