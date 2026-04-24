@@ -173,6 +173,7 @@ from luna_modules.luna_paths import (
     PROMPT_OPTIMIZER_MANAGED_END,
     DEFAULT_LUNA_SYSTEM_PROMPT,
     HEARTBEAT_DEADLOCK_SECONDS,
+    SOVEREIGN_EVOLUTION_INTERVAL_SECONDS,
     STRATEGY_INTERVAL_SECONDS,
 )
 from luna_modules.luna_heartbeat import (
@@ -2391,6 +2392,34 @@ def attempt_self_heal(task: Dict[str, Any], task_path: Path, exc: Exception) -> 
     append_task_memory(f"self_heal:{task.get('prompt', '')}", "\n".join(history_lines), False, category="self_heal")
     return "\n".join(history_lines)
 
+def _cleanup_old_proposals(max_keep: int = 30) -> int:
+    """Remove the oldest proposal dirs from ``logic_updates/`` keeping only ``max_keep``.
+
+    Prevents unbounded disk growth from high-frequency sovereign or auto-proposal
+    cycles.  Returns the number of directories removed.
+    """
+    if not LOGIC_UPDATES_DIR.exists():
+        return 0
+    try:
+        dirs = sorted(
+            [d for d in LOGIC_UPDATES_DIR.iterdir() if d.is_dir()],
+            key=lambda d: d.name,
+            reverse=True,  # newest first
+        )
+    except Exception:
+        return 0
+    removed = 0
+    for old_dir in dirs[max_keep:]:
+        try:
+            shutil.rmtree(old_dir)
+            removed += 1
+        except Exception as exc:
+            _diag(f"_cleanup_old_proposals: could not remove {old_dir.name}: {exc}")
+    if removed:
+        _diag(f"_cleanup_old_proposals: removed {removed} old proposal dir(s), kept {min(len(dirs), max_keep)}")
+    return removed
+
+
 def _notify_self_upgrade(source: str, detail: str) -> None:
     """Persist and broadcast a self-upgrade event so Serge always knows what changed.
 
@@ -2590,6 +2619,7 @@ def autonomous_maintenance_cycle() -> None:
                 )
             _maybe_run_self_upgrade(state)
             _maybe_generate_upgrade_proposal(state)
+            _cleanup_old_proposals(max_keep=30)
             prompt_optimizer = optimize_core_personality(force=False, reason="autonomy_cycle")
             if prompt_optimizer.get("updated"):
                 state["last_prompt_optimization"] = prompt_optimizer
@@ -3085,7 +3115,10 @@ def _sovereign_skip_report(evolution_state: Dict[str, Any], force: bool) -> str:
     if force or not last_run:
         return ""
     try:
-        recent = datetime.now() - datetime.fromisoformat(last_run) < timedelta(seconds=STRATEGY_INTERVAL_SECONDS)
+        # Use the sovereign-specific interval (1 hour) so the engine does not
+        # spam a new proposal directory every 12 seconds alongside the strategy loop.
+        elapsed = (datetime.now() - datetime.fromisoformat(last_run)).total_seconds()
+        recent = elapsed < SOVEREIGN_EVOLUTION_INTERVAL_SECONDS
     except Exception:
         recent = False
     return "[LUNA SOVEREIGN EVOLUTION]\nstatus : SKIPPED\ndetail : recent cycle already completed\n" if recent else ""
