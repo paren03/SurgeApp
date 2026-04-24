@@ -7229,7 +7229,86 @@ def _query_anthropic_chat(messages: List[Dict[str, str]], model: str = "claude-3
         _diag(f"anthropic transport failed: {exc}")
     return ""
 
+def _query_openai_chat(messages: List[Dict[str, str]], model: str = "gpt-4o") -> str:
+    """Call the OpenAI Chat Completions API (ChatGPT)."""
+    vault = load_api_vault()
+    key = str(vault.get("OPENAI_API_KEY") or "").strip()
+    if not key:
+        return ""
+    payload_messages: List[Dict[str, str]] = []
+    for item in messages or []:
+        role = str(item.get("role") or "user")
+        content = str(item.get("content") or item.get("text") or "").strip()
+        if content:
+            payload_messages.append({"role": role, "content": content})
+    if not payload_messages:
+        return ""
+    body = {"model": model or "gpt-4o", "messages": payload_messages, "temperature": 0.25, "max_tokens": 700}
+    req = urllib.request.Request(
+        "https://api.openai.com/v1/chat/completions",
+        data=json.dumps(body).encode("utf-8"),
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            payload = _safe_json_loads(resp.read())
+        choices = list(payload.get("choices") or [])
+        if choices:
+            return str((choices[0].get("message") or {}).get("content") or "").strip()
+    except Exception as exc:
+        _diag(f"openai transport failed: {exc}")
+    return ""
+
+
+def _query_xai_chat(messages: List[Dict[str, str]], model: str = "grok-3") -> str:
+    """Call the Grok / xAI Chat API (OpenAI-compatible endpoint).
+
+    Available models on this key: grok-3, grok-3-mini, grok-4-0709,
+    grok-4-fast-non-reasoning, grok-4-fast-reasoning (use model= to override).
+    """
+    vault = load_api_vault()
+    key = str(vault.get("XAI_API_KEY") or "").strip()
+    if not key:
+        return ""
+    payload_messages: List[Dict[str, str]] = []
+    for item in messages or []:
+        role = str(item.get("role") or "user")
+        content = str(item.get("content") or item.get("text") or "").strip()
+        if content:
+            payload_messages.append({"role": role, "content": content})
+    if not payload_messages:
+        return ""
+    body = {"model": model or "grok-2-latest", "messages": payload_messages, "temperature": 0.25}
+    req = urllib.request.Request(
+        "https://api.x.ai/v1/chat/completions",
+        data=json.dumps(body).encode("utf-8"),
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            payload = _safe_json_loads(resp.read())
+        choices = list(payload.get("choices") or [])
+        if choices:
+            return str((choices[0].get("message") or {}).get("content") or "").strip()
+    except Exception as exc:
+        _diag(f"xai transport failed: {exc}")
+    return ""
+
+
 def query_llm(messages: Optional[List[Dict[str, str]]] = None, prompt: str = "", provider: str = "", model: str = "") -> str:
+    """Multi-provider LLM transport with automatic waterfall fallback.
+
+    Provider waterfall (first successful response wins):
+      1. OpenRouter  — Claude claude-sonnet-4-5 via OpenRouter (primary; key=OPENROUTER_API_KEY)
+      2. OpenAI      — GPT-4o (key=OPENAI_API_KEY)
+      3. Grok/xAI    — grok-2-latest (key=XAI_API_KEY)
+      4. Anthropic   — Claude direct (key=ANTHROPIC_API_KEY)
+
+    Set ``provider`` to ``'openai'``, ``'grok'``, or ``'claude'`` to move
+    that provider to the front of the sequence without excluding the others.
+    """
     mock = os.environ.get("LUNA_CHAT_MOCK_RESPONSE", "").strip()
     if mock:
         return mock
@@ -7238,19 +7317,27 @@ def query_llm(messages: Optional[List[Dict[str, str]]] = None, prompt: str = "",
     if not prepared_messages and prompt_text:
         prepared_messages = [{"role": "user", "text": prompt_text}]
     route = normalize_prompt_text(provider or "")
-    if route in {"claude", "anthropic"}:
-        result = _query_openrouter_chat(prepared_messages, model=model or "anthropic/claude-3.5-sonnet")
-        if result:
-            return result
-        result = _query_anthropic_chat(prepared_messages, model="claude-3-5-sonnet-latest")
-        if result:
-            return result
-    result = _query_openrouter_chat(prepared_messages, model=model or "anthropic/claude-3.5-sonnet")
-    if result:
-        return result
-    result = _query_anthropic_chat(prepared_messages, model="claude-3-5-sonnet-latest")
-    if result:
-        return result
+    # Build ordered sequence — preferred provider first, others as fallback.
+    _openrouter = lambda: _query_openrouter_chat(prepared_messages, model=model or "anthropic/claude-3.5-sonnet-20241022")
+    _openai     = lambda: _query_openai_chat(prepared_messages, model=model or "gpt-4o")
+    _grok       = lambda: _query_xai_chat(prepared_messages, model=model or "grok-3")
+    _anthropic  = lambda: _query_anthropic_chat(prepared_messages)
+    if route in {"openai", "gpt", "chatgpt"}:
+        sequence = [_openai, _openrouter, _grok, _anthropic]
+    elif route in {"grok", "xai"}:
+        sequence = [_grok, _openrouter, _openai, _anthropic]
+    elif route in {"claude", "anthropic"}:
+        sequence = [_openrouter, _anthropic, _openai, _grok]
+    else:
+        # Default: OpenRouter → OpenAI → Grok → Anthropic
+        sequence = [_openrouter, _openai, _grok, _anthropic]
+    for fn in sequence:
+        try:
+            result = fn()
+            if result:
+                return result
+        except Exception as exc:
+            _diag(f"query_llm provider attempt failed: {exc}")
     return ""
 
 
@@ -7259,7 +7346,9 @@ def query_llm(messages: Optional[List[Dict[str, str]]] = None, prompt: str = "",
 def _invoke_luna_llm_transport(messages: List[Dict[str, str]], prompt_text: str, identity: Dict[str, Any]) -> str:
     prepared_messages = _inject_vector_vault_context(list(messages or []), prompt_text)
     try:
-        result = query_llm(messages=prepared_messages, prompt=prompt_text, provider="claude", model="anthropic/claude-3.5-sonnet")
+        # No provider hint — let query_llm try all available models in waterfall order
+        # (OpenRouter → OpenAI → Grok → Anthropic) so every key in API.txt is used.
+        result = query_llm(messages=prepared_messages, prompt=prompt_text)
     except Exception as exc:
         _diag(f"llm transport failed: {exc}")
         result = ""
