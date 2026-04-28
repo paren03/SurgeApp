@@ -96,10 +96,14 @@ powershell -NoProfile -WindowStyle Hidden -Command ^
   "if((Test-Path (Join-Path $root 'aider_bridge.py')) -and (Test-Path $aiderPy)){ StartIfMissing 'aider_bridge.py' $aiderPy }" ^
   "if(Test-Path (Join-Path $root 'SurgeApp_Claude_Terminal.py')){ Start-Process -WindowStyle Hidden -FilePath $py -ArgumentList ('\"' + (Join-Path $root 'SurgeApp_Claude_Terminal.py') + '\"') -WorkingDirectory $root }"
 
-:: ---- auto-start continues-update loop (clears any stale stop flag first) ----
+:: ---- auto-start continues-update loop (skip if one is already alive) ----
+:: We match on the unique CLI flag '--continues-update-start' so we don't
+:: confuse this with the regular worker.py background process.
 if exist "%ROOT%\worker.py" (
   if exist "%ROOT%\memory\continues_update.stop" del /f /q "%ROOT%\memory\continues_update.stop" >nul 2>nul
-  powershell -NoProfile -WindowStyle Hidden -Command "Start-Process -WindowStyle Hidden -FilePath '%PYEXE%' -ArgumentList '\"%ROOT%\worker.py\" --continues-update-start' -WorkingDirectory '%ROOT%'"
+  powershell -NoProfile -WindowStyle Hidden -Command ^
+    "$p=(Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like '*--continues-update-start*' } | Select-Object -First 1);" ^
+    "if(-not $p){ Start-Process -WindowStyle Hidden -FilePath '%PYEXE%' -ArgumentList ('\"%ROOT%\worker.py\" --continues-update-start') -WorkingDirectory '%ROOT%' }"
 )
 
 exit /b
