@@ -334,22 +334,23 @@ def run_aider_patch(task_path: Path) -> None:
 # ── Main watch loop ────────────────────────────────────────────────────────────
 
 def _pid_alive(pid: int) -> bool:
+    """Reliable PID check using tasklist (avoids ctypes 64-bit HANDLE truncation on Windows)."""
+    if pid <= 0:
+        return False
     try:
-        import ctypes
-        handle = ctypes.windll.kernel32.OpenProcess(0x0400, False, pid)  # PROCESS_QUERY_INFORMATION
-        if not handle:
-            return False
-        code = ctypes.c_ulong(0)
-        ctypes.windll.kernel32.GetExitCodeProcess(handle, ctypes.byref(code))
-        ctypes.windll.kernel32.CloseHandle(handle)
-        return code.value == 259  # STILL_ACTIVE
+        result = subprocess.run(
+            ["tasklist", "/FI", f"PID eq {pid}", "/NH"],
+            capture_output=True, text=True, timeout=5,
+            creationflags=0x08000000,
+        )
+        return str(pid) in (result.stdout or "")
     except Exception:
-        try:
-            import signal
-            os.kill(pid, 0)
-            return True
-        except Exception:
-            return False
+        pass
+    try:
+        os.kill(pid, 0)
+        return True
+    except Exception:
+        return False
 
 
 def main() -> None:

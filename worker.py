@@ -9082,8 +9082,8 @@ _CU_STATE_PATH = _CU_MEMORY_DIR / "continues_update_state.json"
 _CU_STOP_FLAG_PATH = _CU_MEMORY_DIR / "continues_update.stop"
 _CU_KILL_SWITCH_PATH = _CU_PROJECT_DIR / "LUNA_STOP_NOW.flag"
 _CU_SHUTDOWN_FLAG_PATH = _CU_LOGS_DIR / "SHUTDOWN.flag"
-_CU_DEFAULT_INTERVAL_SECONDS = 60.0
-_CU_DEFAULT_JOB_TIMEOUT_SECONDS = 360.0
+_CU_DEFAULT_INTERVAL_SECONDS = 600.0   # 10 min — prevents pile-up on slow models
+_CU_DEFAULT_JOB_TIMEOUT_SECONDS = 200.0  # qwen2.5-coder:7b finishes in <2 min on small files
 
 # Rotating list of safe, low-risk improvement asks. The loop walks through
 # them in order; each cycle is one entry.
@@ -9277,7 +9277,9 @@ def continues_update_loop(
             cycle += 1
             template_index = (cycle - 1) % len(_CU_INSTRUCTION_TEMPLATES)
             instructions = _CU_INSTRUCTION_TEMPLATES[template_index]
-            targets = ["worker.py"]
+            # Rotate through small, safe files — never target worker.py (435 KB, always times out)
+            _CU_SMALL_FILES = ["aider_bridge.py", "luna_guardian.py", "luna_apprentice.py"]
+            targets = [_CU_SMALL_FILES[(cycle - 1) % len(_CU_SMALL_FILES)]]
             _cu_feed("CU_CYCLE_START", f"Cycle {cycle} starting",
                      detail=f"target={targets} idx={template_index}")
             task_id = _cu_submit_aider_job(instructions, targets)

@@ -211,6 +211,11 @@ def parse_natural_language_task(prompt: str) -> Optional[Dict[str, Any]]:
     """
     if not (prompt or "").strip():
         return None
+    # Long prompts are conversational chat, not short code-op commands.
+    # Commands like "fix the banner" are always < 200 chars.
+    # A pasted block of text (e.g. a system prompt) should never trigger NL routing.
+    if len(prompt.strip()) > 300:
+        return None
     normalized = normalize_prompt_text(prompt)
 
     # Detect file target — multi-word nicknames checked first for precision.

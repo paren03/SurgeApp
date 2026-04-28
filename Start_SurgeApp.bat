@@ -42,26 +42,28 @@ set "AIDER_PY=%ROOT%\.aider_venv\Scripts\pythonw.exe"
 
 :: per-package redirector (reparse point, 0 bytes but real) — use PowerShell
 :: because batch `if exist` resolves the reparse point and may get confused.
+:: Wildcard search for any Python 3.11 WindowsApps package (folder name varies by build)
 powershell -NoProfile -WindowStyle Hidden -Command ^
-  "$p='%LOCALAPPDATA%\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\pythonw.exe';" ^
-  "if(Test-Path $p){ [System.IO.File]::WriteAllText('%ROOT%\logs\_pyexe.tmp', $p) }" ^
-  "else { [System.IO.File]::WriteAllText('%ROOT%\logs\_pyexe.tmp', '') }"
+  "$found='';" ^
+  "try{ $dirs=Get-Item '%LOCALAPPDATA%\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.11*' -ErrorAction SilentlyContinue;" ^
+  "foreach($d in $dirs){ $p=Join-Path $d.FullName 'pythonw.exe'; if(Test-Path $p){ $found=$p; break } } } catch {};" ^
+  "[System.IO.File]::WriteAllText('%ROOT%\logs\_pyexe.tmp', $found)"
 set /p PYEXE=<"%ROOT%\logs\_pyexe.tmp"
 del /f /q "%ROOT%\logs\_pyexe.tmp" >nul 2>nul
 
 if not defined PYEXE if exist "%LOCALAPPDATA%\Programs\Python\Python311\pythonw.exe" set "PYEXE=%LOCALAPPDATA%\Programs\Python\Python311\pythonw.exe"
 if not defined PYEXE if exist "C:\Python311\pythonw.exe" set "PYEXE=C:\Python311\pythonw.exe"
 
-:: fallback: scan `where pythonw`, skip bare alias stub
+:: fallback: scan running processes to find pythonw used by any SurgeApp process
 if not defined PYEXE (
-  for /f "delims=" %%i in ('where pythonw 2^>nul') do (
-    echo %%i | findstr /i "\\WindowsApps\\pythonw.exe" >nul
-    if errorlevel 1 (
-      set "PYEXE=%%i"
-      goto :gotpy
+  for /f "tokens=1" %%i in ('wmic process where "CommandLine like '%%SurgeApp%%'" get ExecutablePath /value 2^>nul ^| findstr "pythonw"') do (
+    for /f "tokens=2 delims==" %%j in ("%%i") do (
+      if not "%%j"=="" set "PYEXE=%%j"
     )
   )
 )
+
+:: last resort: bare pythonw from PATH
 :gotpy
 if not defined PYEXE set "PYEXE=pythonw"
 
