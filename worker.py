@@ -9088,12 +9088,19 @@ _CU_DEFAULT_JOB_TIMEOUT_SECONDS = 200.0  # qwen2.5-coder:7b finishes in <2 min o
 # Rotating list of safe, low-risk improvement asks. The loop walks through
 # them in order; each cycle is one entry.
 _CU_INSTRUCTION_TEMPLATES = [
-    "Review the file and remove any unused imports or unreachable code. Keep behavior identical. Tiny diff.",
-    "Add type hints to one function whose signature is missing them. Pick the simplest. Do not change behavior.",
-    "Replace one bare `except:` clause with a specific exception class if you can find one. Otherwise make no changes.",
-    "If you can find a single duplicated literal string used more than twice, lift it to a module-level constant.",
-    "Find one function over 60 lines and add a one-line docstring describing its purpose. Do not refactor.",
-    "If there is a TODO/FIXME comment whose fix is obvious and safe, address it; otherwise make no changes.",
+    # Guaranteed-output tasks — aider MUST produce a diff, not skip.
+    "Add a one-line module docstring at the very top of this file (right after any shebang/encoding line) if one is missing. The docstring must describe the file's purpose in plain English. Make ONLY this change.",
+    "Find the first function in this file that has NO docstring and add a concise one-line docstring to it. You MUST make this change — pick the first qualifying function and add the docstring now.",
+    "Find the first bare `except:` clause (no exception type) in this file and change it to `except Exception:`. Make exactly this one change and nothing else.",
+    "Find the first function that has parameters with no type annotations and add type hints to its signature. Make only this change.",
+    "Find any inline comment that says something obvious or redundant (e.g. `# increment counter` on `counter += 1`) and improve it to explain WHY, not what. Change one comment only.",
+    "Find the longest line in this file that exceeds 100 characters and split it across two lines using a backslash continuation or parentheses. Change only that one line.",
+    "Add a trailing newline to the end of the file if one is missing, or remove duplicate blank lines at the end. Make exactly this one whitespace fix.",
+    "Find the first function with more than 3 parameters and add a brief comment above each parameter explaining what it is. Only touch that one function's call signature comment block.",
+    "Rename any local variable in the first function of the file whose name is a single letter (like `x`, `i`, `v`, `d`) to a descriptive name. Change only that one variable.",
+    "Find any string that is constructed with % formatting (old-style) and convert it to an f-string. Change only the first such occurrence.",
+    "Find the first dictionary literal in this file that has more than 3 keys and format it so each key-value pair is on its own line (PEP 8 style). Change only that one dict.",
+    "Ensure all imports at the top of the file are sorted: stdlib first, then third-party, then local. Add a blank line between groups if missing. Only touch the import block.",
 ]
 
 
@@ -9169,7 +9176,7 @@ def _cu_submit_aider_job(instructions: str, target_files: List[str]) -> str:
         "session_id": "continues_update",
         "target_files": list(target_files or ["worker.py"]),
         "instructions": instructions,
-        "apply_on_pass": False,  # safety: never auto-apply during the overnight loop
+        "apply_on_pass": True,   # auto-apply verified patches — bridge syntax-checks before writing
         "origin": "continues_update",
     }
     final = _CU_AIDER_ACTIVE_DIR / f"{task_id}.json"
@@ -9277,8 +9284,15 @@ def continues_update_loop(
             cycle += 1
             template_index = (cycle - 1) % len(_CU_INSTRUCTION_TEMPLATES)
             instructions = _CU_INSTRUCTION_TEMPLATES[template_index]
-            # Rotate through small, safe files — never target worker.py (435 KB, always times out)
-            _CU_SMALL_FILES = ["aider_bridge.py", "luna_guardian.py", "luna_apprentice.py"]
+            # Rotate through safe files — never target worker.py (435 KB, always times out)
+            _CU_SMALL_FILES = [
+                "aider_bridge.py",
+                "luna_guardian.py",
+                "luna_apprentice.py",
+                "luna_modules/luna_routing.py",
+                "luna_modules/luna_tasks.py",
+                "luna_modules/luna_paths.py",
+            ]
             targets = [_CU_SMALL_FILES[(cycle - 1) % len(_CU_SMALL_FILES)]]
             _cu_feed("CU_CYCLE_START", f"Cycle {cycle} starting",
                      detail=f"target={targets} idx={template_index}")
