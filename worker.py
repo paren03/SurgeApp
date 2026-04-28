@@ -227,8 +227,25 @@ from luna_modules.luna_paths import (
     DEFAULT_SAFETY_RULES,
 )
 
+_NO_WINDOW: int = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+
+
+def _pythonw_exe() -> str:
+    exe = str(sys.executable)
+    if exe.lower().endswith("python.exe"):
+        candidate = exe[:-10] + "pythonw.exe"
+        if Path(candidate).exists():
+            return candidate
+    return exe
+
+
 def speak(message: str, mood: str = "awake") -> None:
     telemetry_emit_speak(message, mood, AUTONOMY_MESSAGES, set_heartbeat, log)
+    try:
+        from luna_modules.luna_live_feed import emit
+        emit("convo", message)
+    except Exception:
+        pass
 
 from luna_modules.luna_routing import (
     classify_extended_prompt_route,
@@ -1181,8 +1198,8 @@ def system_action_report(lines: List[str]) -> str:
     return "\n".join(["[LUNA SYSTEM ACTION]"] + lines)
 
 def run_known_package_action(action: str, package_name: str) -> str:
-    cmd = [sys.executable, "-m", "pip", action, package_name]
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+    cmd = [_pythonw_exe(), "-m", "pip", action, package_name]
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, creationflags=_NO_WINDOW)
     lines = [
         f"action  : pip {action}",
         f"package : {package_name}",
@@ -1277,12 +1294,13 @@ def shadow_test_upgrade(staged_file: Path, target_file: str) -> Dict[str, Any]:
         result["details"].append("py_compile passed in temp_test_zone")
         if sandbox_target.name.lower() in {"worker.py", "surgeapp_claude_terminal.py"}:
             proc = subprocess.run(
-                [sys.executable, str(sandbox_target), "--verify-smoke"],
+                [_pythonw_exe(), str(sandbox_target), "--verify-smoke"],
                 cwd=str(TEMP_TEST_ZONE_DIR),
                 env={**os.environ, "LUNA_PROJECT_DIR": str(TEMP_TEST_ZONE_DIR)},
                 capture_output=True,
                 text=True,
                 timeout=10,
+                creationflags=_NO_WINDOW,
             )
             result["heartbeat_detected"] = proc.returncode == 0
             result["shadow_passed"] = proc.returncode == 0
@@ -1989,7 +2007,7 @@ def run_acquisition_request(task: Dict[str, Any]) -> str:
         install_status = "BLOCKED"
     elif download.get("ok"):
         try:
-            subprocess.run([sys.executable, "-m", "venv", str(venv_path)], check=True, capture_output=True, text=True, timeout=120)
+            subprocess.run([_pythonw_exe(), "-m", "venv", str(venv_path)], check=True, capture_output=True, text=True, timeout=120, creationflags=_NO_WINDOW)
             install_status = "VENV_READY"
         except Exception as exc:
             install_status = f"VENV_FAILED: {exc}"
@@ -2700,7 +2718,9 @@ def process_task(task_path: Path) -> bool:
             if not task.get("target_file") or task["target_file"] == str(PROJECT_DIR / "worker.py"):
                 task["target_file"] = _nl["target_file"]
                 ctx["target_file"] = _nl["target_file"]
-            if not task.get("worker_mode") and not task.get("mode"):
+            # "prompt" is the UI's generic default, not a real mode — treat it as unset
+            _declared_mode = str(task.get("worker_mode") or task.get("mode") or "").strip().lower()
+            if _declared_mode in {"", "prompt", "chat"}:
                 task["worker_mode"] = _nl["mode"]
     # ────────────────────────────────────────────────────────────
 
@@ -3806,7 +3826,7 @@ def ephemeral_script_run(code: str) -> Dict[str, Any]:
     script_path = EPHEMERAL_SCRIPTS_DIR / f"ephemeral_{uuid.uuid4().hex[:8]}.py"
     script_path.write_text(code or "", encoding="utf-8")
     try:
-        proc = subprocess.run([sys.executable, str(script_path)], capture_output=True, text=True, cwd=str(EPHEMERAL_SCRIPTS_DIR), timeout=6)
+        proc = subprocess.run([_pythonw_exe(), str(script_path)], capture_output=True, text=True, cwd=str(EPHEMERAL_SCRIPTS_DIR), timeout=6, creationflags=_NO_WINDOW)
         return {"ok": proc.returncode == 0, "rc": proc.returncode, "stdout": (proc.stdout or "")[:2000], "stderr": (proc.stderr or "")[:2000]}
     except Exception as exc:
         return {"ok": False, "reason": str(exc)}
@@ -4261,7 +4281,7 @@ class DisposableModuleManager:
         path = DISPOSABLE_MODULE_DIR / f"micro_{uuid.uuid4().hex[:8]}.py"
         path.write_text(code, encoding="utf-8")
         try:
-            proc = subprocess.run([sys.executable, str(path)], capture_output=True, text=True, cwd=str(DISPOSABLE_MODULE_DIR), timeout=timeout)
+            proc = subprocess.run([_pythonw_exe(), str(path)], capture_output=True, text=True, cwd=str(DISPOSABLE_MODULE_DIR), timeout=timeout, creationflags=_NO_WINDOW)
             out = {"ok": proc.returncode == 0, "rc": proc.returncode, "stdout": (proc.stdout or "")[:2000], "stderr": (proc.stderr or "")[:2000]}
         except Exception as exc:
             out = {"ok": False, "reason": str(exc)}
@@ -7075,7 +7095,7 @@ def _generate_cybernetic_moon_icon(icon_path: Path) -> None:
 
 
 def build_desktop_shortcut_powershell() -> str:
-    python_exe = sys.executable
+    python_exe = _pythonw_exe()
     target = str((PROJECT_DIR / "SurgeApp_Claude_Terminal.py").resolve())
     working = str(PROJECT_DIR.resolve())
     icon = str(CYBER_MOON_ICON_PATH.resolve())
@@ -7099,12 +7119,12 @@ def create_desktop_shortcut(execute: bool = True) -> Dict[str, Any]:
     safe_write_text(script_path, script)
     if not execute or os.name != "nt":
         return {"ok": True, "script_path": str(script_path), "icon_path": str(CYBER_MOON_ICON_PATH), "executed": False}
-    result = subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script_path)], capture_output=True, text=True, timeout=30)
+    result = subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script_path)], capture_output=True, text=True, timeout=30, creationflags=_NO_WINDOW)
     return {"ok": result.returncode == 0, "script_path": str(script_path), "icon_path": str(CYBER_MOON_ICON_PATH), "executed": True, "output": (result.stdout or result.stderr or "").strip()[:500]}
 
 
 def build_startup_powershell() -> str:
-    python_exe = sys.executable
+    python_exe = _pythonw_exe()
     startup = "$startup = [Environment]::GetFolderPath('Startup')"
     items = [("Luna Guardian", str((PROJECT_DIR / "luna_guardian.py").resolve())), ("Luna Tray", str((PROJECT_DIR / "luna_tray.py").resolve()))]
     lines = [startup, "$shell = New-Object -ComObject WScript.Shell"]
@@ -7128,7 +7148,7 @@ def enable_startup(execute: bool = True) -> Dict[str, Any]:
     safe_write_text(script_path, script)
     if not execute or os.name != "nt":
         return {"ok": True, "script_path": str(script_path), "executed": False}
-    result = subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script_path)], capture_output=True, text=True, timeout=30)
+    result = subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script_path)], capture_output=True, text=True, timeout=30, creationflags=_NO_WINDOW)
     return {"ok": result.returncode == 0, "script_path": str(script_path), "executed": True, "output": (result.stdout or result.stderr or "").strip()[:500]}
 
 
@@ -9033,9 +9053,332 @@ def run_chat_response(task: Dict[str, Any]) -> str:
     return generate_luna_chat_response(prompt_text, task)
 
 
-if __name__ == "__main__":
-    main()
-
 def execute_autonomous_code_evolution():
     "Delegate to luna_synthesis.autonomous_evolution."
     return luna_synthesis.autonomous_evolution(str(PROJECT_DIR))
+
+
+# =============================================================================
+# CONTINUES-UPDATE CONTROLLER (ADDITIVE)
+# Overnight unattended improvement loop. Lives at the end of worker.py so it
+# does not interact with import-time wiring above. Triggered by CLI flag
+# `--continues-update-start` (run as a separate process by the UI), and
+# stopped by either the user (writes memory/continues_update.stop) or by the
+# global kill switch (LUNA_STOP_NOW.flag) or shutdown flag.
+# =============================================================================
+import argparse as _cu_argparse
+
+_CU_PROJECT_DIR = PROJECT_DIR
+_CU_MEMORY_DIR = MEMORY_DIR
+_CU_LOGS_DIR = LOGS_DIR
+_CU_AIDER_JOBS_DIR = _CU_PROJECT_DIR / "aider_jobs"
+_CU_AIDER_ACTIVE_DIR = _CU_AIDER_JOBS_DIR / "active"
+_CU_AIDER_DONE_DIR = _CU_AIDER_JOBS_DIR / "done"
+_CU_AIDER_FAILED_DIR = _CU_AIDER_JOBS_DIR / "failed"
+_CU_LIVE_FEED_PATH = _CU_LOGS_DIR / "luna_live_feed.jsonl"
+_CU_NIGHTLY_MD_PATH = _CU_MEMORY_DIR / "nightly_updates.md"
+_CU_NIGHTLY_JSONL_PATH = _CU_MEMORY_DIR / "nightly_updates.jsonl"
+_CU_STATE_PATH = _CU_MEMORY_DIR / "continues_update_state.json"
+_CU_STOP_FLAG_PATH = _CU_MEMORY_DIR / "continues_update.stop"
+_CU_KILL_SWITCH_PATH = _CU_PROJECT_DIR / "LUNA_STOP_NOW.flag"
+_CU_SHUTDOWN_FLAG_PATH = _CU_LOGS_DIR / "SHUTDOWN.flag"
+_CU_DEFAULT_INTERVAL_SECONDS = 60.0
+_CU_DEFAULT_JOB_TIMEOUT_SECONDS = 360.0
+
+# Rotating list of safe, low-risk improvement asks. The loop walks through
+# them in order; each cycle is one entry.
+_CU_INSTRUCTION_TEMPLATES = [
+    "Review the file and remove any unused imports or unreachable code. Keep behavior identical. Tiny diff.",
+    "Add type hints to one function whose signature is missing them. Pick the simplest. Do not change behavior.",
+    "Replace one bare `except:` clause with a specific exception class if you can find one. Otherwise make no changes.",
+    "If you can find a single duplicated literal string used more than twice, lift it to a module-level constant.",
+    "Find one function over 60 lines and add a one-line docstring describing its purpose. Do not refactor.",
+    "If there is a TODO/FIXME comment whose fix is obvious and safe, address it; otherwise make no changes.",
+]
+
+
+def _cu_now_iso() -> str:
+    return datetime.now().isoformat(timespec="seconds")
+
+
+def _cu_hms() -> str:
+    return datetime.now().strftime("%H:%M:%S")
+
+
+def _cu_feed(event: str, msg: str, detail: str = "", task_id: str = "") -> None:
+    try:
+        row: Dict[str, Any] = {
+            "ts": _cu_hms(),
+            "event": event,
+            "icon": "[CU]    ",
+            "msg": str(msg or "")[:240],
+            "source": "continues_update",
+        }
+        if detail:
+            row["detail"] = str(detail)[:600]
+        if task_id:
+            row["task_id"] = str(task_id)
+        _CU_LIVE_FEED_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with _CU_LIVE_FEED_PATH.open("a", encoding="utf-8", errors="replace") as f:
+            json.dump(row, f, ensure_ascii=True)
+            f.write("\n")
+    except Exception:
+        pass
+
+
+def _cu_should_stop() -> bool:
+    try:
+        if _CU_STOP_FLAG_PATH.exists():
+            return True
+        if _CU_KILL_SWITCH_PATH.exists():
+            return True
+        if _CU_SHUTDOWN_FLAG_PATH.exists():
+            return True
+    except Exception:
+        return False
+    return False
+
+
+def _cu_load_state() -> Dict[str, Any]:
+    try:
+        if _CU_STATE_PATH.exists():
+            return json.loads(_CU_STATE_PATH.read_text(encoding="utf-8", errors="replace") or "{}") or {}
+    except Exception:
+        pass
+    return {}
+
+
+def _cu_write_state(state: Dict[str, Any]) -> None:
+    try:
+        _CU_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        tmp = _CU_STATE_PATH.with_suffix(_CU_STATE_PATH.suffix + f".{uuid.uuid4().hex[:6]}.tmp")
+        tmp.write_text(json.dumps(state, indent=2, ensure_ascii=True), encoding="utf-8", errors="replace")
+        tmp.replace(_CU_STATE_PATH)
+    except Exception:
+        pass
+
+
+def _cu_submit_aider_job(instructions: str, target_files: List[str]) -> str:
+    _CU_AIDER_ACTIVE_DIR.mkdir(parents=True, exist_ok=True)
+    task_id = datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
+    payload = {
+        "task_id": task_id,
+        "id": task_id,
+        "task_type": "aider_patch",
+        "timestamp": _cu_now_iso(),
+        "session_id": "continues_update",
+        "target_files": list(target_files or ["worker.py"]),
+        "instructions": instructions,
+        "apply_on_pass": False,  # safety: never auto-apply during the overnight loop
+        "origin": "continues_update",
+    }
+    final = _CU_AIDER_ACTIVE_DIR / f"{task_id}.json"
+    tmp = _CU_AIDER_ACTIVE_DIR / f"{task_id}.tmp"
+    try:
+        tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=True), encoding="utf-8", errors="replace")
+        tmp.replace(final)
+    except Exception:
+        pass
+    return task_id
+
+
+def _cu_wait_for_completion(task_id: str, timeout_s: float) -> Tuple[str, Dict[str, Any]]:
+    """Poll aider_jobs/done|failed/<task>.json. Returns (status, payload)."""
+    deadline = time.monotonic() + max(30.0, timeout_s)
+    while time.monotonic() < deadline:
+        if _cu_should_stop():
+            return "stopped", {}
+        for status, folder in (("done", _CU_AIDER_DONE_DIR), ("failed", _CU_AIDER_FAILED_DIR)):
+            p = folder / f"{task_id}.json"
+            if p.exists():
+                try:
+                    return status, json.loads(p.read_text(encoding="utf-8", errors="replace") or "{}")
+                except Exception:
+                    return status, {}
+        time.sleep(1.0)
+    return "timeout", {}
+
+
+def _cu_append_nightly(report: Dict[str, Any]) -> None:
+    try:
+        _CU_NIGHTLY_MD_PATH.parent.mkdir(parents=True, exist_ok=True)
+        cycle = int(report.get("cycle", 0) or 0)
+        ts = str(report.get("finished_at") or _cu_now_iso())
+        status = str(report.get("status") or "unknown")
+        targets = ", ".join(report.get("target_files") or [])
+        instructions = str(report.get("instructions") or "").strip()
+        diff_path = str(report.get("diff_path") or "")
+        verify = report.get("verify_passed")
+        rc = report.get("aider_rc", "?")
+        summary = str(report.get("summary") or report.get("error") or "")[:600]
+        md_block = (
+            f"## Cycle {cycle} \u2014 {ts}\n"
+            f"- task_id: {report.get('task_id','')}\n"
+            f"- status: {status}\n"
+            f"- targets: {targets}\n"
+            f"- aider_rc: {rc}\n"
+            f"- verify_passed: {verify}\n"
+            f"- diff: {diff_path}\n"
+            f"- instructions: {instructions}\n"
+            f"- summary: {summary}\n\n"
+        )
+        with _CU_NIGHTLY_MD_PATH.open("a", encoding="utf-8", errors="replace") as f:
+            f.write(md_block)
+        with _CU_NIGHTLY_JSONL_PATH.open("a", encoding="utf-8", errors="replace") as f:
+            f.write(json.dumps(report, ensure_ascii=True) + "\n")
+    except Exception:
+        pass
+
+
+def continues_update_status() -> Dict[str, Any]:
+    state = _cu_load_state()
+    state["running"] = bool(state.get("running")) and not _cu_should_stop()
+    state["stop_flag_present"] = _CU_STOP_FLAG_PATH.exists()
+    state["kill_switch_present"] = _CU_KILL_SWITCH_PATH.exists()
+    state["shutdown_flag_present"] = _CU_SHUTDOWN_FLAG_PATH.exists()
+    return state
+
+
+def continues_update_stop() -> Dict[str, Any]:
+    try:
+        _CU_STOP_FLAG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        _CU_STOP_FLAG_PATH.write_text(_cu_now_iso(), encoding="utf-8", errors="replace")
+    except Exception as exc:
+        return {"ok": False, "reason": str(exc)}
+    return {"ok": True, "stop_flag": str(_CU_STOP_FLAG_PATH)}
+
+
+def continues_update_loop(
+    interval_seconds: float = _CU_DEFAULT_INTERVAL_SECONDS,
+    job_timeout_seconds: float = _CU_DEFAULT_JOB_TIMEOUT_SECONDS,
+    max_cycles: int = 0,
+) -> Dict[str, Any]:
+    """Run the unattended improvement loop until stopped. Returns terminal state."""
+    # Clear any old stop flag at start.
+    try:
+        _CU_STOP_FLAG_PATH.unlink(missing_ok=True)
+    except Exception:
+        pass
+    state = _cu_load_state()
+    state.update({
+        "running": True,
+        "started_at": _cu_now_iso(),
+        "cycles": int(state.get("cycles", 0) or 0),
+    })
+    _cu_write_state(state)
+    _cu_feed("CU_START", "Continues-update loop started",
+             detail=f"interval={interval_seconds}s job_timeout={job_timeout_seconds}s")
+
+    cycle = 0
+    try:
+        while not _cu_should_stop():
+            if max_cycles and cycle >= max_cycles:
+                break
+            cycle += 1
+            template_index = (cycle - 1) % len(_CU_INSTRUCTION_TEMPLATES)
+            instructions = _CU_INSTRUCTION_TEMPLATES[template_index]
+            targets = ["worker.py"]
+            _cu_feed("CU_CYCLE_START", f"Cycle {cycle} starting",
+                     detail=f"target={targets} idx={template_index}")
+            task_id = _cu_submit_aider_job(instructions, targets)
+            _cu_feed("CU_QUEUED", f"Cycle {cycle} queued aider job", task_id=task_id,
+                     detail=instructions)
+
+            status, payload = _cu_wait_for_completion(task_id, job_timeout_seconds)
+            report = {
+                "cycle": cycle,
+                "task_id": task_id,
+                "status": status,
+                "target_files": targets,
+                "instructions": instructions,
+                "finished_at": _cu_now_iso(),
+                "aider_rc": payload.get("aider_rc"),
+                "verify_passed": payload.get("verify_passed"),
+                "summary": payload.get("summary") or payload.get("error") or "",
+                "diff_path": payload.get("diff_path") or "",
+                "solution_path": payload.get("solution_path") or "",
+            }
+            _cu_append_nightly(report)
+            _cu_feed(
+                "CU_CYCLE_END",
+                f"Cycle {cycle} {status}",
+                detail=str(report.get("summary") or "")[:300],
+                task_id=task_id,
+            )
+            state.update({
+                "running": True,
+                "cycles": cycle,
+                "last_task_id": task_id,
+                "last_status": status,
+                "last_cycle_at": _cu_now_iso(),
+            })
+            _cu_write_state(state)
+
+            if status == "stopped":
+                break
+            # Cooldown between cycles, also responsive to stop flag.
+            slept = 0.0
+            while slept < interval_seconds and not _cu_should_stop():
+                time.sleep(min(2.0, interval_seconds - slept))
+                slept += 2.0
+    finally:
+        state.update({
+            "running": False,
+            "stopped_at": _cu_now_iso(),
+        })
+        _cu_write_state(state)
+        _cu_feed("CU_STOP", "Continues-update loop stopped",
+                 detail=f"cycles={cycle} stop_flag={_CU_STOP_FLAG_PATH.exists()}")
+        try:
+            _CU_STOP_FLAG_PATH.unlink(missing_ok=True)
+        except Exception:
+            pass
+    return state
+
+
+def _cu_dispatch_cli(argv: List[str]) -> Optional[int]:
+    """Return None if no continues-update flag was passed (worker should boot normally),
+    else an exit code."""
+    parser = _cu_argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--continues-update-start", action="store_true")
+    parser.add_argument("--continues-update-stop", action="store_true")
+    parser.add_argument("--continues-update-status", action="store_true")
+    parser.add_argument("--cu-interval", type=float, default=_CU_DEFAULT_INTERVAL_SECONDS)
+    parser.add_argument("--cu-job-timeout", type=float, default=_CU_DEFAULT_JOB_TIMEOUT_SECONDS)
+    parser.add_argument("--cu-max-cycles", type=int, default=0)
+    args, _unknown = parser.parse_known_args(argv)
+
+    if args.continues_update_status:
+        try:
+            sys.stdout.write(json.dumps(continues_update_status(), ensure_ascii=True) + "\n")
+        except Exception:
+            pass
+        return 0
+    if args.continues_update_stop:
+        try:
+            sys.stdout.write(json.dumps(continues_update_stop(), ensure_ascii=True) + "\n")
+        except Exception:
+            pass
+        return 0
+    if args.continues_update_start:
+        try:
+            continues_update_loop(
+                interval_seconds=float(args.cu_interval),
+                job_timeout_seconds=float(args.cu_job_timeout),
+                max_cycles=int(args.cu_max_cycles),
+            )
+        except Exception as exc:
+            try:
+                _cu_feed("CU_STOP", f"continues-update crashed: {exc}")
+            except Exception:
+                pass
+            return 1
+        return 0
+    return None
+
+
+if __name__ == "__main__":
+    _cu_rc = _cu_dispatch_cli(sys.argv[1:])
+    if _cu_rc is not None:
+        raise SystemExit(_cu_rc)
+    main()
