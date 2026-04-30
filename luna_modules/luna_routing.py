@@ -34,6 +34,8 @@ def prompt_has_any(prompt: str, triggers) -> bool:
 
 def normalize_task_type(task_type: str) -> str:
     normalized = normalize_prompt_text(task_type).replace(" ", "_")
+    if normalized == "self_upgrade":
+        return "self_upgrade_pipeline"
     return normalized if normalized in SUPPORTED_TASK_TYPES else "chat"
 
 
@@ -212,11 +214,24 @@ def parse_natural_language_task(prompt: str) -> Optional[Dict[str, Any]]:
     if not (prompt or "").strip():
         return None
     # Long prompts are conversational chat, not short code-op commands.
-    # Commands like "fix the banner" are always < 200 chars.
-    # A pasted block of text (e.g. a system prompt) should never trigger NL routing.
+    # Commands like "fix the banner" are always short and imperative.
     if len(prompt.strip()) > 300:
         return None
     normalized = normalize_prompt_text(prompt)
+
+    # Conversational starters are never code commands — bail immediately.
+    # A real code command starts with the action verb itself ("fix the banner",
+    # "improve worker"), never with "I", "In", "Also", "Can", "Could", etc.
+    _CONVO_STARTERS = {
+        "i", "in", "also", "can", "could", "would", "should", "please",
+        "hey", "hi", "hello", "so", "and", "but", "what", "how", "why",
+        "when", "where", "do", "does", "is", "are", "the", "a", "an",
+        "that", "this", "will", "let", "make", "tell", "show", "just",
+        "actually", "basically", "additionally", "furthermore",
+    }
+    first_word = normalized.split()[0] if normalized.split() else ""
+    if first_word in _CONVO_STARTERS:
+        return None
 
     # Detect file target — multi-word nicknames checked first for precision.
     detected_file: Optional[str] = None
@@ -230,17 +245,19 @@ def parse_natural_language_task(prompt: str) -> Optional[Dict[str, Any]]:
                 detected_file = _FILE_NICKNAMES[word]
                 break
 
-    # Detect operation verb — multi-word verbs checked first.
+    # Detect operation verb — must be the FIRST word (or first multi-word phrase).
+    # Checking mid-sentence verbs causes conversational messages like
+    # "I want to upgrade the terminal" to be misrouted as code tasks.
     detected_mode: Optional[str] = None
+    words = normalized.split()
+    # Multi-word verb at start of prompt
     for verb, mode in _OPERATION_VERBS.items():
-        if " " in verb and verb in normalized:
+        if " " in verb and normalized.startswith(verb):
             detected_mode = mode
             break
-    if detected_mode is None:
-        for word in normalized.split():
-            if word in _OPERATION_VERBS:
-                detected_mode = _OPERATION_VERBS[word]
-                break
+    # Single-word verb must be the very first word
+    if detected_mode is None and words and words[0] in _OPERATION_VERBS:
+        detected_mode = _OPERATION_VERBS[words[0]]
 
     if detected_mode and detected_file:
         return {"mode": detected_mode, "target_file": detected_file, "nlp_detected": True}

@@ -10,6 +10,7 @@ mutable module-local ``global`` state (``WARM_RESET_COUNT``,
 from __future__ import annotations
 
 import os
+import subprocess
 import threading
 import time
 from collections import deque
@@ -83,6 +84,20 @@ def start_background_thread(target, name: str) -> threading.Thread:
 def _pid_is_alive(pid: int) -> bool:
     if not pid or pid == os.getpid():
         return True
+    if os.name == "nt":
+        try:
+            result = subprocess.run(
+                ["tasklist", "/FI", f"PID eq {int(pid)}", "/NH"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=5,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
+            return str(int(pid)) in (result.stdout or "")
+        except Exception:
+            return False
     try:
         os.kill(int(pid), 0)
     except ProcessLookupError:

@@ -24,7 +24,7 @@ _ATOMIC_REPLACE_RETRIES = 3 if sys.platform == "win32" else 1
 _ATOMIC_REPLACE_DELAY = 0.05  # seconds between retries
 
 from luna_modules.luna_logging import _diag, ensure_layout
-from luna_modules.luna_paths import LUNA_MASTER_CODEX_PATH
+from luna_modules.luna_paths import LUNA_MASTER_CODEX_PATH, TEMP_TEST_ZONE_DIR
 
 
 def safe_read_text(path: Path) -> str:
@@ -73,7 +73,9 @@ def safe_write_text(path: Path, text: str) -> None:
 def _compile_python_path(path: Path) -> Tuple[bool, str]:
     temp_dir = None
     try:
-        temp_dir = tempfile.mkdtemp(prefix="luna_compile_")
+        compile_root = TEMP_TEST_ZONE_DIR / "compile"
+        compile_root.mkdir(parents=True, exist_ok=True)
+        temp_dir = tempfile.mkdtemp(prefix="luna_compile_", dir=str(compile_root))
         pyc_path = Path(temp_dir) / f"{path.stem}.pyc"
         py_compile.compile(str(path), cfile=str(pyc_path), doraise=True)
         return True, ""

@@ -50,7 +50,18 @@ from luna_modules.luna_routing import normalize_prompt_text
 
 # Mutable cache shared with worker.py — the dict object is the same instance
 # once worker.py does ``from luna_modules.luna_verification import VERIFICATION_CACHE``.
+from threading import Lock
+
+VERIFICATION_CACHE_LOCK = Lock()
 VERIFICATION_CACHE: Dict[Tuple[str, int, int], Dict[str, Any]] = {}
+
+def get_verification_cache(key: Tuple[str, int, int]) -> Optional[Dict[str, Any]]:
+    with VERIFICATION_CACHE_LOCK:
+        return VERIFICATION_CACHE.get(key)
+
+def set_verification_cache(key: Tuple[str, int, int], value: Dict[str, Any]) -> None:
+    with VERIFICATION_CACHE_LOCK:
+        VERIFICATION_CACHE[key] = value
 
 
 # ── Module-domain helpers ────────────────────────────────────────────────────
@@ -312,11 +323,54 @@ def _verification_cache_key(path: Path) -> Optional[tuple]:
         return None
 
 
+def _python_executable_is_usable(candidate: str) -> bool:
+    try:
+        path = Path(str(candidate))
+        if not path.exists() or path.stat().st_size <= 0:
+            return False
+        probe = subprocess.run(
+            [str(path), "-c", "import sys; sys.exit(0)"],
+            capture_output=True,
+            text=True,
+            timeout=3,
+        )
+        return probe.returncode == 0
+    except Exception:
+        return False
+
+
+def _real_pythonw() -> str:
+    """Return a real Python executable for smoke boots."""
+    if _python_executable_is_usable(sys.executable):
+        return sys.executable
+
+    import glob as _glob
+
+    candidates = [
+        PROJECT_DIR / ".venv" / "Scripts" / "python.exe",
+        PROJECT_DIR / ".aider_venv" / "Scripts" / "python.exe",
+        PROJECT_DIR / ".aider_venv" / "Scripts" / "pythonw.exe",
+    ]
+    candidates.extend(
+        Path(candidate)
+        for pattern in (
+            r"C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_*\python3.11.exe",
+            r"C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_*\pythonw3.11.exe",
+        )
+        for candidate in sorted(_glob.glob(pattern), reverse=True)
+    )
+    for candidate in candidates:
+        candidate_text = str(candidate)
+        if _python_executable_is_usable(candidate_text):
+            return candidate_text
+    return sys.executable
+
+
 def _run_smoke_boot(path: Path) -> tuple:
     """Return (passed: bool, failure_detail: str). detail is '' on success."""
     try:
         smoke = subprocess.run(
-            [sys.executable, str(path), "--verify-smoke"],
+            [_real_pythonw(), str(path), "--verify-smoke"],
             capture_output=True,
             text=True,
             cwd=str(PROJECT_DIR),
@@ -370,31 +424,44 @@ def _apply_smoke_boot_checks(result: Dict[str, Any], path: Path) -> None:
         result["details"].append(detail)
 
 
-def verify_python_target(target_file: str) -> Dict[str, Any]:
+def _verify_python_target(target_file: str) -> Dict[str, Any]:
     result = _blank_verification_result(target_file)
     path = Path(target_file)
     if not path.exists():
         result["summary"] = TARGET_FILE_DOES_NOT_EXIST
         result["details"].append(TARGET_FILE_DOES_NOT_EXIST)
         return result
+
     cache_key = _verification_cache_key(path)
     if cache_key and cache_key in VERIFICATION_CACHE:
         cached = dict(VERIFICATION_CACHE[cache_key])
         cached["cache_hit"] = True
         return cached
-    result["target_exists"] = True
+
     content = safe_read_text(path)
     _apply_parse_compile_checks(result, path, content)
     _apply_hygiene_checks(result, path)
     _apply_smoke_boot_checks(result, path)
+
     checks = [result["target_exists"], result["ast_parse"], result["py_compile"], result["hygiene_ok"]]
     if result["smoke_boot"] is not None:
         checks.append(bool(result["smoke_boot"]))
+
     result["passed"] = all(checks)
     result["summary"] = "verification passed" if result["passed"] else (result["details"][0] if result["details"] else "verification failed")
+
     if cache_key:
         VERIFICATION_CACHE[cache_key] = dict(result)
+
     return result
+
+def verify_python_target(target_file: str) -> Dict[str, Any]:
+    with HEARTBEAT_LOCK:
+        set_heartbeat(state="verifying", task_id=target_file)
+        try:
+            return _verify_python_target(target_file)
+        finally:
+            set_heartbeat(state="idle")
 
 
 def verification_section(verification: Dict[str, Any]) -> str:

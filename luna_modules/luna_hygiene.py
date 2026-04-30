@@ -34,6 +34,14 @@ HYGIENE_IDENTIFIER_SUFFIX_BLOCKLIST = ("_patch_text", "_template", "_source")
 HYGIENE_NESTED_FUNCTION_MAX_LINES = 50
 HYGIENE_LOCAL_STRING_ASSIGN_MAX_LINES = 15
 
+# Assignments whose names end with these suffixes are legitimate style constants
+# (QSS stylesheets, HTML templates, CSS blocks) and are exempt from the
+# multiline-string length limit.
+HYGIENE_STRING_LENGTH_EXEMPT_SUFFIXES = (
+    "_QSS", "_CSS", "_HTML", "_STYLE", "_STYLESHEET",
+    "_DARK_QSS", "_LIGHT_QSS",
+)
+
 LEGACY_HYGIENE_WHITELIST = {"is_guided_improvement_command", "run_guided_self_improvement"}
 
 
@@ -146,6 +154,10 @@ def _hygiene_check_assignment(
                 f"ends with forbidden suffix '{suffix}'"
             )
     if value is None or not targets:
+        return
+    # Skip length check for known style constants (QSS / CSS / HTML blocks).
+    first_target = targets[0].upper()
+    if any(first_target.endswith(sfx) for sfx in HYGIENE_STRING_LENGTH_EXEMPT_SUFFIXES):
         return
     line_count = _hygiene_string_literal_line_count(value)
     if line_count > HYGIENE_LOCAL_STRING_ASSIGN_MAX_LINES:

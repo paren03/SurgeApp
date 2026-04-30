@@ -153,11 +153,11 @@ HEARTBEAT_DEADLOCK_SECONDS = 10.0
 STRATEGY_INTERVAL_SECONDS = 12.0
 SOVEREIGN_EVOLUTION_INTERVAL_SECONDS = 3600.0  # sovereign engine runs at most once per hour
 
-VERIFY_TIMEOUT_SECONDS = 8
+VERIFY_TIMEOUT_SECONDS = 20
 WORKER_STALE_SECONDS = 12
 HEARTBEAT_INTERVAL_SECONDS = 1.0
 HEARTBEAT_RECOVERY_GRACE_SECONDS = max(3.0, HEARTBEAT_INTERVAL_SECONDS * 3.0)
-AUTONOMY_INTERVAL_SECONDS = 20.0
+AUTONOMY_INTERVAL_SECONDS = 120.0
 MAX_SELF_HEAL_ATTEMPTS = 5
 
 DIAGNOSTIC_PREFIX = "[LUNA-DIAG]"
@@ -265,6 +265,7 @@ MODE_ALIASES = {
     "upgrade_proposal": "upgrade_proposal",
     "acquisition_request": "acquisition_request",
     "meta_decision": "meta_decision",
+    "self_upgrade": "self_upgrade_pipeline",
     "self_upgrade_pipeline": "self_upgrade_pipeline",
     "mcp_adoption": "mcp_adoption",
     "mcp-adoption": "mcp_adoption",

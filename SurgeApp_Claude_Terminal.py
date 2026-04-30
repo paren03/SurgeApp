@@ -22,24 +22,33 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from director_agent import write_director_job
+from luna_modules.luna_autonomy_control import build_autonomy_control_summary
+from luna_modules.luna_inspector_autonomy_feed import build_inspector_autonomy_snapshot
+
 try:
     from PySide6.QtCore import QPoint, QRect, QThread, QTimer, Qt, Signal, Slot
-    from PySide6.QtGui import QColor, QPainter, QPainterPath, QPen, QTextCursor, QDragEnterEvent, QDropEvent
+    from PySide6.QtGui import QColor, QPainter, QPainterPath, QPen, QRadialGradient, QTextCursor, QDragEnterEvent, QDropEvent
     from PySide6.QtWidgets import (
+        QAbstractItemView,
         QApplication,
         QFileDialog,
         QFrame,
         QHBoxLayout,
+        QInputDialog,
         QLabel,
         QLineEdit,
         QListWidget,
         QListWidgetItem,
         QMenu,
+        QMessageBox,
         QPushButton,
         QSplitter,
         QTabWidget,
         QTextBrowser,
         QPlainTextEdit,
+        QTreeWidget,
+        QTreeWidgetItem,
         QVBoxLayout,
         QSizeGrip,
         QWidget,
@@ -154,22 +163,33 @@ def _read_history_lines(limit: int = 1500) -> List[Dict[str, Any]]:
 
 
 def _sanitize_luna_text(text: str) -> str:
-    """
-    Remove noisy quality-report headers like:
-      # LUNA QUALITY REPORT
-      # mode=...
-      # task=...
-      # target=...
-    Keep only the actual response body.
+    """Strip debug/telemetry noise from Luna responses before showing in main chat.
+
+    Removes:
+      - # LUNA QUALITY REPORT headers and meta lines (mode=, task=, target=)
+      - ===...=== separator banners (pure = lines)
+      - Inspection section headers (--- Inspection Results ---, etc.)
+      - Trailing blank lines in multi-line blocks of stripped content
+
+    Keeps all actual response text intact.
     """
     s = (text or "").replace("\r\n", "\n").replace("\r", "\n")
     if not s.strip():
         return ""
 
-    # Remove bracketed report blocks if present
-    s = re.sub(r"^\s*\[LUNA\s+QUALITY\s+REPORT\].*?\n", "", s, flags=re.IGNORECASE)
-    s = re.sub(r"^\s*\[LUNA\s+QUALITY\s+REPORT.*?\]\s*\n", "", s, flags=re.IGNORECASE)
+    # ── Pass 1: whole-line regex removals (anchored to line starts) ───────────
+    # Bracketed LUNA report tags on their own line
+    s = re.sub(r"(?m)^\s*\[LUNA\s+QUALITY\s+REPORT[^\]]*\]\s*$\n?", "", s, flags=re.IGNORECASE)
+    # Pure separator lines (===...===, ---...---, ___...___)  ≥ 6 chars
+    s = re.sub(r"(?m)^\s*[=\-_]{6,}\s*$\n?", "", s)
+    # Inspection / section header lines inside reports
+    s = re.sub(
+        r"(?m)^\s*---\s*(Inspection Results?|Controlled Execution|Recommendation|"
+        r"Verification|Quality Report|Telemetry|Live Feed|Debug)\s*---\s*$\n?",
+        "", s, flags=re.IGNORECASE,
+    )
 
+    # ── Pass 2: line-by-line meta stripping (first 30 lines only) ─────────────
     lines = s.splitlines()
     cleaned: List[str] = []
     dropped = 0
@@ -177,28 +197,32 @@ def _sanitize_luna_text(text: str) -> str:
         t = ln.strip()
         if i < 30:
             if t.startswith("#"):
-                # Drop known meta lines
+                # Drop known report meta lines
                 if re.search(r"luna\s+quality\s+report", t, re.IGNORECASE):
                     dropped += 1
                     continue
-                if re.match(r"^#\s*(mode|task|target|ts|timestamp|quality|report)\s*[:=]", t, re.IGNORECASE):
+                if re.match(
+                    r"^#\s*(mode|task|target|ts|timestamp|quality|report|pid|phase)\s*[:=]",
+                    t, re.IGNORECASE,
+                ):
                     dropped += 1
                     continue
-                if "mode=" in t.lower() or "task=" in t.lower() or "target=" in t.lower():
+                if any(kw in t.lower() for kw in ("mode=", "task=", "target=", "pid=")):
                     dropped += 1
                     continue
-            # Also drop empty banner separators right after meta
-            if dropped and (not t):
+            # Drop blank lines immediately after stripped meta
+            if dropped and not t:
                 dropped += 1
                 continue
         cleaned.append(ln)
 
-    # Trim leading empties
+    # ── Pass 3: trim leading/trailing blank lines ──────────────────────────────
     while cleaned and not cleaned[0].strip():
         cleaned.pop(0)
+    while cleaned and not cleaned[-1].strip():
+        cleaned.pop()
 
-    out = "\n".join(cleaned).strip()
-    return out
+    return "\n".join(cleaned).strip()
 
 
 def _load_sessions() -> List[Dict[str, Any]]:
@@ -322,12 +346,12 @@ def submit_self_upgrade_task(session_id: str) -> str:
     payload = {
         "task_id": task_id,
         "id": task_id,
-        "mode": "self-upgrade",
-        "task_type": "self-upgrade",
-        "worker_mode": "self-upgrade",
+        "mode": "self_upgrade_pipeline",
+        "task_type": "self_upgrade_pipeline",
+        "worker_mode": "self_upgrade_pipeline",
         "timestamp": _now_iso(),
         "session_id": session_id,
-        "prompt": "",
+        "prompt": "run self upgrade",
         "attachments": [],
     }
 
@@ -392,10 +416,56 @@ def _run_git_diff(rel_path: str) -> str:
         if not (PROJECT_DIR / ".git").exists():
             return ""
         cmd = ["git", "-C", str(PROJECT_DIR), "diff", "--", rel_path]
-        p = subprocess.run(cmd, capture_output=True, text=True, timeout=6, creationflags=CREATE_NO_WINDOW)
+        p = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=6,
+            creationflags=CREATE_NO_WINDOW,
+        )
         return (p.stdout or "").strip()
     except Exception:
         return ""
+
+
+def _run_git_review_diff() -> str:
+    """Return staged + unstaged git diff text for the Review pane."""
+    if not (PROJECT_DIR / ".git").exists():
+        return ""
+    chunks: List[str] = []
+    for title, args in (
+        ("Staged changes", ["diff", "--cached", "--unified=3"]),
+        ("Working tree changes", ["diff", "--unified=3"]),
+    ):
+        try:
+            p = subprocess.run(
+                ["git", "-C", str(PROJECT_DIR), *args],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=8,
+                creationflags=CREATE_NO_WINDOW,
+            )
+            text = (p.stdout or "").strip()
+            if text:
+                chunks.append(f"# {title}\n{text}")
+        except Exception:
+            continue
+    return "\n\n".join(chunks).strip()
+
+
+def _is_update_control_text(text: str) -> bool:
+    """Catch common misspellings so update requests do not fall into chat."""
+    normalized = re.sub(r"[^a-z0-9]+", " ", str(text or "").lower()).strip()
+    if not normalized:
+        return False
+    words = set(normalized.split())
+    has_update = any(token.startswith(("updat", "upgrad")) for token in words)
+    has_continue = any(token.startswith(("continu", "contino", "contiu", "contiue", "contn")) for token in words)
+    return has_update and has_continue
 
 
 def _latest_logic_updates_dir() -> Optional[Path]:
@@ -514,7 +584,21 @@ class WorkerWaitThread(QThread):
             if failed_path.exists():
                 try:
                     res = _safe_read_json(failed_path, default={}) or {}
-                    reason = str(res.get("error") or res.get("reason") or "Unknown failure").strip()
+                    reason = str(res.get("error") or res.get("reason") or "").strip()
+                    # Fall back to solution file — the worker writes explanations there
+                    if not reason:
+                        task_id_from_path = failed_path.stem.split(".")[0]
+                        sol_file = SOLUTIONS_DIR / f"{task_id_from_path}.txt"
+                        if sol_file.exists():
+                            try:
+                                sol_text = sol_file.read_text(encoding="utf-8", errors="replace").strip()
+                                # Extract the meaningful part (skip the header lines)
+                                lines = [l for l in sol_text.splitlines() if l.strip() and not l.startswith("=")]
+                                reason = "\n".join(lines[:6]).strip() or sol_text[:300]
+                            except Exception:
+                                pass
+                    if not reason:
+                        reason = "Task failed — no details available."
                     self.task_finished.emit("failed", self.task_id, reason, "")
                     return
                 except Exception as e:
@@ -538,6 +622,8 @@ class ShellExecutionThread(QThread):
                 shell=True,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 cwd=str(PROJECT_DIR),
                 timeout=120,
                 creationflags=CREATE_NO_WINDOW,
@@ -625,6 +711,14 @@ class LiveFeedThread(QThread):
         ensure_layout()
         try:
             if LIVE_FEED_PATH.exists():
+                lines = LIVE_FEED_PATH.read_text(encoding="utf-8", errors="replace").splitlines()
+                for line in lines[-80:]:
+                    try:
+                        row = json.loads(line.strip())
+                    except Exception:
+                        continue
+                    if isinstance(row, dict):
+                        self.feed_event.emit(row)
                 self._pos = LIVE_FEED_PATH.stat().st_size
         except Exception:
             self._pos = 0
@@ -660,30 +754,58 @@ class LiveFeedThread(QThread):
 # =============================================================================
 # UI (Claude-like palette)
 # =============================================================================
-CLAUDE_DARK_QSS = """
+LUNA_GOLD_QSS = """
 QWidget { background: #0f0f10; color: #e9e9eb; font-family: "Segoe UI"; font-size: 12px; }
 QFrame#Surface { background: #141416; border: 1px solid #242428; border-radius: 12px; }
 QFrame#SurfaceRaised { background: #17171a; border: 1px solid #2a2a30; border-radius: 12px; }
+QFrame#GlassCard { background: #17171a; border: 1px solid #2a2a30; border-radius: 12px; }
+QLabel { background: transparent; }
 QLabel#Muted { color: #a6a6ad; }
-QLabel#Title { font-size: 13px; font-weight: 600; }
-QPushButton { background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 10px; padding: 8px 10px; }
+QLabel#Title { font-size: 13px; font-weight: 600; color: #e9e9eb; }
+QLabel#LunaTitle { font-size: 20px; font-weight: 800; color: #D4AF37; letter-spacing: 3px; }
+QLabel#ClockLabel { font-size: 13px; font-weight: 600; color: #7eb8ff; font-family: Consolas; background: transparent; }
+QLabel#UpgradeBadge { color: #7ec3ff; padding: 4px 10px; background-color: rgba(60,90,140,0.18); border: 1px solid rgba(126,195,255,0.35); border-radius: 6px; font-weight: 600; font-size: 11px; }
+QPushButton { background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 10px; padding: 8px 10px; color: #e9e9eb; }
 QPushButton:hover { background: #202026; }
 QPushButton:pressed { background: #26262e; }
-QPushButton#Primary { background: #1c2b4a; border: 1px solid #2f4f89; }
+QPushButton#Primary { background: #1c2b4a; border: 1px solid #2f4f89; color: #e9e9eb; }
 QPushButton#Primary:hover { background: #243864; }
-QPushButton#Ghost { background: transparent; border: 1px solid #2a2a30; }
+QPushButton#Ghost { background: transparent; border: 1px solid #2a2a30; color: #e9e9eb; }
+QPushButton#Ghost:hover { background: #1a1a22; }
 QLineEdit { background: #141416; border: 1px solid #242428; border-radius: 10px; padding: 10px; color: #f2f2f4; selection-background-color: #2f4f89; }
 QTextBrowser { background: transparent; border: none; color: #e9e9eb; selection-background-color: #2f4f89; }
-QPlainTextEdit { background: #101012; border: 1px solid #242428; border-radius: 10px; padding: 10px; color: #e9e9eb; selection-background-color: #2f4f89; font-family: Consolas, "Courier New", monospace; font-size: 12px; }
+QPlainTextEdit { background: #101012; border: 1px solid #242428; border-radius: 10px; padding: 10px; color: #e9e9eb; selection-background-color: #2f4f89; font-family: Consolas,"Courier New",monospace; font-size: 12px; }
 QListWidget { background: transparent; border: none; outline: none; }
 QListWidget::item { padding: 8px 10px; border-radius: 10px; color: #d8d8dc; }
 QListWidget::item:selected { background: #1c2b4a; color: #ffffff; }
+QListWidget::item:hover { background: #1a1a22; }
+QTreeWidget { background: transparent; border: none; outline: none; color: #d8d8dc; }
+QTreeWidget::item { padding: 5px; border-radius: 6px; }
+QTreeWidget::item:selected { background: #1c2b4a; color: #ffffff; }
+QTreeWidget::item:hover { background: #1a1a22; }
 QTabWidget::pane { border: 1px solid #242428; border-radius: 12px; top: -1px; }
-QTabBar::tab { background: #141416; border: 1px solid #242428; border-bottom: none;
-               padding: 8px 10px; border-top-left-radius: 10px; border-top-right-radius: 10px; margin-right: 6px; color: #bdbdc4; }
+QTabBar::tab { background: #141416; border: 1px solid #242428; border-bottom: none; padding: 8px 10px; border-top-left-radius: 10px; border-top-right-radius: 10px; margin-right: 6px; color: #bdbdc4; }
 QTabBar::tab:selected { background: #17171a; color: #ffffff; border-color: #2a2a30; }
 QSplitter::handle { background: #1a1a1e; }
+QMenu { background: #141416; border: 1px solid #2a2a30; border-radius: 10px; padding: 5px; }
+QMenu::item { padding: 8px 18px; border-radius: 6px; color: #d8d8dc; }
+QMenu::item:selected { background: #1c2b4a; color: #ffffff; }
+QMenu::separator { height: 1px; background: #242428; margin: 4px 10px; }
 """
+
+
+def _list_windows_drives() -> List[Path]:
+    """Return all available Windows drive paths (A:\\ through Z:\\)."""
+    import string
+    drives = []
+    for letter in string.ascii_uppercase:
+        p = Path(f"{letter}:\\")
+        try:
+            if p.exists():
+                drives.append(p)
+        except Exception:
+            pass
+    return drives or [Path("C:\\")]
 
 
 def _icon_for_event(evt: str) -> str:
@@ -698,12 +820,14 @@ def _icon_for_event(evt: str) -> str:
 
 def _color_for_event(evt: str) -> str:
     evt = (evt or "").lower().strip()
-    if evt in ("error", "patch_fail"):
+    if evt in ("error", "patch_fail", "failed", "cu_failure", "cu_2x_review_paused", "cu_noop_budget_exhausted"):
         return "#ff5f56"
-    if evt in ("patch_ok", "tier_done"):
+    if evt in ("patch_ok", "tier_done", "done", "cu_improved", "verify_compile"):
         return "#27c93f"
-    if evt in ("patch", "debate", "repair"):
+    if evt in ("patch", "debate", "repair", "run_aider_start", "cu_cycle_start", "cu_queued", "diff_saved"):
         return "#ffbd2e"
+    if evt in ("noop", "cu_empty_diff", "cu_skip_recent_noop"):
+        return "#ff8f40"
     if evt in ("wire",):
         return "#5b8cff"
     return "#a6a6ad"
@@ -739,6 +863,29 @@ if PYSIDE_AVAILABLE:
             """)
             self.moveCursor(QTextCursor.End)
 
+        def append_diff_block(self, title: str, diff_text: str, accent: str = "#ffbd2e") -> None:
+            title = _esc(title)
+            rows = []
+            for raw in str(diff_text or "").splitlines()[:1200]:
+                line = _esc(raw)
+                if raw.startswith("+") and not raw.startswith("+++"):
+                    rows.append(f"<span style='color:#27c93f;'>{line}</span>")
+                elif raw.startswith("-") and not raw.startswith("---"):
+                    rows.append(f"<span style='color:#ff5f56;'>{line}</span>")
+                elif raw.startswith("@@"):
+                    rows.append(f"<span style='color:#7eb8ff;'>{line}</span>")
+                else:
+                    rows.append(f"<span style='color:#cfd3dc;'>{line}</span>")
+            body = "<br>".join(rows) if rows else "<span style='color:#777;'>no diff text</span>"
+            self.append(f"""
+            <div style="margin: 10px 0; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.03);
+                        border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-weight: 600; color: {accent}; margin-bottom: 6px;">{title}</div>
+              <pre style="white-space: pre-wrap; margin: 0; font-family: Consolas,'Courier New',monospace; font-size: 11px; line-height: 1.35;">{body}</pre>
+            </div>
+            """)
+            self.moveCursor(QTextCursor.End)
+
         def append_user(self, text: str) -> None:
             t = _esc(text)
             self.append(f"""
@@ -753,10 +900,10 @@ if PYSIDE_AVAILABLE:
         def append_ai(self, text: str) -> None:
             t = _esc(text).replace("\n", "<br>")
             self.append(f"""
-            <div style="margin: 10px 0; padding: 10px 12px; border-radius: 12px;
-                        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
-              <div style="font-weight: 700; color: #e9e9eb; margin-bottom: 6px;">Luna</div>
-              <div style="color: #e9e9eb; line-height: 1.45;">{t}</div>
+            <div style="margin: 10px 0; padding: 13px 16px; border-radius: 14px;
+                        background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.22);">
+              <div style="font-weight: 700; color: #D4AF37; margin-bottom: 7px; font-size: 11px; letter-spacing: 1.2px;">&#127769; LUNA</div>
+              <div style="color: #D5D5E8; line-height: 1.52;">{t}</div>
             </div>
             """)
             self.moveCursor(QTextCursor.End)
@@ -822,6 +969,15 @@ if PYSIDE_AVAILABLE:
 
             self._paused = False
             self._pending_attachments: List[Path] = []
+
+            # Pre-compute star positions for space background (seeded — no flicker)
+            import random as _rng_
+            _r = _rng_.Random(42)
+            self._stars = [(_r.randint(30, 1500), _r.randint(20, 880), _r.random()) for _ in range(220)]
+
+            # File explorer clipboard state
+            self._explorer_clipboard: List[Path] = []
+            self._explorer_is_cut: bool = False
 
             # Sessions
             self._sessions: List[Dict[str, Any]] = []
@@ -894,24 +1050,95 @@ if PYSIDE_AVAILABLE:
                 self.plan.append_block("Worker", f"Could not auto-start worker: {exc}", accent="#ffbd2e")
 
         # ------------------------------
+        # Live upgrade-badge refresh — reads real state files, no LLM
+        # ------------------------------
+        def _refresh_upgrade_badge(self) -> None:
+            """Update the top-bar upgrade badge from architect + CU state files.
+
+            Shows: "Arch: <applied>/<total> · CU: <real>/<cycles> · <when>"
+            All numbers read directly from disk - no LLM hallucination possible.
+            """
+            try:
+                # Architect state
+                arch_path = MEMORY_DIR / "architect_state.json"
+                arch_applied = arch_total = 0
+                arch_running = False
+                if arch_path.exists():
+                    a = _safe_read_json(arch_path, default={}) or {}
+                    arch_applied = int(a.get("issues_resolved", 0) or 0)
+                    arch_total = arch_applied + int(a.get("issues_pending", 0) or 0)
+                    arch_running = bool(a.get("running", False))
+
+                # Continues-update state
+                cu_path = MEMORY_DIR / "continues_update_state.json"
+                cu_cycles = 0
+                cu_last = ""
+                cu_running = False
+                if cu_path.exists():
+                    c = _safe_read_json(cu_path, default={}) or {}
+                    cu_cycles = int(c.get("cycles", 0) or 0)
+                    cu_running = bool(c.get("running", False))
+                    last_at = str(c.get("last_cycle_at") or "")
+                    if last_at:
+                        try:
+                            cu_last = last_at.split("T")[1][:5]
+                        except Exception:
+                            cu_last = last_at[-5:]
+
+                # Real applied diffs in last 24h (count solutions w/ real changes)
+                real_applied_24h = 0
+                try:
+                    cutoff = time.time() - 86400
+                    sol_dir = SOLUTIONS_DIR
+                    if sol_dir.exists():
+                        for f in sol_dir.glob("*.txt"):
+                            if f.stat().st_mtime < cutoff:
+                                continue
+                            try:
+                                txt = f.read_text(encoding="utf-8", errors="replace")
+                                if "applied=True" in txt or "APPLIED" in txt:
+                                    real_applied_24h += 1
+                            except Exception:
+                                pass
+                except Exception:
+                    pass
+
+                dot = "●" if (arch_running or cu_running) else "○"
+                color = "#27c93f" if (arch_running or cu_running) else "#888"
+                txt = (f"{dot} Arch {arch_applied}/{arch_total} · "
+                       f"CU c{cu_cycles}{(' @' + cu_last) if cu_last else ''} · "
+                       f"24h applied: {real_applied_24h}")
+                self.lbl_upgrades.setText(txt)
+                self.lbl_upgrades.setStyleSheet(
+                    "QLabel#UpgradeBadge {"
+                    f"  color: {color}; padding: 4px 10px;"
+                    "  background-color: rgba(60,90,140,0.18);"
+                    f"  border: 1px solid rgba(126,195,255,0.35);"
+                    "  border-radius: 6px; font-weight: 600;"
+                    "  font-size: 11px;"
+                    "}"
+                )
+            except Exception:
+                pass
+
+        # ------------------------------
         # Window visuals / drag
         # ------------------------------
         def paintEvent(self, event) -> None:
             p = QPainter(self)
             p.setRenderHint(QPainter.Antialiasing)
             full = self.rect()
-            margin = 7   # glow thickness (halved from 14 — slimmer blue trim)
+            margin = 4
 
-            # ── Navy blue glow — radiates outward from the content edge ──────
-            # Draw rings from the inner content boundary into the transparent margin.
             content_rect = full.adjusted(margin, margin, -margin, -margin)
+
+            # ── Half-size navy glow — radiates outward from the content edge ─
             p.setBrush(Qt.NoBrush)
             for i in range(1, margin):
-                # Opacity curve: bright near edge, fades toward outer rim
                 alpha = int(200 * ((margin - i) / margin) ** 1.6)
                 if alpha <= 0:
                     continue
-                glow_color = QColor(10, 60, 160, alpha)  # navy #0a3ca0
+                glow_color = QColor(10, 60, 160, alpha)
                 pen = QPen(glow_color, 1.2)
                 p.setPen(pen)
                 r = content_rect.adjusted(-i, -i, i, i)
@@ -1026,18 +1253,37 @@ if PYSIDE_AVAILABLE:
             # Top bar
             top = QFrame()
             top.setObjectName("SurfaceRaised")
-            top.setFixedHeight(52)
+            top.setFixedHeight(62)
             outer.addWidget(top)
 
             top_l = QHBoxLayout(top)
-            top_l.setContentsMargins(12, 10, 12, 10)
+            top_l.setContentsMargins(14, 8, 14, 8)
             top_l.setSpacing(10)
 
-            title = QLabel("SurgeApp / Luna Command Center")
-            title.setObjectName("Title")
+            # Moon icon
+            luna_moon = QLabel("🌙")
+            luna_moon.setStyleSheet("font-size: 24px; background: transparent; padding: 0 4px 0 0;")
+            top_l.addWidget(luna_moon)
+
+            title = QLabel("LUNA")
+            title.setObjectName("LunaTitle")
             top_l.addWidget(title)
 
+            top_l.addSpacing(8)
+
             top_l.addStretch(1)
+
+            # Live clock
+            self.lbl_clock = QLabel(datetime.now().strftime("%H:%M:%S"))
+            self.lbl_clock.setObjectName("ClockLabel")
+            top_l.addWidget(self.lbl_clock)
+
+            top_l.addSpacing(4)
+
+            # System resources
+            self.lbl_sysres = QLabel("CPU — · RAM —")
+            self.lbl_sysres.setStyleSheet("color: #4A6070; font-size: 11px; background: transparent;")
+            top_l.addWidget(self.lbl_sysres)
 
             self.phase = QLabel("phase: unknown")
             self.phase.setObjectName("Muted")
@@ -1054,12 +1300,59 @@ if PYSIDE_AVAILABLE:
             self.btn_toggle_right.clicked.connect(self._toggle_right)
             top_l.addWidget(self.btn_toggle_right)
 
+            # Real-data upgrade-activity badge — reads actual files, no LLM
+            self.lbl_upgrades = QLabel("⚙ — / — applied")
+            self.lbl_upgrades.setObjectName("UpgradeBadge")
+            self.lbl_upgrades.setFixedHeight(30)
+            self.lbl_upgrades.setStyleSheet(
+                "QLabel#UpgradeBadge {"
+                "  color: #7ec3ff; padding: 4px 10px;"
+                "  background-color: rgba(60,90,140,0.18);"
+                "  border: 1px solid rgba(126,195,255,0.35);"
+                "  border-radius: 6px; font-weight: 600;"
+                "  font-size: 11px;"
+                "}"
+            )
+            self.lbl_upgrades.setToolTip(
+                "Live upgrade activity — real numbers from architect_state.json + "
+                "continues_update_state.json. No LLM hallucination."
+            )
+            top_l.addWidget(self.lbl_upgrades)
+            # Refresh every 8 seconds
+            from PySide6.QtCore import QTimer
+            self._upgrade_timer = QTimer(self)
+            self._upgrade_timer.setInterval(8000)
+            self._upgrade_timer.timeout.connect(self._refresh_upgrade_badge)
+            self._upgrade_timer.start()
+            self._refresh_upgrade_badge()  # immediate first read
+
             self.btn_restart = QPushButton("↺ Restart")
             self.btn_restart.setObjectName("Ghost")
             self.btn_restart.setFixedHeight(30)
             self.btn_restart.setToolTip("Kill worker, clear lock, and start fresh (no window close needed)")
             self.btn_restart.clicked.connect(self._restart_worker)
             top_l.addWidget(self.btn_restart)
+
+            self.btn_cu_upgrade = QPushButton("Continues Upgrade")
+            self.btn_cu_upgrade.setObjectName("Primary")
+            self.btn_cu_upgrade.setFixedHeight(30)
+            self.btn_cu_upgrade.setToolTip("Start Luna's bounded continues-update upgrade loop")
+            self.btn_cu_upgrade.clicked.connect(self._start_continues_update_from_ui)
+            top_l.addWidget(self.btn_cu_upgrade)
+
+            self.btn_update = QPushButton("Update")
+            self.btn_update.setObjectName("Ghost")
+            self.btn_update.setFixedHeight(30)
+            self.btn_update.setToolTip("Check Python packages for available updates")
+            self.btn_update.clicked.connect(self._check_updates_from_ui)
+            top_l.addWidget(self.btn_update)
+
+            self.btn_cancel_update = QPushButton("Cancel Update")
+            self.btn_cancel_update.setObjectName("Ghost")
+            self.btn_cancel_update.setFixedHeight(30)
+            self.btn_cancel_update.setToolTip("Stop the active continues-update cycle after its current safe checkpoint")
+            self.btn_cancel_update.clicked.connect(self._cancel_continues_update_from_ui)
+            top_l.addWidget(self.btn_cancel_update)
 
             self.btn_aider = QPushButton("⚡ Aider")
             self.btn_aider.setObjectName("Ghost")
@@ -1103,18 +1396,30 @@ if PYSIDE_AVAILABLE:
             self._split = QSplitter(Qt.Horizontal)
             outer.addWidget(self._split, 1)
 
-            # Left: sessions
+            # Left: sessions (top) + file explorer (bottom) — split vertically
             self.sidebar = QFrame()
             self.sidebar.setObjectName("SurfaceRaised")
             self.sidebar.setMinimumWidth(240)
-            self.sidebar.setMaximumWidth(380)
+            self.sidebar.setMaximumWidth(400)
             self._split.addWidget(self.sidebar)
 
-            sb = QVBoxLayout(self.sidebar)
-            sb.setContentsMargins(12, 12, 12, 12)
-            sb.setSpacing(10)
+            sb_outer = QVBoxLayout(self.sidebar)
+            sb_outer.setContentsMargins(8, 8, 8, 8)
+            sb_outer.setSpacing(0)
 
-            sb_title = QLabel("Sessions")
+            left_vsplit = QSplitter(Qt.Vertical)
+            sb_outer.addWidget(left_vsplit, 1)
+
+            # ── Top half: Sessions ────────────────────────────────────────────
+            sessions_pane = QFrame()
+            sessions_pane.setObjectName("GlassCard")
+            left_vsplit.addWidget(sessions_pane)
+
+            sb = QVBoxLayout(sessions_pane)
+            sb.setContentsMargins(10, 10, 10, 10)
+            sb.setSpacing(8)
+
+            sb_title = QLabel("💬 Sessions")
             sb_title.setObjectName("Title")
             sb.addWidget(sb_title)
 
@@ -1125,17 +1430,17 @@ if PYSIDE_AVAILABLE:
 
             self.btn_rename = QPushButton("✏")
             self.btn_rename.setObjectName("Ghost")
-            self.btn_rename.setFixedWidth(36)
+            self.btn_rename.setFixedWidth(34)
             self.btn_rename.setToolTip("Rename selected session (or double-click)")
             self.btn_rename.clicked.connect(self._rename_selected_session)
             btn_row.addWidget(self.btn_rename)
 
             self.btn_delete_session = QPushButton("✕")
             self.btn_delete_session.setObjectName("Ghost")
-            self.btn_delete_session.setFixedWidth(36)
+            self.btn_delete_session.setFixedWidth(34)
             self.btn_delete_session.setToolTip("Delete selected session")
             self.btn_delete_session.setStyleSheet(
-                "QPushButton { color: #a6a6ad; } QPushButton:hover { background: #c0392b; color: #ffffff; border-color: #c0392b; }"
+                "QPushButton { color: #8A7A7A; } QPushButton:hover { background: rgba(140,20,20,0.6); color: #ffaaaa; border-color: #cc3333; }"
             )
             self.btn_delete_session.clicked.connect(self._delete_selected_session)
             btn_row.addWidget(self.btn_delete_session)
@@ -1149,6 +1454,10 @@ if PYSIDE_AVAILABLE:
             self.sessions_list.setToolTip("Double-click to rename · select then ✕ to delete")
             sb.addWidget(self.sessions_list, 1)
 
+            # ── Bottom half: File Explorer ────────────────────────────────────
+            self._build_left_explorer(left_vsplit)
+            left_vsplit.setSizes([420, 420])
+
             # Center: chat
             self.center = QFrame()
             self.center.setObjectName("SurfaceRaised")
@@ -1157,6 +1466,20 @@ if PYSIDE_AVAILABLE:
             cc = QVBoxLayout(self.center)
             cc.setContentsMargins(12, 12, 12, 12)
             cc.setSpacing(10)
+
+            # Chat header with Clear Chat button
+            chat_hdr = QHBoxLayout()
+            _chat_lbl = QLabel("Conversation")
+            _chat_lbl.setStyleSheet("font-weight: 700; font-size: 13px; color: #C9A84C; background: transparent; letter-spacing: 0.5px;")
+            chat_hdr.addWidget(_chat_lbl)
+            chat_hdr.addStretch(1)
+            self.btn_clear_chat = QPushButton("⊘ Clear Chat")
+            self.btn_clear_chat.setObjectName("Ghost")
+            self.btn_clear_chat.setFixedHeight(26)
+            self.btn_clear_chat.setToolTip("Clear this chat display (history on disk is preserved)")
+            self.btn_clear_chat.clicked.connect(self._clear_chat)
+            chat_hdr.addWidget(self.btn_clear_chat)
+            cc.addLayout(chat_hdr)
 
             self.chat = RichText()
             cc.addWidget(self.chat, 1)
@@ -1215,16 +1538,28 @@ if PYSIDE_AVAILABLE:
             ri.addWidget(self.tabs, 1)
 
             self.preview  = RichText()
+            self.diff_tab = QWidget()
+            self.diff_split = QSplitter(Qt.Vertical)
             self.diff = RichText()
+            self.diff_review = RichText()
+            diff_lay = QVBoxLayout(self.diff_tab)
+            diff_lay.setContentsMargins(0, 0, 0, 0)
+            diff_lay.setSpacing(0)
+            self.diff_split.addWidget(self.diff)
+            self.diff_split.addWidget(self.diff_review)
+            self.diff_split.setSizes([220, 520])
+            diff_lay.addWidget(self.diff_split, 1)
             self.terminal = RichText()   # live work feed
+            self.autonomy = RichText()   # autonomy plans/jobs/verification summary
             self.files = QWidget()       # editable files tab
             self.queue_tab = QWidget()   # queue hub
             self.tasks = QWidget()
             self.plan = RichText()       # system/control notes live here
 
             self.tabs.addTab(self.preview, "Preview")
-            self.tabs.addTab(self.diff, "Diff")
+            self.tabs.addTab(self.diff_tab, "Diff")
             self.tabs.addTab(self.terminal, "Terminal")
+            self.tabs.addTab(self.autonomy, "Autonomy")
             self.tabs.addTab(self.queue_tab, "⚡ Queue")
             self.tabs.addTab(self.files, "Files")
             self.tabs.addTab(self.tasks, "Tasks")
@@ -1233,6 +1568,7 @@ if PYSIDE_AVAILABLE:
             self._build_files_tab()
             self._build_tasks_tab()
             self._build_queue_tab()
+            self._refresh_review_diff()
 
             # Initial sizes
             self._split.setSizes([300, 820, self._right_width])
@@ -1248,6 +1584,7 @@ if PYSIDE_AVAILABLE:
                 "Terminal tab is the live work feed (what Luna is doing).",
                 accent="#a6a6ad",
             )
+            self._refresh_autonomy_tab()
 
         # ------------------------------
         # Sessions UI
@@ -1519,6 +1856,89 @@ if PYSIDE_AVAILABLE:
 
             self.plan.append_block("Attachments", "\n".join(f"- {r}" for r in rels) + (("\n…") if suffix else ""), accent="#5b8cff")
 
+        def _ui_pythonw(self) -> str:
+            exe = str(sys.executable)
+            if exe.lower().endswith("python.exe"):
+                cand = exe[:-10] + "pythonw.exe"
+                if Path(cand).exists():
+                    return cand
+            return exe
+
+        @Slot()
+        def _start_continues_update_from_ui(self) -> None:
+            # Respect the pause flag; budget gates use it to stop job floods.
+            _cu_stop = MEMORY_DIR / "continues_update.stop"
+            if _cu_stop.exists():
+                self._append_luna_msg(
+                    "Continues-update is paused by `memory/continues_update.stop`. "
+                    "Clear that pause intentionally before starting another update cycle."
+                )
+                return
+
+            # Guard: check if CU loop already running (avoid duplicate processes).
+            _cu_already = False
+            try:
+                _wmic = subprocess.run(
+                    ["wmic", "process", "get", "CommandLine"],
+                    capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5,
+                    creationflags=CREATE_NO_WINDOW,
+                )
+                _cu_already = "--continues-update-start" in (_wmic.stdout or "")
+            except Exception:
+                pass
+
+            if _cu_already:
+                self._append_luna_msg("▶ Continues-update loop is already running. Watch Inspector → Terminal for live progress.")
+                return
+
+            try:
+                subprocess.Popen(
+                    [self._ui_pythonw(), str(WORKER_PATH), "--continues-update-start"],
+                    cwd=str(PROJECT_DIR),
+                    creationflags=CREATE_NO_WINDOW,
+                )
+                self._append_luna_msg("▶ Continues-update loop started. Watch Inspector → Terminal for live progress.")
+            except Exception as exc:
+                self._append_luna_msg(f"⚠ Could not start continues-update: {exc}")
+
+        @Slot()
+        def _cancel_continues_update_from_ui(self) -> None:
+            _cu_stop = MEMORY_DIR / "continues_update.stop"
+            try:
+                _cu_stop.parent.mkdir(parents=True, exist_ok=True)
+                _cu_stop.write_text(_now_iso(), encoding="utf-8")
+                self._append_luna_msg(
+                    "⏹ **Stop signal sent.**\n"
+                    "Luna → Aider Bridge → Worker: stop flag written to `memory/continues_update.stop`.\n"
+                    "The active cycle will finish its current step, then everything halts within 2–5s."
+                )
+            except Exception as exc:
+                self._append_luna_msg(f"⚠ Could not write stop flag: {exc}")
+
+        @Slot()
+        def _check_updates_from_ui(self) -> None:
+            self._append_luna_msg("🔍 Checking for outdated packages…")
+
+            def _do_check():
+                try:
+                    r = subprocess.run(
+                        [sys.executable, "-m", "pip", "list", "--outdated", "--format=columns"],
+                        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30,
+                        creationflags=CREATE_NO_WINDOW,
+                    )
+                    out = (r.stdout or "").strip()
+                    if not out:
+                        return "✅ All packages are up to date."
+                    lines = out.splitlines()
+                    shown = "\n".join(lines[:22])
+                    extra = f"\n…and {len(lines)-22} more" if len(lines) > 22 else ""
+                    return f"📦 **Outdated packages:**\n```\n{shown}{extra}\n```\nRun `/aider worker: upgrade <package>` to update one."
+                except Exception as exc:
+                    return f"⚠ pip check failed: {exc}"
+
+            import threading
+            threading.Thread(target=lambda: self._append_luna_msg(_do_check()), daemon=True).start()
+
         # ------------------------------
         # Sending
         # ------------------------------
@@ -1546,6 +1966,30 @@ if PYSIDE_AVAILABLE:
             # --- Continues-Update commands -------------------------------------
             raw_lower = raw.lower().strip()
 
+            if raw_lower.startswith("/ceo") or raw_lower in ("/autonomy", "/autonomy status", "autonomy status"):
+                self.input.clear()
+                try:
+                    if raw_lower.startswith("/ceo"):
+                        director_job = write_director_job(PROJECT_DIR, raw)
+                        self.plan.append_block(
+                            "Director",
+                            json.dumps({
+                                "state": director_job.get("state"),
+                                "goal": director_job.get("goal"),
+                                "path": director_job.get("path"),
+                                "missions": len(director_job.get("missions") or []),
+                            }, indent=2),
+                            accent="#5b8cff",
+                        )
+                    summary = build_autonomy_control_summary(PROJECT_DIR)
+                    self.plan.append_block("Autonomy Control v1", summary, accent="#5b8cff")
+                    self._refresh_autonomy_tab()
+                    self._append_luna_msg("Autonomy Control v1 refreshed in Inspector.")
+                except Exception as exc:
+                    self.plan.append_block("Autonomy Control Error", str(exc), accent="#ff6b6b")
+                    self._append_luna_msg(f"Autonomy Control could not refresh: {exc}")
+                return
+
             # Stop continues update — all aliases + fuzzy ("stop" AND "update"/"continu")
             _is_stop_cu = raw_lower in (
                 "stop continues update", "stop continuous update", "stop updates",
@@ -1553,73 +1997,27 @@ if PYSIDE_AVAILABLE:
                 "/continuesupdate stop", "/cu stop", "/stop update", "/stopupdate",
             ) or (
                 "stop" in raw_lower and (
-                    "update" in raw_lower or "continu" in raw_lower
+                    "update" in raw_lower or "upgrade" in raw_lower or _is_update_control_text(raw_lower)
                 )
             )
             if _is_stop_cu:
                 self.input.clear()
-                _cu_stop = MEMORY_DIR / "continues_update.stop"
-                try:
-                    _cu_stop.parent.mkdir(parents=True, exist_ok=True)
-                    _cu_stop.write_text(_now_iso(), encoding="utf-8")
-                    self._append_luna_msg(
-                        "⏹ **Stop signal sent.**\n"
-                        "Luna → Aider Bridge → Worker: stop flag written to `memory/continues_update.stop`.\n"
-                        "The active cycle will finish its current step, then everything halts within 2–5s."
-                    )
-                except Exception as exc:
-                    self._append_luna_msg(f"⚠ Could not write stop flag: {exc}")
+                self._cancel_continues_update_from_ui()
                 return
 
-            # Start continues update — exact list + fuzzy ("continu" AND "update")
+            # Start continues update — exact list + typo-tolerant control parser.
             _is_start_cu = raw_lower in (
                 "continues update", "update continuous", "continuous update",
+                "continues upgrade", "continuous upgrade", "continuous upgrades",
+                "continuos update", "continuos updates", "continuos upgrade", "continuos upgrades",
                 "none stop update", "nonstop update", "non stop update",
                 "start update", "start updates", "start continuous update",
+                "start upgrade", "start upgrades", "start continuous upgrades",
                 "/continuesupdate", "/cu start", "/cu",
-            ) or (
-                "continu" in raw_lower and "update" in raw_lower
-                and "stop" not in raw_lower
-            )
+            ) or (_is_update_control_text(raw_lower) and "stop" not in raw_lower)
             if _is_start_cu:
                 self.input.clear()
-                # Remove stale stop flag first
-                _cu_stop = MEMORY_DIR / "continues_update.stop"
-                try:
-                    _cu_stop.unlink(missing_ok=True)
-                except Exception:
-                    pass
-                # Find pythonw
-                def _ui_pythonw() -> str:
-                    exe = str(sys.executable)
-                    if exe.lower().endswith("python.exe"):
-                        cand = exe[:-10] + "pythonw.exe"
-                        if Path(cand).exists():
-                            return cand
-                    return exe
-                # Guard: check if CU loop already running (avoid duplicate processes)
-                _cu_already = False
-                try:
-                    _wmic = subprocess.run(
-                        ["wmic", "process", "get", "CommandLine"],
-                        capture_output=True, text=True, timeout=5,
-                        creationflags=CREATE_NO_WINDOW,
-                    )
-                    _cu_already = "--continues-update-start" in (_wmic.stdout or "")
-                except Exception:
-                    pass
-                if _cu_already:
-                    self._append_luna_msg("▶ Continues-update loop is already running. Watch Inspector → Terminal for live progress.")
-                else:
-                    try:
-                        subprocess.Popen(
-                            [_ui_pythonw(), str(WORKER_PATH), "--continues-update-start"],
-                            cwd=str(PROJECT_DIR),
-                            creationflags=CREATE_NO_WINDOW,
-                        )
-                        self._append_luna_msg("▶ Continues-update loop started. Watch Inspector → Terminal for live progress.")
-                    except Exception as exc:
-                        self._append_luna_msg(f"⚠ Could not start continues-update: {exc}")
+                self._start_continues_update_from_ui()
                 return
 
             # Check for upgradeable packages
@@ -1628,26 +2026,7 @@ if PYSIDE_AVAILABLE:
                 "what can we update", "what can we upgrade",
             ):
                 self.input.clear()
-                self._append_luna_msg("🔍 Checking for outdated packages…")
-                def _do_check():
-                    try:
-                        r = subprocess.run(
-                            [sys.executable, "-m", "pip", "list", "--outdated", "--format=columns"],
-                            capture_output=True, text=True, timeout=30,
-                            creationflags=CREATE_NO_WINDOW,
-                        )
-                        out = (r.stdout or "").strip()
-                        if not out:
-                            return "✅ All packages are up to date."
-                        lines = out.splitlines()
-                        # top 20 rows
-                        shown = "\n".join(lines[:22])
-                        extra = f"\n…and {len(lines)-22} more" if len(lines) > 22 else ""
-                        return f"📦 **Outdated packages:**\n```\n{shown}{extra}\n```\nRun `/aider worker: upgrade <package>` to update one."
-                    except Exception as exc:
-                        return f"⚠ pip check failed: {exc}"
-                import threading
-                threading.Thread(target=lambda: self._append_luna_msg(_do_check()), daemon=True).start()
+                self._check_updates_from_ui()
                 return
 
             # Show nightly updates
@@ -1971,20 +2350,51 @@ if PYSIDE_AVAILABLE:
                 b = edited.splitlines(keepends=True)
                 ud = difflib.unified_diff(a, b, fromfile=f"{rel} (disk)", tofile=f"{rel} (edited)", lineterm="")
                 diff_text = "".join(ud).strip()
-                self.diff.append_block(f"Unsaved diff: {rel}", diff_text[:200000] or "(no changes)", accent="#ffbd2e")
+                self.diff.append_diff_block(f"Unsaved diff: {rel}", diff_text[:200000] or "(no changes)", accent="#ffbd2e")
                 return
 
             staged = _best_effort_staged_diff(path)
             if staged:
-                self.diff.append_block(f"Staged diff: {rel}", staged[:200000], accent="#ffbd2e")
+                self.diff.append_diff_block(f"Staged diff: {rel}", staged[:200000], accent="#ffbd2e")
                 return
 
             gd = _run_git_diff(rel)
             if gd:
-                self.diff.append_block(f"git diff: {rel}", gd[:200000], accent="#ffbd2e")
+                self.diff.append_diff_block(f"git diff: {rel}", gd[:200000], accent="#ffbd2e")
                 return
 
             self.diff.append_block("Diff", "No diff found.", accent="#a6a6ad")
+
+        def _refresh_review_diff(self) -> None:
+            """Render the bottom Review pane as a red/green git diff."""
+            if not hasattr(self, "diff_review"):
+                return
+            try:
+                text = _run_git_review_diff()
+                self.diff_review.clear()
+                if not text:
+                    self.diff_review.append_block(
+                        "Review",
+                        "No staged or working-tree diff to show.",
+                        accent="#a6a6ad",
+                    )
+                    return
+                added = len([
+                    line for line in text.splitlines()
+                    if line.startswith("+") and not line.startswith("+++")
+                ])
+                removed = len([
+                    line for line in text.splitlines()
+                    if line.startswith("-") and not line.startswith("---")
+                ])
+                files = len([line for line in text.splitlines() if line.startswith("diff --git ")])
+                self.diff_review.append_diff_block(
+                    f"Review Diff  ·  {files} file(s)  +{added} -{removed}",
+                    text[:240000],
+                    accent="#7eb8ff",
+                )
+            except Exception as exc:
+                self.diff_review.append_block("Review Diff Error", str(exc), accent="#ff5f56")
 
         # ------------------------------
         # Tasks tab
@@ -2072,28 +2482,61 @@ if PYSIDE_AVAILABLE:
             lay.setContentsMargins(0, 6, 0, 0)
             lay.setSpacing(6)
 
-            # ── Stats pills ───────────────────────────────────────────
+            # ── Clickable filter pills (also show counts) ─────────────────
             stats_row = QHBoxLayout()
             stats_row.setSpacing(6)
 
-            _pill_css = (
-                "font-weight:600; font-size:11px; padding:3px 10px;"
-                "border-radius:10px; border:1px solid #2a2a30;"
-            )
-            self._q_lbl_queued  = QLabel("● 0 Queued")
-            self._q_lbl_running = QLabel("⚡ 0 Running")
-            self._q_lbl_failed  = QLabel("✕ 0 Failed")
-            self._q_lbl_done    = QLabel("✓ 0 Done")
-            for lbl, col in (
-                (self._q_lbl_queued,  "#4a9eff"),
-                (self._q_lbl_running, "#f5a623"),
-                (self._q_lbl_failed,  "#ff5f56"),
-                (self._q_lbl_done,    "#27c93f"),
-            ):
-                lbl.setStyleSheet(f"color:{col}; background:#1a1a1e; {_pill_css}")
-                stats_row.addWidget(lbl)
+            self._q_status_filter: Optional[str] = None
+            self._q_filter_btns: Dict[Optional[str], QPushButton] = {}
+
+            _PILL_DATA = [
+                ("_q_lbl_queued",  "● 0 Queued",  "queued",  "#4a9eff"),
+                ("_q_lbl_running", "⚡ 0 Running", "running", "#f5a623"),
+                ("_q_lbl_blocked", "⛔ 0 Blocked", "blocked", "#ffbd2e"),
+                ("_q_lbl_failed",  "✕ 0 Failed",  "failed",  "#ff5f56"),
+                ("_q_lbl_done",    "✓ 0 Done",    "done",    "#27c93f"),
+                ("_q_btn_all",     "⊘ All",        None,      "#8A9AB8"),
+            ]
+            for attr, label, status, col in _PILL_DATA:
+                btn = QPushButton(label)
+                btn.setCheckable(True)
+                _s = status
+                btn.clicked.connect(lambda _checked, s=_s: self._q_set_filter(s))
+                btn.setStyleSheet(
+                    f"QPushButton {{ color:{col}; background: rgba(18,38,80,0.70);"
+                    f"  border: 1px solid rgba(100,80,30,0.45); border-radius:10px;"
+                    f"  padding:3px 10px; font-weight:700; font-size:11px; }}"
+                    f"QPushButton:checked {{ background: rgba(38,75,155,0.80);"
+                    f"  border-color: {col}; color: {col}; }}"
+                    f"QPushButton:hover {{ border-color: {col}; color: {col}; }}"
+                )
+                setattr(self, attr, btn)
+                self._q_filter_btns[status] = btn
+                stats_row.addWidget(btn)
+
+            # "All" is active by default
+            self._q_filter_btns[None].setChecked(True)
+
+            # Alias so existing setText() calls keep working
+            self._q_lbl_queued  = self._q_filter_btns["queued"]
+            self._q_lbl_running = self._q_filter_btns["running"]
+            self._q_lbl_blocked = self._q_filter_btns["blocked"]
+            self._q_lbl_failed  = self._q_filter_btns["failed"]
+            self._q_lbl_done    = self._q_filter_btns["done"]
+
             stats_row.addStretch(1)
             lay.addLayout(stats_row)
+
+            self._q_now = QLabel("Now: reading runtime state...")
+            self._q_now.setWordWrap(True)
+            self._q_now.setTextFormat(Qt.RichText)
+            self._q_now.setStyleSheet(
+                "QLabel { color:#cfd3dc; padding:8px 10px;"
+                " background: rgba(8,12,22,0.72); border:1px solid #242838;"
+                " border-radius:10px; font-family: Consolas, 'Courier New', monospace;"
+                " font-size:11px; }"
+            )
+            lay.addWidget(self._q_now)
 
             # ── Controls ─────────────────────────────────────────────
             ctrl = QHBoxLayout()
@@ -2177,6 +2620,71 @@ if PYSIDE_AVAILABLE:
         def _q_collect_jobs(self) -> List[Dict]:
             """Scan all 6 queue dirs and return unified job dicts, newest first."""
             jobs: List[Dict] = []
+            cu_state = _safe_read_json(MEMORY_DIR / "continues_update_state.json", default={}) or {}
+            active_job_count = 0
+            try:
+                active_job_count = (
+                    len(list(AIDER_ACTIVE_DIR.glob("*.json")))
+                    + len(list(ACTIVE_DIR.glob("*.json")))
+                )
+            except Exception:
+                active_job_count = 0
+            cu_phase = str(cu_state.get("phase") or "").lower()
+            cu_blocked = cu_phase == "blocked_by_staged_edits" or str(cu_state.get("last_status") or "").lower() == "blocked"
+            if cu_blocked and active_job_count == 0:
+                dirty = cu_state.get("dirty_targets") or []
+                try:
+                    cu_mtime = (MEMORY_DIR / "continues_update_state.json").stat().st_mtime
+                except Exception:
+                    cu_mtime = time.time()
+                jobs.append({
+                    "status": "blocked",
+                    "group": "system",
+                    "target": "continues_update",
+                    "instr": (
+                        "Blocked: all planned update targets already have staged or unstaged edits. "
+                        "Finish or clear the current staged patch before Luna creates more upgrades."
+                    ),
+                    "path": MEMORY_DIR / "continues_update_state.json",
+                    "mtime": cu_mtime,
+                    "data": {
+                        "task_id": "continues_update_blocked",
+                        "id": "continues_update_blocked",
+                        "status": "blocked",
+                        "target_file": "continues_update",
+                        "timestamp": str(cu_state.get("last_cycle_at") or cu_state.get("stopped_at") or ""),
+                        "instructions": f"blocked_by_staged_edits; dirty_targets={len(dirty)}",
+                        **cu_state,
+                    },
+                })
+            elif bool(cu_state.get("running")) and active_job_count == 0:
+                last_cycle_at = str(cu_state.get("last_cycle_at") or cu_state.get("started_at") or "")
+                try:
+                    cu_mtime = (MEMORY_DIR / "continues_update_state.json").stat().st_mtime
+                except Exception:
+                    cu_mtime = time.time()
+                jobs.append({
+                    "status": "running",
+                    "group": "system",
+                    "target": "continues_update",
+                    "instr": (
+                        f"Sleeping between jobs; cycles={cu_state.get('cycles', 0)} "
+                        f"last={cu_state.get('last_status', 'unknown')} "
+                        f"noop={cu_state.get('noop_count', 0)} "
+                        f"fail={cu_state.get('consecutive_failures', 0)}"
+                    ),
+                    "path": MEMORY_DIR / "continues_update_state.json",
+                    "mtime": cu_mtime,
+                    "data": {
+                        "task_id": "continues_update",
+                        "id": "continues_update",
+                        "status": "running",
+                        "target_file": "continues_update",
+                        "timestamp": last_cycle_at or str(cu_state.get("started_at") or ""),
+                        "instructions": "continues_update loop is alive; it may be sleeping until the next interval.",
+                        **cu_state,
+                    },
+                })
             STATUS_MAP = {
                 (AIDER_ACTIVE_DIR, "aider"): "active",
                 (AIDER_DONE_DIR,   "aider"): "done",
@@ -2228,35 +2736,116 @@ if PYSIDE_AVAILABLE:
             jobs.sort(key=lambda j: j["mtime"], reverse=True)
             return jobs
 
+        def _q_tail_live_feed(self, limit: int = 40) -> List[dict]:
+            rows: List[dict] = []
+            try:
+                if not LIVE_FEED_PATH.exists():
+                    return rows
+                for line in LIVE_FEED_PATH.read_text(encoding="utf-8", errors="replace").splitlines()[-limit:]:
+                    try:
+                        row = json.loads(line)
+                        if isinstance(row, dict):
+                            rows.append(row)
+                    except Exception:
+                        continue
+            except Exception:
+                return rows
+            return rows
+
+        def _q_activity_html(self, full_jobs: List[Dict]) -> str:
+            active_jobs = [j for j in full_jobs if j.get("status") in {"queued", "running"}]
+            cu_state = _safe_read_json(MEMORY_DIR / "continues_update_state.json", default={}) or {}
+            latest = (self._q_tail_live_feed(1) or [{}])[-1]
+            evt = str(latest.get("event") or "STATE").upper()
+            msg = str(latest.get("msg") or latest.get("message") or "").strip()
+            detail = str(latest.get("detail") or "").strip()
+            task_id = str(latest.get("task_id") or cu_state.get("last_task_id") or "")
+            color = _color_for_event(evt)
+            running = bool(cu_state.get("running"))
+            phase = str(cu_state.get("phase") or "").lower()
+            if active_jobs:
+                job = active_jobs[0]
+                data = job.get("data", {}) or {}
+                target = str(job.get("target") or data.get("target_file") or "unknown")
+                doing = str(job.get("instr") or data.get("instructions") or "processing job")
+                state_label = "RUNNING"
+            elif phase == "blocked_by_staged_edits":
+                dirty = cu_state.get("dirty_targets") or []
+                target = "continues_update"
+                doing = (
+                    f"blocked by staged/unstaged edits; deferred={len(dirty)} mission(s). "
+                    "Luna is protecting current work instead of overwriting it."
+                )
+                state_label = "BLOCKED"
+            elif running:
+                target = "continues_update"
+                doing = (
+                    f"sleeping between jobs; cycle={cu_state.get('cycles', 0)} "
+                    f"last={cu_state.get('last_status', 'unknown')}"
+                )
+                state_label = "SLEEPING"
+            else:
+                target = "continues_update"
+                doing = (
+                    f"paused/stopped; last={cu_state.get('last_status', 'unknown')} "
+                    f"noop={cu_state.get('noop_count', 0)} "
+                    f"fail={cu_state.get('consecutive_failures', 0)}"
+                )
+                state_label = "STOPPED"
+                if str(cu_state.get("last_status") or "").lower() == "noop" and int(cu_state.get("noop_count", 0) or 0) >= 5:
+                    doing = "paused after no-diff budget; Luna is not allowed to count NOOPs as upgrades"
+            parts = [
+                f"<span style='color:{color}; font-weight:800;'>Now: {state_label}</span>",
+                f"<span style='color:#8ab4ff;'>event</span>={_esc(evt)}",
+                f"<span style='color:#8ab4ff;'>target</span>={_esc(target)}",
+            ]
+            if task_id:
+                parts.append(f"<span style='color:#8ab4ff;'>task</span>={_esc(task_id[-12:])}")
+            if msg:
+                parts.append(f"<span style='color:#a6a6ad;'>msg</span>={_esc(msg)}")
+            if detail:
+                parts.append(f"<span style='color:#a6a6ad;'>detail</span>={_esc(detail[:180])}")
+            parts.append(f"<br><span style='color:#d9dde8;'>{_esc(doing[:260])}</span>")
+            return " &nbsp; ".join(parts)
+
         def _refresh_queue(self) -> None:
             try:
                 q_text = (self._q_filter.text() or "").strip().lower()
                 all_jobs = self._q_collect_jobs()
 
-                # Apply filter
+                # Apply text filter
                 if q_text:
                     all_jobs = [
                         j for j in all_jobs
                         if q_text in (j["target"] + j["instr"] + j["path"].stem).lower()
                     ]
 
+                # Apply status filter (from clickable pills)
+                _sf = getattr(self, '_q_status_filter', None)
+                if _sf is not None:
+                    all_jobs = [j for j in all_jobs if j["status"] == _sf]
+
                 # Stats (from full unfiltered list for accuracy)
                 full = self._q_collect_jobs()
                 n_queued  = sum(1 for j in full if j["status"] == "queued")
                 n_running = sum(1 for j in full if j["status"] == "running")
+                n_blocked = sum(1 for j in full if j["status"] == "blocked")
                 n_failed  = sum(1 for j in full if j["status"] == "failed")
                 n_done    = sum(1 for j in full if j["status"] == "done")
 
                 self._q_lbl_queued.setText(f"● {n_queued} Queued")
                 self._q_lbl_running.setText(f"⚡ {n_running} Running")
+                self._q_lbl_blocked.setText(f"⛔ {n_blocked} Blocked")
                 self._q_lbl_failed.setText(f"✕ {n_failed} Failed")
-                self._q_lbl_done.setText(f"✓ {n_done} Done")
+                self._q_lbl_done.setText(f"✓ {n_done} Recent Done")
+                if hasattr(self, "_q_now"):
+                    self._q_now.setText(self._q_activity_html(full))
 
-                _STATUS_ICON  = {"queued": "🔵", "running": "🟡",
+                _STATUS_ICON  = {"queued": "🔵", "running": "🟡", "blocked": "⛔",
                                   "failed": "🔴", "done": "✅"}
-                _STATUS_COLOR = {"queued": "#4a9eff", "running": "#f5a623",
+                _STATUS_COLOR = {"queued": "#4a9eff", "running": "#f5a623", "blocked": "#ffbd2e",
                                   "failed": "#ff5f56", "done":   "#27c93f"}
-                _STATUS_BG    = {"queued": "#0d1f38", "running": "#2a1e08",
+                _STATUS_BG    = {"queued": "#0d1f38", "running": "#2a1e08", "blocked": "#2a2408",
                                   "failed": "#2a0a0a", "done":   "#0a1f10"}
 
                 def _q_elapsed(data: dict) -> str:
@@ -2304,7 +2893,7 @@ if PYSIDE_AVAILABLE:
                     s    = job["status"]
                     data = job.get("data", {})
                     icon = _STATUS_ICON.get(s, "⬜")
-                    grp  = "Aider" if job["group"] == "aider" else "Task"
+                    grp  = "Aider" if job["group"] == "aider" else ("System" if job["group"] == "system" else "Task")
                     tgt  = job["target"] or "—"
                     ins  = (job["instr"] or "—")
                     ts   = _q_ts_label(data)
@@ -2572,12 +3161,25 @@ if PYSIDE_AVAILABLE:
             self._tasks_timer.timeout.connect(self._tick_tasks)
             self._tasks_timer.start(2500)
 
+            self._clock_timer = QTimer(self)
+            self._clock_timer.timeout.connect(self._tick_clock)
+            self._clock_timer.start(1000)
+
+            self._sysres_timer = QTimer(self)
+            self._sysres_timer.timeout.connect(self._tick_sysres)
+            self._sysres_timer.start(4000)
+            self._tick_sysres()
+
+            self._diff_review_timer = QTimer(self)
+            self._diff_review_timer.timeout.connect(self._refresh_review_diff)
+            self._diff_review_timer.start(7000)
+
         def _tick_tasks(self) -> None:
             try:
                 idx = self.tabs.currentIndex()
-                if idx == 5:   # Tasks (shifted by Queue tab insert)
+                if idx == 6:   # Tasks
                     self._refresh_tasks_list()
-                elif idx == 3:  # Queue Hub — always refresh
+                elif idx == 4:  # Queue Hub - always refresh while visible
                     self._refresh_queue()
             except Exception:
                 pass
@@ -2614,10 +3216,62 @@ if PYSIDE_AVAILABLE:
                     self.badge.setText(f"● stale ({int(age_s)}s)")
                     self.badge.setStyleSheet("color: #ffbd2e;")
 
+        def _tick_clock(self) -> None:
+            if hasattr(self, 'lbl_clock'):
+                self.lbl_clock.setText(datetime.now().strftime("%H:%M:%S"))
+
+        def _tick_sysres(self) -> None:
+            if not hasattr(self, 'lbl_sysres'):
+                return
+            try:
+                import psutil as _ps
+                cpu = _ps.cpu_percent(interval=None)
+                ram = _ps.virtual_memory().percent
+                self.lbl_sysres.setText(f"CPU {cpu:.0f}% · RAM {ram:.0f}%")
+            except Exception:
+                self.lbl_sysres.setText("")
+
+        def _clear_chat(self) -> None:
+            self.chat.clear()
+            self.chat.append_ai("Chat cleared. Ready for new messages.")
+
+        def _q_set_filter(self, status: Optional[str]) -> None:
+            self._q_status_filter = status
+            for s, btn in getattr(self, '_q_filter_btns', {}).items():
+                btn.setChecked(s == status)
+            self._refresh_queue()
+
         def _start_live_feed(self) -> None:
             self._live_feed_thread = LiveFeedThread()
             self._live_feed_thread.feed_event.connect(self._on_feed_event)
             self._live_feed_thread.start()
+
+        def _append_diff_runtime_event(self, row: dict) -> None:
+            evt = str(row.get("event") or row.get("type") or "info").upper()
+            if evt not in {
+                "RUN_AIDER_START", "RUN_AIDER_END", "DIFF_SAVED", "VERIFY_COMPILE",
+                "NOOP", "FAILED", "DONE", "CU_CYCLE_START", "CU_EMPTY_DIFF",
+                "CU_2X_REVIEW", "CU_2X_REVIEW_PAUSED", "CU_NOOP_BUDGET_EXHAUSTED",
+                "CU_START", "CU_STOP", "CU_DEFER_DIRTY_TARGET", "CU_BLOCKED_BY_STAGED_EDITS",
+                "CU_DIRECTOR_REFRESH_READY", "CU_STALE_PLAN_FILTERED",
+            }:
+                return
+            ts = str(row.get("ts") or _fmt_hms())
+            msg = str(row.get("msg") or row.get("message") or "").strip()
+            detail = str(row.get("detail") or "").strip()
+            task_id = str(row.get("task_id") or "")
+            color = _color_for_event(evt)
+            body_lines = []
+            if task_id:
+                body_lines.append(f"task: {task_id}")
+            if msg:
+                body_lines.append(msg)
+            if detail:
+                body_lines.append(detail)
+            if evt == "DIFF_SAVED" and "no changes" in detail.lower():
+                body_lines.append("NOOP: no green/red diff was produced.")
+            self.diff.append_diff_block(f"[{ts}] {evt}", "\n".join(body_lines), accent=color)
+            self._refresh_review_diff()
 
         @Slot(dict)
         def _on_feed_event(self, row: dict) -> None:
@@ -2634,11 +3288,334 @@ if PYSIDE_AVAILABLE:
                 if detail:
                     body += "\n" + detail
                 self.terminal.append_block(f"[{ts}] {icon} {evt}", body[:9000], accent=color)
+                self._append_diff_runtime_event(row)
+                if hasattr(self, "_q_now"):
+                    self._refresh_queue()
+                if evt in {"DIRECTOR_PLAN_CREATED", "NOOP", "FAILED", "DONE", "CU_CYCLE_END", "CU_BUDGET_EXHAUSTED", "CU_NOOP_BUDGET_EXHAUSTED", "CU_2X_REVIEW_PAUSED"}:
+                    self._refresh_autonomy_tab()
             except Exception:
                 pass
 
+        # ------------------------------
+        # Left File Explorer
+        # ------------------------------
+        def _build_left_explorer(self, parent_splitter: QSplitter) -> None:
+            explorer_pane = QFrame()
+            explorer_pane.setObjectName("GlassCard")
+            parent_splitter.addWidget(explorer_pane)
+
+            lay = QVBoxLayout(explorer_pane)
+            lay.setContentsMargins(10, 10, 10, 8)
+            lay.setSpacing(6)
+
+            # Header
+            ex_hdr = QHBoxLayout()
+            ex_title = QLabel("📁 Files")
+            ex_title.setObjectName("Title")
+            ex_hdr.addWidget(ex_title)
+            ex_hdr.addStretch(1)
+            btn_up = QPushButton("↑ Up")
+            btn_up.setObjectName("Ghost")
+            btn_up.setFixedHeight(24)
+            btn_up.setToolTip("Go up one folder level")
+            btn_up.clicked.connect(self._explorer_go_up)
+            ex_hdr.addWidget(btn_up)
+            btn_ex_ref = QPushButton("⟳ Refresh")
+            btn_ex_ref.setObjectName("Ghost")
+            btn_ex_ref.setFixedHeight(24)
+            btn_ex_ref.setToolTip("Refresh current folder")
+            btn_ex_ref.clicked.connect(self._refresh_explorer)
+            ex_hdr.addWidget(btn_ex_ref)
+            lay.addLayout(ex_hdr)
+
+            # Path bar
+            self.explorer_path_bar = QLineEdit()
+            self.explorer_path_bar.setReadOnly(True)
+            self.explorer_path_bar.setText(str(PROJECT_DIR))
+            self.explorer_path_bar.setStyleSheet(
+                "font-size: 10px; color: #5A7090; padding: 3px 8px;"
+                " background: rgba(4,10,28,0.70); border-radius: 6px;"
+                " border: 1px solid rgba(120,95,36,0.28);"
+            )
+            lay.addWidget(self.explorer_path_bar)
+
+            # Action buttons row
+            act_row = QHBoxLayout()
+            act_row.setSpacing(3)
+            for label, tip, slot in [
+                ("Copy", "Copy selected", self._explorer_copy),
+                ("Cut",  "Cut selected",  self._explorer_cut),
+                ("Paste","Paste here",    self._explorer_paste),
+                ("Del",  "Delete",        self._explorer_delete),
+                ("Ren",  "Rename",        self._explorer_rename),
+                ("New",  "New Folder",    self._explorer_new_folder),
+            ]:
+                b = QPushButton(label)
+                b.setObjectName("Ghost")
+                b.setFixedHeight(22)
+                b.setToolTip(tip)
+                b.clicked.connect(slot)
+                b.setStyleSheet("font-size: 10px; padding: 1px 5px;")
+                act_row.addWidget(b)
+            lay.addLayout(act_row)
+
+            # Tree
+            self.explorer_tree = QTreeWidget()
+            self.explorer_tree.setHeaderHidden(True)
+            self.explorer_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
+            self.explorer_tree.setContextMenuPolicy(Qt.CustomContextMenu)
+            self.explorer_tree.customContextMenuRequested.connect(self._explorer_context_menu)
+            self.explorer_tree.itemDoubleClicked.connect(self._explorer_double_click)
+            lay.addWidget(self.explorer_tree, 1)
+
+            self._explorer_root: Optional[Path] = None  # None = drives list view
+            self._populate_explorer(None)
+
+        def _populate_explorer(self, target_dir: Optional[Path] = None) -> None:
+            # target_dir=None means "show all drives"
+            self._explorer_root = target_dir
+            if hasattr(self, 'explorer_path_bar'):
+                self.explorer_path_bar.setText("This PC" if target_dir is None else str(target_dir))
+            self.explorer_tree.clear()
+
+            if target_dir is None:
+                # Drives list
+                for drive in _list_windows_drives():
+                    item = QTreeWidgetItem([f"💾 {drive}"])
+                    item.setData(0, Qt.UserRole, str(drive))
+                    self.explorer_tree.addTopLevelItem(item)
+                    dummy = QTreeWidgetItem(["…"])
+                    dummy.setData(0, Qt.UserRole, "__dummy__")
+                    item.addChild(dummy)
+                return
+
+            _SKIP = {".git", "__pycache__", ".aider_venv", ".venv", "venv", "node_modules"}
+            try:
+                entries = sorted(target_dir.iterdir(), key=lambda p: (p.is_file(), p.name.lower()))
+            except PermissionError:
+                item = QTreeWidgetItem(["🚫 Access denied"])
+                self.explorer_tree.addTopLevelItem(item)
+                return
+            except Exception:
+                return
+            for entry in entries:
+                if entry.name in _SKIP:
+                    continue
+                icon = "📁 " if entry.is_dir() else "📄 "
+                item = QTreeWidgetItem([icon + entry.name])
+                item.setData(0, Qt.UserRole, str(entry))
+                self.explorer_tree.addTopLevelItem(item)
+                if entry.is_dir():
+                    dummy = QTreeWidgetItem(["…"])
+                    dummy.setData(0, Qt.UserRole, "__dummy__")
+                    item.addChild(dummy)
+
+        def _refresh_explorer(self) -> None:
+            self._populate_explorer(getattr(self, '_explorer_root', None))
+
+        def _explorer_go_up(self) -> None:
+            current = getattr(self, '_explorer_root', None)
+            if current is None:
+                return  # already at drives root
+            parent = current.parent
+            if parent == current:
+                # At drive root (e.g. C:\) — go to drives list
+                self._populate_explorer(None)
+            else:
+                self._populate_explorer(parent)
+
+        def _explorer_double_click(self, item: QTreeWidgetItem, _col: int) -> None:
+            path_str = str(item.data(0, Qt.UserRole) or "")
+            if path_str == "__dummy__":
+                return
+            path = Path(path_str)
+            if path.is_dir():
+                self._populate_explorer(path)
+            elif path.is_file():
+                self._open_file(path)
+
+        def _explorer_context_menu(self, pos) -> None:
+            item = self.explorer_tree.itemAt(pos)
+            menu = QMenu(self)
+            if item and str(item.data(0, Qt.UserRole) or "") != "__dummy__":
+                act_open    = menu.addAction("▶ Open / Edit")
+                act_explore = menu.addAction("🗂 Open in Explorer")
+                menu.addSeparator()
+                act_copy    = menu.addAction("Copy")
+                act_cut     = menu.addAction("Cut")
+                act_paste   = menu.addAction("Paste")
+                menu.addSeparator()
+                act_ren     = menu.addAction("Rename")
+                act_del     = menu.addAction("Delete")
+                menu.addSeparator()
+                act_up      = menu.addAction("⬆ Go Up")
+            else:
+                act_open = act_explore = act_copy = act_cut = act_ren = act_del = None
+                act_paste = menu.addAction("Paste")
+                act_up    = menu.addAction("⬆ Go Up")
+            act_new = menu.addAction("New Folder")
+
+            chosen = menu.exec(self.explorer_tree.viewport().mapToGlobal(pos))
+            if not chosen:
+                return
+            if item and str(item.data(0, Qt.UserRole) or "") != "__dummy__":
+                path = Path(str(item.data(0, Qt.UserRole) or ""))
+                if chosen == act_open:
+                    self._explorer_double_click(item, 0)
+                elif chosen == act_explore:
+                    try:
+                        subprocess.run(
+                            ["explorer", str(path if path.is_dir() else path.parent)],
+                            check=False, creationflags=CREATE_NO_WINDOW,
+                        )
+                    except Exception:
+                        pass
+                elif chosen == act_copy:
+                    self._explorer_clipboard = [path]; self._explorer_is_cut = False
+                elif chosen == act_cut:
+                    self._explorer_clipboard = [path]; self._explorer_is_cut = True
+                elif chosen == act_ren:
+                    self._explorer_rename_path(path)
+                elif chosen == act_del:
+                    self._explorer_delete_path(path)
+            if chosen == act_paste:
+                self._explorer_paste()
+            if chosen == act_up:
+                self._explorer_go_up()
+            if chosen == act_new:
+                self._explorer_new_folder()
+
+        def _explorer_copy(self) -> None:
+            items = self.explorer_tree.selectedItems()
+            if items:
+                self._explorer_clipboard = [Path(str(i.data(0, Qt.UserRole))) for i in items
+                                             if str(i.data(0, Qt.UserRole)) != "__dummy__"]
+                self._explorer_is_cut = False
+
+        def _explorer_cut(self) -> None:
+            items = self.explorer_tree.selectedItems()
+            if items:
+                self._explorer_clipboard = [Path(str(i.data(0, Qt.UserRole))) for i in items
+                                             if str(i.data(0, Qt.UserRole)) != "__dummy__"]
+                self._explorer_is_cut = True
+
+        def _explorer_paste(self) -> None:
+            if not self._explorer_clipboard:
+                return
+            dest_dir = getattr(self, '_explorer_root', None) or PROJECT_DIR
+            for src in self._explorer_clipboard:
+                try:
+                    if src.is_file():
+                        shutil.copy2(str(src), str(dest_dir / src.name))
+                    elif src.is_dir():
+                        shutil.copytree(str(src), str(dest_dir / src.name), dirs_exist_ok=True)
+                    if self._explorer_is_cut:
+                        if src.is_file():
+                            src.unlink(missing_ok=True)
+                        elif src.is_dir():
+                            shutil.rmtree(str(src), ignore_errors=True)
+                except Exception:
+                    pass
+            self._explorer_is_cut = False
+            self._explorer_clipboard = []
+            self._refresh_explorer()
+
+        def _explorer_delete(self) -> None:
+            for item in self.explorer_tree.selectedItems():
+                path_str = str(item.data(0, Qt.UserRole) or "")
+                if path_str and path_str != "__dummy__":
+                    self._explorer_delete_path(Path(path_str))
+
+        def _explorer_delete_path(self, path: Path) -> None:
+            try:
+                reply = QMessageBox.question(
+                    self, "Delete", f"Delete '{path.name}'?",
+                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No,
+                )
+                if reply == QMessageBox.Yes:
+                    if path.is_file():
+                        path.unlink(missing_ok=True)
+                    elif path.is_dir():
+                        shutil.rmtree(str(path), ignore_errors=True)
+                    self._refresh_explorer()
+            except Exception:
+                pass
+
+        def _explorer_rename(self) -> None:
+            items = self.explorer_tree.selectedItems()
+            if items:
+                path_str = str(items[0].data(0, Qt.UserRole) or "")
+                if path_str and path_str != "__dummy__":
+                    self._explorer_rename_path(Path(path_str))
+
+        def _explorer_rename_path(self, path: Path) -> None:
+            try:
+                new_name, ok = QInputDialog.getText(
+                    self, "Rename", f"New name for '{path.name}':", text=path.name
+                )
+                if ok and new_name and new_name.strip() and new_name.strip() != path.name:
+                    os.rename(str(path), str(path.parent / new_name.strip()))
+                    self._refresh_explorer()
+            except Exception:
+                pass
+
+        def _explorer_new_folder(self) -> None:
+            try:
+                dest = getattr(self, '_explorer_root', None) or PROJECT_DIR
+                name, ok = QInputDialog.getText(self, "New Folder", "Folder name:")
+                if ok and name and name.strip():
+                    (dest / name.strip()).mkdir(parents=True, exist_ok=True)
+                    self._refresh_explorer()
+            except Exception:
+                pass
+
+        def _refresh_autonomy_tab(self) -> None:
+            """Refresh Inspector Autonomy tab without writing to main chat."""
+            try:
+                snapshot = build_inspector_autonomy_snapshot(PROJECT_DIR)
+                self.autonomy.clear()
+                counts = {
+                    "plans": len(snapshot.get("plans") or []),
+                    "jobs": len(snapshot.get("jobs") or []),
+                    "diffs": len(snapshot.get("diffs") or []),
+                    "failures": len(snapshot.get("failures") or []),
+                    "summaries": len(snapshot.get("summaries") or []),
+                }
+                self.autonomy.append_block("Autonomy Snapshot", json.dumps(counts, indent=2), accent="#7bd88f")
+                for plan in (snapshot.get("plans") or [])[:5]:
+                    self.autonomy.append_block(
+                        f"Plan: {plan.get('goal', 'unknown')}",
+                        json.dumps(plan.get("missions") or [], indent=2)[:4000],
+                        accent="#8ab4ff",
+                    )
+                for job in (snapshot.get("jobs") or [])[:8]:
+                    body = json.dumps({
+                        "task_id": job.get("task_id") or job.get("id"),
+                        "status": job.get("status"),
+                        "target_file": job.get("target_file") or job.get("target_files"),
+                        "diff_exists": job.get("diff_exists"),
+                        "verification_passed": job.get("verification_passed") or job.get("verify_passed"),
+                        "failure_reason": job.get("failure_reason") or job.get("error"),
+                        "noop_reason": job.get("noop_reason"),
+                    }, indent=2)
+                    accent = "#ffbd2e" if job.get("status") in {"failed", "noop"} else "#a6a6ad"
+                    self.autonomy.append_block("Job", body, accent=accent)
+                for summary in (snapshot.get("summaries") or [])[:3]:
+                    self.autonomy.append_block(
+                        f"Summary: {Path(summary.get('path', '')).name}",
+                        summary.get("preview", ""),
+                        accent="#c9a7ff",
+                    )
+            except Exception as exc:
+                self.autonomy.append_block("Autonomy Snapshot Error", str(exc), accent="#ff6b6b")
+
 
 def main() -> None:
+    if "--verify-smoke" in sys.argv:
+        ensure_layout()
+        print("terminal smoke ok")
+        return
+
     if not PYSIDE_AVAILABLE:
         print("PySide6 is required. Run: pip install PySide6")
         sys.exit(1)
@@ -2647,7 +3624,7 @@ def main() -> None:
 
     app = QApplication.instance() or QApplication(sys.argv)
     app.setApplicationName("SurgeApp")
-    app.setStyleSheet(CLAUDE_DARK_QSS)
+    app.setStyleSheet(LUNA_GOLD_QSS)
 
     win = LunaClaudeStyleWindow()
     win.show()

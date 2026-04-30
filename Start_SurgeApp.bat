@@ -13,7 +13,7 @@ cd /d "%ROOT%"
 
 if "%LUNA_PROJECT_DIR%"=="" set "LUNA_PROJECT_DIR=%ROOT%"
 if "%OLLAMA_API_BASE%"=="" set "OLLAMA_API_BASE=http://127.0.0.1:11434"
-if "%LUNA_INSTRUCTOR_MODEL%"=="" set "LUNA_INSTRUCTOR_MODEL=ollama_chat/llama3.1:8b-instruct-q4_K_M"
+if "%LUNA_INSTRUCTOR_MODEL%"=="" set "LUNA_INSTRUCTOR_MODEL=ollama_chat/qwen2.5-coder:7b-instruct"
 if "%AIDER_EXE%"=="" set "AIDER_EXE=%ROOT%\.aider_venv\Scripts\aider.exe"
 
 if not exist "%ROOT%\logs"              mkdir "%ROOT%\logs"              >nul 2>nul
@@ -86,17 +86,23 @@ powershell -NoProfile -WindowStyle Hidden -Command ^
 :: ---- StartIfMissing: start each service only if not already running ----
 :: PYEXE     = system Python (has PySide6, Luna modules) -> guardian, apprentice, worker, UI
 :: AIDER_PY  = .aider_venv pythonw (has aider installed)  -> aider_bridge ONLY
+:: All services use StartIfMissing so double-clicking the icon is safe.
 powershell -NoProfile -WindowStyle Hidden -Command ^
   "$root='%ROOT%'; $py='%PYEXE%'; $aiderPy='%AIDER_PY%';" ^
-  "function StartIfMissing($script, $exe){" ^
+  "function StartIfMissing($script, $exe, $extraArgs=''){" ^
   "  $p=(Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like ('*' + $script + '*') } | Select-Object -First 1);" ^
-  "  if(-not $p){ Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList ('\"' + (Join-Path $root $script) + '\"') -WorkingDirectory $root }" ^
+  "  if(-not $p){" ^
+  "    $argStr = '\"' + (Join-Path $root $script) + '\"';" ^
+  "    if($extraArgs){ $argStr = $argStr + ' ' + $extraArgs };" ^
+  "    Start-Process -WindowStyle Hidden -FilePath $exe -ArgumentList $argStr -WorkingDirectory $root" ^
+  "  }" ^
   "}" ^
-  "if(Test-Path (Join-Path $root 'luna_guardian.py')){ StartIfMissing 'luna_guardian.py' $py }" ^
-  "if(Test-Path (Join-Path $root 'luna_apprentice.py')){ StartIfMissing 'luna_apprentice.py' $py }" ^
-  "if(Test-Path (Join-Path $root 'worker.py')){ StartIfMissing 'worker.py' $py }" ^
+  "if(Test-Path (Join-Path $root 'luna_guardian.py'))   { StartIfMissing 'luna_guardian.py'           $py }" ^
+  "if(Test-Path (Join-Path $root 'luna_apprentice.py')) { StartIfMissing 'luna_apprentice.py'         $py }" ^
+  "if(Test-Path (Join-Path $root 'worker.py'))          { StartIfMissing 'worker.py'                  $py }" ^
   "if((Test-Path (Join-Path $root 'aider_bridge.py')) -and (Test-Path $aiderPy)){ StartIfMissing 'aider_bridge.py' $aiderPy }" ^
-  "if(Test-Path (Join-Path $root 'SurgeApp_Claude_Terminal.py')){ Start-Process -WindowStyle Hidden -FilePath $py -ArgumentList ('\"' + (Join-Path $root 'SurgeApp_Claude_Terminal.py') + '\"') -WorkingDirectory $root }"
+  "if(Test-Path (Join-Path $root 'SurgeApp_Claude_Terminal.py')){ StartIfMissing 'SurgeApp_Claude_Terminal.py' $py }" ^
+  "if(Test-Path (Join-Path $root 'luna_start.pyw'))     { StartIfMissing 'luna_start.pyw --tray-only' $py '--tray-only' }"
 
 :: ---- auto-start continues-update loop (skip if one is already alive) ----
 :: We match on the unique CLI flag '--continues-update-start' so we don't

@@ -11,6 +11,7 @@ until those runners are modularised in later steps.
 from __future__ import annotations
 
 import os
+import re
 import time
 import traceback
 from datetime import datetime
@@ -109,6 +110,24 @@ def build_runtime_exception_report(task_id: str, target_file: str, exc: Exceptio
     )
 
 
+def _report_claims_unverified_upgrade(report: str) -> bool:
+    text = re.sub(r"[^a-z0-9]+", " ", str(report or "").lower()).strip()
+    markers = [
+        "i upgraded",
+        "just patched",
+        "updated my model",
+        "last evolution note",
+        "self evolution log",
+        "engineering note",
+        "technical gap",
+        "likely fix",
+        "next i m pushing",
+        "next im pushing",
+        "so my answers land faster",
+    ]
+    return any(marker in text for marker in markers)
+
+
 def run_mode_safely(task_id: str, target_file: str, fn):
     try:
         return fn(), True
@@ -150,9 +169,21 @@ def update_task_runtime(
 
 # ── Task finish helpers ───────────────────────────────────────────────────────
 
-def _finish_task(task_path: Path, solution_path: Path, header: str, body: str, success: bool) -> None:
+def _finish_task(task_path: Path, solution_path: Path, header: str, body: str, success: bool, reason: str = "") -> None:
     safe_write_text(solution_path, header + body)
-    update_task_runtime(task_path, "done" if success else "failed", "complete" if success else "failed", 100, {"finished_at": now_iso()})
+    extra: dict = {"finished_at": now_iso()}
+    if not success and reason:
+        extra["reason"] = reason[:400]
+    elif not success and body:
+        # Extract a short reason from the body so the terminal can display it
+        # without needing to read the solution file separately.
+        first_meaningful = next(
+            (l.strip() for l in body.splitlines() if l.strip() and not l.startswith("=")),
+            ""
+        )
+        if first_meaningful:
+            extra["reason"] = first_meaningful[:200]
+    update_task_runtime(task_path, "done" if success else "failed", "complete" if success else "failed", 100, extra)
     dest = DONE_DIR / build_final_task_name(task_path) if success else FAILED_DIR / build_final_task_name(task_path)
     try:
         os.replace(str(task_path), str(dest))
@@ -254,7 +285,7 @@ def _complete_task_mode(
 
 def _evaluate_standard_mode_success(mode_label: str, report: str, runtime_ok: bool, verification: Optional[Dict[str, Any]]) -> bool:
     if mode_label in {"chat", "chat-response"}:
-        return runtime_ok and bool(str(report or "").strip())
+        return runtime_ok and bool(str(report or "").strip()) and not _report_claims_unverified_upgrade(report)
     if mode_label == "approval-response":
         return "FAILED" not in report
     if mode_label in {"system-action", "mcp-adoption", "upgrade-proposal"}:
