@@ -1932,6 +1932,7 @@ if PYSIDE_AVAILABLE:
                 _r = _sp.run(
                     ["tasklist"],
                     capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5,
+                    creationflags=0x08000000,
                 )
                 # Check cu_loop.lock exists and PID alive
                 _lock = MEMORY_DIR / "cu_loop.lock.json"
@@ -2937,7 +2938,8 @@ if PYSIDE_AVAILABLE:
                     if _cu_pid > 0:
                         import subprocess as _sp
                         _r = _sp.run(["tasklist", "/FI", f"PID eq {_cu_pid}", "/NH"],
-                                     capture_output=True, text=True, timeout=3)
+                                     capture_output=True, text=True, timeout=3,
+                                     creationflags=0x08000000)
                         cu_process_alive = str(_cu_pid) in (_r.stdout or "")
             except Exception:
                 pass
