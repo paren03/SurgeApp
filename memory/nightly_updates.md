@@ -5500,3 +5500,260 @@ Follow the concrete edit requirement above exactly; do not rewrite unrelated cod
 - none recorded
 ### which prompts failed
 - none recorded
+## Cycle 1 — 2026-04-30T14:12:10
+- task_id: 
+- status: deferred
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: False
+- diff: 
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: deferred because target has existing staged or unstaged edits
+
+## Cycle 1 — 2026-04-30T14:12:10
+- task_id: 
+- status: blocked
+- targets: 
+- aider_rc: None
+- verify_passed: False
+- diff: 
+- instructions: continues_update could not safely queue any job because every target had staged, unstaged, or untracked edits
+- summary: all planned jobs deferred by dirty-target guard
+
+## Continues Update Morning Summary - 2026-04-30T14:12:10
+### what was attempted
+- review_gate_stability
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T14:17:05
+- task_id: 20260430_141546_0d90682b
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_141546_0d90682b.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T14:26:25
+### what was attempted
+- review_gate_stability
+- director_refresh_01
+- director_refresh_02
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T14:35:33
+- task_id: 20260430_143410_5e7bfba7
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_143410_5e7bfba7.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Cycle 2 — 2026-04-30T14:50:34
+- task_id: 20260430_144534_419098ad
+- status: timeout
+- targets: SurgeApp_Claude_Terminal.py
+- aider_rc: None
+- verify_passed: False
+- diff: 
+- instructions: Director refresh mission: Create a fresh, non-repeated mission because this target/prompt family recently produced no usable upgrade. Produce a concrete staged code/test diff or explicit compliance evidence; do not repeat the prior prompt family.
+Target files: SurgeApp_Claude_Terminal.py
+Acceptance test: Inspector can read live-feed autonomy events and show plan/job/failure summaries.
+Expected diff type: inspector_ui
+Prior failed/noop reason: no_diff
+Make one concrete staged improvement only. If the target is already compliant, write clear evidence instead of a fake upgrade claim.
+
+Concrete edit requirement:
+At line 145 there is an `except` block whose only statement is `pass`. Here is the line:
+
+          pass
+
+Replace that `pass` with a comment `# swallowed: <one-line reason this is safe to ignore>`. Do NOT change anything else - only that one line.
+Follow the concrete edit requirement above exactly; do not rewrite unrelated code.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T14:50:34
+### what was attempted
+- review_gate_stability
+- director_refresh_01
+- director_refresh_02
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T14:55:26
+- task_id: 20260430_145349_04bd2f34
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_145349_04bd2f34.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Cycle 2 — 2026-04-30T15:10:27
+- task_id: 20260430_150527_a45def7b
+- status: timeout
+- targets: SurgeApp_Claude_Terminal.py
+- aider_rc: None
+- verify_passed: False
+- diff: 
+- instructions: Director refresh mission: Create a fresh, non-repeated mission because this target/prompt family recently produced no usable upgrade. Produce a concrete staged code/test diff or explicit compliance evidence; do not repeat the prior prompt family.
+Target files: SurgeApp_Claude_Terminal.py
+Acceptance test: Inspector can read live-feed autonomy events and show plan/job/failure summaries.
+Expected diff type: inspector_ui
+Prior failed/noop reason: no_diff
+Make one concrete staged improvement only. If the target is already compliant, write clear evidence instead of a fake upgrade claim.
+
+Concrete edit requirement:
+At line 145 there is an `except` block whose only statement is `pass`. Here is the line:
+
+          pass
+
+Replace that `pass` with a comment `# swallowed: <one-line reason this is safe to ignore>`. Do NOT change anything else - only that one line.
+Follow the concrete edit requirement above exactly; do not rewrite unrelated code.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T15:10:27
+### what was attempted
+- review_gate_stability
+- director_refresh_01
+- director_refresh_02
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T15:20:27
+- task_id: 20260430_151925_e8be96b6
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_151925_e8be96b6.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Cycle 2 — 2026-04-30T15:35:28
+- task_id: 20260430_153028_8fb66cc3
+- status: timeout
+- targets: SurgeApp_Claude_Terminal.py
+- aider_rc: None
+- verify_passed: False
+- diff: 
+- instructions: Director refresh mission: Create a fresh, non-repeated mission because this target/prompt family recently produced no usable upgrade. Produce a concrete staged code/test diff or explicit compliance evidence; do not repeat the prior prompt family.
+Target files: SurgeApp_Claude_Terminal.py
+Acceptance test: Inspector can read live-feed autonomy events and show plan/job/failure summaries.
+Expected diff type: inspector_ui
+Prior failed/noop reason: no_diff
+Make one concrete staged improvement only. If the target is already compliant, write clear evidence instead of a fake upgrade claim.
+
+Concrete edit requirement:
+At line 145 there is an `except` block whose only statement is `pass`. Here is the line:
+
+          pass
+
+Replace that `pass` with a comment `# swallowed: <one-line reason this is safe to ignore>`. Do NOT change anything else - only that one line.
+Follow the concrete edit requirement above exactly; do not rewrite unrelated code.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T15:35:28
+### what was attempted
+- review_gate_stability
+- director_refresh_01
+- director_refresh_02
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T15:39:32
+- task_id: 20260430_153815_50bbf59d
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_153815_50bbf59d.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+

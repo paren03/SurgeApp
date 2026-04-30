@@ -21,6 +21,7 @@ from luna_modules.luna_autonomy_control import (
 
 class TestAutonomyQualityGate(unittest.TestCase):
     def setUp(self) -> None:
+        "Set up test environment"
         self.root = Path("temp_test_zone") / f"autonomy_control_{uuid.uuid4().hex[:8]}"
         (self.root / "aider_jobs" / "failed").mkdir(parents=True, exist_ok=True)
         (self.root / "aider_jobs" / "done").mkdir(parents=True, exist_ok=True)
