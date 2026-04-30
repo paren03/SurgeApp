@@ -9885,10 +9885,11 @@ _CU_KILL_SWITCH_PATH = _CU_PROJECT_DIR / "LUNA_STOP_NOW.flag"
 _CU_SHUTDOWN_FLAG_PATH = _CU_LOGS_DIR / "SHUTDOWN.flag"
 _CU_DEFAULT_INTERVAL_SECONDS = 600.0   # 10 min — prevents pile-up on slow models
 _CU_DIRECTOR_REFRESH_INTERVAL_SECONDS = 60.0  # refresh plans should keep moving but not hammer the machine
-_CU_DEFAULT_JOB_TIMEOUT_SECONDS = 300.0  # must be > AIDER_TIMEOUT(240s) so aider finishes first
-_CU_MAX_CONSECUTIVE_FAILURES = 5        # stop loop after N back-to-back real failures
-_CU_MAX_EMPTY_ON_FILE = 2               # skip a file after this many consecutive empty diffs
+_CU_DEFAULT_JOB_TIMEOUT_SECONDS = 420.0  # must be > AIDER_TIMEOUT so aider finishes first
+_CU_MAX_CONSECUTIVE_FAILURES = 5         # stop loop after N back-to-back real failures
+_CU_MAX_EMPTY_ON_FILE = 2                # skip a file after this many consecutive empty diffs
 _CU_MAX_NOOP_PER_CYCLE = 5              # pause if too many jobs prove already-compliant/no-diff
+_CU_LARGE_FILE_LINE_THRESHOLD = 2000    # files with more lines get section-level targeting
 _CU_RECOVERY_FILES = [
     "luna_modules/luna_heartbeat.py",
     "luna_modules/luna_logging.py",
@@ -10586,6 +10587,57 @@ def continues_update_stop() -> Dict[str, Any]:
     return {"ok": True, "stop_flag": str(_CU_STOP_FLAG_PATH)}
 
 
+# ── Large-file chunked targeting ──────────────────────────────────────────────
+
+def _cu_get_file_sections(filepath: str) -> List[Dict[str, Any]]:
+    """Return top-level class/function sections suitable for focused edits."""
+    try:
+        path = Path(filepath)
+        if not path.exists():
+            return []
+        source = path.read_text(encoding="utf-8", errors="replace")
+        tree = ast.parse(source)
+        sections: List[Dict[str, Any]] = []
+        for node in ast.iter_child_nodes(tree):
+            if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+                start = node.lineno
+                end = getattr(node, "end_lineno", None) or start
+                sections.append({
+                    "name": node.name,
+                    "kind": "class" if isinstance(node, ast.ClassDef) else "function",
+                    "start_line": start,
+                    "end_line": end,
+                    "line_count": end - start + 1,
+                })
+        return sections
+    except Exception:
+        return []
+
+
+def _cu_pick_next_section(filepath: str, last_section_name: str) -> Optional[Dict[str, Any]]:
+    """Rotate through substantial (≥50-line) sections of a large file."""
+    sections = [s for s in _cu_get_file_sections(filepath) if s["line_count"] >= 50]
+    if not sections:
+        return None
+    if last_section_name:
+        for i, s in enumerate(sections):
+            if s["name"] == last_section_name:
+                return sections[(i + 1) % len(sections)]
+    return sections[0]
+
+
+def _cu_annotate_for_section(instruction: str, target_file: str, section: Dict[str, Any]) -> str:
+    """Prefix instruction with a focused section directive so aider edits only that block."""
+    kind = section.get("kind", "section")
+    name = section.get("name", "")
+    start = section.get("start_line", "")
+    end = section.get("end_line", "")
+    return (
+        f"Focus ONLY on the {kind} `{name}` (lines {start}–{end}) in `{target_file}`. "
+        f"Do not modify anything outside this {kind}.\n\n{instruction}"
+    )
+
+
 def continues_update_loop(
     interval_seconds: float = _CU_DEFAULT_INTERVAL_SECONDS,
     job_timeout_seconds: float = _CU_DEFAULT_JOB_TIMEOUT_SECONDS,
@@ -10915,6 +10967,25 @@ def continues_update_loop(
             _cu_feed("CU_CYCLE_START", f"Cycle {cycle} starting",
                      detail=f"target={targets} src={source_label} idx={template_index} "
                             f"empty_streak={file_empty_streak.get(target_file,0)} consec_fail={consecutive_failures}")
+            # Chunk large files: pick one section per cycle so aider stays within context
+            section_cursor: Dict[str, str] = state.get("file_section_cursor") or {}
+            for _tgt in targets:
+                _full = str(_CU_PROJECT_DIR / _tgt)
+                try:
+                    _line_count = sum(1 for _ in open(_full, "rb"))
+                except Exception:
+                    _line_count = 0
+                if _line_count >= _CU_LARGE_FILE_LINE_THRESHOLD:
+                    _section = _cu_pick_next_section(_full, section_cursor.get(_tgt, ""))
+                    if _section:
+                        instructions = _cu_annotate_for_section(instructions, _tgt, _section)
+                        section_cursor[_tgt] = _section["name"]
+                        _cu_feed(
+                            "CU_SECTION_FOCUS",
+                            f"Cycle {cycle}: large file — focusing on {_section['kind']} "
+                            f"`{_section['name']}` (lines {_section['start_line']}–{_section['end_line']})",
+                        )
+                        break  # one section focus per job
             state.update({
                 "running": True,
                 "phase": "queueing",
@@ -10923,6 +10994,7 @@ def continues_update_loop(
                 "cooldown_until": "",
                 "cooldown_remaining_seconds": 0,
                 "last_cycle_at": _cu_now_iso(),
+                "file_section_cursor": section_cursor,
             })
             _cu_write_state(state)
             task_id = _cu_submit_aider_job(instructions, targets, apply_on_pass=False, plan_job=plan_job)

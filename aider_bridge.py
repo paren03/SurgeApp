@@ -110,7 +110,7 @@ AIDER_FLAGS   = [
 
 APPLY_ON_PASS  = os.environ.get("APPLY_ON_PASS", "false").lower() == "true"
 POLL_INTERVAL  = 3.0   # seconds between active dir scans
-AIDER_TIMEOUT  = 240   # seconds — sufficient for diff format
+AIDER_TIMEOUT  = 360   # seconds — extended for large-file section edits
 BRIDGE_PID_PATH = LOGS_DIR / "aider_bridge.pid"
 
 
