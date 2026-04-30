@@ -3082,7 +3082,8 @@ def autonomous_maintenance_cycle() -> None:
             state["last_message"] = HEARTBEAT_STATE.get("last_message", "")
             write_json_atomic(LUNA_AUTONOMY_STATE_PATH, state)
         except Exception as exc:
-            _diag(f"autonomous_maintenance_cycle failed: {exc}")
+            import traceback as _tb
+            _diag(f"autonomous_maintenance_cycle failed: {exc}\n{''.join(_tb.format_tb(exc.__traceback__))}")
         time.sleep(2.0)
 
 def process_task(task_path: Path) -> bool:
