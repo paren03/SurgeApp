@@ -9879,6 +9879,7 @@ _CU_NIGHTLY_MD_PATH = _CU_MEMORY_DIR / "nightly_updates.md"
 _CU_NIGHTLY_JSONL_PATH = _CU_MEMORY_DIR / "nightly_updates.jsonl"
 _CU_STATE_PATH = _CU_MEMORY_DIR / "continues_update_state.json"
 _CU_STOP_FLAG_PATH = _CU_MEMORY_DIR / "continues_update.stop"
+_CU_FORCE_START_FLAG_PATH = _CU_MEMORY_DIR / "cu_force_start.flag"
 _CU_ARCHITECT_STOP_FLAG_PATH = _CU_MEMORY_DIR / "architect.stop"
 _CU_KILL_SWITCH_PATH = _CU_PROJECT_DIR / "LUNA_STOP_NOW.flag"
 _CU_SHUTDOWN_FLAG_PATH = _CU_LOGS_DIR / "SHUTDOWN.flag"
@@ -11076,6 +11077,13 @@ def continues_update_loop(
             )
             slept = 0.0
             while slept < cooldown_seconds and not _cu_should_stop():
+                if _CU_FORCE_START_FLAG_PATH.exists():
+                    try:
+                        _CU_FORCE_START_FLAG_PATH.unlink(missing_ok=True)
+                    except Exception:
+                        pass
+                    _cu_feed("CU_FORCE_START", "User requested immediate start — skipping cooldown")
+                    break
                 step = min(2.0, cooldown_seconds - slept)
                 time.sleep(step)
                 slept += step

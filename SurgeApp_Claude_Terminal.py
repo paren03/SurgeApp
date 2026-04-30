@@ -1915,6 +1915,50 @@ if PYSIDE_AVAILABLE:
             except Exception as exc:
                 self._append_luna_msg(f"⚠ Could not start continues-update: {exc}")
 
+        def _force_start_cu_from_ui(self) -> None:
+            """Skip cooldown and make the CU loop start its next cycle immediately."""
+            _force_flag = MEMORY_DIR / "cu_force_start.flag"
+            try:
+                _force_flag.parent.mkdir(parents=True, exist_ok=True)
+                _force_flag.write_text("force-start requested from terminal", encoding="utf-8")
+            except Exception as exc:
+                self._append_luna_msg(f"⚠ Could not write force-start flag: {exc}")
+                return
+
+            # If no CU process is running, also start one
+            _cu_already = False
+            try:
+                import subprocess as _sp
+                _r = _sp.run(
+                    ["tasklist"],
+                    capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5,
+                )
+                # Check cu_loop.lock exists and PID alive
+                _lock = MEMORY_DIR / "cu_loop.lock.json"
+                if _lock.exists():
+                    import json as _json
+                    _pid = int(_json.loads(_lock.read_text(encoding="utf-8", errors="replace") or "{}").get("pid", 0) or 0)
+                    _cu_already = _pid > 0 and str(_pid) in (_r.stdout or "")
+            except Exception:
+                pass
+
+            if not _cu_already:
+                try:
+                    _cu_stop = MEMORY_DIR / "continues_update.stop"
+                    if _cu_stop.exists():
+                        _cu_stop.unlink(missing_ok=True)
+                    import subprocess as _sp2
+                    _sp2.Popen(
+                        [self._ui_pythonw(), str(WORKER_PATH), "--continues-update-start"],
+                        cwd=str(PROJECT_DIR),
+                        creationflags=CREATE_NO_WINDOW,
+                    )
+                    self._append_luna_msg("▶ **Force start:** cooldown skipped — new upgrade cycle starting now.")
+                except Exception as exc:
+                    self._append_luna_msg(f"⚠ Could not start CU process: {exc}")
+            else:
+                self._append_luna_msg("⚡ **Force start:** cooldown flag set — active CU loop will skip wait and start next cycle now.")
+
         @Slot()
         def _cancel_continues_update_from_ui(self) -> None:
             _cu_stop = MEMORY_DIR / "continues_update.stop"
@@ -2032,6 +2076,18 @@ if PYSIDE_AVAILABLE:
             if _is_start_cu:
                 self.input.clear()
                 self._start_continues_update_from_ui()
+                return
+
+            # Force-start: skip cooldown and start immediately
+            _is_force_start = raw_lower in (
+                "start now", "start all", "start all upgrades", "start all updates",
+                "force start", "force update", "force upgrade", "skip cooldown",
+                "skip wait", "go now", "upgrade now", "update now", "/go", "/start now",
+                "/force", "/skip",
+            )
+            if _is_force_start:
+                self.input.clear()
+                self._force_start_cu_from_ui()
                 return
 
             # Check for upgradeable packages

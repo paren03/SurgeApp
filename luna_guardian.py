@@ -37,7 +37,8 @@ AIDER_PYTHONW = PROJECT_DIR / ".aider_venv" / "Scripts" / "pythonw.exe"
 SERVICE_SCRIPTS = {
     "worker": "worker.py",
     "aider_bridge": "aider_bridge.py",
-    "terminal": "SurgeApp_Claude_Terminal.py",
+    # Terminal is opened by LaunchLuna.pyw only — guardian must not respawn it
+    # because each respawn creates an unwanted visible popup window.
 }
 
 SERVICE_LOCKS = {
