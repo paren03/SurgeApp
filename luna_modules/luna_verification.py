@@ -47,6 +47,7 @@ from luna_modules.luna_paths import (
     VERIFY_TIMEOUT_SECONDS,
 )
 from luna_modules.luna_routing import normalize_prompt_text
+from luna_modules.luna_heartbeat import HEARTBEAT_LOCK, set_heartbeat
 
 # Mutable cache shared with worker.py — the dict object is the same instance
 # once worker.py does ``from luna_modules.luna_verification import VERIFICATION_CACHE``.
