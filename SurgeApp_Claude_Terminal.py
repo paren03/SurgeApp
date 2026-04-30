@@ -2924,6 +2924,13 @@ if PYSIDE_AVAILABLE:
             active_targets = cu_state.get("active_target_files") or []
             if isinstance(active_targets, list) and active_targets:
                 cu_target = ", ".join(str(item) for item in active_targets[:3])
+            # Annotate target with section focus when chunking a large file
+            _sec_cursor = cu_state.get("file_section_cursor") or {}
+            for _t in (active_targets or []):
+                _sec = _sec_cursor.get(str(_t), "")
+                if _sec:
+                    cu_target = f"{_t} › {_sec}"
+                    break
             latest_done = next((j for j in full_jobs if j.get("status") == "done"), {})
             latest_failed = next((j for j in full_jobs if j.get("status") == "failed"), {})
 
