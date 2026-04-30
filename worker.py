@@ -11024,24 +11024,37 @@ def continues_update_loop(
             if status == "stopped":
                 break
             if not two_pass_review.get("satisfied"):
-                pause_reason = str(two_pass_review.get("action") or "2x_review_not_satisfied")
-                _CU_STOP_FLAG_PATH.write_text(_cu_now_iso(), encoding="utf-8", errors="replace")
-                state.update({
-                    "running": False,
-                    "phase": "paused",
-                    "pause_reason": pause_reason,
-                    "stopped_at": _cu_now_iso(),
-                    "cooldown_until": "",
-                    "cooldown_remaining_seconds": 0,
-                })
-                _cu_write_state(state)
-                _cu_feed(
-                    "CU_2X_REVIEW_PAUSED",
-                    "Pausing continues-update because the 2x review was not satisfied",
-                    detail=pause_reason,
-                    task_id=task_id,
-                )
-                break
+                # Hard failures (timeout/crash) use the consecutive_failures budget
+                # so a single large-file timeout doesn't stop the whole loop.
+                # Only pause immediately for noop/no-diff failures or when the
+                # failure budget is exhausted.
+                if hard_failure and consecutive_failures < _CU_MAX_CONSECUTIVE_FAILURES:
+                    _cu_feed(
+                        "CU_2X_REVIEW_RETRY",
+                        f"Cycle {cycle} hard-failed ({status}) but within failure budget "
+                        f"({consecutive_failures}/{_CU_MAX_CONSECUTIVE_FAILURES}) — continuing",
+                        task_id=task_id,
+                    )
+                    # fall through to cooldown so the next cycle picks a fresh target
+                else:
+                    pause_reason = str(two_pass_review.get("action") or "2x_review_not_satisfied")
+                    _CU_STOP_FLAG_PATH.write_text(_cu_now_iso(), encoding="utf-8", errors="replace")
+                    state.update({
+                        "running": False,
+                        "phase": "paused",
+                        "pause_reason": pause_reason,
+                        "stopped_at": _cu_now_iso(),
+                        "cooldown_until": "",
+                        "cooldown_remaining_seconds": 0,
+                    })
+                    _cu_write_state(state)
+                    _cu_feed(
+                        "CU_2X_REVIEW_PAUSED",
+                        "Pausing continues-update because the 2x review was not satisfied",
+                        detail=pause_reason,
+                        task_id=task_id,
+                    )
+                    break
             if noop_count >= _CU_MAX_NOOP_PER_CYCLE:
                 _CU_STOP_FLAG_PATH.write_text(_cu_now_iso(), encoding="utf-8", errors="replace")
                 state.update({
