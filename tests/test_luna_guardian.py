@@ -53,6 +53,29 @@ class TestLunaGuardian(unittest.TestCase):
         command = " ".join(run.call_args.args[0])
         self.assertIn("$_.Name -match '^python'", command)
 
+    def test_matching_processes_ignores_aider_child_target_file_mentions(self) -> None:
+        rows = [
+            {
+                "command": (
+                    "python.exe -m aider --file "
+                    "D:\\SurgeApp\\logic_updates\\job\\aider_bridge.py "
+                    "--message \"Target files: aider_bridge.py\""
+                ),
+                "name": "python.exe",
+                "pid": "2001",
+            },
+            {
+                "command": "pythonw.exe D:\\SurgeApp\\aider_bridge.py",
+                "name": "pythonw.exe",
+                "pid": "2002",
+            },
+        ]
+
+        with patch.object(luna_guardian, "_process_rows", return_value=rows):
+            matches = luna_guardian._matching_processes("aider_bridge.py")
+
+        self.assertEqual([row["pid"] for row in matches], ["2002"])
+
     def test_status_file_records_service_snapshot(self) -> None:
         project = _test_dir("guardian_status")
         status_path = project / "memory" / "luna_guardian_status.json"

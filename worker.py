@@ -9930,7 +9930,7 @@ def _cu_build_concrete_instruction(target_rel: str) -> Optional[str]:
             '"r+b"', "'r+b'", '"w+b"', "'w+b'",
         ))
         if (
-            "open(" in s
+            re.search(r"(?<![A-Za-z0-9_\.])open\(", s)
             and "encoding" not in s
             and not is_binary
             and not s.startswith("#")
@@ -9947,23 +9947,7 @@ def _cu_build_concrete_instruction(target_rel: str) -> Optional[str]:
                 f"line in the file."
             )
 
-    # Priority 2: functions with no docstring (real change, predictable diff)
-    for node in _ast.walk(tree):
-        if isinstance(node, _ast.FunctionDef) and not _ast.get_docstring(node):
-            if node.name.startswith("_"):
-                continue  # skip private helpers
-            # Get the actual signature line for context
-            sig_line = lines[node.lineno - 1] if node.lineno <= len(lines) else ""
-            return (
-                f"The function `{node.name}` defined at line {node.lineno} has NO "
-                f"docstring. Here is the exact signature:\n\n"
-                f"  {sig_line.strip()}\n\n"
-                f"Add a one-line docstring as the very first statement inside "
-                f"`{node.name}`. The docstring must start with a triple-quote and "
-                f"describe what the function does. Make ONLY this one change."
-            )
-
-    # Priority 3: bare `except: pass` blocks
+    # Priority 2: bare `except: pass` blocks
     for node in _ast.walk(tree):
         if isinstance(node, _ast.ExceptHandler):
             body = node.body
@@ -9985,21 +9969,16 @@ def _cu_build_concrete_instruction(target_rel: str) -> Optional[str]:
     return None  # Caller falls back to generic templates
 
 
-# Rotating list of safe, low-risk improvement asks. The loop walks through
-# them in order; each cycle is one entry.
+# Rotating list of bounded improvement asks. Keep this list focused on real
+# behavior, robustness, or maintainability work; do not add docstring-only jobs.
 _CU_INSTRUCTION_PATTERNS = [
-    # Always-produce-output: add something genuinely new.
-    # These never match "already done" because they add unique new content.
     # NOTE: All strings are pure ASCII to avoid CP1252 encoding errors on Windows.
-    "Look at the LAST function defined in this file. Add a one-sentence docstring to it right now - even if other functions have docstrings, add one to the very last function. Make ONLY this one change.",
     "Find any except block in this file that contains only `pass` (no log, no comment). Replace `pass` with a descriptive comment like `# swallowed: <brief reason>`. Change the FIRST such block only.",
-    "Find the LAST function in this file that takes at least one parameter. Add a `# param: <name> - <what it does>` comment for the first parameter inside the function body. One change only.",
     "Find any function in this file that builds a string using + concatenation inside a loop. Rewrite it to use ''.join(...) instead. Change ONLY the first such case. If none exist, add a `# perf: join preferred over + in loops` comment to the first loop that builds a string.",
     "Find the first `if x == True:` or `if x == False:` comparison and simplify to `if x:` or `if not x:`. If none exist, find the first `if len(x) == 0:` and simplify to `if not x:`. One change only.",
     "Find the first function that has NO return statement (implicitly returns None) but whose name starts with get_, load_, read_, build_, create_, or resolve_. Add an explicit `return None` at the end with a `# explicit: intentional None return` comment. One change only.",
     "Find the first place in this file where an exception is caught and re-raised. Add a `# re-raise: <why>` comment on the raise line. One change only. If no re-raise exists, find the first `raise Exception(` and improve the message to include the variable name that caused the error.",
     # Concrete improvements that nearly always apply.
-    "Find the first function with more than 5 lines in its body that has NO comments at all. Add exactly TWO inline comments explaining what the two most complex lines do. Touch only those two comment lines.",
     "Find any timeout, delay, retry-count, or buffer-size number (like 30, 60, 200, 512, 1024) that is a bare integer literal. Add a `# <what this number means>` comment on the same line. One comment only.",
     "Find the first dictionary that is built with `dict()` constructor instead of `{}` literal syntax and convert it. One change only. If all dicts already use `{}`, find the first `list()` call on a literal and convert to `[...]`.",
     "Find any string longer than 80 characters that is NOT a docstring and NOT a URL. Split it using parentheses into two shorter lines. Change only the first such string.",
@@ -10007,7 +9986,6 @@ _CU_INSTRUCTION_PATTERNS = [
     # Robustness.
     "Find the first `open(` call in this file that does NOT have `encoding='utf-8'` specified. Add `encoding='utf-8', errors='replace'` to it. One change only.",
     "Find the first subprocess call that does NOT have `capture_output=True` or explicit stdout/stderr args. Add `capture_output=True` to it. One call only.",
-    "Find the first function that accepts a `path` or `file` parameter typed as `str`. Add a one-line comment `# path: accepts str or Path` above the parameter. One comment only.",
     # Module-level hygiene.
     "Check if this file has a `__all__` list defined. If NOT, add one at the top (after imports) listing only the public functions (those not starting with `_`). Make only this one addition.",
     "Find the first `TODO` or `FIXME` comment in this file and implement the simplest possible fix for it. If the TODO says something like 'handle X', add minimal handling. One TODO only.",
@@ -10309,8 +10287,11 @@ def _cu_jobs_from_director_refresh(director_job: Dict[str, Any]) -> List[Dict[st
         targets = [str(item) for item in (mission.get("target_files") or []) if str(item).strip()]
         if not targets:
             continue
+        if _cu_recent_target_timeout_without_newer_success(targets):
+            continue
         executable_index += 1
         mission_id = str(mission.get("id") or f"mission_{executable_index:02d}")
+        concrete_instruction = _cu_build_concrete_instruction(targets[0]) if targets else None
         prompt = (
             f"Director refresh mission: {mission.get('purpose', '').strip()}\n"
             f"Target files: {', '.join(targets)}\n"
@@ -10319,6 +10300,12 @@ def _cu_jobs_from_director_refresh(director_job: Dict[str, Any]) -> List[Dict[st
             f"Prior failed/noop reason: {prior_reason or 'unknown'}\n"
             "Make one concrete staged improvement only. If the target is already compliant, write clear evidence instead of a fake upgrade claim."
         )
+        if concrete_instruction:
+            prompt += (
+                "\n\nConcrete edit requirement:\n"
+                f"{concrete_instruction}\n"
+                "Follow the concrete edit requirement above exactly; do not rewrite unrelated code."
+            )
         jobs.append({
             "id": f"cu_director_refresh_{executable_index:02d}_{mission_id}",
             "origin": "director_refresh",
@@ -10340,6 +10327,70 @@ def _cu_jobs_from_director_refresh(director_job: Dict[str, Any]) -> List[Dict[st
             "source_quarantine": director_job.get("source_quarantine", ""),
         })
     return jobs
+
+
+def _cu_recent_target_timeout_without_newer_success(targets: List[str], limit: int = 100) -> bool:
+    """Return True when the newest result for these targets is a timeout/failure."""
+    wanted = {str(item).replace("\\", "/").lower() for item in (targets or [])}
+    if not wanted:
+        return False
+    paths: List[Path] = []
+    for folder in (_CU_AIDER_FAILED_DIR, _CU_AIDER_DONE_DIR):
+        try:
+            if folder.exists():
+                paths.extend(p for p in folder.glob("*.json") if p.is_file())
+        except Exception:
+            continue
+    paths.sort(key=lambda path: path.stat().st_mtime if path.exists() else 0.0, reverse=True)
+    for result_path in paths[:limit]:
+        try:
+            payload = json.loads(result_path.read_text(encoding="utf-8", errors="replace") or "{}")
+        except Exception:
+            continue
+        payload_targets = {str(item).replace("\\", "/").lower() for item in (payload.get("target_files") or [])}
+        if payload_targets != wanted:
+            continue
+        status = str(payload.get("status") or payload.get("state") or "").lower()
+        reason = str(payload.get("failure_reason") or payload.get("noop_reason") or "").lower()
+        if status == "done" and bool(payload.get("diff_exists")):
+            return False
+        if status in {"failed", "timeout"} or reason in {"aider_timeout", "timeout", "cu_timeout_cancelled"}:
+            return True
+    return False
+
+
+def _cu_supplement_fresh_jobs(
+    fresh_jobs: List[Dict[str, Any]],
+    stale_blocked_jobs: List[Dict[str, Any]],
+    *,
+    minimum_jobs: int = 2,
+    max_jobs: int = 12,
+) -> Tuple[List[Dict[str, Any]], str]:
+    """Add Director refresh missions when stale filtering leaves too little work."""
+    if len(fresh_jobs) >= minimum_jobs or not stale_blocked_jobs:
+        return fresh_jobs, ""
+    director_refresh = _cu_latest_active_director_refresh()
+    backlog_path = str(director_refresh.get("source_quarantine") or "")
+    if not director_refresh:
+        backlog_path = _cu_write_stale_plan_backlog({"jobs": [b.get("job") for b in stale_blocked_jobs]}, stale_blocked_jobs)
+        director_refresh = write_director_refresh_job(_CU_PROJECT_DIR, backlog_path)
+    director_jobs = _cu_jobs_from_director_refresh(director_refresh)
+    seen_targets = {
+        tuple(str(item).lower() for item in (job.get("target_files") or []))
+        for job in fresh_jobs
+    }
+    supplemented = list(fresh_jobs)
+    for job in director_jobs:
+        targets_key = tuple(str(item).lower() for item in (job.get("target_files") or []))
+        if targets_key in seen_targets:
+            continue
+        if _cu_dirty_targets([str(item) for item in (job.get("target_files") or [])]):
+            continue
+        supplemented.append(job)
+        seen_targets.add(targets_key)
+        if len(supplemented) >= max(minimum_jobs, min(max_jobs, 12)):
+            break
+    return supplemented, str(director_refresh.get("path") or backlog_path)
 
 
 def _cu_recent_success_for_director_mission(
@@ -10577,6 +10628,13 @@ def continues_update_loop(
                 ensure_ascii=True,
             ),
         )
+        fresh_jobs, supplement_path = _cu_supplement_fresh_jobs(fresh_jobs, stale_blocked_jobs)
+        if supplement_path and len(fresh_jobs) >= 2:
+            _cu_feed(
+                "CU_DIRECTOR_SUPPLEMENT_READY",
+                f"Director supplemented continues-update with {len(fresh_jobs)} executable jobs",
+                detail=f"director_job={supplement_path}",
+            )
     if not fresh_jobs:
         director_refresh = _cu_latest_active_director_refresh()
         backlog_path = str(director_refresh.get("source_quarantine") or "")

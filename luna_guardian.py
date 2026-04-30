@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -120,10 +121,23 @@ def _matching_processes(script_marker: str, *, exclude: str = "") -> List[Dict[s
     excluded = exclude.lower()
     return [
         row for row in _process_rows()
-        if marker in (row.get("command") or "").lower()
+        if _command_invokes_script(row.get("command") or "", marker)
         and (not excluded or excluded not in (row.get("command") or "").lower())
         and str(os.getpid()) != str(row.get("pid") or "")
     ]
+
+
+def _command_invokes_script(command: str, script_marker: str) -> bool:
+    """Return True only when command launches the service script itself."""
+    marker = re.escape(str(script_marker or "").lower())
+    if not marker:
+        return False
+    normalized = str(command or "").lower().replace("/", "\\")
+    pattern = (
+        r'(?:^|\s)"?[^"\s]*python[\w.]*\.exe"?\s+'
+        r'"?[^"\s]*\\?' + marker + r'(?:"|\s|$)'
+    )
+    return bool(re.search(pattern, normalized))
 
 
 def _process_command_line_for_pid(pid: int) -> str:
@@ -155,7 +169,7 @@ def _pid_alive(pid: int, marker: str = "") -> bool:
     if pid <= 0:
         return False
     if marker:
-        return marker.lower() in _process_command_line_for_pid(pid).lower()
+        return _command_invokes_script(_process_command_line_for_pid(pid), marker)
     try:
         result = subprocess.run(
             ["tasklist", "/FI", f"PID eq {pid}", "/NH"],

@@ -23,6 +23,7 @@ class DirectorPaths:
 
     @property
     def jobs_dir(self) -> Path:
+        """Return the path to the director jobs directory."""
         return self.project_dir / "director_jobs"
 
     @property

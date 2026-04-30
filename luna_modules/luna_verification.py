@@ -47,7 +47,7 @@ from luna_modules.luna_paths import (
     VERIFY_TIMEOUT_SECONDS,
 )
 from luna_modules.luna_routing import normalize_prompt_text
-from luna_modules.luna_heartbeat import HEARTBEAT_LOCK, set_heartbeat
+from luna_modules.luna_heartbeat import set_heartbeat
 
 # Mutable cache shared with worker.py — the dict object is the same instance
 # once worker.py does ``from luna_modules.luna_verification import VERIFICATION_CACHE``.
@@ -457,12 +457,12 @@ def _verify_python_target(target_file: str) -> Dict[str, Any]:
     return result
 
 def verify_python_target(target_file: str) -> Dict[str, Any]:
-    with HEARTBEAT_LOCK:
-        set_heartbeat(state="verifying", task_id=target_file)
-        try:
-            return _verify_python_target(target_file)
-        finally:
-            set_heartbeat(state="idle")
+    # set_heartbeat acquires HEARTBEAT_LOCK internally — do NOT hold it here
+    set_heartbeat(state="verifying", task_id=target_file)
+    try:
+        return _verify_python_target(target_file)
+    finally:
+        set_heartbeat(state="idle")
 
 
 def verification_section(verification: Dict[str, Any]) -> str:

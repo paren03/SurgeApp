@@ -5113,3 +5113,390 @@ Make one concrete staged improvement only. If the target is already compliant, w
 - none recorded
 ### which prompts failed
 - none recorded
+## Cycle 1 — 2026-04-30T12:00:32
+- task_id: 20260430_115900_a31051f8
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_115900_a31051f8.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T12:10:33
+### what was attempted
+- review_gate_stability
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## [ARCHITECT] open_no_encoding in luna_guardian.py -- 2026-04-30T12:26:42
+- function : open_at_line_370 (line 370)
+- status   : empty_diff
+- applied  : False
+- task_id  : 20260430_122555_arch_629936
+
+## Cycle 1 — 2026-04-30T12:31:38
+- task_id: 20260430_123034_5fda3843
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_123034_5fda3843.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T12:41:38
+### what was attempted
+- review_gate_stability
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T13:02:09
+- task_id: 20260430_130059_6aea3581
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_130059_6aea3581.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T13:12:09
+### what was attempted
+- review_gate_stability
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T13:17:19
+- task_id: 20260430_131607_111050b6
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_131607_111050b6.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Cycle 2 — 2026-04-30T13:21:22
+- task_id: 20260430_131720_1a9eea8c
+- status: failed
+- targets: director_agent.py
+- aider_rc: None
+- verify_passed: False
+- diff: 
+- instructions: Director refresh mission: Create a fresh, non-repeated mission because this target/prompt family recently produced no usable upgrade. Produce a concrete staged code/test diff or explicit compliance evidence; do not repeat the prior prompt family.
+Target files: director_agent.py
+Acceptance test: A `/ceo` goal produces active Director jobs with all required mission fields.
+Expected diff type: orchestration
+Prior failed/noop reason: no_diff
+Make one concrete staged improvement only. If the target is already compliant, write clear evidence instead of a fake upgrade claim.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T13:21:22
+### what was attempted
+- review_gate_stability
+- director_refresh_03
+- director_refresh_05
+- director_refresh_06
+- director_refresh_07
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T13:23:11
+- task_id: 20260430_132206_e6da37dc
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_132206_e6da37dc.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Cycle 2 — 2026-04-30T13:23:41
+- task_id: 20260430_132312_6e940ac4
+- status: done
+- targets: director_agent.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_132312_6e940ac4.diff
+- instructions: Director refresh mission: Create a fresh, non-repeated mission because this target/prompt family recently produced no usable upgrade. Produce a concrete staged code/test diff or explicit compliance evidence; do not repeat the prior prompt family.
+Target files: director_agent.py
+Acceptance test: A `/ceo` goal produces active Director jobs with all required mission fields.
+Expected diff type: orchestration
+Prior failed/noop reason: no_diff
+Make one concrete staged improvement only. If the target is already compliant, write clear evidence instead of a fake upgrade claim.
+
+Concrete edit requirement:
+The function `jobs_dir` defined at line 25 has NO docstring. Here is the exact signature:
+
+  def jobs_dir(self) -> Path:
+
+Add a one-line docstring as the very first statement inside `jobs_dir`. The docstring must start with a triple-quote and describe what the function does. Make ONLY this one change.
+Follow the concrete edit requirement above exactly; do not rewrite unrelated code.
+- summary: 
+
+## Cycle 3 — 2026-04-30T13:28:42
+- task_id: 20260430_132342_43df1a7b
+- status: timeout
+- targets: aider_bridge.py
+- aider_rc: None
+- verify_passed: False
+- diff: 
+- instructions: Director refresh mission: Create a fresh, non-repeated mission because this target/prompt family recently produced no usable upgrade. Produce a concrete staged code/test diff or explicit compliance evidence; do not repeat the prior prompt family.
+Target files: aider_bridge.py
+Acceptance test: Aider job metadata records target function or bounded region before execution.
+Expected diff type: safety_guard
+Prior failed/noop reason: no_diff
+Make one concrete staged improvement only. If the target is already compliant, write clear evidence instead of a fake upgrade claim.
+
+Concrete edit requirement:
+At line 187 of this file, there is an `open()` call that is missing the `encoding` argument. Here is the exact line:
+
+  with urllib.request.urlopen(OLLAMA_TAGS_URL, timeout=timeout_seconds) as response:
+
+Add `encoding='utf-8', errors='replace'` as arguments to that specific `open()` call on line 187. Do not change any other line in the file.
+Follow the concrete edit requirement above exactly; do not rewrite unrelated code.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T13:28:42
+### what was attempted
+- review_gate_stability
+- director_refresh_03
+- director_refresh_05
+- director_refresh_06
+- director_refresh_07
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## [ARCHITECT] open_no_encoding in luna_guardian.py -- 2026-04-30T13:30:45
+- function : open_at_line_384 (line 384)
+- status   : quarantined
+- applied  : False
+- task_id  : 20260430_133043_arch_8dc9b9
+
+## Cycle 1 — 2026-04-30T13:33:37
+- task_id: 20260430_133229_ed399ecb
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_133229_ed399ecb.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Cycle 2 — 2026-04-30T13:37:39
+- task_id: 20260430_133338_cec52ec1
+- status: failed
+- targets: aider_bridge.py
+- aider_rc: None
+- verify_passed: False
+- diff: 
+- instructions: Director refresh mission: Create a fresh, non-repeated mission because this target/prompt family recently produced no usable upgrade. Produce a concrete staged code/test diff or explicit compliance evidence; do not repeat the prior prompt family.
+Target files: aider_bridge.py
+Acceptance test: Aider job metadata records target function or bounded region before execution.
+Expected diff type: safety_guard
+Prior failed/noop reason: no_diff
+Make one concrete staged improvement only. If the target is already compliant, write clear evidence instead of a fake upgrade claim.
+
+Concrete edit requirement:
+The function `run_aider_patch` defined at line 361 has NO docstring. Here is the exact signature:
+
+  def run_aider_patch(task_path: Path) -> None:
+
+Add a one-line docstring as the very first statement inside `run_aider_patch`. The docstring must start with a triple-quote and describe what the function does. Make ONLY this one change.
+Follow the concrete edit requirement above exactly; do not rewrite unrelated code.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T13:37:39
+### what was attempted
+- review_gate_stability
+- director_refresh_04
+- director_refresh_05
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T13:39:52
+- task_id: 20260430_133843_2577e0ca
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_133843_2577e0ca.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T13:39:53
+### what was attempted
+- review_gate_stability
+- director_refresh_02
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded
+## Cycle 1 — 2026-04-30T13:53:08
+- task_id: 20260430_135155_b197f169
+- status: done
+- targets: luna_modules/luna_two_pass_review.py, luna_modules/luna_verification.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_135155_b197f169.diff
+- instructions: Strengthen two-pass review and verification gates so staged upgrades are blocked when evidence is missing, stale, or ambiguous.
+- summary: 
+
+## Cycle 2 — 2026-04-30T13:53:39
+- task_id: 20260430_135318_cc53b506
+- status: done
+- targets: tests/test_luna_autonomy_control.py
+- aider_rc: None
+- verify_passed: True
+- diff: D:\SurgeApp\solutions\diffs\20260430_135318_cc53b506.diff
+- instructions: Director refresh mission: Create a fresh, non-repeated mission because this target/prompt family recently produced no usable upgrade. Produce a concrete staged code/test diff or explicit compliance evidence; do not repeat the prior prompt family.
+Target files: tests/test_luna_autonomy_control.py
+Acceptance test: Unit tests cover DONE, NOOP, failure, budget pause, and nightly summary behavior.
+Expected diff type: tests
+Prior failed/noop reason: no_diff
+Make one concrete staged improvement only. If the target is already compliant, write clear evidence instead of a fake upgrade claim.
+
+Concrete edit requirement:
+The function `setUp` defined at line 23 has NO docstring. Here is the exact signature:
+
+  def setUp(self) -> None:
+
+Add a one-line docstring as the very first statement inside `setUp`. The docstring must start with a triple-quote and describe what the function does. Make ONLY this one change.
+Follow the concrete edit requirement above exactly; do not rewrite unrelated code.
+- summary: 
+
+## Continues Update Morning Summary - 2026-04-30T13:53:49
+### what was attempted
+- review_gate_stability
+- director_refresh_02
+### what changed
+- none recorded
+### what failed
+- none recorded
+### what produced no diff
+- none recorded
+### what Luna learned
+- continues_update now uses bounded high-impact plans
+### what should be tried next
+- review Aider Bridge result discipline and apply staged patches
+### which files are risky
+- worker.py
+- aider_bridge.py
+- luna_guardian.py
+- director_agent.py
+### which prompts worked
+- none recorded
+### which prompts failed
+- none recorded

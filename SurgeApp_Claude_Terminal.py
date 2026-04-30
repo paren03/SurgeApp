@@ -56,6 +56,20 @@ try:
     PYSIDE_AVAILABLE = True
 except Exception:
     PYSIDE_AVAILABLE = False
+    class QThread:  # type: ignore[no-redef]
+        """Fallback so non-Qt startup reports the missing dependency cleanly."""
+        def __init__(self, *args, **kwargs):
+            pass
+
+    class _MissingSignal:
+        def connect(self, *args, **kwargs):
+            pass
+
+        def emit(self, *args, **kwargs):
+            pass
+
+    def Signal(*args, **kwargs):  # type: ignore[no-redef]
+        return _MissingSignal()
 
 
 # =============================================================================
@@ -2436,8 +2450,8 @@ if PYSIDE_AVAILABLE:
                 except Exception:
                     return
 
-            _collect(ACTIVE_DIR, "active")
-            _collect(AIDER_ACTIVE_DIR, "aider-active")
+            _collect(ACTIVE_DIR, "running")
+            _collect(AIDER_ACTIVE_DIR, "aider-running")
             _collect(DONE_DIR, "done")
             _collect(AIDER_DONE_DIR, "aider-done")
             _collect(FAILED_DIR, "failed")
@@ -2753,60 +2767,273 @@ if PYSIDE_AVAILABLE:
             return rows
 
         def _q_activity_html(self, full_jobs: List[Dict]) -> str:
+            from datetime import datetime as _dt
+            now = _dt.now()
+
+            # ── helpers ────────────────────────────────────────────────
+            def _age(ts_str: str) -> str:
+                if not ts_str:
+                    return "?"
+                try:
+                    dt = _dt.fromisoformat(str(ts_str).split("+")[0].replace("Z", ""))
+                    s = int((now - dt).total_seconds())
+                    if s < 0:   return "just now"
+                    if s < 60:  return f"{s}s ago"
+                    if s < 3600: return f"{s // 60}m ago"
+                    return f"{s // 3600}h {(s % 3600) // 60}m ago"
+                except Exception:
+                    return "?"
+
+            def _countdown(ts_str: str) -> str:
+                if not ts_str:
+                    return ""
+                try:
+                    dt = _dt.fromisoformat(str(ts_str).split("+")[0].replace("Z", ""))
+                    s = int((dt - now).total_seconds())
+                    if s <= 0:  return "due now"
+                    if s < 60:  return f"in {s}s"
+                    return f"in {s // 60}m {s % 60}s"
+                except Exception:
+                    return ""
+
+            def _dot(ok: bool, warn: bool = False) -> str:
+                if ok:   return "<span style='color:#27c93f;'>●</span>"
+                if warn: return "<span style='color:#ffbd2e;'>●</span>"
+                return "<span style='color:#ff5f56;'>●</span>"
+
+            def _row(label: str, val: str, color: str = "#cfd3dc") -> str:
+                return (
+                    f"<tr>"
+                    f"<td style='color:#8ab4ff;padding-right:8px;white-space:nowrap;'>{_esc(label)}</td>"
+                    f"<td style='color:{color};'>{val}</td>"
+                    f"</tr>"
+                )
+
+            # ── data sources ───────────────────────────────────────────
+            cu_state  = _safe_read_json(MEMORY_DIR / "continues_update_state.json", default={}) or {}
+            hb        = _safe_read_json(WORKER_HEARTBEAT_PATH, default={}) or {}
             active_jobs = [j for j in full_jobs if j.get("status") in {"queued", "running"}]
-            cu_state = _safe_read_json(MEMORY_DIR / "continues_update_state.json", default={}) or {}
-            latest = (self._q_tail_live_feed(1) or [{}])[-1]
-            evt = str(latest.get("event") or "STATE").upper()
-            msg = str(latest.get("msg") or latest.get("message") or "").strip()
-            detail = str(latest.get("detail") or "").strip()
-            task_id = str(latest.get("task_id") or cu_state.get("last_task_id") or "")
-            color = _color_for_event(evt)
-            running = bool(cu_state.get("running"))
-            phase = str(cu_state.get("phase") or "").lower()
+            latest    = (self._q_tail_live_feed(3) or [{}])
+
+            # ── worker status ─────────────────────────────────────────
+            hb_ts  = str(hb.get("timestamp") or hb.get("ts") or "")
+            hb_age = _age(hb_ts)
+            try:
+                hb_age_s = int((now - _dt.fromisoformat(hb_ts.split("+")[0].replace("Z",""))).total_seconds()) if hb_ts else 999
+            except Exception:
+                hb_age_s = 999
+            worker_ok = hb_age_s < 60
+            worker_phase = str(hb.get("phase") or hb.get("state") or "unknown")
+            worker_msg   = str(hb.get("last_message") or "").strip()[:80]
+
+            # ── guardian status ────────────────────────────────────────
+            g_lock = _safe_read_json(MEMORY_DIR / "luna_guardian.lock.json", default={}) or {}
+            g_ts   = str(g_lock.get("ts") or g_lock.get("started_at") or "")
+            try:
+                g_age_s = int((now - _dt.fromisoformat(g_ts.split("+")[0].replace("Z",""))).total_seconds()) if g_ts else 999
+            except Exception:
+                g_age_s = 999
+            guardian_ok = g_age_s < 120
+
+            # ── aider bridge ───────────────────────────────────────────
+            aider_pid_path = LOGS_DIR / "aider_bridge.pid"
+            aider_ok = False
+            try:
+                if aider_pid_path.exists():
+                    aider_pid = int(aider_pid_path.read_text(encoding="utf-8").strip() or "0")
+                    aider_ok  = aider_pid > 0
+            except Exception:
+                pass
+
+            # ── active jobs ────────────────────────────────────────────
+            n_tasks_active = 0
+            n_aider_active = 0
+            try: n_tasks_active = len(list(ACTIVE_DIR.glob("*.json")))
+            except Exception: pass
+            try: n_aider_active = len(list(AIDER_ACTIVE_DIR.glob("*.json")))
+            except Exception: pass
+
+            # ── CU loop ────────────────────────────────────────────────
+            cu_running   = bool(cu_state.get("running"))
+            cu_phase     = str(cu_state.get("phase") or "").lower()
+            cu_last      = str(cu_state.get("last_status") or "—")
+            cu_cycles    = int(cu_state.get("cycles") or 0)
+            cu_noop      = int(cu_state.get("noop_count") or 0)
+            cu_fail      = int(cu_state.get("consecutive_failures") or 0)
+            cu_last_at   = str(cu_state.get("last_cycle_at") or "")
+            cu_next_at   = str(cu_state.get("next_cycle_at") or "")
+            cu_target    = str(cu_state.get("last_target") or cu_state.get("current_target") or "—")
+            dirty        = cu_state.get("dirty_targets") or []
+            active_targets = cu_state.get("active_target_files") or []
+            if isinstance(active_targets, list) and active_targets:
+                cu_target = ", ".join(str(item) for item in active_targets[:3])
+            latest_done = next((j for j in full_jobs if j.get("status") == "done"), {})
+            latest_failed = next((j for j in full_jobs if j.get("status") == "failed"), {})
+
+            # Detect whether the CU process is actually alive via lock file
+            cu_lock_path = MEMORY_DIR / "cu_loop.lock.json"
+            cu_process_alive = False
+            try:
+                if cu_lock_path.exists():
+                    import json as _json
+                    _cu_lock = _json.loads(cu_lock_path.read_text(encoding="utf-8", errors="replace") or "{}")
+                    _cu_pid = int(_cu_lock.get("pid") or 0)
+                    if _cu_pid > 0:
+                        import subprocess as _sp
+                        _r = _sp.run(["tasklist", "/FI", f"PID eq {_cu_pid}", "/NH"],
+                                     capture_output=True, text=True, timeout=3)
+                        cu_process_alive = str(_cu_pid) in (_r.stdout or "")
+            except Exception:
+                pass
+
+            # How far until next cycle (negative = overdue)
+            _cu_next_secs = 0
+            try:
+                if cu_next_at:
+                    _cu_next_secs = int((_dt.fromisoformat(cu_next_at.split("+")[0].replace("Z","")) - now).total_seconds())
+            except Exception:
+                pass
+
             if active_jobs:
                 job = active_jobs[0]
                 data = job.get("data", {}) or {}
-                target = str(job.get("target") or data.get("target_file") or "unknown")
-                doing = str(job.get("instr") or data.get("instructions") or "processing job")
-                state_label = "RUNNING"
-            elif phase == "blocked_by_staged_edits":
-                dirty = cu_state.get("dirty_targets") or []
-                target = "continues_update"
-                doing = (
-                    f"blocked by staged/unstaged edits; deferred={len(dirty)} mission(s). "
-                    "Luna is protecting current work instead of overwriting it."
-                )
-                state_label = "BLOCKED"
-            elif running:
-                target = "continues_update"
-                doing = (
-                    f"sleeping between jobs; cycle={cu_state.get('cycles', 0)} "
-                    f"last={cu_state.get('last_status', 'unknown')}"
-                )
-                state_label = "SLEEPING"
+                cu_target = str(job.get("target") or data.get("target_file") or cu_target)
+                cu_label  = "<span style='color:#27c93f;font-weight:800;'>▶ RUNNING</span>"
+                pulse_mode = "RUNNING"
+                pulse_color = "#27c93f"
+                next_action = str(job.get("instr") or data.get("instructions") or "Working current job")[:180]
+            elif cu_phase == "blocked_by_staged_edits":
+                cu_label  = f"<span style='color:#ffbd2e;font-weight:800;'>⛔ BLOCKED</span> ({len(dirty)} dirty targets)"
+                pulse_mode = "BLOCKED"
+                pulse_color = "#ffbd2e"
+                next_action = "Waiting for staged/unstaged target edits to clear before creating more upgrade jobs."
+            elif cu_process_alive and _cu_next_secs > 5:
+                nxt = _countdown(cu_next_at)
+                cu_label  = f"<span style='color:#4a9eff;font-weight:800;'>⏳ COOLDOWN</span> — next cycle {nxt}"
+                pulse_mode = "COOLDOWN"
+                pulse_color = "#4a9eff"
+                next_action = f"Cooldown — next cycle {nxt} · next project: {cu_target}"
+            elif cu_process_alive:
+                cu_label  = "<span style='color:#27c93f;font-weight:800;'>▶ READY</span> — starting next cycle now"
+                pulse_mode = "READY"
+                pulse_color = "#27c93f"
+                next_action = f"Process alive, cooldown expired — starting upgrade on: {cu_target}"
+            elif cu_running or n_aider_active > 0:
+                nxt = _countdown(cu_next_at)
+                cu_label  = f"<span style='color:#4a9eff;font-weight:800;'>⏳ SLEEPING</span> — next cycle {nxt}"
+                pulse_mode = "SLEEPING"
+                pulse_color = "#4a9eff"
+                next_action = f"Next cycle {nxt or 'soon'} for: {cu_target}"
             else:
-                target = "continues_update"
-                doing = (
-                    f"paused/stopped; last={cu_state.get('last_status', 'unknown')} "
-                    f"noop={cu_state.get('noop_count', 0)} "
-                    f"fail={cu_state.get('consecutive_failures', 0)}"
+                # Process not alive — show restart status
+                nxt_lbl = _countdown(cu_next_at) if cu_next_at else "—"
+                was_overdue = bool(cu_next_at and _cu_next_secs <= 0)
+                if was_overdue:
+                    cu_label = "<span style='color:#ff5f56;font-weight:800;'>⚠ NOT RUNNING</span> — was due, restarting via guardian"
+                    pulse_mode = "RESTARTING"
+                    pulse_color = "#ff5f56"
+                    next_action = f"CU process exited. Guardian will restart. Next project: {cu_target}"
+                elif cu_last == "done":
+                    cu_label = f"<span style='color:#ffbd2e;font-weight:800;'>⏸ WAITING</span> — process exited after {cu_cycles} cycle(s)"
+                    pulse_mode = "WAITING"
+                    pulse_color = "#ffbd2e"
+                    next_action = f"CU completed its run. Next project: {cu_target} · Last: {_age(cu_last_at)} ago"
+                else:
+                    cu_label = f"<span style='color:#ff5f56;font-weight:800;'>■ STOPPED</span> (last={_esc(cu_last)} noop={cu_noop} fail={cu_fail})"
+                    pulse_mode = "STOPPED"
+                    pulse_color = "#ff5f56"
+                    next_action = "Stopped. Check the last failure/noop before starting another run."
+
+            latest_done_text = "none yet"
+            if latest_done:
+                data = latest_done.get("data", {}) or {}
+                latest_done_text = (
+                    f"{_esc(str(data.get('task_id') or data.get('id') or latest_done.get('path').stem)[-12:])}"
+                    f" · {_esc(str(latest_done.get('target') or data.get('target_file') or 'unknown'))}"
+                    f" · {_age(str(data.get('finished_at') or data.get('ts') or ''))}"
                 )
-                state_label = "STOPPED"
-                if str(cu_state.get("last_status") or "").lower() == "noop" and int(cu_state.get("noop_count", 0) or 0) >= 5:
-                    doing = "paused after no-diff budget; Luna is not allowed to count NOOPs as upgrades"
-            parts = [
-                f"<span style='color:{color}; font-weight:800;'>Now: {state_label}</span>",
-                f"<span style='color:#8ab4ff;'>event</span>={_esc(evt)}",
-                f"<span style='color:#8ab4ff;'>target</span>={_esc(target)}",
-            ]
-            if task_id:
-                parts.append(f"<span style='color:#8ab4ff;'>task</span>={_esc(task_id[-12:])}")
-            if msg:
-                parts.append(f"<span style='color:#a6a6ad;'>msg</span>={_esc(msg)}")
-            if detail:
-                parts.append(f"<span style='color:#a6a6ad;'>detail</span>={_esc(detail[:180])}")
-            parts.append(f"<br><span style='color:#d9dde8;'>{_esc(doing[:260])}</span>")
-            return " &nbsp; ".join(parts)
+            latest_failed_text = "none recent"
+            if latest_failed:
+                data = latest_failed.get("data", {}) or {}
+                latest_failed_text = (
+                    f"{_esc(str(data.get('task_id') or data.get('id') or latest_failed.get('path').stem)[-12:])}"
+                    f" · {_esc(str(data.get('failure_reason') or data.get('error') or 'failed'))[:80]}"
+                    f" · {_age(str(data.get('finished_at') or data.get('ts') or ''))}"
+                )
+
+            # ── last live-feed events ──────────────────────────────────
+            feed_rows = ""
+            for row in reversed(latest[-3:]):
+                evt = str(row.get("event") or "").upper()
+                msg = str(row.get("msg") or row.get("message") or row.get("data") or "").strip()[:100]
+                ts  = str(row.get("ts") or "")
+                col = _color_for_event(evt)
+                feed_rows += f"<tr><td style='color:#555;padding-right:6px;white-space:nowrap;font-size:10px;'>{_esc(ts[11:19])}</td><td style='color:{col};white-space:nowrap;padding-right:6px;'>{_esc(evt[:22])}</td><td style='color:#a6a6ad;'>{_esc(msg)}</td></tr>"
+
+            # ── assemble HTML ──────────────────────────────────────────
+            svc_row = (
+                f"{_dot(worker_ok)} <b style='color:#cfd3dc;'>Worker</b> "
+                f"<span style='color:#888;'>{_esc(worker_phase)} · {hb_age}</span>"
+                f" &nbsp;&nbsp; "
+                f"{_dot(guardian_ok, warn=True)} <b style='color:#cfd3dc;'>Guardian</b> "
+                f"<span style='color:#888;'>{'ok' if guardian_ok else 'stale'}</span>"
+                f" &nbsp;&nbsp; "
+                f"{_dot(aider_ok)} <b style='color:#cfd3dc;'>Aider</b> "
+                f"<span style='color:#888;'>{'running' if aider_ok else 'stopped'}</span>"
+                f" &nbsp;&nbsp; "
+                f"<span style='color:#8ab4ff;'>tasks/active</span> "
+                f"<b style='color:#f5a623;'>{n_tasks_active}</b>"
+                f" &nbsp; "
+                f"<span style='color:#8ab4ff;'>aider/active</span> "
+                f"<b style='color:#f5a623;'>{n_aider_active}</b>"
+            )
+
+            # Countdown string for the "starts in" display
+            if _cu_next_secs > 0:
+                _cd_mins, _cd_secs = divmod(_cu_next_secs, 60)
+                _cd_str = f"{_cd_mins}m {_cd_secs}s" if _cd_mins else f"{_cd_secs}s"
+            else:
+                _cd_str = "due now"
+
+            html = (
+                f"<table style='font-family:Consolas,monospace;font-size:11px;border-collapse:collapse;width:100%;'>"
+                # ── PULSE banner ───────────────────────────────────────────
+                f"<tr><td colspan='2' style='padding:0 0 6px 0;'>"
+                f"<div style='border:1px solid {pulse_color}; border-radius:10px; padding:7px 10px;"
+                f" background:linear-gradient(90deg, rgba(18,28,50,.95), rgba(7,10,18,.88));'>"
+                f"<span style='color:{pulse_color};font-size:13px;font-weight:900;'>● {_esc(pulse_mode)}</span>"
+                f"&nbsp;&nbsp;<span style='color:#e9e9eb;font-size:11px;'>{_esc(next_action[:160])}</span>"
+                f"<br><span style='color:#555;font-size:10px;'>last done: </span>"
+                f"<span style='color:#27c93f;font-size:10px;'>{latest_done_text}</span>"
+                f"&nbsp;&nbsp;<span style='color:#555;font-size:10px;'>last fail: </span>"
+                f"<span style='color:#ffbd2e;font-size:10px;'>{latest_failed_text}</span>"
+                f"</div></td></tr>"
+                # ── Continues-Update row ───────────────────────────────────
+                f"<tr><td colspan='2' style='padding:2px 0 2px 0;border-top:1px solid #1e2535;'>"
+                f"<b style='color:#8ab4ff;'>Continues-Update</b> &nbsp; {cu_label}"
+                f" &nbsp;&nbsp; <span style='color:#555;'>cycles={cu_cycles}</span>"
+                f" &nbsp; <span style='color:#555;'>last={_esc(cu_last)} {_age(cu_last_at)}</span>"
+                f"</td></tr>"
+                # ── Next project + countdown ───────────────────────────────
+                f"<tr><td colspan='2' style='padding:1px 0 3px 0;'>"
+                f"<span style='color:#555;'>next project: </span>"
+                f"<span style='color:#f5a623;font-weight:700;'>{_esc(cu_target)}</span>"
+                f" &nbsp; <span style='color:#555;'>starts in: </span>"
+                f"<span style='color:{pulse_color};font-weight:700;'>{_cd_str}</span>"
+                f"</td></tr>"
+                # ── Services row ───────────────────────────────────────────
+                f"<tr><td colspan='2' style='padding-bottom:3px;border-top:1px solid #1e2535;padding-top:2px;'>{svc_row}</td></tr>"
+            )
+            if worker_msg:
+                html += f"<tr><td colspan='2' style='color:#888;padding-bottom:4px;font-size:10px;'>💬 {_esc(worker_msg)}</td></tr>"
+            if feed_rows:
+                html += (
+                    f"<tr><td colspan='2' style='color:#555;padding-top:2px;font-size:10px;'>"
+                    f"<table style='width:100%;'>{feed_rows}</table>"
+                    f"</td></tr>"
+                )
+            html += "</table>"
+            return html
 
         def _refresh_queue(self) -> None:
             try:
@@ -2832,12 +3059,19 @@ if PYSIDE_AVAILABLE:
                 n_blocked = sum(1 for j in full if j["status"] == "blocked")
                 n_failed  = sum(1 for j in full if j["status"] == "failed")
                 n_done    = sum(1 for j in full if j["status"] == "done")
+                try:
+                    total_done = (
+                        len(list(DONE_DIR.glob("*.json")))
+                        + len(list(AIDER_DONE_DIR.glob("*.json")))
+                    )
+                except Exception:
+                    total_done = n_done
 
                 self._q_lbl_queued.setText(f"● {n_queued} Queued")
                 self._q_lbl_running.setText(f"⚡ {n_running} Running")
                 self._q_lbl_blocked.setText(f"⛔ {n_blocked} Blocked")
                 self._q_lbl_failed.setText(f"✕ {n_failed} Failed")
-                self._q_lbl_done.setText(f"✓ {n_done} Recent Done")
+                self._q_lbl_done.setText(f"✓ {total_done} Done ({n_done} recent)")
                 if hasattr(self, "_q_now"):
                     self._q_now.setText(self._q_activity_html(full))
 
@@ -3215,6 +3449,12 @@ if PYSIDE_AVAILABLE:
                 else:
                     self.badge.setText(f"● stale ({int(age_s)}s)")
                     self.badge.setStyleSheet("color: #ffbd2e;")
+
+            if hasattr(self, "_q_now"):
+                try:
+                    self._q_now.setText(self._q_activity_html(self._q_collect_jobs()))
+                except Exception:
+                    pass
 
         def _tick_clock(self) -> None:
             if hasattr(self, 'lbl_clock'):

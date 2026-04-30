@@ -73,6 +73,8 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
             worker._CU_PROJECT_DIR = original_project_dir
 
     def test_director_refresh_missions_become_fresh_cu_jobs(self) -> None:
+        original_concrete = worker._cu_build_concrete_instruction
+        original_recent_timeout = worker._cu_recent_target_timeout_without_newer_success
         director_job = {
             "goal": "Refresh stale continues_update plan",
             "path": "director_jobs/active/refresh.json",
@@ -90,16 +92,25 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
             ],
         }
 
-        jobs = worker._cu_jobs_from_director_refresh(director_job)
+        try:
+            worker._cu_build_concrete_instruction = lambda target: "Edit line 10 only."
+            worker._cu_recent_target_timeout_without_newer_success = lambda targets: False
+
+            jobs = worker._cu_jobs_from_director_refresh(director_job)
+        finally:
+            worker._cu_build_concrete_instruction = original_concrete
+            worker._cu_recent_target_timeout_without_newer_success = original_recent_timeout
 
         self.assertEqual(len(jobs), 1)
         self.assertEqual(jobs[0]["origin"], "director_refresh")
         self.assertEqual(jobs[0]["target_files"], ["worker.py"])
         self.assertLessEqual(jobs[0]["max_lines_changed"], 220)
         self.assertIn("aider_timeout", jobs[0]["prompt"])
+        self.assertIn("Concrete edit requirement", jobs[0]["prompt"])
         self.assertTrue(jobs[0]["prompt_family"].startswith("director_refresh_"))
 
     def test_director_refresh_keeps_prior_no_diff_missions_as_fresh_work(self) -> None:
+        original_recent_timeout = worker._cu_recent_target_timeout_without_newer_success
         director_job = {
             "goal": "Refresh stale continues_update plan",
             "missions": [
@@ -116,7 +127,12 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
             ],
         }
 
-        jobs = worker._cu_jobs_from_director_refresh(director_job)
+        try:
+            worker._cu_recent_target_timeout_without_newer_success = lambda targets: False
+
+            jobs = worker._cu_jobs_from_director_refresh(director_job)
+        finally:
+            worker._cu_recent_target_timeout_without_newer_success = original_recent_timeout
 
         self.assertEqual(len(jobs), 2)
         self.assertEqual(jobs[0]["target_files"], ["worker.py"])
@@ -152,12 +168,71 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
         finally:
             worker._CU_PROJECT_DIR = original_project_dir
 
+    def test_supplement_fresh_jobs_uses_director_when_stale_filter_leaves_one_job(self) -> None:
+        original_latest = worker._cu_latest_active_director_refresh
+        original_from_director = worker._cu_jobs_from_director_refresh
+        original_dirty_targets = worker._cu_dirty_targets
+        try:
+            worker._cu_latest_active_director_refresh = lambda: {
+                "path": "director_jobs/active/refresh.json",
+                "source_quarantine": "director_jobs/quarantine/stale.json",
+                "missions": [{"id": "m1", "target_files": ["worker.py"]}],
+            }
+            worker._cu_jobs_from_director_refresh = lambda director_job: [
+                {
+                    "id": "director_extra",
+                    "origin": "director_refresh",
+                    "target_files": ["worker.py"],
+                    "prompt_family": "director_refresh_test",
+                }
+            ]
+            worker._cu_dirty_targets = lambda targets: []
+            fresh = [{"id": "fresh", "target_files": ["luna_modules/luna_two_pass_review.py"]}]
+            blocked = [{"job": {"id": "blocked", "target_files": ["worker.py"]}, "prior_reason": "aider_timeout"}]
+
+            jobs, source = worker._cu_supplement_fresh_jobs(fresh, blocked)
+
+            self.assertEqual(len(jobs), 2)
+            self.assertEqual(jobs[1]["id"], "director_extra")
+            self.assertEqual(source, "director_jobs/active/refresh.json")
+        finally:
+            worker._cu_latest_active_director_refresh = original_latest
+            worker._cu_jobs_from_director_refresh = original_from_director
+            worker._cu_dirty_targets = original_dirty_targets
+
+    def test_supplement_fresh_jobs_skips_dirty_director_targets(self) -> None:
+        original_latest = worker._cu_latest_active_director_refresh
+        original_from_director = worker._cu_jobs_from_director_refresh
+        original_dirty_targets = worker._cu_dirty_targets
+        try:
+            worker._cu_latest_active_director_refresh = lambda: {"path": "refresh.json", "missions": []}
+            worker._cu_jobs_from_director_refresh = lambda director_job: [
+                {"id": "dirty", "target_files": ["worker.py"]},
+                {"id": "clean", "target_files": ["aider_bridge.py"]},
+            ]
+            worker._cu_dirty_targets = lambda targets: (
+                [{"status": "M", "path": "worker.py"}] if targets == ["worker.py"] else []
+            )
+
+            jobs, _source = worker._cu_supplement_fresh_jobs(
+                [{"id": "fresh", "target_files": ["luna_modules/luna_two_pass_review.py"]}],
+                [{"job": {"id": "blocked"}, "prior_reason": "aider_timeout"}],
+            )
+
+            self.assertEqual([job["id"] for job in jobs], ["fresh", "clean"])
+        finally:
+            worker._cu_latest_active_director_refresh = original_latest
+            worker._cu_jobs_from_director_refresh = original_from_director
+            worker._cu_dirty_targets = original_dirty_targets
+
     def test_director_refresh_skips_recent_successful_mission(self) -> None:
         original_recent_success = worker._cu_recent_success_for_director_mission
+        original_recent_timeout = worker._cu_recent_target_timeout_without_newer_success
         try:
             worker._cu_recent_success_for_director_mission = lambda mission, director_job: (
                 {"task_id": "done"} if mission.get("id") == "already_done" else None
             )
+            worker._cu_recent_target_timeout_without_newer_success = lambda targets: False
             director_job = {
                 "goal": "Refresh stale continues_update plan",
                 "missions": [
@@ -172,6 +247,24 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
             self.assertEqual(jobs[0]["target_files"], ["worker.py"])
         finally:
             worker._cu_recent_success_for_director_mission = original_recent_success
+            worker._cu_recent_target_timeout_without_newer_success = original_recent_timeout
+
+    def test_director_refresh_skips_recent_target_timeout(self) -> None:
+        original_recent_timeout = worker._cu_recent_target_timeout_without_newer_success
+        try:
+            worker._cu_recent_target_timeout_without_newer_success = lambda targets: targets == ["aider_bridge.py"]
+            director_job = {
+                "missions": [
+                    {"id": "stuck", "target_files": ["aider_bridge.py"], "prior_reason": "no_diff"},
+                    {"id": "safe", "target_files": ["director_agent.py"], "prior_reason": "no_diff"},
+                ]
+            }
+
+            jobs = worker._cu_jobs_from_director_refresh(director_job)
+
+            self.assertEqual([job["target_files"] for job in jobs], [["director_agent.py"]])
+        finally:
+            worker._cu_recent_target_timeout_without_newer_success = original_recent_timeout
 
     def test_dirty_target_guard_reads_git_status(self) -> None:
         original_run = worker.subprocess.run
@@ -195,6 +288,49 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
             )
         finally:
             worker.subprocess.run = original_run
+
+    def test_concrete_instruction_does_not_treat_urlopen_as_file_open(self) -> None:
+        original_project_dir = worker.PROJECT_DIR
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                worker.PROJECT_DIR = root
+                target = root / "sample.py"
+                target.write_text(
+                    "import urllib.request\n\n"
+                    "def fetch():\n"
+                    "    with urllib.request.urlopen('http://example.test') as response:\n"
+                    "        return response.read()\n",
+                    encoding="utf-8",
+                )
+
+                instruction = worker._cu_build_concrete_instruction("sample.py")
+
+                self.assertNotIn("encoding", instruction or "")
+        finally:
+            worker.PROJECT_DIR = original_project_dir
+
+    def test_concrete_instruction_rejects_docstring_only_work(self) -> None:
+        original_project_dir = worker.PROJECT_DIR
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                worker.PROJECT_DIR = root
+                target = root / "sample.py"
+                target.write_text(
+                    "def useful_public_function(value: int) -> int:\n"
+                    "    return value + 1\n",
+                    encoding="utf-8",
+                )
+
+                instruction = worker._cu_build_concrete_instruction("sample.py")
+
+                self.assertIsNone(instruction)
+                combined_patterns = "\n".join(worker._CU_INSTRUCTION_PATTERNS).lower()
+                self.assertNotIn("add a one-sentence docstring", combined_patterns)
+                self.assertNotIn("no docstring", combined_patterns)
+        finally:
+            worker.PROJECT_DIR = original_project_dir
 
     def test_dirty_plan_recovery_builds_jobs_for_clean_existing_targets(self) -> None:
         original_candidates = worker._CU_RECOVERY_FILES
