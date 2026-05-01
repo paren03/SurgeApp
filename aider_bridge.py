@@ -579,14 +579,21 @@ def _preflight_research(target_path: Path, prompt: str, task_id: str) -> str:
             f"[PRE-FLIGHT] {test_file.name} is currently ALL PASSING. "
             f"Your changes MUST NOT break any existing tests.\n\n"
         )
+        return context + prompt
     else:
+        # Fix-first policy: when tests are failing, the ONLY job is to fix those
+        # failures.  Do not attempt the improvement task until the baseline is green.
+        # The CU will retry the original improvement task on the next cycle once
+        # the target file passes its tests.
         snippet = test_output[-2000:] if len(test_output) > 2000 else test_output
-        context = (
-            f"[PRE-FLIGHT] Current failures in {test_file.name}:\n"
-            f"```\n{snippet}\n```\n"
-            f"Address these specific failures. Do not introduce new ones.\n\n"
+        _live_feed("PREFLIGHT_FIX_FIRST", f"Stage 1b: fix-first mode — improvement deferred until tests pass",
+                   task_id=task_id, detail=test_output[:200])
+        fix_prompt = (
+            f"[FIX-FIRST] {test_file.name} has failing tests. Fix ONLY those failures. "
+            f"Do not add new features or change test logic; just make the tests green.\n\n"
+            f"Failures:\n```\n{snippet}\n```"
         )
-    return context + prompt
+        return fix_prompt
 
 
 # ── Test-based self-fix (Stage 4b) ────────────────────────────────────────────
