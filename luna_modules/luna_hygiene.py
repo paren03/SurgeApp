@@ -44,6 +44,14 @@ LEGACY_HYGIENE_WHITELIST = {"is_guided_improvement_command", "run_guided_self_im
 
 
 def _hygiene_extract_target_names(target: ast.AST) -> List[str]:
+    """Extracts the target names from an AST node.
+
+    Args:
+        target (ast.AST): The AST node to extract target names from.
+
+    Returns:
+        List[str]: A list of target names.
+    """
     if isinstance(target, ast.Name):
         return [str(target.id)]
     if isinstance(target, ast.Attribute):

@@ -27,5 +27,6 @@ class TestLunaMemoryRouter(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    import pytest
-    pytest.main(["-v", __file__])
+    import subprocess
+
+    subprocess.run(["pytest", "-v"], check=True)

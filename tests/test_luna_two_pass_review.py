@@ -48,5 +48,9 @@ class TestLunaTwoPassReview(unittest.TestCase):
         self.assertIn("oversized_target_requires_scope", review["reviews"][0]["reason"])
 
 
+import sys
+
 if __name__ == "__main__":
-    unittest.main()
+    # Remove unrecognized arguments from the command line
+    sys.argv = [arg for arg in sys.argv if not arg.startswith('--timeout=')]
+    unittest.main(exit=False)
