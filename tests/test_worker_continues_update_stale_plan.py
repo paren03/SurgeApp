@@ -37,6 +37,78 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
         finally:
             worker._cu_recent_non_success_for_plan_job = original_recent
 
+    def test_wait_for_completion_treats_quarantine_as_terminal(self) -> None:
+        original_quarantine = worker._CU_AIDER_QUARANTINE_DIR
+        original_should_stop = worker._cu_should_stop
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                quarantine = Path(tmp)
+                worker._CU_AIDER_QUARANTINE_DIR = quarantine
+                worker._cu_should_stop = lambda: False
+                quarantine.mkdir(parents=True, exist_ok=True)
+                (quarantine / "job-quarantine.json").write_text(
+                    json.dumps(
+                        {
+                            "task_id": "job-quarantine",
+                            "status": "quarantined",
+                            "failure_reason": "oversized_target_requires_scope",
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+
+                status, payload = worker._cu_wait_for_completion("job-quarantine", 30)
+
+                self.assertEqual(status, "quarantined")
+                self.assertEqual(payload["failure_reason"], "oversized_target_requires_scope")
+        finally:
+            worker._CU_AIDER_QUARANTINE_DIR = original_quarantine
+            worker._cu_should_stop = original_should_stop
+
+    def test_recent_non_success_includes_quarantined_results(self) -> None:
+        original_done = worker._CU_AIDER_DONE_DIR
+        original_failed = worker._CU_AIDER_FAILED_DIR
+        original_quarantine = worker._CU_AIDER_QUARANTINE_DIR
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                done = root / "done"
+                failed = root / "failed"
+                quarantine = root / "quarantine"
+                done.mkdir()
+                failed.mkdir()
+                quarantine.mkdir()
+                worker._CU_AIDER_DONE_DIR = done
+                worker._CU_AIDER_FAILED_DIR = failed
+                worker._CU_AIDER_QUARANTINE_DIR = quarantine
+                (quarantine / "job.json").write_text(
+                    json.dumps(
+                        {
+                            "origin": "continues_update",
+                            "task_id": "job",
+                            "status": "quarantined",
+                            "failure_reason": "oversized_target_requires_scope",
+                            "target_files": ["SurgeApp_Claude_Terminal.py"],
+                            "plan_job": {"prompt_family": "inspector_ui"},
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+
+                recent = worker._cu_recent_non_success_for_plan_job(
+                    {
+                        "target_files": ["SurgeApp_Claude_Terminal.py"],
+                        "prompt_family": "inspector_ui",
+                    }
+                )
+
+                self.assertIsNotNone(recent)
+                self.assertEqual(recent["status"], "quarantined")
+        finally:
+            worker._CU_AIDER_DONE_DIR = original_done
+            worker._CU_AIDER_FAILED_DIR = original_failed
+            worker._CU_AIDER_QUARANTINE_DIR = original_quarantine
+
     def test_stale_plan_backlog_quarantines_without_deleting_queues(self) -> None:
         original_project_dir = worker._CU_PROJECT_DIR
         try:
@@ -283,11 +355,28 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
                 [
                     {"status": "MM", "path": "worker.py"},
                     {"status": "M", "path": "aider_bridge.py"},
-                    {"status": "??", "path": "luna_start.pyw"},
                 ],
             )
         finally:
             worker.subprocess.run = original_run
+
+    def test_activate_rebuilt_plan_resets_recovery_state(self) -> None:
+        plan = {"jobs": [{"id": "old"}]}
+        file_empty_streak = {"worker.py": 2}
+
+        reset = worker._cu_activate_rebuilt_plan(
+            plan,
+            [{"id": "fresh"}],
+            file_empty_streak,
+        )
+
+        self.assertEqual(plan["jobs"], [{"id": "fresh"}])
+        self.assertEqual(file_empty_streak, {})
+        self.assertEqual(reset["cycle"], 0)
+        self.assertEqual(reset["deferred_count"], 0)
+        self.assertEqual(reset["queued_count"], 0)
+        self.assertFalse(reset["dirty_recovery_added"])
+        self.assertEqual(reset["deferred_targets"], [])
 
     def test_concrete_instruction_does_not_treat_urlopen_as_file_open(self) -> None:
         original_project_dir = worker.PROJECT_DIR
@@ -336,6 +425,7 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
         original_candidates = worker._CU_RECOVERY_FILES
         original_dirty_targets = worker._cu_dirty_targets
         original_project_dir = worker._CU_PROJECT_DIR
+        original_concrete = worker._cu_build_concrete_instruction
         try:
             with tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
@@ -355,6 +445,7 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
                     if targets == ["luna_modules/luna_logging.py"]
                     else []
                 )
+                worker._cu_build_concrete_instruction = lambda target: "Edit this target line only."
 
                 jobs = worker._cu_dirty_plan_recovery_jobs([{"target_files": ["worker.py"]}])
 
@@ -362,18 +453,48 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
                 self.assertEqual(jobs[0]["origin"], "dirty_target_recovery")
                 self.assertEqual(jobs[0]["target_files"], ["luna_modules/luna_heartbeat.py"])
                 self.assertFalse(jobs[0]["apply_on_pass"])
+                self.assertIn("Edit ONLY `luna_modules/luna_heartbeat.py`", jobs[0]["prompt"])
+                self.assertIn("Concrete edit requirement", jobs[0]["prompt"])
+                self.assertNotIn("worker.py", jobs[0]["prompt"])
         finally:
             worker._CU_RECOVERY_FILES = original_candidates
             worker._cu_dirty_targets = original_dirty_targets
             worker._CU_PROJECT_DIR = original_project_dir
+            worker._cu_build_concrete_instruction = original_concrete
+
+    def test_dirty_plan_recovery_offers_enough_fallback_targets(self) -> None:
+        original_candidates = worker._CU_RECOVERY_FILES
+        original_dirty_targets = worker._cu_dirty_targets
+        original_project_dir = worker._CU_PROJECT_DIR
+        original_concrete = worker._cu_build_concrete_instruction
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                worker._CU_PROJECT_DIR = root
+                worker._CU_RECOVERY_FILES = [f"mod_{index}.py" for index in range(8)]
+                for rel in worker._CU_RECOVERY_FILES:
+                    (root / rel).write_text("value = 1\n", encoding="utf-8")
+                worker._cu_dirty_targets = lambda targets: []
+                worker._cu_build_concrete_instruction = lambda target: "Edit this target line only."
+
+                jobs = worker._cu_dirty_plan_recovery_jobs([{"target_files": ["worker.py"]}])
+
+                self.assertEqual(len(jobs), 6)
+        finally:
+            worker._CU_RECOVERY_FILES = original_candidates
+            worker._cu_dirty_targets = original_dirty_targets
+            worker._CU_PROJECT_DIR = original_project_dir
+            worker._cu_build_concrete_instruction = original_concrete
 
     def test_status_reports_cooldown_remaining(self) -> None:
         original_load_state = worker._cu_load_state
         original_should_stop = worker._cu_should_stop
+        original_lock_alive = worker._cu_is_alive_via_lock
         future = (worker.datetime.now() + worker.timedelta(seconds=35)).isoformat(timespec="seconds")
         try:
             worker._cu_load_state = lambda: {"running": True, "phase": "cooldown", "cooldown_until": future}
             worker._cu_should_stop = lambda: False
+            worker._cu_is_alive_via_lock = lambda: True
 
             status = worker.continues_update_status()
 
@@ -384,6 +505,7 @@ class TestWorkerContinuesUpdateStalePlan(unittest.TestCase):
         finally:
             worker._cu_load_state = original_load_state
             worker._cu_should_stop = original_should_stop
+            worker._cu_is_alive_via_lock = original_lock_alive
 
     def test_cleanup_old_proposals_quarantines_without_deleting_staged_dirs(self) -> None:
         original_logic_updates = worker.LOGIC_UPDATES_DIR

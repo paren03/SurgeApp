@@ -32,6 +32,21 @@ class TestLunaTwoPassReview(unittest.TestCase):
         self.assertFalse(review["satisfied"])
         self.assertIn("target not found", review["reviews"][0]["reason"])
 
+    def test_timeout_pauses_for_repair(self) -> None:
+        review = build_two_pass_review({"status": "timeout", "summary": "aider timeout"})
+
+        self.assertFalse(review["satisfied"])
+        self.assertEqual(review["action"], "pause_for_inspection")
+
+    def test_quarantine_pauses_for_repair(self) -> None:
+        review = build_two_pass_review({
+            "status": "quarantined",
+            "failure_reason": "oversized_target_requires_scope",
+        })
+
+        self.assertFalse(review["satisfied"])
+        self.assertIn("oversized_target_requires_scope", review["reviews"][0]["reason"])
+
 
 if __name__ == "__main__":
     unittest.main()

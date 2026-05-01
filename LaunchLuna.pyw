@@ -59,7 +59,7 @@ PYEXE = str(REAL_PYTHONW) if REAL_PYTHONW.exists() else (
     str(_self_w) if _self_w.exists() and _self_w.stat().st_size > 0 else str(_self_exe)
 )
 
-AIDER_PY = str(ROOT / ".aider_venv" / "Scripts" / "pythonw.exe")
+AIDER_PY = str(ROOT / ".aider_venv" / "Scripts" / "python.exe")
 
 SERVICE_LOCKS = {
     "luna_apprentice.py": LOGS / "luna_apprentice.pid.json",
@@ -348,6 +348,31 @@ def _cu_quality_gate_paused() -> bool:
         return False
 
 
+def _worker_import_ready() -> tuple[bool, str]:
+    worker_path = ROOT / "worker.py"
+    if not worker_path.exists():
+        return False, "worker_missing"
+    try:
+        result = subprocess.run(
+            [AIDER_PY, "-c", "import worker; print('IMPORT_OK')"],
+            cwd=str(ROOT),
+            env=ENV,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            creationflags=NO_WIN,
+        )
+        stdout = (result.stdout or "").strip()
+        stderr = (result.stderr or "").strip()
+        if result.returncode == 0 and "IMPORT_OK" in stdout:
+            return True, "IMPORT_OK"
+        return False, stderr or stdout or f"rc={result.returncode}"
+    except Exception as exc:
+        return False, str(exc)
+
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -371,6 +396,11 @@ def main() -> None:
             write_startup_status(events)
             open_terminal()
             return
+    # Show the monitor first; slower background services can warm up behind it.
+    open_terminal()
+    events.append({"service": "SurgeApp_Claude_Terminal.py", "action": "opened_early_or_already_running"})
+    write_startup_status(events)
+
     ensure_ollama()
     events.append({"service": "ollama", "action": "ensured"})
 
@@ -380,7 +410,7 @@ def main() -> None:
     events.append({"service": "worker.py", "action": "started" if start_if_missing("worker.py") else "already_running_or_missing"})
 
     # Aider bridge uses .aider_venv Python (has aider installed)
-    aider_py_path = ROOT / ".aider_venv" / "Scripts" / "pythonw.exe"
+    aider_py_path = ROOT / ".aider_venv" / "Scripts" / "python.exe"
     if aider_py_path.exists():
         aider_started = start_if_missing("aider_bridge.py", exe=str(aider_py_path))
     else:
@@ -389,6 +419,13 @@ def main() -> None:
 
     # Tray icon (luna_start.pyw --tray-only)
     events.append({"service": "luna_start.pyw --tray-only", "action": "started" if start_if_missing("luna_start.pyw", extra_args=["--tray-only"]) else "already_running_or_missing"})
+
+    worker_import_ok, worker_import_detail = _worker_import_ready()
+    events.append({
+        "service": "worker_import",
+        "action": "ok" if worker_import_ok else "blocked",
+        "detail": worker_import_detail[:300],
+    })
 
     # Continues-update loop (unique flag so it's not confused with worker.py)
     cu_lock = SERVICE_LOCKS["--continues-update-start"]
@@ -399,6 +436,13 @@ def main() -> None:
             "action": "paused_quality_gate",
             "reason": "noop_budget_exhausted",
         })
+    elif not worker_import_ok:
+        _archive_path(cu_lock, "worker_import_blocked")
+        events.append({
+            "service": "continues_update",
+            "action": "blocked_worker_import",
+            "reason": worker_import_detail[:300],
+        })
     elif (ROOT / "worker.py").exists() and not _lock_alive(cu_lock) and not is_running("--continues-update-start"):
         _archive_path(MEMORY / "continues_update.stop", "one_click_resume")
         pid = start_hidden(PYEXE, str(ROOT / "worker.py"), ["--continues-update-start"])
@@ -408,12 +452,6 @@ def main() -> None:
 
     events.append({"service": "luna_guardian.py", "action": "started" if start_if_missing("luna_guardian.py") else "already_running_or_missing"})
 
-    # Give background services a moment to initialise
-    time.sleep(1)
-
-    # Open the visible terminal window
-    open_terminal()
-    events.append({"service": "SurgeApp_Claude_Terminal.py", "action": "opened_or_already_running"})
     write_startup_status(events)
 
 

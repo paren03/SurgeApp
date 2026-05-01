@@ -17,6 +17,7 @@ UTF-8 IO with errors='replace'; JSON ensure_ascii=True; no stdout under pythonw.
 """
 from __future__ import annotations
 
+import ast
 import json
 import os
 import py_compile
@@ -174,11 +175,15 @@ def _append_job_log(task_id: str, message: str) -> None:
         pass
 
 
-def _aider_subprocess_env() -> Dict[str, str]:
+def _aider_subprocess_env(workspace: Path | None = None) -> Dict[str, str]:
     env = dict(os.environ)
     env["OLLAMA_API_BASE"] = OLLAMA_API_BASE
     env.setdefault("PYTHONIOENCODING", "utf-8")
     env.setdefault("PYTHONUTF8", "1")
+    if workspace is not None:
+        workspace_str = str(workspace)
+        env["GIT_CEILING_DIRECTORIES"] = workspace_str
+        env["AIDER_AUTO_COMMITS"] = "false"
     return env
 
 
@@ -315,6 +320,77 @@ def _py_verify(path: Path) -> tuple[bool, str]:
         return False, str(exc)
     except Exception as exc:
         return False, f"verify error: {exc}"
+
+
+def _core_export_verify(original_path: Path, staged_path: Path) -> tuple[bool, str]:
+    """Catch import-contract breaks that py_compile cannot see."""
+    required_by_file = {
+        "luna_paths.py": {"DEFAULT_PROJECT_DIR", "PROJECT_DIR", "MEMORY_DIR", "LOGS_DIR", "KILL_SWITCH_PATH"},
+        "luna_tasks.py": {"extract_task_identity", "_task_identity", "update_task_runtime", "_finish_task"},
+        "luna_routing.py": {"normalize_prompt_text", "resolve_worker_mode", "classify_extended_prompt_route"},
+    }
+    required = required_by_file.get(original_path.name)
+    if not required:
+        return True, ""
+    try:
+        tree = ast.parse(staged_path.read_text(encoding="utf-8", errors="replace"))
+    except Exception as exc:
+        return False, f"export check parse error: {exc}"
+    exported = set()
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and node.targets and isinstance(node.targets[0], ast.Name):
+            exported.add(node.targets[0].id)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            exported.add(node.name)
+    missing = sorted(required - exported)
+    if missing:
+        return False, f"missing required exports: {', '.join(missing)}"
+    return True, ""
+
+
+def _needs_worker_import_verify(target_path: Path) -> bool:
+    try:
+        rel = target_path.resolve().relative_to(PROJECT_DIR.resolve())
+    except Exception:
+        rel = target_path
+    normalized = str(rel).replace("\\", "/").lower()
+    return normalized == "worker.py" or normalized.startswith("luna_modules/")
+
+
+def _worker_import_verify() -> tuple[bool, str]:
+    env = _aider_subprocess_env()
+    existing_pythonpath = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = str(PROJECT_DIR) + (os.pathsep + existing_pythonpath if existing_pythonpath else "")
+    try:
+        proc = subprocess.run(
+            [AIDER_PYTHON, "-c", "import worker; print('IMPORT_OK')"],
+            cwd=str(PROJECT_DIR),
+            capture_output=True,
+            text=True,
+            timeout=30,
+            creationflags=0x08000000,
+            env=env,
+        )
+    except Exception as exc:
+        return False, f"worker import verify error: {exc}"
+    stdout = (proc.stdout or "").strip()
+    stderr = (proc.stderr or "").strip()
+    if proc.returncode != 0 or "IMPORT_OK" not in stdout:
+        detail = stderr or stdout or f"returncode={proc.returncode}"
+        return False, f"worker import verify failed: {detail}"
+    return True, "IMPORT_OK"
+
+
+def _post_apply_verify(target_path: Path) -> tuple[bool, str]:
+    ok, detail = _py_verify(target_path)
+    if not ok:
+        return False, f"live py_compile failed: {detail}"
+    ok, detail = _core_export_verify(target_path, target_path)
+    if not ok:
+        return False, f"live export check failed: {detail}"
+    if _needs_worker_import_verify(target_path):
+        return _worker_import_verify()
+    return True, ""
 
 
 def _make_diff(original: Path, patched: Path) -> str:
@@ -456,7 +532,12 @@ def run_aider_patch(task_path: Path) -> None:
     # 1. Copy target to safe workspace (unique per bridge PID to avoid collision)
     workspace = LOGIC_DIR / f"{task_id}_{os.getpid()}"
     workspace.mkdir(parents=True, exist_ok=True)
-    copy_path = workspace / target_path.name
+    try:
+        rel_target = target_path.resolve().relative_to(PROJECT_DIR.resolve())
+    except Exception:
+        rel_target = Path(target_path.name)
+    copy_path = workspace / rel_target
+    copy_path.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(target_path, copy_path)
     if not copy_path.exists() or copy_path.stat().st_size <= 0:
         _finish_quarantined(task_path, task_id, target, prompt, "empty_staged_copy", started_at, analysis_only)
@@ -485,7 +566,7 @@ def run_aider_patch(task_path: Path) -> None:
             text=True,
             timeout=AIDER_TIMEOUT,
             creationflags=0x08000000,  # CREATE_NO_WINDOW
-            env=_aider_subprocess_env(),
+            env=_aider_subprocess_env(workspace),
         )
         aider_stdout = result.stdout or ""
         aider_stderr = result.stderr or ""
@@ -559,6 +640,8 @@ def run_aider_patch(task_path: Path) -> None:
         ok, err = True, "no changes; verify skipped"
     else:
         ok, err = _py_verify(copy_path)
+        if ok:
+            ok, err = _core_export_verify(target_path, copy_path)
     _log(f"Syntax check: {'PASS' if ok else 'FAIL'} {err}")
     _append_job_log(task_id, f"VERIFY_COMPILE ok={ok} detail={err}")
     _live_feed("VERIFY_COMPILE", f"Stage 4/5: Compile {'PASS' if ok else 'FAIL'}", task_id=task_id,
@@ -569,6 +652,7 @@ def run_aider_patch(task_path: Path) -> None:
 
     # Stage 5a — APPLY (optional)
     applied = False
+    backup_path: Path | None = None
     if ok and apply and diff:
         # ── SAFETY GUARD ───────────────────────────────────────────────────────
         # Prevent the "wipe-to-0-bytes" disaster we saw on 2026-04-29.
@@ -610,6 +694,25 @@ def run_aider_patch(task_path: Path) -> None:
                 shutil.copy2(copy_path, target_path)
                 applied = True
                 _log(f"Applied patch to {target_path}  backup={backup_path.name}")
+                live_ok, live_detail = _post_apply_verify(target_path)
+                if not live_ok:
+                    ok = False
+                    rollback_note = ""
+                    try:
+                        if backup_path and backup_path.exists():
+                            shutil.copy2(backup_path, target_path)
+                            rollback_note = f"; rolled back from {backup_path.name}"
+                    except Exception as rollback_exc:
+                        rollback_note = f"; rollback failed: {rollback_exc}"
+                    applied = False
+                    err = f"{live_detail}{rollback_note}"
+                    _log(f"POST-APPLY VERIFY FAILED: {err}")
+                    _live_feed(
+                        "APPLY_ROLLBACK",
+                        "Stage 5/5: Apply rolled back after failed live verify",
+                        task_id=task_id,
+                        detail=err,
+                    )
             except Exception as exc:
                 _log(f"Apply failed: {exc}")
                 ok = False
@@ -731,8 +834,8 @@ def main() -> None:
                     return
                 if existing != my_pid:
                     _log(f"Clearing stale bridge PID {existing}.")
-            except Exception:
-                pass
+            except Exception as exc:
+                _log(f"swallowed: {exc}")
         BRIDGE_PID_PATH.write_text(str(my_pid), encoding="utf-8")
     except Exception:
         pass

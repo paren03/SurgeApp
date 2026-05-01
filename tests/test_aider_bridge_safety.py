@@ -30,6 +30,14 @@ class TestAiderBridgeSafety(unittest.TestCase):
         self.assertEqual(env["OLLAMA_API_BASE"], "http://127.0.0.1:11434")
         self.assertEqual(env["PYTHONIOENCODING"], "utf-8")
 
+    def test_aider_environment_isolates_git_discovery_for_workspace_runs(self) -> None:
+        workspace = Path(r"D:\SurgeApp\logic_updates\sample_task")
+
+        env = aider_bridge._aider_subprocess_env(workspace)
+
+        self.assertEqual(env["GIT_CEILING_DIRECTORIES"], str(workspace))
+        self.assertEqual(env["AIDER_AUTO_COMMITS"], "false")
+
     def test_hidden_safe_flags_are_present(self) -> None:
         flags = aider_bridge.AIDER_FLAGS
 
@@ -118,6 +126,62 @@ class TestAiderBridgeSafety(unittest.TestCase):
 
     def test_parent_launcher_pid_does_not_block_bridge_start(self) -> None:
         self.assertFalse(aider_bridge._bridge_pid_blocks_start(200, my_pid=300, parent_pid=200))
+
+    def test_luna_paths_export_guard_blocks_import_contract_breaks(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            staged = Path(tmp) / "luna_paths.py"
+            staged.write_text(
+                "from pathlib import Path\n"
+                "PROJECT_DIR = Path('D:/SurgeApp')\n"
+                "MEMORY_DIR = PROJECT_DIR / 'memory'\n"
+                "LOGS_DIR = PROJECT_DIR / 'logs'\n"
+                "KILL_SWITCH_PATH = PROJECT_DIR / 'LUNA_STOP_NOW.flag'\n",
+                encoding="utf-8",
+            )
+
+            ok, detail = aider_bridge._core_export_verify(staged, staged)
+
+            self.assertFalse(ok)
+            self.assertIn("DEFAULT_PROJECT_DIR", detail)
+
+    def test_luna_tasks_export_guard_blocks_missing_task_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            staged = Path(tmp) / "luna_tasks.py"
+            staged.write_text(
+                "def extract_task_identity(task_path, task=None):\n"
+                "    return {}\n"
+                "def update_task_runtime(*args, **kwargs):\n"
+                "    return None\n"
+                "def _finish_task(*args, **kwargs):\n"
+                "    return None\n",
+                encoding="utf-8",
+            )
+
+            ok, detail = aider_bridge._core_export_verify(staged, staged)
+
+            self.assertFalse(ok)
+            self.assertIn("_task_identity", detail)
+
+    def test_worker_import_verify_required_for_luna_modules(self) -> None:
+        self.assertTrue(aider_bridge._needs_worker_import_verify(Path(r"D:\SurgeApp\luna_modules\luna_paths.py")))
+        self.assertTrue(aider_bridge._needs_worker_import_verify(Path(r"D:\SurgeApp\worker.py")))
+        self.assertFalse(aider_bridge._needs_worker_import_verify(Path(r"D:\SurgeApp\README.md")))
+
+    def test_luna_routing_export_guard_blocks_missing_normalize_prompt_text(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            staged = Path(tmp) / "luna_routing.py"
+            staged.write_text(
+                "def resolve_worker_mode(task):\n"
+                "    return ('chat-response', 'chat', 'chat_response')\n"
+                "def classify_extended_prompt_route(prompt):\n"
+                "    return 'standard'\n",
+                encoding="utf-8",
+            )
+
+            ok, detail = aider_bridge._core_export_verify(staged, staged)
+
+            self.assertFalse(ok)
+            self.assertIn("normalize_prompt_text", detail)
 
 
 if __name__ == "__main__":

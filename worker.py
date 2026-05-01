@@ -3236,6 +3236,36 @@ def _cu_clear_lock() -> None:
         pass
 
 
+def _cu_process_command_line(pid: int) -> str:
+    try:
+        result = subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-Command",
+                f"(Get-CimInstance Win32_Process -Filter \"ProcessId={pid}\").CommandLine",
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=5,
+            creationflags=0x08000000,
+        )
+        if result.returncode == 0:
+            return (result.stdout or "").strip()
+    except Exception:
+        pass
+    return ""
+
+
+def _cu_pid_looks_like_worker(pid: int) -> bool:
+    if pid <= 0:
+        return False
+    command_line = _cu_process_command_line(pid).lower()
+    return "worker.py" in command_line
+
+
 def _cu_is_alive_via_lock() -> bool:
     """Return True if a CU loop with a live PID holds the lock file."""
     try:
@@ -3251,7 +3281,9 @@ def _cu_is_alive_via_lock() -> bool:
             capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5,
             creationflags=0x08000000,
         )
-        return str(pid) in result.stdout
+        if str(pid) not in result.stdout:
+            return False
+        return _cu_pid_looks_like_worker(pid)
     except Exception:
         return False
 
@@ -9874,6 +9906,7 @@ _CU_AIDER_JOBS_DIR = _CU_PROJECT_DIR / "aider_jobs"
 _CU_AIDER_ACTIVE_DIR = _CU_AIDER_JOBS_DIR / "active"
 _CU_AIDER_DONE_DIR = _CU_AIDER_JOBS_DIR / "done"
 _CU_AIDER_FAILED_DIR = _CU_AIDER_JOBS_DIR / "failed"
+_CU_AIDER_QUARANTINE_DIR = _CU_AIDER_JOBS_DIR / "quarantine"
 _CU_LIVE_FEED_PATH = _CU_LOGS_DIR / "luna_live_feed.jsonl"
 _CU_NIGHTLY_MD_PATH = _CU_MEMORY_DIR / "nightly_updates.md"
 _CU_NIGHTLY_JSONL_PATH = _CU_MEMORY_DIR / "nightly_updates.jsonl"
@@ -10145,7 +10178,7 @@ def _cu_cancel_job(task_id: str) -> None:
 
 
 def _cu_wait_for_completion(task_id: str, timeout_s: float) -> Tuple[str, Dict[str, Any]]:
-    """Poll aider_jobs/done|failed/<task>.json. Returns (status, payload).
+    """Poll aider job terminal folders for a result.
 
     If the job does not finish within timeout_s, cancels it from the active
     queue so aider does not keep processing a stale job and cause queue buildup.
@@ -10155,7 +10188,11 @@ def _cu_wait_for_completion(task_id: str, timeout_s: float) -> Tuple[str, Dict[s
         if _cu_should_stop():
             _cu_cancel_job(task_id)
             return "stopped", {}
-        for status, folder in (("done", _CU_AIDER_DONE_DIR), ("failed", _CU_AIDER_FAILED_DIR)):
+        for status, folder in (
+            ("done", _CU_AIDER_DONE_DIR),
+            ("failed", _CU_AIDER_FAILED_DIR),
+            ("quarantined", _CU_AIDER_QUARANTINE_DIR),
+        ):
             p = folder / f"{task_id}.json"
             if p.exists():
                 try:
@@ -10164,7 +10201,7 @@ def _cu_wait_for_completion(task_id: str, timeout_s: float) -> Tuple[str, Dict[s
                     noop_reason = str(payload.get("noop_reason") or payload.get("failure_reason") or "").lower()
                     if payload_status == "noop" or "no_diff" in noop_reason:
                         return "noop", payload
-                    return status, payload
+                    return payload_status or status, payload
                 except Exception:
                     return status, {}
         time.sleep(1.0)
@@ -10178,7 +10215,7 @@ def _cu_recent_non_success_for_plan_job(plan_job: Dict[str, Any], limit: int = 2
     targets = {str(item).replace("\\", "/").lower() for item in (plan_job.get("target_files") or [])}
     prompt_family = str(plan_job.get("prompt_family") or "").lower()
     paths: List[Path] = []
-    for folder in (_CU_AIDER_FAILED_DIR, _CU_AIDER_DONE_DIR):
+    for folder in (_CU_AIDER_FAILED_DIR, _CU_AIDER_QUARANTINE_DIR, _CU_AIDER_DONE_DIR):
         try:
             if folder.exists():
                 paths.extend(p for p in folder.glob("*.json") if p.is_file())
@@ -10195,7 +10232,11 @@ def _cu_recent_non_success_for_plan_job(plan_job: Dict[str, Any], limit: int = 2
         payload_status = str(payload.get("status") or payload.get("state") or "").lower()
         noop_reason = str(payload.get("noop_reason") or payload.get("failure_reason") or "").lower()
         is_noop = payload_status == "noop" or "no_diff" in noop_reason
-        is_failed = payload_status == "failed" or str(payload.get("failure_reason") or "").lower() in {"aider_timeout", "timeout"}
+        failure_reason = str(payload.get("failure_reason") or "").lower()
+        is_failed = (
+            payload_status in {"failed", "quarantined", "timeout"}
+            or failure_reason in {"aider_timeout", "timeout", "oversized_target_requires_scope"}
+        )
         if not is_noop and not is_failed:
             continue
         payload_targets = {str(item).replace("\\", "/").lower() for item in (payload.get("target_files") or [])}
@@ -10337,7 +10378,7 @@ def _cu_recent_target_timeout_without_newer_success(targets: List[str], limit: i
     if not wanted:
         return False
     paths: List[Path] = []
-    for folder in (_CU_AIDER_FAILED_DIR, _CU_AIDER_DONE_DIR):
+    for folder in (_CU_AIDER_FAILED_DIR, _CU_AIDER_QUARANTINE_DIR, _CU_AIDER_DONE_DIR):
         try:
             if folder.exists():
                 paths.extend(p for p in folder.glob("*.json") if p.is_file())
@@ -10440,6 +10481,7 @@ def _cu_dirty_targets(targets: List[str]) -> List[Dict[str, str]]:
     clean_targets = [str(item).strip() for item in (targets or []) if str(item).strip()]
     if not clean_targets:
         return []
+    wanted = {str(Path(item)).replace("\\", "/").lower() for item in clean_targets}
     try:
         result = subprocess.run(
             ["git", "status", "--porcelain=v1", "--untracked-files=all", "--", *clean_targets],
@@ -10462,18 +10504,15 @@ def _cu_dirty_targets(targets: List[str]) -> List[Dict[str, str]]:
             continue
         status = line[:2].strip() or "changed"
         path = line[3:].strip() if len(line) > 3 else line.strip()
+        normalized = str(Path(path)).replace("\\", "/").lower()
+        if normalized not in wanted:
+            continue
         dirty.append({"status": status, "path": path})
     return dirty
 
 
-def _cu_dirty_plan_recovery_jobs(deferred_targets: List[Dict[str, Any]], max_jobs: int = 3) -> List[Dict[str, Any]]:
+def _cu_dirty_plan_recovery_jobs(deferred_targets: List[Dict[str, Any]], max_jobs: int = 6) -> List[Dict[str, Any]]:
     """Build fallback jobs on clean existing files when the main CU plan is blocked."""
-    blocked = [
-        str(path)
-        for item in deferred_targets
-        for path in (item.get("target_files") or [])
-        if str(path).strip()
-    ]
     jobs: List[Dict[str, Any]] = []
     for candidate in _CU_RECOVERY_FILES:
         if len(jobs) >= max_jobs:
@@ -10484,6 +10523,17 @@ def _cu_dirty_plan_recovery_jobs(deferred_targets: List[Dict[str, Any]], max_job
         if _cu_dirty_targets([candidate]):
             continue
         index = len(jobs) + 1
+        concrete_instruction = _cu_build_concrete_instruction(candidate)
+        prompt = (
+            f"Edit ONLY `{candidate}`. Do not inspect, mention, or modify any other file. "
+            "Perform one bounded stability improvement that produces a non-empty staged diff."
+        )
+        if concrete_instruction:
+            prompt += (
+                "\n\nConcrete edit requirement:\n"
+                f"{concrete_instruction}\n"
+                "Follow the concrete edit requirement exactly and touch only the target file."
+            )
         jobs.append({
             "id": f"cu_dirty_recovery_{index:02d}_{Path(candidate).stem}",
             "origin": "dirty_target_recovery",
@@ -10496,17 +10546,30 @@ def _cu_dirty_plan_recovery_jobs(deferred_targets: List[Dict[str, Any]], max_job
             "impact_area": "dirty_target_recovery",
             "target_files": [candidate],
             "prompt_family": f"dirty_target_recovery_{index:02d}",
-            "prompt": (
-                "Perform one bounded stability improvement on this clean low-risk Luna module. "
-                "Do not touch files already deferred by the dirty-target guard: "
-                + ", ".join(blocked[:12])
-            ),
+            "prompt": prompt,
             "acceptance_test": f"{candidate} compiles and the staged diff is non-empty.",
             "verify": [f"python -m py_compile {candidate}"],
             "expected_diff_type": "stability_recovery",
             "max_lines_changed": 120,
         })
     return jobs
+
+
+def _cu_activate_rebuilt_plan(
+    plan: Dict[str, Any],
+    fresh_jobs: List[Dict[str, Any]],
+    file_empty_streak: Dict[str, int],
+) -> Dict[str, Any]:
+    """Swap in a rebuilt plan and reset per-plan loop state."""
+    plan["jobs"] = list(fresh_jobs)
+    file_empty_streak.clear()
+    return {
+        "cycle": 0,
+        "deferred_count": 0,
+        "queued_count": 0,
+        "dirty_recovery_added": False,
+        "deferred_targets": [],
+    }
 
 
 def _cu_latest_active_director_refresh() -> Dict[str, Any]:
@@ -10561,7 +10624,24 @@ def _cu_append_nightly(report: Dict[str, Any]) -> None:
 
 def continues_update_status() -> Dict[str, Any]:
     state = _cu_load_state()
-    state["running"] = bool(state.get("running")) and not _cu_should_stop()
+    lock_alive = _cu_is_alive_via_lock()
+    state["lock_alive"] = lock_alive
+    state["running"] = bool(state.get("running")) and not _cu_should_stop() and lock_alive
+    if not state["running"] and state.get("phase") in {
+        "starting",
+        "queueing",
+        "reviewed",
+        "cooldown",
+        "deferred_dirty_target",
+    }:
+        state["phase"] = "ready"
+        state["cooldown_remaining_seconds"] = 0
+        state["cooldown_until"] = ""
+        state["next_cycle_at"] = ""
+        state["stopped_at"] = state.get("stopped_at") or _cu_now_iso()
+        if _CU_LOCK_PATH.exists() and not lock_alive:
+            _cu_clear_lock()
+        _cu_write_state(state)
     cooldown_until = str(state.get("cooldown_until") or state.get("next_cycle_at") or "").strip()
     if state["running"] and cooldown_until:
         try:
@@ -10817,6 +10897,23 @@ def continues_update_loop(
         while not _cu_should_stop():
             if cycle >= len(plan["jobs"]):
                 if deferred_count and queued_count == 0:
+                    if not dirty_recovery_added:
+                        recovery_jobs = _cu_dirty_plan_recovery_jobs(deferred_targets)
+                        if recovery_jobs:
+                            dirty_recovery_added = True
+                            plan["jobs"] = recovery_jobs
+                            cycle = 0
+                            deferred_count = 0
+                            queued_count = 0
+                            _cu_feed(
+                                "CU_DIRTY_RECOVERY_READY",
+                                f"Main plan dirty; queued {len(recovery_jobs)} clean recovery job(s)",
+                                detail=json.dumps(
+                                    [job.get("target_files") for job in recovery_jobs],
+                                    ensure_ascii=True,
+                                ),
+                            )
+                            continue
                     detail = json.dumps(deferred_targets[-12:], ensure_ascii=True)
                     _cu_feed(
                         "CU_BLOCKED_BY_STAGED_EDITS",
@@ -10853,10 +10950,33 @@ def continues_update_loop(
                     })
                     _cu_write_state(state)
                 else:
-                    _cu_feed("CU_PLAN_COMPLETE", "Reached end of bounded continues-update plan")
+                    # Plan exhausted normally — rebuild and keep improving instead of stopping.
+                    _cu_feed("CU_PLAN_COMPLETE", "Reached end of bounded plan — rebuilding for next iteration")
+                    _new_plan = build_continues_update_plan("continues update", max_jobs=12)
+                    _new_check = validate_continues_update_plan(_new_plan)
+                    if not _new_check.get("ok"):
+                        _cu_feed(
+                            "CU_PLAN_REBUILD_REJECTED",
+                            "Rebuilt plan failed quality gate — stopping",
+                            detail=json.dumps(_new_check.get("violations", []), ensure_ascii=True),
+                        )
+                        break
+                    _fresh, _stale = _cu_stale_plan_report(_new_plan)
+                    if _stale:
+                        _fresh, _ = _cu_supplement_fresh_jobs(_fresh, _stale)
+                    if not _fresh:
+                        _cu_feed("CU_PLAN_REBUILD_EMPTY", "No fresh jobs after rebuild — stopping")
+                        break
+                    reset = _cu_activate_rebuilt_plan(plan, _fresh, file_empty_streak)
+                    cycle = int(reset["cycle"])
+                    deferred_count = int(reset["deferred_count"])
+                    queued_count = int(reset["queued_count"])
+                    dirty_recovery_added = bool(reset["dirty_recovery_added"])
+                    deferred_targets = list(reset["deferred_targets"])
+                    continue
                 break
-            if max_cycles and cycle >= max_cycles:
-                _cu_feed("CU_MAX_CYCLES", f"Reached max_cycles={max_cycles} — stopping loop")
+            if max_cycles and queued_count >= max_cycles:
+                _cu_feed("CU_MAX_CYCLES", f"Reached max queued jobs={max_cycles} — stopping loop")
                 break
             # Failure-budget guard: stop if aider keeps hard-failing back-to-back
             if consecutive_failures >= _CU_MAX_CONSECUTIVE_FAILURES:
@@ -11020,8 +11140,11 @@ def continues_update_loop(
                      or str(payload.get("noop_reason") or "").lower() == "no_diff")
             )
 
-            # Hard failure = aider crashed/timed-out (not just empty diff)
-            hard_failure = status in ("failed", "timeout")
+            # Hard failure = aider process crashed (not just a timeout or empty diff).
+            # Timeouts are capacity failures (file too large) — they don't count
+            # against the consecutive-failure budget so the loop keeps retrying.
+            hard_failure = status in {"failed", "quarantined"}
+            timed_out = status == "timeout"
 
             if diff_empty:
                 noop_count += 1
@@ -11037,13 +11160,19 @@ def continues_update_loop(
                 # Real change or hard failure — reset empty streak for this file
                 file_empty_streak[target_file] = 0
 
-            # Update failure budget (only hard failures count, not empty diffs)
+            # Update failure budget (crashed jobs only — timeouts are capacity, not errors)
             if hard_failure:
                 consecutive_failures += 1
                 _cu_feed(
                     "CU_FAILURE",
-                    f"Cycle {cycle} hard-failed (status={status}) — "
+                    f"Cycle {cycle} crashed (status={status}) — "
                     f"consecutive={consecutive_failures}/{_CU_MAX_CONSECUTIVE_FAILURES}",
+                    task_id=task_id,
+                )
+            elif timed_out:
+                _cu_feed(
+                    "CU_TIMEOUT",
+                    f"Cycle {cycle} timed out on {target_file} — retrying (budget unaffected)",
                     task_id=task_id,
                 )
             elif not diff_empty:
@@ -11051,7 +11180,7 @@ def continues_update_loop(
                 _cu_feed("CU_IMPROVED", f"Cycle {cycle}: real change applied to {target_file}",
                          task_id=task_id)
 
-            verify_ok = (status == "done") and not hard_failure and not diff_empty
+            verify_ok = bool(payload.get("verification_passed")) and (status == "done")
             report = {
                 "cycle": cycle,
                 "task_id": task_id,
@@ -11110,7 +11239,6 @@ def continues_update_loop(
                     # fall through to cooldown so the next cycle picks a fresh target
                 else:
                     pause_reason = str(two_pass_review.get("action") or "2x_review_not_satisfied")
-                    _CU_STOP_FLAG_PATH.write_text(_cu_now_iso(), encoding="utf-8", errors="replace")
                     state.update({
                         "running": False,
                         "phase": "paused",
@@ -11128,7 +11256,6 @@ def continues_update_loop(
                     )
                     break
             if noop_count >= _CU_MAX_NOOP_PER_CYCLE:
-                _CU_STOP_FLAG_PATH.write_text(_cu_now_iso(), encoding="utf-8", errors="replace")
                 state.update({
                     "running": False,
                     "phase": "paused",
@@ -11144,6 +11271,9 @@ def continues_update_loop(
             cooldown_seconds = float(interval_seconds)
             if str(plan_job.get("origin") or "") == "director_refresh":
                 cooldown_seconds = min(cooldown_seconds, _CU_DIRECTOR_REFRESH_INTERVAL_SECONDS)
+            # No real work done — skip the full wait so Luna retries immediately.
+            if hard_failure or timed_out or diff_empty:
+                cooldown_seconds = min(cooldown_seconds, 10.0)
             cooldown_until = (datetime.now() + timedelta(seconds=max(0.0, cooldown_seconds))).isoformat(timespec="seconds")
             state.update({
                 "running": True,
@@ -11188,6 +11318,7 @@ def continues_update_loop(
             "stopped_at": _cu_now_iso(),
         })
         _cu_write_state(state)
+        _cu_clear_lock()  # let watchdog see a clean state and restart if needed
         try:
             with _CU_NIGHTLY_MD_PATH.open("a", encoding="utf-8", errors="replace") as f:
                 f.write(build_morning_summary({

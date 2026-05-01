@@ -22,25 +22,20 @@ def _reviewer_decision(name: str, report: Dict[str, Any]) -> Dict[str, Any]:
             "satisfied": True,
             "reason": "real_diff_verified",
         }
-    if status == "done" and bool(report.get("analysis_only")):
+    if status in {"analysis_only", "already_compliant"}:
+        evidence = str(report.get("evidence") or "").strip()
         return {
             "reviewer": name,
-            "satisfied": True,
-            "reason": "analysis_only_accepted",
+            "satisfied": bool(evidence),
+            "reason": f"{'analysis_only_accepted' if status == 'analysis_only' else 'already_compliant_with_evidence'}",
         }
-    if status == "done" and bool(report.get("already_compliant")) and str(report.get("evidence") or "").strip():
-        return {
-            "reviewer": name,
-            "satisfied": True,
-            "reason": "already_compliant_with_evidence",
-        }
-    if status == "noop":
+    if status in {"noop", "timeout"}:
         return {
             "reviewer": name,
             "satisfied": False,
-            "reason": "noop_is_not_upgrade",
+            "reason": f"{'noop_is_not_upgrade' if status == 'noop' else 'timeout_needs_repair'}",
         }
-    if status in {"failed", "timeout", "stopped"}:
+    if status in {"failed", "stopped", "quarantined"}:
         return {
             "reviewer": name,
             "satisfied": False,

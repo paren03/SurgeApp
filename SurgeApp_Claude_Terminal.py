@@ -16,6 +16,7 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 import time
 import uuid
 from datetime import datetime
@@ -28,7 +29,7 @@ from luna_modules.luna_inspector_autonomy_feed import build_inspector_autonomy_s
 
 try:
     from PySide6.QtCore import QPoint, QRect, QThread, QTimer, Qt, Signal, Slot
-    from PySide6.QtGui import QColor, QPainter, QPainterPath, QPen, QRadialGradient, QTextCursor, QDragEnterEvent, QDropEvent
+    from PySide6.QtGui import QAction, QColor, QPainter, QPainterPath, QPen, QRadialGradient, QTextCursor, QDragEnterEvent, QDropEvent
     from PySide6.QtWidgets import (
         QAbstractItemView,
         QApplication,
@@ -87,6 +88,7 @@ LOGS_DIR = PROJECT_DIR / "logs"
 MEMORY_DIR = PROJECT_DIR / "memory"
 
 WORKER_PATH = PROJECT_DIR / "worker.py"
+MONITOR_PATH = PROJECT_DIR / "luna_monitor.pyw"
 WORKER_HEARTBEAT_PATH = LOGS_DIR / "luna_worker_heartbeat.json"
 WORKER_LOCK_PATH = LOGS_DIR / "luna_worker.lock.json"
 LIVE_FEED_PATH = LOGS_DIR / "luna_live_feed.jsonl"
@@ -101,6 +103,7 @@ AIDER_JOBS_DIR = PROJECT_DIR / "aider_jobs"
 AIDER_ACTIVE_DIR = AIDER_JOBS_DIR / "active"
 AIDER_DONE_DIR = AIDER_JOBS_DIR / "done"
 AIDER_FAILED_DIR = AIDER_JOBS_DIR / "failed"
+AIDER_QUARANTINE_DIR = AIDER_JOBS_DIR / "quarantine"
 
 # Windows: hide spawned console windows for subprocesses we launch
 CREATE_NO_WINDOW = 0x08000000 if os.name == "nt" else 0
@@ -137,6 +140,24 @@ def _safe_read_json(path: Path, default: Any = None) -> Any:
     return default
 
 
+def _tail_text_lines(path: Path, limit: int = 80, max_bytes: int = 262_144) -> List[str]:
+    """Return recent text lines without reading an entire growing log file."""
+    try:
+        if not path.exists():
+            return []
+        size = path.stat().st_size
+        with path.open("rb") as f:
+            if size > max_bytes:
+                f.seek(max(0, size - max_bytes))
+                if size > max_bytes:
+                    f.readline()
+            data = f.read()
+        text = data.decode("utf-8", errors="replace")
+        return text.splitlines()[-limit:]
+    except Exception:
+        return []
+
+
 def _safe_write_json(path: Path, obj: Any) -> None:
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -158,10 +179,7 @@ def write_history(entry: Dict[str, Any]) -> None:
 def _read_history_lines(limit: int = 1500) -> List[Dict[str, Any]]:
     if not HISTORY_PATH.exists():
         return []
-    try:
-        raw = HISTORY_PATH.read_text(encoding="utf-8", errors="ignore").splitlines()
-    except Exception:
-        return []
+    raw = _tail_text_lines(HISTORY_PATH, limit=limit, max_bytes=1_048_576)
     out: List[Dict[str, Any]] = []
     for line in raw[-limit:]:
         line = line.strip()
@@ -263,12 +281,12 @@ def _ensure_default_session(sessions: List[Dict[str, Any]]) -> Tuple[List[Dict[s
     return sessions, s
 
 
-def _session_messages(session_id: str, limit: int = 600) -> List[Tuple[str, str]]:
+def _session_messages(session_id: str, limit: int = 180) -> List[Tuple[str, str]]:
     """
     Returns list of (role, text) for the session from history.
     role in {"user","luna"}.
     """
-    rows = _read_history_lines(limit=3000)
+    rows = _read_history_lines(limit=900)
     msgs: List[Tuple[str, str]] = []
     for r in rows:
         if str(r.get("session_id") or "") != str(session_id):
@@ -725,8 +743,7 @@ class LiveFeedThread(QThread):
         ensure_layout()
         try:
             if LIVE_FEED_PATH.exists():
-                lines = LIVE_FEED_PATH.read_text(encoding="utf-8", errors="replace").splitlines()
-                for line in lines[-80:]:
+                for line in _tail_text_lines(LIVE_FEED_PATH, limit=80):
                     try:
                         row = json.loads(line.strip())
                     except Exception:
@@ -855,15 +872,26 @@ def _fmt_hms() -> str:
     return datetime.now().strftime("%H:%M:%S")
 
 
+_CHAT_HISTORY_RENDER_LIMIT = 60
+_SESSION_SCAN_HISTORY_LIMIT = 450
+_RICH_TEXT_MAX_BLOCKS = 220
+_TERMINAL_MAX_BLOCKS = 180
+_DIFF_MAX_BLOCKS = 90
+_DETAIL_MAX_BLOCKS = 120
+_REVIEW_REFRESH_DEBOUNCE_MS = 900
+
+
 # =============================================================================
 # GUI
 # =============================================================================
 if PYSIDE_AVAILABLE:
     class RichText(QTextBrowser):
-        def __init__(self, parent=None):
+        def __init__(self, parent=None, max_blocks: int = _RICH_TEXT_MAX_BLOCKS):
             super().__init__(parent)
             self.setOpenExternalLinks(True)
             self.setReadOnly(True)
+            self.setUndoRedoEnabled(False)
+            self.document().setMaximumBlockCount(max_blocks)
 
         def append_block(self, title: str, body: str, accent: str = "#5b8cff") -> None:
             title = _esc(title)
@@ -880,7 +908,7 @@ if PYSIDE_AVAILABLE:
         def append_diff_block(self, title: str, diff_text: str, accent: str = "#ffbd2e") -> None:
             title = _esc(title)
             rows = []
-            for raw in str(diff_text or "").splitlines()[:1200]:
+            for raw in str(diff_text or "").splitlines()[:400]:
                 line = _esc(raw)
                 if raw.startswith("+") and not raw.startswith("+++"):
                     rows.append(f"<span style='color:#27c93f;'>{line}</span>")
@@ -1017,17 +1045,25 @@ if PYSIDE_AVAILABLE:
             self._build_ui()
             self._start_timers()
             self._start_live_feed()
-
-            # Sessions load
-            self._sessions, self._session = _ensure_default_session(_load_sessions())
-            self._render_sessions()
-            self._select_session(self._session.get("id", ""))
+            self._queue_refresh_timer: Optional[QTimer] = None
+            self._hydrate_timer = QTimer(self)
+            self._hydrate_timer.setSingleShot(True)
+            self._hydrate_timer.timeout.connect(self._hydrate_initial_state)
+            self._hydrate_timer.start(0)
 
             # Start on Terminal tab (live work)
             self.tabs.setCurrentIndex(2)
 
             # Auto-start worker.py in background if not already running
             self._ensure_worker_running()
+
+        def _hydrate_initial_state(self) -> None:
+            try:
+                self._sessions, self._session = _ensure_default_session(_load_sessions())
+                self._render_sessions()
+                self._select_session(self._session.get("id", ""))
+            except Exception:
+                pass
 
         # ------------------------------
         # Worker auto-start
@@ -1340,33 +1376,20 @@ if PYSIDE_AVAILABLE:
             self._upgrade_timer.start()
             self._refresh_upgrade_badge()  # immediate first read
 
-            self.btn_restart = QPushButton("↺ Restart")
-            self.btn_restart.setObjectName("Ghost")
-            self.btn_restart.setFixedHeight(30)
-            self.btn_restart.setToolTip("Kill worker, clear lock, and start fresh (no window close needed)")
-            self.btn_restart.clicked.connect(self._restart_worker)
-            top_l.addWidget(self.btn_restart)
+            self.btn_control = QPushButton("Luna Control ▾")
+            self.btn_control.setObjectName("Primary")
+            self.btn_control.setFixedHeight(30)
+            self.btn_control.setToolTip("Restart Luna, run upgrades, check updates, or pause everything from one menu")
+            self._control_menu = self._build_control_menu()
+            self.btn_control.setMenu(self._control_menu)
+            top_l.addWidget(self.btn_control)
 
-            self.btn_cu_upgrade = QPushButton("Continues Upgrade")
-            self.btn_cu_upgrade.setObjectName("Primary")
-            self.btn_cu_upgrade.setFixedHeight(30)
-            self.btn_cu_upgrade.setToolTip("Start Luna's bounded continues-update upgrade loop")
-            self.btn_cu_upgrade.clicked.connect(self._start_continues_update_from_ui)
-            top_l.addWidget(self.btn_cu_upgrade)
-
-            self.btn_update = QPushButton("Update")
-            self.btn_update.setObjectName("Ghost")
-            self.btn_update.setFixedHeight(30)
-            self.btn_update.setToolTip("Check Python packages for available updates")
-            self.btn_update.clicked.connect(self._check_updates_from_ui)
-            top_l.addWidget(self.btn_update)
-
-            self.btn_cancel_update = QPushButton("Cancel Update")
-            self.btn_cancel_update.setObjectName("Ghost")
-            self.btn_cancel_update.setFixedHeight(30)
-            self.btn_cancel_update.setToolTip("Stop the active continues-update cycle after its current safe checkpoint")
-            self.btn_cancel_update.clicked.connect(self._cancel_continues_update_from_ui)
-            top_l.addWidget(self.btn_cancel_update)
+            self.btn_monitor = QPushButton("Luna Monitor")
+            self.btn_monitor.setObjectName("Ghost")
+            self.btn_monitor.setFixedHeight(30)
+            self.btn_monitor.setToolTip("Open the floating Luna Monitor dashboard")
+            self.btn_monitor.clicked.connect(self._open_luna_monitor)
+            top_l.addWidget(self.btn_monitor)
 
             self.btn_aider = QPushButton("⚡ Aider")
             self.btn_aider.setObjectName("Ghost")
@@ -1374,12 +1397,6 @@ if PYSIDE_AVAILABLE:
             self.btn_aider.setToolTip("Launch Aider coding session in a new terminal")
             self.btn_aider.clicked.connect(self._launch_aider)
             top_l.addWidget(self.btn_aider)
-
-            self.btn_pause = QPushButton("Pause")
-            self.btn_pause.setObjectName("Primary")
-            self.btn_pause.setFixedHeight(30)
-            self.btn_pause.clicked.connect(self._toggle_pause)
-            top_l.addWidget(self.btn_pause)
 
             # Window controls — Windows-style right edge
             _sep = QFrame()
@@ -1495,7 +1512,7 @@ if PYSIDE_AVAILABLE:
             chat_hdr.addWidget(self.btn_clear_chat)
             cc.addLayout(chat_hdr)
 
-            self.chat = RichText()
+            self.chat = RichText(max_blocks=_RICH_TEXT_MAX_BLOCKS)
             cc.addWidget(self.chat, 1)
 
             # Input row with attachment button
@@ -1551,11 +1568,11 @@ if PYSIDE_AVAILABLE:
             self.tabs = QTabWidget()
             ri.addWidget(self.tabs, 1)
 
-            self.preview  = RichText()
+            self.preview  = RichText(max_blocks=_DETAIL_MAX_BLOCKS)
             self.diff_tab = QWidget()
             self.diff_split = QSplitter(Qt.Vertical)
-            self.diff = RichText()
-            self.diff_review = RichText()
+            self.diff = RichText(max_blocks=_DIFF_MAX_BLOCKS)
+            self.diff_review = RichText(max_blocks=_DIFF_MAX_BLOCKS)
             diff_lay = QVBoxLayout(self.diff_tab)
             diff_lay.setContentsMargins(0, 0, 0, 0)
             diff_lay.setSpacing(0)
@@ -1563,12 +1580,12 @@ if PYSIDE_AVAILABLE:
             self.diff_split.addWidget(self.diff_review)
             self.diff_split.setSizes([220, 520])
             diff_lay.addWidget(self.diff_split, 1)
-            self.terminal = RichText()   # live work feed
-            self.autonomy = RichText()   # autonomy plans/jobs/verification summary
+            self.terminal = RichText(max_blocks=_TERMINAL_MAX_BLOCKS)   # live work feed
+            self.autonomy = RichText(max_blocks=_DETAIL_MAX_BLOCKS)   # autonomy plans/jobs/verification summary
             self.files = QWidget()       # editable files tab
             self.queue_tab = QWidget()   # queue hub
             self.tasks = QWidget()
-            self.plan = RichText()       # system/control notes live here
+            self.plan = RichText(max_blocks=_DETAIL_MAX_BLOCKS)       # system/control notes live here
 
             self.tabs.addTab(self.preview, "Preview")
             self.tabs.addTab(self.diff_tab, "Diff")
@@ -1578,11 +1595,16 @@ if PYSIDE_AVAILABLE:
             self.tabs.addTab(self.files, "Files")
             self.tabs.addTab(self.tasks, "Tasks")
             self.tabs.addTab(self.plan, "Plan")
+            self.tabs.currentChanged.connect(self._on_tab_changed)
 
             self._build_files_tab()
             self._build_tasks_tab()
             self._build_queue_tab()
-            self._refresh_review_diff()
+            self.diff_review.append_block(
+                "Review",
+                "Open the Diff tab or wait for a completed patch to refresh the review diff.",
+                accent="#a6a6ad",
+            )
 
             # Initial sizes
             self._split.setSizes([300, 820, self._right_width])
@@ -1598,7 +1620,11 @@ if PYSIDE_AVAILABLE:
                 "Terminal tab is the live work feed (what Luna is doing).",
                 accent="#a6a6ad",
             )
-            self._refresh_autonomy_tab()
+            self.autonomy.append_block(
+                "Autonomy Snapshot",
+                "Open the Autonomy tab or wait for a completed autonomy event to refresh this view.",
+                accent="#7bd88f",
+            )
 
         # ------------------------------
         # Sessions UI
@@ -1633,7 +1659,7 @@ if PYSIDE_AVAILABLE:
 
             # Render chat history for session
             self.chat.clear()
-            msgs = _session_messages(str(found.get("id")), limit=700)
+            msgs = _session_messages(str(found.get("id")), limit=_CHAT_HISTORY_RENDER_LIMIT)
             if not msgs:
                 self.chat.append_ai("Ready. What's next?")
                 return
@@ -1761,11 +1787,105 @@ if PYSIDE_AVAILABLE:
         # ------------------------------
         # Control plane
         # ------------------------------
+        def _build_control_menu(self) -> QMenu:
+            menu = QMenu(self)
+            self.act_restart = QAction("Restart Luna", self)
+            self.act_restart.triggered.connect(self._restart_worker)
+            menu.addAction(self.act_restart)
+
+            self.act_cu_upgrade = QAction("Continues Upgrade", self)
+            self.act_cu_upgrade.triggered.connect(self._start_continues_update_from_ui)
+            menu.addAction(self.act_cu_upgrade)
+
+            self.act_update = QAction("Update Check", self)
+            self.act_update.triggered.connect(self._check_updates_from_ui)
+            menu.addAction(self.act_update)
+
+            self.act_cancel_update = QAction("Cancel Update", self)
+            self.act_cancel_update.triggered.connect(self._cancel_continues_update_from_ui)
+            menu.addAction(self.act_cancel_update)
+
+            menu.addSeparator()
+            self.act_pause = QAction("Pause All", self)
+            self.act_pause.triggered.connect(self._toggle_pause)
+            menu.addAction(self.act_pause)
+            self._sync_control_menu()
+            return menu
+
+        def _sync_control_menu(self) -> None:
+            if hasattr(self, "act_pause"):
+                self.act_pause.setText("Resume All" if self._paused else "Pause All")
+            if hasattr(self, "btn_control"):
+                self.btn_control.setText("Luna Control ▾")
+
+        def _monitor_python(self) -> str:
+            candidates = [self._ui_pythonw(), "pythonw", "python"]
+            seen = set()
+            for candidate in candidates:
+                if candidate and candidate not in seen:
+                    seen.add(candidate)
+                    return candidate
+            return sys.executable
+
+        def _python_process_has_marker(self, marker: str) -> bool:
+            if not marker:
+                return False
+            try:
+                escaped = marker.replace("\\", "\\\\").replace("'", "''")
+                result = subprocess.run(
+                    [
+                        "powershell",
+                        "-NoProfile",
+                        "-Command",
+                        (
+                            "Get-CimInstance Win32_Process | "
+                            "Where-Object { $_.Name -match '^python' -and "
+                            f"$_.CommandLine -match '{escaped}' }} | "
+                            "Select-Object -ExpandProperty ProcessId"
+                        ),
+                    ],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    timeout=5,
+                    creationflags=CREATE_NO_WINDOW,
+                )
+                return bool((result.stdout or "").strip())
+            except Exception:
+                return False
+
+        def _open_luna_monitor(self) -> None:
+            if self._python_process_has_marker("luna_monitor.pyw"):
+                self.plan.append_block("Monitor", "Luna Monitor is already open.", accent="#8ab4ff")
+                return
+            if not MONITOR_PATH.exists():
+                self.plan.append_block("Monitor", f"luna_monitor.pyw not found at {MONITOR_PATH}", accent="#ff5f56")
+                return
+            try:
+                # Use real pythonw — WindowsApps stub unreliable for GUI launch
+                _real_pythonw = Path(
+                    r"C:\Program Files\WindowsApps"
+                    r"\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0"
+                    r"\pythonw3.11.exe"
+                )
+                _exe = str(_real_pythonw) if _real_pythonw.exists() else self._ui_pythonw()
+                subprocess.Popen(
+                    [_exe, str(MONITOR_PATH)],
+                    cwd=str(PROJECT_DIR),
+                    creationflags=CREATE_NO_WINDOW,
+                    stdin=subprocess.DEVNULL,
+                )
+                self.plan.append_block("Monitor", "Opened Luna Monitor dashboard.", accent="#7bd88f")
+            except Exception as exc:
+                self.plan.append_block("Monitor", f"Could not open Luna Monitor: {exc}", accent="#ff5f56")
+
         def _restart_worker(self) -> None:
             if self._restart_thread and self._restart_thread.isRunning():
                 return
-            self.btn_restart.setText("↺ …")
-            self.btn_restart.setEnabled(False)
+            if hasattr(self, "act_restart"):
+                self.act_restart.setText("Restarting…")
+                self.act_restart.setEnabled(False)
             self.badge.setText("● restarting")
             self.badge.setStyleSheet("color: #ffbd2e;")
             self.plan.append_block("Restart", "Stopping worker and clearing lock…", accent="#ffbd2e")
@@ -1776,8 +1896,9 @@ if PYSIDE_AVAILABLE:
 
         @Slot(str)
         def _on_restart_done(self, msg: str) -> None:
-            self.btn_restart.setText("↺ Restart")
-            self.btn_restart.setEnabled(True)
+            if hasattr(self, "act_restart"):
+                self.act_restart.setText("Restart Luna")
+                self.act_restart.setEnabled(True)
             self.plan.append_block("Restart", msg, accent="#27c93f")
 
         def _launch_aider(self) -> None:
@@ -1807,7 +1928,7 @@ if PYSIDE_AVAILABLE:
                 KILL_SWITCH_PATH.touch()
             except Exception:
                 pass
-            self.btn_pause.setText("Resume")
+            self._sync_control_menu()
             self.badge.setText("● paused")
             self.badge.setStyleSheet("color: #ffbd2e;")
             self.plan.append_block("Control", "Paused. Autonomy should stop at the next loop checkpoint.", accent="#ffbd2e")
@@ -1819,7 +1940,7 @@ if PYSIDE_AVAILABLE:
                     KILL_SWITCH_PATH.unlink()
             except Exception:
                 pass
-            self.btn_pause.setText("Pause")
+            self._sync_control_menu()
             self.plan.append_block("Control", "Resumed.", accent="#27c93f")
 
         # ------------------------------
@@ -2440,6 +2561,9 @@ if PYSIDE_AVAILABLE:
             """Render the bottom Review pane as a red/green git diff."""
             if not hasattr(self, "diff_review"):
                 return
+            if hasattr(self, "tabs") and hasattr(self, "diff_tab"):
+                if self.tabs.currentWidget() is not self.diff_tab:
+                    return
             try:
                 text = _run_git_review_diff()
                 self.diff_review.clear()
@@ -2461,11 +2585,27 @@ if PYSIDE_AVAILABLE:
                 files = len([line for line in text.splitlines() if line.startswith("diff --git ")])
                 self.diff_review.append_diff_block(
                     f"Review Diff  ·  {files} file(s)  +{added} -{removed}",
-                    text[:240000],
+                    text[:80000],
                     accent="#7eb8ff",
                 )
             except Exception as exc:
                 self.diff_review.append_block("Review Diff Error", str(exc), accent="#ff5f56")
+
+        def _schedule_review_diff_refresh(self) -> None:
+            if hasattr(self, "_diff_review_refresh_timer"):
+                self._diff_review_refresh_timer.start(_REVIEW_REFRESH_DEBOUNCE_MS)
+
+        def _schedule_queue_refresh(self, delay_ms: int = 350) -> None:
+            if hasattr(self, "_queue_refresh_timer") and self._queue_refresh_timer is not None:
+                self._queue_refresh_timer.start(delay_ms)
+
+        def _on_tab_changed(self, index: int) -> None:
+            if hasattr(self, "tabs") and hasattr(self, "diff_tab"):
+                if self.tabs.widget(index) is self.diff_tab:
+                    self._schedule_review_diff_refresh()
+            if hasattr(self, "tabs") and hasattr(self, "autonomy"):
+                if self.tabs.widget(index) is self.autonomy:
+                    self._refresh_autonomy_tab()
 
         # ------------------------------
         # Tasks tab
@@ -2760,6 +2900,7 @@ if PYSIDE_AVAILABLE:
                 (AIDER_ACTIVE_DIR, "aider"): "active",
                 (AIDER_DONE_DIR,   "aider"): "done",
                 (AIDER_FAILED_DIR, "aider"): "failed",
+                (AIDER_QUARANTINE_DIR, "aider"): "quarantined",
                 (ACTIVE_DIR,       "task"):  "active",
                 (DONE_DIR,         "task"):  "done",
                 (FAILED_DIR,       "task"):  "failed",
@@ -2812,7 +2953,7 @@ if PYSIDE_AVAILABLE:
             try:
                 if not LIVE_FEED_PATH.exists():
                     return rows
-                for line in LIVE_FEED_PATH.read_text(encoding="utf-8", errors="replace").splitlines()[-limit:]:
+                for line in _tail_text_lines(LIVE_FEED_PATH, limit=limit):
                     try:
                         row = json.loads(line)
                         if isinstance(row, dict):
@@ -2932,24 +3073,10 @@ if PYSIDE_AVAILABLE:
                     cu_target = f"{_t} › {_sec}"
                     break
             latest_done = next((j for j in full_jobs if j.get("status") == "done"), {})
-            latest_failed = next((j for j in full_jobs if j.get("status") == "failed"), {})
+            latest_failed = next((j for j in full_jobs if j.get("status") in {"failed", "quarantined"}), {})
 
-            # Detect whether the CU process is actually alive via lock file
-            cu_lock_path = MEMORY_DIR / "cu_loop.lock.json"
-            cu_process_alive = False
-            try:
-                if cu_lock_path.exists():
-                    import json as _json
-                    _cu_lock = _json.loads(cu_lock_path.read_text(encoding="utf-8", errors="replace") or "{}")
-                    _cu_pid = int(_cu_lock.get("pid") or 0)
-                    if _cu_pid > 0:
-                        import subprocess as _sp
-                        _r = _sp.run(["tasklist", "/FI", f"PID eq {_cu_pid}", "/NH"],
-                                     capture_output=True, text=True, timeout=3,
-                                     creationflags=0x08000000)
-                        cu_process_alive = str(_cu_pid) in (_r.stdout or "")
-            except Exception:
-                pass
+            # Detect whether the CU process is actually alive — use cached value (updated every 5s in background)
+            cu_process_alive = self._cu_alive_cache
 
             # How far until next cycle (negative = overdue)
             _cu_next_secs = 0
@@ -3103,7 +3230,8 @@ if PYSIDE_AVAILABLE:
         def _refresh_queue(self) -> None:
             try:
                 q_text = (self._q_filter.text() or "").strip().lower()
-                all_jobs = self._q_collect_jobs()
+                full = self._q_collect_jobs()
+                all_jobs = full
 
                 # Apply text filter
                 if q_text:
@@ -3118,11 +3246,10 @@ if PYSIDE_AVAILABLE:
                     all_jobs = [j for j in all_jobs if j["status"] == _sf]
 
                 # Stats (from full unfiltered list for accuracy)
-                full = self._q_collect_jobs()
                 n_queued  = sum(1 for j in full if j["status"] == "queued")
                 n_running = sum(1 for j in full if j["status"] == "running")
                 n_blocked = sum(1 for j in full if j["status"] == "blocked")
-                n_failed  = sum(1 for j in full if j["status"] == "failed")
+                n_failed  = sum(1 for j in full if j["status"] in {"failed", "quarantined"})
                 n_done    = sum(1 for j in full if j["status"] == "done")
                 try:
                     total_done = (
@@ -3454,11 +3581,16 @@ if PYSIDE_AVAILABLE:
         def _start_timers(self) -> None:
             self._hb_timer = QTimer(self)
             self._hb_timer.timeout.connect(self._tick_heartbeat)
-            self._hb_timer.start(2000)
+            self._hb_timer.start(3000)
+            self._cu_alive_cache: bool = False
+            self._cu_alive_timer = QTimer(self)
+            self._cu_alive_timer.timeout.connect(self._refresh_cu_alive)
+            self._cu_alive_timer.start(8000)
+            self._refresh_cu_alive()  # initial check
 
             self._tasks_timer = QTimer(self)
             self._tasks_timer.timeout.connect(self._tick_tasks)
-            self._tasks_timer.start(2500)
+            self._tasks_timer.start(5000)
 
             self._clock_timer = QTimer(self)
             self._clock_timer.timeout.connect(self._tick_clock)
@@ -3466,12 +3598,19 @@ if PYSIDE_AVAILABLE:
 
             self._sysres_timer = QTimer(self)
             self._sysres_timer.timeout.connect(self._tick_sysres)
-            self._sysres_timer.start(4000)
+            self._sysres_timer.start(8000)
             self._tick_sysres()
 
             self._diff_review_timer = QTimer(self)
             self._diff_review_timer.timeout.connect(self._refresh_review_diff)
-            self._diff_review_timer.start(7000)
+            self._diff_review_timer.start(30000)
+
+            self._diff_review_refresh_timer = QTimer(self)
+            self._diff_review_refresh_timer.setSingleShot(True)
+            self._diff_review_refresh_timer.timeout.connect(self._refresh_review_diff)
+            self._queue_refresh_timer = QTimer(self)
+            self._queue_refresh_timer.setSingleShot(True)
+            self._queue_refresh_timer.timeout.connect(self._refresh_queue)
 
         def _tick_tasks(self) -> None:
             try:
@@ -3482,6 +3621,30 @@ if PYSIDE_AVAILABLE:
                     self._refresh_queue()
             except Exception:
                 pass
+
+        def _refresh_cu_alive(self) -> None:
+            """Check CU process alive in background thread — keeps UI responsive."""
+            def _check() -> None:
+                try:
+                    cu_lock_path = MEMORY_DIR / "cu_loop.lock.json"
+                    if not cu_lock_path.exists():
+                        self._cu_alive_cache = False
+                        return
+                    import json as _json
+                    _cu_lock = _json.loads(cu_lock_path.read_text(encoding="utf-8", errors="replace") or "{}")
+                    _cu_pid = int(_cu_lock.get("pid") or 0)
+                    if _cu_pid <= 0:
+                        self._cu_alive_cache = False
+                        return
+                    _r = subprocess.run(
+                        ["tasklist", "/FI", f"PID eq {_cu_pid}", "/NH"],
+                        capture_output=True, text=True, timeout=3,
+                        creationflags=CREATE_NO_WINDOW,
+                    )
+                    self._cu_alive_cache = str(_cu_pid) in (_r.stdout or "")
+                except Exception:
+                    self._cu_alive_cache = False
+            threading.Thread(target=_check, daemon=True).start()
 
         def _tick_heartbeat(self) -> None:
             hb = _safe_read_json(WORKER_HEARTBEAT_PATH, default={}) or {}
@@ -3515,7 +3678,7 @@ if PYSIDE_AVAILABLE:
                     self.badge.setText(f"● stale ({int(age_s)}s)")
                     self.badge.setStyleSheet("color: #ffbd2e;")
 
-            if hasattr(self, "_q_now"):
+            if hasattr(self, "_q_now") and hasattr(self, "tabs") and self.tabs.currentIndex() == 4:
                 try:
                     self._q_now.setText(self._q_activity_html(self._q_collect_jobs()))
                 except Exception:
@@ -3576,7 +3739,8 @@ if PYSIDE_AVAILABLE:
             if evt == "DIFF_SAVED" and "no changes" in detail.lower():
                 body_lines.append("NOOP: no green/red diff was produced.")
             self.diff.append_diff_block(f"[{ts}] {evt}", "\n".join(body_lines), accent=color)
-            self._refresh_review_diff()
+            if evt in {"DIFF_SAVED", "NOOP", "FAILED", "DONE", "CU_CYCLE_END", "CU_2X_REVIEW_PAUSED"}:
+                self._schedule_review_diff_refresh()
 
         @Slot(dict)
         def _on_feed_event(self, row: dict) -> None:
@@ -3594,10 +3758,15 @@ if PYSIDE_AVAILABLE:
                     body += "\n" + detail
                 self.terminal.append_block(f"[{ts}] {icon} {evt}", body[:9000], accent=color)
                 self._append_diff_runtime_event(row)
-                if hasattr(self, "_q_now"):
-                    self._refresh_queue()
+                if (
+                    hasattr(self, "_q_now")
+                    and hasattr(self, "tabs")
+                    and self.tabs.currentIndex() == 4
+                ):
+                    self._schedule_queue_refresh()
                 if evt in {"DIRECTOR_PLAN_CREATED", "NOOP", "FAILED", "DONE", "CU_CYCLE_END", "CU_BUDGET_EXHAUSTED", "CU_NOOP_BUDGET_EXHAUSTED", "CU_2X_REVIEW_PAUSED"}:
-                    self._refresh_autonomy_tab()
+                    if hasattr(self, "tabs") and self.tabs.currentWidget() is self.autonomy:
+                        self._refresh_autonomy_tab()
             except Exception:
                 pass
 
@@ -3877,6 +4046,8 @@ if PYSIDE_AVAILABLE:
         def _refresh_autonomy_tab(self) -> None:
             """Refresh Inspector Autonomy tab without writing to main chat."""
             try:
+                if hasattr(self, "tabs") and self.tabs.currentWidget() is not self.autonomy:
+                    return
                 snapshot = build_inspector_autonomy_snapshot(PROJECT_DIR)
                 self.autonomy.clear()
                 counts = {

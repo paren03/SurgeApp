@@ -77,7 +77,7 @@ def update_session_summary(task_name: str, mood: str = "awake") -> None:
 
 # ── Task identity and path helpers ────────────────────────────────────────────
 
-def _task_identity(task_path: Path, task: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def extract_task_identity(task_path: Path, task: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     task = task if isinstance(task, dict) else safe_read_json(task_path, default={})
     task_id = task.get("id", task_path.stem.replace(".working", ""))
     target_file = task.get("target_file") or str(PROJECT_DIR / "worker.py")
@@ -89,6 +89,11 @@ def _task_identity(task_path: Path, task: Optional[Dict[str, Any]] = None) -> Di
         "user_input": user_input,
         "solution_path": SOLUTIONS_DIR / f"{task_id}.txt",
     }
+
+
+def _task_identity(task_path: Path, task: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Compatibility shim for worker imports during the modular refactor."""
+    return extract_task_identity(task_path, task)
 
 
 def build_final_task_name(task_path: Path) -> str:
@@ -192,6 +197,9 @@ def _finish_task(task_path: Path, solution_path: Path, header: str, body: str, s
 
 
 def _finish_kill_switch_block(task_path: Path) -> bool:
+    if "_task_identity" not in globals():
+        from luna_modules.luna_tasks import _task_identity
+
     report = "[LUNA EXECUTION BLOCKED]\nKill switch is active. Clear LUNA_STOP_NOW.flag to resume.\n"
     ctx = _task_identity(task_path)
     _finish_task(

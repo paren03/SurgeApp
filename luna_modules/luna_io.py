@@ -54,7 +54,8 @@ def _atomic_replace(temp_path: Path, dest_path: Path) -> None:
     # Cleanup orphaned temp file before propagating
     try:
         temp_path.unlink(missing_ok=True)
-    except Exception:
+    except Exception as exc:
+        # swallowed: exception is ignored and does not affect the function's behavior
         pass
     raise last_exc
 

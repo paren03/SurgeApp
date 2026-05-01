@@ -222,13 +222,15 @@ def parse_natural_language_task(prompt: str) -> Optional[Dict[str, Any]]:
     # Conversational starters are never code commands — bail immediately.
     # A real code command starts with the action verb itself ("fix the banner",
     # "improve worker"), never with "I", "In", "Also", "Can", "Could", etc.
-    _CONVO_STARTERS = {
-        "i", "in", "also", "can", "could", "would", "should", "please",
-        "hey", "hi", "hello", "so", "and", "but", "what", "how", "why",
-        "when", "where", "do", "does", "is", "are", "the", "a", "an",
-        "that", "this", "will", "let", "make", "tell", "show", "just",
-        "actually", "basically", "additionally", "furthermore",
-    }
+    def is_convo_starter(word: str) -> bool:
+        _CONVO_STARTERS = {
+            "i", "in", "also", "can", "could", "would", "should", "please",
+            "hey", "hi", "hello", "so", "and", "but", "what", "how", "why",
+            "when", "where", "do", "does", "is", "are", "the", "a", "an",
+            "that", "this", "will", "let", "make", "tell", "show", "just",
+            "actually", "basically", "additionally", "furthermore",
+        }
+        return word in _CONVO_STARTERS
     first_word = normalized.split()[0] if normalized.split() else ""
     if first_word in _CONVO_STARTERS:
         return None

@@ -32,7 +32,7 @@ PYTHONW = Path(
     r"\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0"
     r"\pythonw3.11.exe"
 )
-AIDER_PYTHONW = PROJECT_DIR / ".aider_venv" / "Scripts" / "pythonw.exe"
+AIDER_PYTHON = PROJECT_DIR / ".aider_venv" / "Scripts" / "python.exe"
 
 SERVICE_SCRIPTS = {
     "worker": "worker.py",
@@ -274,8 +274,8 @@ def _dedupe_service_processes(service_name: str, script_spec: str) -> List[int]:
             try:
                 pid = int(row.get("pid") or 0)
                 parent_by_pid[pid] = int(row.get("parent_pid") or 0)
-            except Exception:
-                pass
+            except Exception as exc:
+                _log(f"swallowed: {exc}")
         child_pids = [pid for pid, parent_pid in parent_by_pid.items() if parent_pid in row_pids]
         if len(child_pids) == 1:
             if lock:
@@ -354,8 +354,8 @@ def acquire_guardian_lock() -> bool:
 
 
 def _pythonw_for(service_name: str) -> str:
-    if service_name == "aider_bridge" and AIDER_PYTHONW.exists():
-        return str(AIDER_PYTHONW)
+    if service_name == "aider_bridge" and AIDER_PYTHON.exists():
+        return str(AIDER_PYTHON)
     return str(PYTHONW if PYTHONW.exists() else sys.executable)
 
 
