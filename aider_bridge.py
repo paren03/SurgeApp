@@ -180,9 +180,9 @@ def _aider_subprocess_env(workspace: Path | None = None) -> Dict[str, str]:
     env = dict(os.environ)
     env["OLLAMA_API_BASE"] = OLLAMA_API_BASE
     # Ollama defaults to num_ctx=2048 which causes context overflow on almost
-    # any non-trivial file.  Set a larger window so the model can see the file
-    # content + generate a complete diff without hitting the token limit.
-    env.setdefault("OLLAMA_NUM_CTX", "8192")
+    # any non-trivial file.  4096 doubles the window without blowing VRAM on
+    # a 7B model (8192 can exceed GPU memory and cause model-not-ready failures).
+    env.setdefault("OLLAMA_NUM_CTX", "4096")
     env.setdefault("PYTHONIOENCODING", "utf-8")
     env.setdefault("PYTHONUTF8", "1")
     if workspace is not None:
@@ -818,7 +818,7 @@ def run_aider_patch(task_path: Path) -> None:
         return
 
     # Ollama MODEL can generate tokens? (fast-fail before 6-min Aider timeout)
-    model_ok, model_detail = _ollama_model_ready(timeout_seconds=20.0)
+    model_ok, model_detail = _ollama_model_ready(timeout_seconds=45.0)
     _live_feed("OLLAMA_MODEL_CHECK", f"Model {'ready' if model_ok else 'NOT READY — skipping job'}", task_id=task_id, detail=model_detail)
     _append_job_log(task_id, f"OLLAMA_MODEL_CHECK ok={model_ok} detail={model_detail}")
     if not model_ok:
