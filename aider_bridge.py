@@ -1232,6 +1232,12 @@ def main() -> None:
             jobs_seen = 0
             failed_seen = 0
             noop_seen = 0
+            # Reset queue governor cycle at the start of each scan pass
+            try:
+                from luna_modules.luna_queue_governor import reset_cycle_state
+                reset_cycle_state(PROJECT_DIR)
+            except ImportError:
+                pass
             for task_file in sorted(ACTIVE_DIR.glob("*.json")):
                 if jobs_seen >= MAX_JOBS_PER_CYCLE or failed_seen >= MAX_FAILED_PER_CYCLE or noop_seen >= MAX_NOOP_PER_CYCLE:
                     _live_feed(
