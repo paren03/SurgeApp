@@ -9916,7 +9916,7 @@ _CU_FORCE_START_FLAG_PATH = _CU_MEMORY_DIR / "cu_force_start.flag"
 _CU_ARCHITECT_STOP_FLAG_PATH = _CU_MEMORY_DIR / "architect.stop"
 _CU_KILL_SWITCH_PATH = _CU_PROJECT_DIR / "LUNA_STOP_NOW.flag"
 _CU_SHUTDOWN_FLAG_PATH = _CU_LOGS_DIR / "SHUTDOWN.flag"
-_CU_DEFAULT_INTERVAL_SECONDS = 600.0   # 10 min — prevents pile-up on slow models
+_CU_DEFAULT_INTERVAL_SECONDS = 5.0     # short pause to let git settle; aider completion is the real gate
 _CU_DIRECTOR_REFRESH_INTERVAL_SECONDS = 60.0  # refresh plans should keep moving but not hammer the machine
 _CU_DEFAULT_JOB_TIMEOUT_SECONDS = 420.0  # must be > AIDER_TIMEOUT so aider finishes first
 _CU_MAX_CONSECUTIVE_FAILURES = 5         # stop loop after N back-to-back real failures
@@ -10706,6 +10706,50 @@ def _cu_pick_next_section(filepath: str, last_section_name: str) -> Optional[Dic
     return sections[0]
 
 
+def _cu_pick_section_by_relevance(
+    filepath: str,
+    instructions: str,
+    last_section_name: str,
+) -> Optional[Dict[str, Any]]:
+    """Pick the section of *filepath* most relevant to *instructions*.
+
+    Uses find_targets() from the self-knowledge engine when the index exists.
+    Falls back to round-robin (_cu_pick_next_section) if the index is absent or
+    no scored result lands in this file.
+    """
+    try:
+        from luna_modules.luna_self_knowledge import find_targets  # lazy import
+        hits = find_targets(instructions, _CU_PROJECT_DIR, limit=20)
+        abs_path = str(Path(filepath).resolve())
+        best: Optional[Dict[str, Any]] = None
+        best_score = -1
+        for hit in hits:
+            hit_abs = str(Path(hit.get("file_path", "")).resolve())
+            if hit_abs != abs_path:
+                continue
+            s_line = hit.get("start_line")
+            e_line = hit.get("end_line")
+            if s_line is None or e_line is None:
+                continue
+            line_count = (e_line - s_line + 1) if e_line >= s_line else 1
+            if line_count < 50:
+                continue
+            if hit["score"] > best_score:
+                best_score = hit["score"]
+                best = {
+                    "name": hit.get("symbol") or f"lines_{s_line}_{e_line}",
+                    "kind": hit.get("kind", "function"),
+                    "start_line": s_line,
+                    "end_line": e_line,
+                    "line_count": line_count,
+                }
+        if best is not None:
+            return best
+    except Exception:
+        pass
+    return _cu_pick_next_section(filepath, last_section_name)
+
+
 def _cu_annotate_for_section(instruction: str, target_file: str, section: Dict[str, Any]) -> str:
     """Prefix instruction with a focused section directive so aider edits only that block."""
     kind = section.get("kind", "section")
@@ -11096,7 +11140,7 @@ def continues_update_loop(
                 except Exception:
                     _line_count = 0
                 if _line_count >= _CU_LARGE_FILE_LINE_THRESHOLD:
-                    _section = _cu_pick_next_section(_full, section_cursor.get(_tgt, ""))
+                    _section = _cu_pick_section_by_relevance(_full, instructions, section_cursor.get(_tgt, ""))
                     if _section:
                         instructions = _cu_annotate_for_section(instructions, _tgt, _section)
                         section_cursor[_tgt] = _section["name"]
@@ -11225,15 +11269,13 @@ def continues_update_loop(
             if status == "stopped":
                 break
             if not two_pass_review.get("satisfied"):
-                # Hard failures (timeout/crash) use the consecutive_failures budget
-                # so a single large-file timeout doesn't stop the whole loop.
-                # Only pause immediately for noop/no-diff failures or when the
-                # failure budget is exhausted.
-                if hard_failure and consecutive_failures < _CU_MAX_CONSECUTIVE_FAILURES:
+                # Timeouts are capacity failures (file too large), not quality failures.
+                # Crashes (hard_failure) use the consecutive budget. Timeouts always retry.
+                if timed_out or (hard_failure and consecutive_failures < _CU_MAX_CONSECUTIVE_FAILURES):
                     _cu_feed(
                         "CU_2X_REVIEW_RETRY",
-                        f"Cycle {cycle} hard-failed ({status}) but within failure budget "
-                        f"({consecutive_failures}/{_CU_MAX_CONSECUTIVE_FAILURES}) — continuing",
+                        f"Cycle {cycle} {'timed out' if timed_out else 'hard-failed'} ({status}) — "
+                        f"retrying (failures={consecutive_failures}/{_CU_MAX_CONSECUTIVE_FAILURES})",
                         task_id=task_id,
                     )
                     # fall through to cooldown so the next cycle picks a fresh target
@@ -11369,18 +11411,21 @@ def _cu_dispatch_cli(argv: List[str]) -> Optional[int]:
             pass
         return 0
     if args.continues_update_start:
-        try:
-            continues_update_loop(
-                interval_seconds=float(args.cu_interval),
-                job_timeout_seconds=float(args.cu_job_timeout),
-                max_cycles=int(args.cu_max_cycles),
-            )
-        except Exception as exc:
+        while not _CU_STOP_FLAG_PATH.exists():
             try:
-                _cu_feed("CU_STOP", f"continues-update crashed: {exc}")
-            except Exception:
-                pass
-            return 1
+                continues_update_loop(
+                    interval_seconds=float(args.cu_interval),
+                    job_timeout_seconds=float(args.cu_job_timeout),
+                    max_cycles=int(args.cu_max_cycles),
+                )
+            except Exception as exc:
+                try:
+                    _cu_feed("CU_STOP", f"continues-update crashed: {exc}")
+                except Exception:
+                    pass
+            if _CU_STOP_FLAG_PATH.exists():
+                break
+            time.sleep(5.0)  # brief pause between plan cycles before restarting
         return 0
     return None
 
