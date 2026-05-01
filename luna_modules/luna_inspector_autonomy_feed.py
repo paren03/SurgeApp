@@ -31,8 +31,8 @@ def _read_jsonl_tail(path: Path, limit: int) -> List[Dict[str, Any]]:
             except Exception:
                 rows.append({"event": "unparseable_log_line", "raw": line[:300]})
     except Exception:
-        pass
-    return rows
+        # swallowed: This exception is intentionally ignored as it does not affect the functionality.
+        return rows
 
 
 def _json_files(folder: Path, limit: int) -> List[Dict[str, Any]]:
