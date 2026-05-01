@@ -11722,8 +11722,11 @@ def continues_update_loop(
             # Hard failure = aider process crashed (not just a timeout or empty diff).
             # Timeouts are capacity failures (file too large) — they don't count
             # against the consecutive-failure budget so the loop keeps retrying.
-            hard_failure = status in {"failed", "quarantined"}
-            timed_out = status == "timeout"
+            # Context overflow is also a capacity failure (file too large for model
+            # context window), not a code-quality crash — treat it like a timeout.
+            _overflow = str(payload.get("failure_reason") or "").lower() == "aider_context_overflow"
+            hard_failure = (status in {"failed", "quarantined"}) and not _overflow
+            timed_out = (status == "timeout") or _overflow
 
             if diff_empty:
                 noop_count += 1

@@ -918,23 +918,29 @@ def run_aider_patch(task_path: Path) -> None:
 
     # Context-overflow detection: if Aider auto-pulled extra files and blew the
     # model's context window, the output will contain a context-limit warning.
-    # Fail fast with a distinct reason so the CU can log this pattern and retry
-    # with a tighter prompt instead of silently recording a NOOP.
+    # Quarantine (not fail) so the CU treats this as a capacity issue, not a
+    # code-quality crash, and does not burn the consecutive-failure budget.
     _combined_out = (aider_stdout + aider_stderr).lower()
     if "token limit" in _combined_out or "exceeds the" in _combined_out or "context limit" in _combined_out:
         _live_feed(
             "CONTEXT_OVERFLOW",
-            "Stage 2/5: Aider context overflow — model pulled extra files beyond target",
+            "Stage 2/5: Aider context overflow — file too large for model context; quarantining",
             task_id=task_id,
             detail=f"rc={aider_rc} target={target}",
         )
-        record = build_aider_completion_record(
-            task_id=task_id, target_file=target, diff_text="", diff_path="",
-            log_path=log_path, verification_passed=False, applied=False,
-            failure_reason="aider_context_overflow", analysis_only=analysis_only,
-            model_used=AIDER_MODEL, started_at=started_at, finished_at=time.time(),
-        )
-        _finish(task_path, task_id, build_aider_report(record, prompt=prompt, diff_text="", stdout=aider_stdout, stderr=aider_stderr), False, record)
+        # Track which files overflow so the CU can deprioritise them
+        try:
+            _ov_path = PROJECT_DIR / "memory" / "context_overflow_targets.jsonl"
+            _ov_path.parent.mkdir(parents=True, exist_ok=True)
+            import json as _j
+            with open(_ov_path, "a", encoding="utf-8", errors="replace") as _ov_f:
+                _ov_f.write(_j.dumps({
+                    "ts": _now_iso(), "target": target,
+                    "task_id": task_id, "reason": "aider_context_overflow",
+                }) + "\n")
+        except Exception:
+            pass
+        _finish_quarantined(task_path, task_id, target, prompt, "aider_context_overflow", started_at, analysis_only)
         return
 
     _live_feed("RUN_AIDER_END", f"Stage 2/5: Aider finished rc={aider_rc}", task_id=task_id)
