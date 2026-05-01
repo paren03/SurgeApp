@@ -179,6 +179,10 @@ def _append_job_log(task_id: str, message: str) -> None:
 def _aider_subprocess_env(workspace: Path | None = None) -> Dict[str, str]:
     env = dict(os.environ)
     env["OLLAMA_API_BASE"] = OLLAMA_API_BASE
+    # Ollama defaults to num_ctx=2048 which causes context overflow on almost
+    # any non-trivial file.  Set a larger window so the model can see the file
+    # content + generate a complete diff without hitting the token limit.
+    env.setdefault("OLLAMA_NUM_CTX", "8192")
     env.setdefault("PYTHONIOENCODING", "utf-8")
     env.setdefault("PYTHONUTF8", "1")
     if workspace is not None:
