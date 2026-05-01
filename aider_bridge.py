@@ -435,7 +435,7 @@ def _preflight_run_tests(test_file: Path, timeout: float = 60.0) -> tuple[bool, 
     try:
         result = subprocess.run(
             [AIDER_PYTHON, "-m", "pytest", str(test_file),
-             "--tb=short", "-q", "--no-header", "--timeout=30"],
+             "--tb=short", "-q", "--no-header"],
             cwd=str(PROJECT_DIR),
             capture_output=True,
             text=True,
@@ -643,7 +643,7 @@ def _run_tests_against_staged(
         try:
             result = subprocess.run(
                 [AIDER_PYTHON, "-m", "pytest", str(test_file),
-                 "--tb=short", "-q", "--no-header", "--timeout=30"],
+                 "--tb=short", "-q", "--no-header"],
                 cwd=str(PROJECT_DIR),
                 capture_output=True,
                 text=True,
