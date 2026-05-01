@@ -91,7 +91,7 @@ def build_director_missions(goal: str) -> List[Dict[str, Any]]:
             "acceptance_test": "Aider Bridge checks Ollama, sets OLLAMA_API_BASE, writes per-job logs/diffs, and quarantines unsafe jobs.",
             "rollback_stage_plan": "Stage only; py_compile aider_bridge.py and run Aider safety tests before apply.",
             "expected_diff_type": "safety_guard",
-            "max_lines_changed": 220,
+            "max_lines_changed": 90,
             "function_scope_required": False,
         },
         {
@@ -102,7 +102,7 @@ def build_director_missions(goal: str) -> List[Dict[str, Any]]:
             "acceptance_test": "Each mission has required metadata, avoids low-value repeated work, and stays within max_lines_changed.",
             "rollback_stage_plan": "Stage only; py_compile director_agent.py and run Director tests before apply.",
             "expected_diff_type": "orchestration",
-            "max_lines_changed": 180,
+            "max_lines_changed": 90,
             "function_scope_required": False,
         },
         {
@@ -113,7 +113,7 @@ def build_director_missions(goal: str) -> List[Dict[str, Any]]:
             "acceptance_test": "Duplicate start attempts write live-feed/log events and do not spawn extra service copies.",
             "rollback_stage_plan": "Stage only; py_compile luna_guardian.py and run guardian tests before apply.",
             "expected_diff_type": "process_guard",
-            "max_lines_changed": 180,
+            "max_lines_changed": 80,
             "function_scope_required": False,
         },
         {
@@ -124,7 +124,7 @@ def build_director_missions(goal: str) -> List[Dict[str, Any]]:
             "acceptance_test": "Cycle state records jobs_created, failed_count, noop_count, done_count, and pause_reason.",
             "rollback_stage_plan": "Function-scoped stage only; py_compile worker.py and import worker before apply.",
             "expected_diff_type": "telemetry",
-            "max_lines_changed": 160,
+            "max_lines_changed": 80,
             "function_scope_required": True,
             "function_scope": "continues_update_loop",
         },
@@ -136,7 +136,7 @@ def build_director_missions(goal: str) -> List[Dict[str, Any]]:
             "acceptance_test": "Inspector reads live-feed autonomy events and shows current job/defer/quarantine status.",
             "rollback_stage_plan": "Stage only; py_compile UI modules before apply.",
             "expected_diff_type": "inspector_ui",
-            "max_lines_changed": 220,
+            "max_lines_changed": 120,
             "function_scope_required": False,
         },
         {
@@ -147,7 +147,7 @@ def build_director_missions(goal: str) -> List[Dict[str, Any]]:
             "acceptance_test": "Summary includes attempted, changed, failed, no-diff, quarantined, learned, risky files, and next steps.",
             "rollback_stage_plan": "Append-only files; quarantine bad entries rather than deleting.",
             "expected_diff_type": "memory_summary",
-            "max_lines_changed": 120,
+            "max_lines_changed": 60,
             "function_scope_required": False,
         },
         {
@@ -158,7 +158,7 @@ def build_director_missions(goal: str) -> List[Dict[str, Any]]:
             "acceptance_test": "Desktop launcher points to LaunchLuna.pyw, uses real Python, and records startup status.",
             "rollback_stage_plan": "Stage only; py_compile launcher and verify shortcut metadata before apply.",
             "expected_diff_type": "startup",
-            "max_lines_changed": 180,
+            "max_lines_changed": 90,
             "function_scope_required": False,
         },
         {
@@ -169,7 +169,7 @@ def build_director_missions(goal: str) -> List[Dict[str, Any]]:
             "acceptance_test": "Tests fail before the guard and pass after the staged rescue patch.",
             "rollback_stage_plan": "Stage tests only; no runtime queue edits.",
             "expected_diff_type": "tests",
-            "max_lines_changed": 220,
+            "max_lines_changed": 100,
             "function_scope_required": False,
         },
     ]
@@ -189,6 +189,24 @@ def emit_director_event(project_dir: str | Path, event_name: str, details: Dict[
     }
     _append_jsonl(paths.live_feed, event)
     return event
+
+
+def _enrich_missions_with_targets(project_dir: Path, goal: str, missions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Use find_targets to suggest relevant files for each mission."""
+    try:
+        from luna_modules.luna_self_knowledge import find_targets
+        hits = find_targets(goal, project_dir, limit=6)
+        suggested = [h.get("file", "") for h in hits if h.get("file")]
+        if suggested:
+            for mission in missions:
+                existing = mission.get("target_files") or []
+                merged = list(dict.fromkeys(existing + suggested[:3]))
+                mission["suggested_targets_from_selfmap"] = suggested[:6]
+                if not existing:
+                    mission["target_files"] = merged[:3]
+    except Exception:
+        pass
+    return missions
 
 
 def write_director_job(project_dir: str | Path, command_text: str) -> Dict[str, Any]:
@@ -221,7 +239,7 @@ def write_director_job(project_dir: str | Path, command_text: str) -> Dict[str, 
         "state": state,
         "goal": goal,
         "source_command": parsed["raw"],
-        "missions": build_director_missions(goal),
+        "missions": _enrich_missions_with_targets(paths.project_dir, goal, build_director_missions(goal)),
         "failure_reason": failure_reason,
         "policy": {
             "stage_only": True,

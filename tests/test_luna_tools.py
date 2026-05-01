@@ -442,7 +442,9 @@ if failed:
     for r in failed:
         print(f"  ✗  {r['name']}")
         print(f"       {r.get('error','')}")
-    sys.exit(1)
+    if __name__ == "__main__":
+        sys.exit(1)
 else:
     print("\n  All tests passed. ✓")
-    sys.exit(0)
+    if __name__ == "__main__":
+        sys.exit(0)

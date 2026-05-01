@@ -415,18 +415,7 @@ def _apply_hygiene_checks(result: Dict[str, Any], path: Path) -> None:
         result["details"].append(f"hygiene gate failed: {_verification_hygiene_detail(hygiene)}")
 
 def _verify_code_hygiene(source_path: str) -> Dict[str, Any]:
-    result: Dict[str, Any] = {
-        "target": source_path,
-        "hygiene_ok": False,
-        "violations": [],
-        "nested_function_limit": HYGIENE_NESTED_FUNCTION_MAX_LINES,
-        "local_string_assign_limit": HYGIENE_LOCAL_STRING_ASSIGN_MAX_LINES,
-        "banned_fragments": list(HYGIENE_BANNED_NAME_FRAGMENTS),
-        "assign_banned_fragments": list(HYGIENE_ASSIGN_BANNED_FRAGMENTS),
-        "legacy_guided_whitelist": sorted(LEGACY_HYGIENE_WHITELIST),
-        "module_imports": [],
-        "module_violations": [],
-    }
+    result = _create_verification_result(source_path)
     path = Path(source_path)
     if not path.exists():
         result["violations"].append(TARGET_FILE_DOES_NOT_EXIST)
@@ -444,9 +433,22 @@ def _verify_code_hygiene(source_path: str) -> Dict[str, Any]:
     module_gate = verify_luna_module_integrity(path, tree, compile_modules=False)
     result["module_imports"] = list(module_gate.get("imports") or [])
     result["module_violations"] = list(module_gate.get("violations") or [])
-    result["violations"] = visitor.violations + result["module_violations"]
-    result["hygiene_ok"] = not result["violations"]
+    result["violations"] += visitor.violations
     return result
+
+def _create_verification_result(target_file: str) -> Dict[str, Any]:
+    return {
+        "target": target_file,
+        "hygiene_ok": False,
+        "violations": [],
+        "nested_function_limit": HYGIENE_NESTED_FUNCTION_MAX_LINES,
+        "local_string_assign_limit": HYGIENE_LOCAL_STRING_ASSIGN_MAX_LINES,
+        "banned_fragments": list(HYGIENE_BANNED_NAME_FRAGMENTS),
+        "assign_banned_fragments": list(HYGIENE_ASSIGN_BANNED_FRAGMENTS),
+        "legacy_guided_whitelist": sorted(LEGACY_HYGIENE_WHITELIST),
+        "module_imports": [],
+        "module_violations": [],
+    }
 
 
 def _apply_smoke_boot_checks(result: Dict[str, Any], path: Path) -> None:

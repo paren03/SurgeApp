@@ -333,14 +333,26 @@ def _finish_blocked_mode(task_path: Path, ctx: Dict[str, Any]) -> bool:
 
 # ── Task claim and orphan recovery ────────────────────────────────────────────
 
+
 def claim_task(task_path: Path) -> Optional[Path]:
-    if task_path.name.endswith(".working.json"):
+    """Atomically claim an active task by renaming it into ``.working`` state."""
+    ensure_layout()
+    if not task_path.exists() or task_path.name.endswith(".working.json"):
         return None
-    claimed = task_path.with_name(task_path.stem + ".working.json")
+    payload = safe_read_json(task_path, default={})
+    if not payload:
+        return None
+    working_path = task_path.with_name(task_path.name.replace(".json", ".working.json"))
+    payload["status"] = "running"
+    payload["state"] = "running"
+    payload["phase"] = "claimed"
+    payload["updated_at"] = now_iso()
     try:
-        os.replace(str(task_path), str(claimed))
-        return claimed
-    except Exception:
+        write_json_atomic(task_path, payload)
+        os.replace(str(task_path), str(working_path))
+        return working_path
+    except Exception as exc:
+        _diag(f"claim_task failed for {task_path}: {exc}")
         return None
 
 

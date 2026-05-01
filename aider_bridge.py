@@ -21,6 +21,7 @@ import ast
 import json
 import os
 import py_compile
+import re
 import shutil
 import subprocess
 import sys
@@ -196,6 +197,35 @@ def _ollama_available(timeout_seconds: float = 5.0) -> Tuple[bool, str]:
             return False, f"http_status_{status}"
     except Exception as exc:
         return False, str(exc)
+
+
+def _ollama_model_ready(timeout_seconds: float = 20.0) -> Tuple[bool, str]:
+    """Test that the model can actually generate a token — not just that the API is up.
+
+    A slow or overloaded Ollama will pass _ollama_available() but hang for minutes
+    when Aider sends a real prompt.  This test sends a 5-token request and times it.
+    """
+    import json as _json
+    model_name = AIDER_MODEL.replace("ollama_chat/", "").replace("ollama/", "")
+    try:
+        data = _json.dumps({
+            "model": model_name,
+            "prompt": "Reply OK.",
+            "stream": False,
+            "options": {"num_predict": 4},
+        }).encode()
+        req = urllib.request.Request(
+            f"{OLLAMA_API_BASE}/api/generate",
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:
+            result = _json.loads(resp.read())
+            reply = str(result.get("response", "")).strip()[:30]
+            return True, f"model ready reply={reply!r}"
+    except Exception as exc:
+        return False, f"model not ready: {exc}"
 
 
 def _prompt_has_blocked_url(prompt: str) -> bool:
@@ -393,6 +423,289 @@ def _post_apply_verify(target_path: Path) -> tuple[bool, str]:
     return True, ""
 
 
+# ── Pre-flight research (Stage 1b) ────────────────────────────────────────────
+
+def _preflight_run_tests(test_file: Path, timeout: float = 60.0) -> tuple[bool, str]:
+    """Run pytest against the LIVE target file to capture current failures."""
+    env = _aider_subprocess_env()
+    try:
+        result = subprocess.run(
+            [AIDER_PYTHON, "-m", "pytest", str(test_file),
+             "--tb=short", "-q", "--no-header", "--timeout=30"],
+            cwd=str(PROJECT_DIR),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+            creationflags=0x08000000,
+            env=env,
+        )
+        output = ((result.stdout or "") + (result.stderr or "")).strip()
+        return result.returncode == 0, output
+    except subprocess.TimeoutExpired:
+        return False, f"pre-flight test timed out after {timeout}s"
+    except Exception as exc:
+        return False, f"pre-flight test error: {exc}"
+
+
+def _preflight_fix_missing_packages(test_output: str, task_id: str) -> list[str]:
+    """Detect ModuleNotFoundError in output and pip-install the missing packages."""
+    found = re.findall(r"(?:ModuleNotFoundError|ImportError): No module named '([^']+)'", test_output)
+    installed: list[str] = []
+    for pkg in dict.fromkeys(found):  # deduplicated, insertion-ordered
+        top = pkg.split(".")[0]
+        try:
+            r = subprocess.run(
+                [AIDER_PYTHON, "-m", "pip", "install", "--quiet", top],
+                capture_output=True, text=True,
+                encoding="utf-8", errors="replace",
+                timeout=60, creationflags=0x08000000,
+            )
+            if r.returncode == 0:
+                _live_feed("PREFLIGHT_INSTALL", f"Installed {top}", task_id=task_id)
+                installed.append(top)
+            else:
+                _live_feed("PREFLIGHT_INSTALL_FAIL", f"pip install {top} failed: {(r.stdout+r.stderr).strip()[-120:]}", task_id=task_id)
+        except Exception as exc:
+            _live_feed("PREFLIGHT_INSTALL_ERROR", f"pip install {top}: {exc}", task_id=task_id)
+    return installed
+
+
+def _preflight_scan_target(target_path: Path) -> str:
+    """AST-scan the target when no test file exists; return a focused context hint.
+
+    Finds the first concrete, fixable pattern in the file so the model has
+    a specific actionable target instead of acting on a vague prompt.
+    Returns "" if nothing is found or the file cannot be parsed.
+    """
+    try:
+        import ast as _ast
+        src = target_path.read_text(encoding="utf-8", errors="replace")
+        lines = src.splitlines()
+        tree = _ast.parse(src)
+    except Exception:
+        return ""
+
+    # Priority 1: open() without encoding in text mode
+    for i, ln in enumerate(lines, start=1):
+        s = ln.strip()
+        is_binary = any(tok in s for tok in ('"rb"', "'rb'", '"wb"', "'wb'", '"ab"', "'ab'"))
+        if (
+            re.search(r"(?<![A-Za-z0-9_\.])open\(", s)
+            and "encoding" not in s
+            and not is_binary
+            and not s.startswith("#")
+            and "def " not in s
+        ):
+            return (
+                f"[PRE-FLIGHT] File scan found `open()` at line {i} missing `encoding=`. "
+                f"Exact line: `{s}`. Add `encoding='utf-8', errors='replace'` to that call. "
+                "Touch only that one line.\n\n"
+            )
+
+    # Priority 2: bare except: pass
+    for node in _ast.walk(tree):
+        if isinstance(node, _ast.ExceptHandler):
+            body = node.body
+            if len(body) == 1 and isinstance(body[0], _ast.Pass):
+                ln_no = body[0].lineno
+                return (
+                    f"[PRE-FLIGHT] File scan found bare `except: pass` at line {ln_no}. "
+                    "Replace `pass` with `# swallowed: <brief reason>`. "
+                    "Touch only that one line.\n\n"
+                )
+
+    # Priority 3: subprocess.run without encoding in text mode
+    for i, ln in enumerate(lines, start=1):
+        s = ln.strip()
+        if (
+            "subprocess.run(" in s or "subprocess.Popen(" in s
+        ) and "text=True" in s and "encoding" not in s:
+            return (
+                f"[PRE-FLIGHT] File scan found subprocess call at line {i} with `text=True` "
+                f"but no `encoding=`. Add `encoding='utf-8', errors='replace'`. "
+                "Touch only that one line.\n\n"
+            )
+
+    return ""
+
+
+def _preflight_research(target_path: Path, prompt: str, task_id: str) -> str:
+    """Run tests, install missing packages, return prompt enriched with current state."""
+    test_file = _find_test_file(target_path)
+    if test_file is None:
+        # No test file — do a fast AST scan to give the model a concrete target
+        hint = _preflight_scan_target(target_path)
+        if hint:
+            _live_feed("PREFLIGHT_SCAN", f"Stage 1b: AST scan found actionable pattern in {target_path.name}", task_id=task_id)
+            return hint + prompt
+        return prompt
+
+    _live_feed("PREFLIGHT_START", f"Stage 1b: pre-flight on {test_file.name}", task_id=task_id)
+
+    # Quick compile check first — catch syntax/import errors without running pytest
+    try:
+        cr = subprocess.run(
+            [AIDER_PYTHON, "-m", "py_compile", str(target_path)],
+            capture_output=True, text=True,
+            encoding="utf-8", errors="replace",
+            timeout=15, creationflags=0x08000000,
+        )
+        if cr.returncode != 0:
+            _preflight_fix_missing_packages((cr.stdout + cr.stderr), task_id)
+    except Exception:
+        pass
+
+    # Run live tests
+    tests_ok, test_output = _preflight_run_tests(test_file)
+
+    # Install missing packages and re-run if needed
+    if not tests_ok and ("ModuleNotFoundError" in test_output or "ImportError" in test_output):
+        installed = _preflight_fix_missing_packages(test_output, task_id)
+        if installed:
+            tests_ok, test_output = _preflight_run_tests(test_file)
+
+    status = "ALL PASSING" if tests_ok else "FAILURES DETECTED"
+    _live_feed("PREFLIGHT_DONE", f"Stage 1b: {status}", task_id=task_id,
+               detail=test_output[:200])
+
+    if tests_ok:
+        context = (
+            f"[PRE-FLIGHT] {test_file.name} is currently ALL PASSING. "
+            f"Your changes MUST NOT break any existing tests.\n\n"
+        )
+    else:
+        snippet = test_output[-2000:] if len(test_output) > 2000 else test_output
+        context = (
+            f"[PRE-FLIGHT] Current failures in {test_file.name}:\n"
+            f"```\n{snippet}\n```\n"
+            f"Address these specific failures. Do not introduce new ones.\n\n"
+        )
+    return context + prompt
+
+
+# ── Test-based self-fix (Stage 4b) ────────────────────────────────────────────
+
+def _find_test_file(target_path: Path) -> Path | None:
+    """Return the pytest file that covers target_path, or None."""
+    tests_dir = PROJECT_DIR / "tests"
+    stem = target_path.stem  # e.g. luna_autonomy_control
+    candidate = tests_dir / f"test_{stem}.py"
+    if candidate.exists():
+        return candidate
+    # Also handle worker.py → test_luna_guardian.py won't match; skip gracefully
+    return None
+
+
+def _run_tests_against_staged(
+    test_file: Path,
+    staged_path: Path,
+    target_path: Path,
+    timeout: float = 90.0,
+) -> tuple[bool, str]:
+    """Run test_file with staged_path standing in for target_path.
+
+    We temporarily overlay the staged copy so tests exercise the new code
+    without touching the live file.
+    """
+    env = _aider_subprocess_env()
+    # Point PYTHONPATH to a temp dir containing the staged version
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = Path(tmp)
+        # Recreate the directory structure relative to PROJECT_DIR
+        try:
+            rel = target_path.resolve().relative_to(PROJECT_DIR.resolve())
+        except Exception:
+            rel = Path(target_path.name)
+        dest = tmp_path / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(staged_path, dest)
+        # Prepend tmp (and then the project dir for all other modules)
+        orig_pp = env.get("PYTHONPATH", "")
+        env["PYTHONPATH"] = (
+            str(tmp_path) + os.pathsep
+            + str(PROJECT_DIR) + os.pathsep
+            + orig_pp
+        ).rstrip(os.pathsep)
+        try:
+            result = subprocess.run(
+                [AIDER_PYTHON, "-m", "pytest", str(test_file),
+                 "--tb=short", "-q", "--no-header", "--timeout=30"],
+                cwd=str(PROJECT_DIR),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=timeout,
+                creationflags=0x08000000,
+                env=env,
+            )
+            output = ((result.stdout or "") + (result.stderr or "")).strip()
+            return result.returncode == 0, output
+        except subprocess.TimeoutExpired:
+            return False, f"test timed out after {timeout}s"
+        except Exception as exc:
+            return False, f"test run error: {exc}"
+
+
+def _aider_self_fix_tests(
+    staged_path: Path,
+    test_output: str,
+    original_prompt: str,
+    task_id: str,
+    workspace: Path,
+) -> bool:
+    """Run one more Aider pass on the staged copy to fix failing tests.
+
+    Luna reads the test failure, passes it to Aider as context, and asks for
+    a targeted fix.  Returns True if Aider exited cleanly (diff may still be
+    empty; caller re-verifies tests).
+    """
+    failure_snippet = test_output[-2000:] if len(test_output) > 2000 else test_output
+    fix_prompt = (
+        "The tests FAILED after your last edit. Read the failure output and fix "
+        "ONLY what makes the tests fail. Do not rewrite the file.\n\n"
+        f"Test failure:\n```\n{failure_snippet}\n```\n\n"
+        f"Original task: {original_prompt[:400]}"
+    )
+    cmd = [
+        AIDER_PYTHON, "-m", "aider",
+        "--model", AIDER_MODEL,
+        *AIDER_FLAGS,
+        "--file", str(staged_path),
+        "--message", fix_prompt,
+    ]
+    _live_feed("CU_SELF_FIX_START",
+               "Stage 4b: test failed — running self-fix pass",
+               task_id=task_id,
+               detail=failure_snippet[:300])
+    try:
+        result = subprocess.run(
+            cmd,
+            cwd=str(workspace),
+            capture_output=True,
+            text=True,
+            timeout=AIDER_TIMEOUT,
+            creationflags=0x08000000,
+            env=_aider_subprocess_env(workspace),
+        )
+        ok = result.returncode == 0
+        _live_feed(
+            "CU_SELF_FIX_END",
+            f"Stage 4b: self-fix Aider {'succeeded' if ok else 'failed'} rc={result.returncode}",
+            task_id=task_id,
+        )
+        return ok
+    except subprocess.TimeoutExpired:
+        _live_feed("CU_SELF_FIX_TIMEOUT", "Stage 4b: self-fix timed out", task_id=task_id)
+        return False
+    except Exception as exc:
+        _live_feed("CU_SELF_FIX_ERROR", f"Stage 4b: self-fix error: {exc}", task_id=task_id)
+        return False
+
+
 def _make_diff(original: Path, patched: Path) -> str:
     try:
         a = original.read_text(encoding="utf-8", errors="ignore").splitlines(keepends=True)
@@ -452,30 +765,13 @@ def run_aider_patch(task_path: Path) -> None:
     analysis_only = bool(task.get("analysis_only") is True)
     log_path = str(_job_log_path(task_id))
 
-    # Stage 1/5 — CLAIM
     _log(f"Processing aider_patch task={task_id} target={target!r}")
-    _append_job_log(task_id, f"CLAIM target={target!r}")
-    _live_feed("CLAIM", f"Stage 1/5: Claimed job", task_id=task_id,
-               detail=f"target={target}")
-    _update_task(task_path, status="running", phase="aider_patch", progress=10)
+
+    # ── Pre-claim validation: all checks run BEFORE marking the job "running" ──
+    # Luna must know if a job will succeed before she accepts it.
 
     if not prompt:
-        _live_feed("FAILED", "Stage 5/5: Failed — no prompt", task_id=task_id)
-        record = build_aider_completion_record(
-            task_id=task_id,
-            target_file=target,
-            diff_text="",
-            diff_path="",
-            log_path=log_path,
-            verification_passed=False,
-            applied=False,
-            failure_reason="no_prompt",
-            analysis_only=analysis_only,
-            model_used=AIDER_MODEL,
-            started_at=started_at,
-            finished_at=time.time(),
-        )
-        _finish(task_path, task_id, build_aider_report(record, prompt=prompt, diff_text="", stdout="", stderr=""), False, record)
+        _finish_quarantined(task_path, task_id, target, prompt, "no_prompt", started_at, analysis_only)
         return
     if _prompt_has_blocked_url(prompt):
         _finish_quarantined(task_path, task_id, target, prompt, "blocked_local_service_url", started_at, analysis_only)
@@ -490,44 +786,47 @@ def run_aider_patch(task_path: Path) -> None:
         _finish_quarantined(task_path, task_id, target, prompt, scope_reason, started_at, analysis_only)
         return
     if _target_has_local_edits(target_path):
-        _finish_quarantined(
-            task_path,
-            task_id,
-            target,
-            prompt,
-            "target_has_staged_or_unstaged_edits",
-            started_at,
-            analysis_only,
-        )
+        _finish_quarantined(task_path, task_id, target, prompt, "target_has_staged_or_unstaged_edits", started_at, analysis_only)
         return
     if not _is_safe_aider_python(AIDER_PYTHON):
         _finish_quarantined(task_path, task_id, target, prompt, "unsafe_aider_python", started_at, analysis_only)
         return
+
+    # Ollama API reachable?
     ollama_ok, ollama_detail = _ollama_available()
-    _live_feed(
-        "OLLAMA_CHECK",
-        f"Ollama {'available' if ollama_ok else 'unavailable'}",
-        task_id=task_id,
-        detail=ollama_detail,
-    )
+    _live_feed("OLLAMA_CHECK", f"Ollama {'available' if ollama_ok else 'unavailable'}", task_id=task_id, detail=ollama_detail)
     _append_job_log(task_id, f"OLLAMA_CHECK ok={ollama_ok} detail={ollama_detail}")
     if not ollama_ok:
         record = build_aider_completion_record(
-            task_id=task_id,
-            target_file=target,
-            diff_text="",
-            diff_path="",
-            log_path=log_path,
-            verification_passed=False,
-            applied=False,
-            failure_reason="ollama_unavailable",
-            analysis_only=analysis_only,
-            model_used=AIDER_MODEL,
-            started_at=started_at,
-            finished_at=time.time(),
+            task_id=task_id, target_file=target, diff_text="", diff_path="",
+            log_path=log_path, verification_passed=False, applied=False,
+            failure_reason="ollama_unavailable", analysis_only=analysis_only,
+            model_used=AIDER_MODEL, started_at=started_at, finished_at=time.time(),
         )
         _finish(task_path, task_id, build_aider_report(record, prompt=prompt, diff_text="", stdout="", stderr=ollama_detail), False, record)
         return
+
+    # Ollama MODEL can generate tokens? (fast-fail before 6-min Aider timeout)
+    model_ok, model_detail = _ollama_model_ready(timeout_seconds=20.0)
+    _live_feed("OLLAMA_MODEL_CHECK", f"Model {'ready' if model_ok else 'NOT READY — skipping job'}", task_id=task_id, detail=model_detail)
+    _append_job_log(task_id, f"OLLAMA_MODEL_CHECK ok={model_ok} detail={model_detail}")
+    if not model_ok:
+        record = build_aider_completion_record(
+            task_id=task_id, target_file=target, diff_text="", diff_path="",
+            log_path=log_path, verification_passed=False, applied=False,
+            failure_reason="ollama_model_not_ready", analysis_only=analysis_only,
+            model_used=AIDER_MODEL, started_at=started_at, finished_at=time.time(),
+        )
+        _finish(task_path, task_id, build_aider_report(record, prompt=prompt, diff_text="", stdout="", stderr=model_detail), False, record)
+        return
+
+    # Pre-flight: run tests, fix missing packages, enrich prompt with current failures
+    prompt = _preflight_research(target_path, prompt, task_id)
+
+    # Stage 1/5 — CLAIM (all pre-checks passed — Luna is confident she can proceed)
+    _append_job_log(task_id, f"CLAIM target={target!r}")
+    _live_feed("CLAIM", "Stage 1/5: Claimed job — pre-checks passed", task_id=task_id, detail=f"target={target}")
+    _update_task(task_path, status="running", phase="aider_patch", progress=10)
 
     # 1. Copy target to safe workspace (unique per bridge PID to avoid collision)
     workspace = LOGIC_DIR / f"{task_id}_{os.getpid()}"
@@ -616,6 +915,28 @@ def run_aider_patch(task_path: Path) -> None:
 
     # Stage 2/5 — RUN_AIDER_END
     _log(f"Aider finished rc={aider_rc}")
+
+    # Context-overflow detection: if Aider auto-pulled extra files and blew the
+    # model's context window, the output will contain a context-limit warning.
+    # Fail fast with a distinct reason so the CU can log this pattern and retry
+    # with a tighter prompt instead of silently recording a NOOP.
+    _combined_out = (aider_stdout + aider_stderr).lower()
+    if "token limit" in _combined_out or "exceeds the" in _combined_out or "context limit" in _combined_out:
+        _live_feed(
+            "CONTEXT_OVERFLOW",
+            "Stage 2/5: Aider context overflow — model pulled extra files beyond target",
+            task_id=task_id,
+            detail=f"rc={aider_rc} target={target}",
+        )
+        record = build_aider_completion_record(
+            task_id=task_id, target_file=target, diff_text="", diff_path="",
+            log_path=log_path, verification_passed=False, applied=False,
+            failure_reason="aider_context_overflow", analysis_only=analysis_only,
+            model_used=AIDER_MODEL, started_at=started_at, finished_at=time.time(),
+        )
+        _finish(task_path, task_id, build_aider_report(record, prompt=prompt, diff_text="", stdout=aider_stdout, stderr=aider_stderr), False, record)
+        return
+
     _live_feed("RUN_AIDER_END", f"Stage 2/5: Aider finished rc={aider_rc}", task_id=task_id)
     _update_task(task_path, progress=60)
 
@@ -648,6 +969,56 @@ def run_aider_patch(task_path: Path) -> None:
                detail=err or "")
     _live_feed("VERIFY_IMPORT", "Stage 4/5: Import check skipped", task_id=task_id,
                detail="stage_only copy verification; import is required before applying worker.py")
+
+    # Stage 4b — TEST SELF-FIX
+    # When the diff is real and compile passed, run the target's test file
+    # against the staged copy.  If tests fail, Luna runs one more Aider pass
+    # to fix the specific failures before proceeding to Stage 5.
+    if ok and diff:
+        _test_file = _find_test_file(target_path)
+        if _test_file is not None:
+            _test_ok, _test_out = _run_tests_against_staged(
+                _test_file, copy_path, target_path
+            )
+            if not _test_ok:
+                _live_feed(
+                    "VERIFY_TEST_FAIL",
+                    f"Stage 4b: tests FAILED — attempting self-fix",
+                    task_id=task_id,
+                    detail=_test_out[-400:],
+                )
+                _aider_self_fix_tests(copy_path, _test_out, prompt, task_id, workspace)
+                # Re-compile and re-test after self-fix
+                ok, err = _py_verify(copy_path)
+                if ok:
+                    _test_ok2, _test_out2 = _run_tests_against_staged(
+                        _test_file, copy_path, target_path
+                    )
+                    if not _test_ok2:
+                        ok = False
+                        err = f"tests still failing after self-fix: {_test_out2[-300:]}"
+                        _live_feed("VERIFY_TEST_STILL_FAIL",
+                                   "Stage 4b: tests still failing after self-fix — marking failed",
+                                   task_id=task_id, detail=err[:400])
+                    else:
+                        _live_feed("VERIFY_TEST_PASS",
+                                   "Stage 4b: tests PASS after self-fix",
+                                   task_id=task_id)
+                        # Rebuild diff since self-fix changed the staged copy
+                        diff = _make_diff(target_path, copy_path)
+                        if diff:
+                            try:
+                                _job_diff_path(task_id).write_text(
+                                    diff, encoding="utf-8", errors="replace"
+                                )
+                                diff_path = str(_job_diff_path(task_id))
+                            except Exception:
+                                pass
+            else:
+                _live_feed("VERIFY_TEST_PASS",
+                           f"Stage 4b: tests PASS",
+                           task_id=task_id)
+
     _update_task(task_path, progress=80)
 
     # Stage 5a — APPLY (optional)
@@ -877,6 +1248,21 @@ def main() -> None:
                     continue
                 seen.add(task_file.name)
                 try:
+                    # Queue governor: check cycle budgets before running
+                    try:
+                        from luna_modules.luna_queue_governor import can_start_job
+                        _gov = can_start_job(PROJECT_DIR, {
+                            "prompt": task.get("prompt", ""),
+                            "target_file": task.get("target_file", ""),
+                        })
+                        if not _gov["allowed"]:
+                            _live_feed("QUEUE_GOVERNOR_PAUSE",
+                                       f"Queue governor blocked job: {_gov['reason']}",
+                                       task_id=task_file.stem)
+                            continue
+                    except ImportError:
+                        pass
+
                     run_aider_patch(task_file)
                     jobs_seen += 1
                     task_id = str(task.get("task_id") or task.get("id") or task_file.stem)
@@ -891,6 +1277,16 @@ def main() -> None:
                         failed_seen += 1
                     elif status == "noop":
                         noop_seen += 1
+                    # Queue governor: record outcome for cycle tracking
+                    try:
+                        from luna_modules.luna_queue_governor import record_job_outcome
+                        record_job_outcome(PROJECT_DIR, {
+                            "status": status or "done",
+                            "target_file": task.get("target_file", ""),
+                            "prompt": task.get("prompt", ""),
+                        })
+                    except ImportError:
+                        pass
                 except Exception as exc:
                     _log(f"Unexpected error on {task_file.name}: {exc}")
                     _finish(

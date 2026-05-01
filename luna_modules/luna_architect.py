@@ -178,6 +178,7 @@ def scan_file(rel_path: str) -> IssueList:
             and not stripped.startswith('"""')
         ):
             issues.append(("open_no_encoding", rel_path, f"open_at_line_{i+1}", i + 1))
+            lines[i] = lines[i].replace("open(", "open(encoding='utf-8', errors='replace', ", 1)
 
     return issues
 

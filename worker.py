@@ -6551,6 +6551,84 @@ def main_with_rsi() -> None:
 
 main = main_with_rsi
 
+
+# ─── Operating Layer Command Hook ─────────────────────────────────────────────
+# Adds /selfmap, /failuredoctor, /toolregistry, /toolchain as task commands.
+
+_OL_PREVIOUS_PROCESS_TASK = process_task
+
+
+def process_task_operating_layer(task_path: Path) -> bool:
+    task = safe_read_json(task_path, default={})
+    raw_prompt = str(task.get("prompt") or "").strip()
+    normalized = normalize_prompt_text(raw_prompt)
+    task_id = task.get("id", task_path.stem.replace(".working", ""))
+    target_file = task.get("target_file") or str(PROJECT_DIR / "worker.py")
+    solution_path = SOLUTIONS_DIR / f"{task_id}.txt"
+
+    if normalized in {"/selfmap", "selfmap", "/self map"}:
+        try:
+            from luna_modules.luna_self_knowledge import summarize_self_knowledge, refresh_self_knowledge
+            refresh_self_knowledge(PROJECT_DIR)
+            report = summarize_self_knowledge(PROJECT_DIR)
+        except Exception as exc:
+            report = f"[SELFMAP ERROR] {exc}"
+        _finish_task(task_path, solution_path, build_solution_header("selfmap", task_id, target_file), report, True)
+        append_task_memory(raw_prompt, report, True, category="selfmap")
+        return True
+
+    if normalized in {"/failuredoctor", "failuredoctor", "/failure doctor"}:
+        try:
+            from luna_modules.luna_failure_doctor import diagnose_failures
+            diag = diagnose_failures(PROJECT_DIR)
+            issues = diag.get("issues", [])
+            lines = [f"[FAILURE DOCTOR] {len(issues)} issue(s) — status={diag.get('status')}"]
+            for issue in issues:
+                lines.append(f"  - {issue}")
+            report = "\n".join(lines) if issues else "[FAILURE DOCTOR] No issues found"
+        except Exception as exc:
+            report = f"[FAILURE DOCTOR ERROR] {exc}"
+        _finish_task(task_path, solution_path, build_solution_header("failure-doctor", task_id, target_file), report, True)
+        append_task_memory(raw_prompt, report, True, category="failure_doctor")
+        return True
+
+    if normalized in {"/toolregistry", "toolregistry", "/tool registry"}:
+        try:
+            from luna_modules.luna_tool_registry import detect_available_tools
+            result = detect_available_tools(PROJECT_DIR)
+            lines = [f"[TOOL REGISTRY] {len(result['available'])} available, {len(result['missing'])} missing"]
+            lines.append(f"Available: {', '.join(result['available'][:12])}")
+            if result["missing"]:
+                lines.append(f"Missing: {', '.join(result['missing'][:12])}")
+            report = "\n".join(lines)
+        except Exception as exc:
+            report = f"[TOOL REGISTRY ERROR] {exc}"
+        _finish_task(task_path, solution_path, build_solution_header("tool-registry", task_id, target_file), report, True)
+        append_task_memory(raw_prompt, report, True, category="tool_registry")
+        return True
+
+    if normalized in {"/toolchain", "toolchain", "/tool chain"}:
+        try:
+            from luna_modules.luna_toolchain import verify_toolchain
+            result = verify_toolchain(PROJECT_DIR)
+            lines = [f"[TOOLCHAIN] {result['available_count']} available, {result['missing_count']} missing"]
+            lines.append(f"Available: {', '.join(result['available'][:10])}")
+            if result["missing"]:
+                lines.append(f"Missing: {', '.join(result['missing'][:10])}")
+            report = "\n".join(lines)
+        except Exception as exc:
+            report = f"[TOOLCHAIN ERROR] {exc}"
+        _finish_task(task_path, solution_path, build_solution_header("toolchain", task_id, target_file), report, True)
+        append_task_memory(raw_prompt, report, True, category="toolchain")
+        return True
+
+    return _OL_PREVIOUS_PROCESS_TASK(task_path)
+
+
+process_task = process_task_operating_layer
+# ──────────────────────────────────────────────────────────────────────────────
+
+
 def default_omega_batch2_flags() -> Dict[str, Any]:
     return {
         "thermal_aware_pacing_enabled": False,
@@ -9916,14 +9994,27 @@ _CU_FORCE_START_FLAG_PATH = _CU_MEMORY_DIR / "cu_force_start.flag"
 _CU_ARCHITECT_STOP_FLAG_PATH = _CU_MEMORY_DIR / "architect.stop"
 _CU_KILL_SWITCH_PATH = _CU_PROJECT_DIR / "LUNA_STOP_NOW.flag"
 _CU_SHUTDOWN_FLAG_PATH = _CU_LOGS_DIR / "SHUTDOWN.flag"
-_CU_DEFAULT_INTERVAL_SECONDS = 5.0     # short pause to let git settle; aider completion is the real gate
+_CU_DEFAULT_INTERVAL_SECONDS = 12.0    # small cooldown keeps CU nonstop without hammering CPU/fans
 _CU_DIRECTOR_REFRESH_INTERVAL_SECONDS = 60.0  # refresh plans should keep moving but not hammer the machine
 _CU_DEFAULT_JOB_TIMEOUT_SECONDS = 420.0  # must be > AIDER_TIMEOUT so aider finishes first
+_CU_EMPTY_PLAN_RETRY_SECONDS = 15.0     # short back-off only when all jobs are stale; 0 used on normal completion
 _CU_MAX_CONSECUTIVE_FAILURES = 5         # stop loop after N back-to-back real failures
 _CU_MAX_EMPTY_ON_FILE = 2                # skip a file after this many consecutive empty diffs
 _CU_MAX_NOOP_PER_CYCLE = 5              # pause if too many jobs prove already-compliant/no-diff
 _CU_LARGE_FILE_LINE_THRESHOLD = 2000    # files with more lines get section-level targeting
+_CU_MICRO_MAX_LINES_CHANGED = 90
 _CU_RECOVERY_FILES = [
+    "luna_modules/luna_hygiene.py",
+    "luna_modules/luna_environment.py",
+    "luna_modules/luna_goal_tracker.py",
+    "luna_modules/luna_live_feed.py",
+    "luna_modules/luna_loop_detector.py",
+    "luna_modules/luna_memory_router.py",
+    "luna_modules/luna_aider_result_policy.py",
+    "luna_modules/luna_autonomy_control.py",
+    "luna_modules/luna_continues_update_policy.py",
+    "luna_modules/luna_refactor.py",
+    "tests/test_luna_autonomy_control.py",
     "luna_modules/luna_heartbeat.py",
     "luna_modules/luna_logging.py",
     "luna_modules/luna_approvals.py",
@@ -10128,6 +10219,7 @@ def _cu_submit_aider_job(
     *,
     apply_on_pass: bool = False,
     plan_job: Optional[Dict[str, Any]] = None,
+    scope: Optional[Dict[str, Any]] = None,
 ) -> str:
     _CU_AIDER_ACTIVE_DIR.mkdir(parents=True, exist_ok=True)
     task_id = datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:8]
@@ -10144,6 +10236,14 @@ def _cu_submit_aider_job(
         "plan_job": plan_job or {},
         "origin": "continues_update",
     }
+    if scope:
+        if scope.get("name"):
+            payload["function_scope"] = scope["name"]
+            payload["symbol_name"] = scope["name"]
+        if scope.get("start_line") is not None:
+            payload["start_line"] = int(scope["start_line"])
+        if scope.get("end_line") is not None:
+            payload["end_line"] = int(scope["end_line"])
     final = _CU_AIDER_ACTIVE_DIR / f"{task_id}.json"
     tmp = _CU_AIDER_ACTIVE_DIR / f"{task_id}.tmp"
     try:
@@ -10210,10 +10310,23 @@ def _cu_wait_for_completion(task_id: str, timeout_s: float) -> Tuple[str, Dict[s
     return "timeout", {}
 
 
-def _cu_recent_non_success_for_plan_job(plan_job: Dict[str, Any], limit: int = 200) -> Optional[Dict[str, Any]]:
-    """Return a recent NOOP/failed result for the same target/prompt family, if any."""
+_CU_NOOP_MAX_AGE_HOURS = 8.0  # NOOPs/failures older than this do not block plan rebuilds
+
+
+def _cu_recent_non_success_for_plan_job(
+    plan_job: Dict[str, Any],
+    limit: int = 200,
+    max_age_hours: float = _CU_NOOP_MAX_AGE_HOURS,
+) -> Optional[Dict[str, Any]]:
+    """Return a recent NOOP/failed result for the same target/prompt family, if any.
+
+    Results older than max_age_hours are ignored so stale history never blocks
+    the plan forever — Luna must be able to retry after code has had time to evolve.
+    """
+    import time as _time
     targets = {str(item).replace("\\", "/").lower() for item in (plan_job.get("target_files") or [])}
     prompt_family = str(plan_job.get("prompt_family") or "").lower()
+    age_cutoff = _time.time() - max_age_hours * 3600.0
     paths: List[Path] = []
     for folder in (_CU_AIDER_FAILED_DIR, _CU_AIDER_QUARANTINE_DIR, _CU_AIDER_DONE_DIR):
         try:
@@ -10224,6 +10337,9 @@ def _cu_recent_non_success_for_plan_job(plan_job: Dict[str, Any], limit: int = 2
     paths.sort(key=lambda path: path.stat().st_mtime if path.exists() else 0.0, reverse=True)
     for result_path in paths[:limit]:
         try:
+            # Skip results that are older than max_age_hours — they no longer count as blockers
+            if result_path.stat().st_mtime < age_cutoff:
+                continue
             payload = json.loads(result_path.read_text(encoding="utf-8", errors="replace") or "{}")
         except Exception:
             continue
@@ -10244,6 +10360,139 @@ def _cu_recent_non_success_for_plan_job(plan_job: Dict[str, Any], limit: int = 2
         if targets and payload_targets == targets and prompt_family == payload_family:
             return payload
     return None
+
+
+def _cu_check_bridge_staleness() -> None:
+    """Check if the running aider_bridge.py process predates the script file.
+
+    If aider_bridge.py was edited AFTER the bridge process started, the bridge
+    is running stale code — it lacks any fixes applied since it was launched.
+    Emitting CU_BRIDGE_STALE makes the live feed visible so the operator or
+    future automation knows to restart it.
+    """
+    try:
+        import psutil as _psutil
+    except ImportError:
+        return  # psutil not available — skip silently
+
+    bridge_script = PROJECT_DIR / "aider_bridge.py"
+    if not bridge_script.exists():
+        return
+
+    try:
+        file_mtime = bridge_script.stat().st_mtime
+    except OSError:
+        return
+
+    for proc in _psutil.process_iter(["pid", "cmdline", "create_time"]):
+        try:
+            cmdline = proc.info.get("cmdline") or []
+            if not any("aider_bridge" in str(c) for c in cmdline):
+                continue
+            proc_start = proc.info.get("create_time") or 0.0
+            if proc_start < file_mtime:
+                import datetime as _dt
+                age_s = file_mtime - proc_start
+                _cu_feed(
+                    "CU_BRIDGE_STALE",
+                    f"aider_bridge.py process (pid={proc.pid}) started "
+                    f"{age_s / 60:.1f}min BEFORE the script was last saved — "
+                    "running stale code. Restart the bridge to pick up latest fixes.",
+                )
+                return
+        except (_psutil.NoSuchProcess, _psutil.AccessDenied, Exception):
+            continue
+
+
+def _cu_self_repair_staleness(plan: Dict[str, Any], empty_rebuild_count: int) -> bool:
+    """Self-repair: when ALL plan jobs are stale, archive old blocking results and retry.
+
+    Luna calls this after consecutive CU_PLAN_REBUILD_EMPTY events.  She detects
+    which result files are blocking each template job, moves them to an archive
+    subfolder (reversible — not deleted), then emits CU_SELF_REPAIR so the live
+    feed shows what happened.  On the next rebuild pass the age-decay filter will
+    treat the now-moved files as absent, making every template job fresh again.
+
+    Returns True if at least one blocker was archived.
+    """
+    import time as _time
+    import shutil as _shutil
+
+    _cu_feed(
+        "CU_SELF_REPAIR_START",
+        f"Self-repair triggered after {empty_rebuild_count} empty rebuild(s) — scanning for stale blockers",
+    )
+
+    archive_root = _CU_PROJECT_DIR / "aider_jobs" / "archived_noop"
+    try:
+        archive_root.mkdir(parents=True, exist_ok=True)
+    except Exception as exc:
+        _cu_feed("CU_SELF_REPAIR_FAIL", f"Cannot create archive dir: {exc}")
+        return False
+
+    archived: List[str] = []
+    for job in plan.get("jobs") or []:
+        # Use infinite max_age so we find even ancient blockers
+        blocking = _cu_recent_non_success_for_plan_job(job, max_age_hours=9999.0)
+        if blocking is None:
+            continue
+        targets = list(job.get("target_files") or ["?"])
+        # Find the actual file on disk that produced this result
+        targets_key = frozenset(
+            str(x).replace("\\", "/").lower() for x in (blocking.get("target_files") or [])
+        )
+        for folder in (_CU_AIDER_FAILED_DIR, _CU_AIDER_QUARANTINE_DIR, _CU_AIDER_DONE_DIR):
+            try:
+                if not folder.exists():
+                    continue
+                for p in folder.glob("*.json"):
+                    if not p.is_file():
+                        continue
+                    try:
+                        d = json.loads(p.read_text(encoding="utf-8", errors="replace") or "{}")
+                    except Exception:
+                        continue
+                    if str(d.get("origin") or "") != "continues_update":
+                        continue
+                    status = str(d.get("status") or d.get("state") or "").lower()
+                    noop_reason = str(d.get("noop_reason") or d.get("failure_reason") or "").lower()
+                    is_noop = status == "noop" or "no_diff" in noop_reason
+                    fail_reason = str(d.get("failure_reason") or "").lower()
+                    is_failed = (
+                        status in {"failed", "quarantined", "timeout"}
+                        or fail_reason in {"aider_timeout", "timeout", "oversized_target_requires_scope"}
+                    )
+                    if not is_noop and not is_failed:
+                        continue
+                    p_targets = frozenset(
+                        str(x).replace("\\", "/").lower() for x in (d.get("target_files") or [])
+                    )
+                    if p_targets != targets_key:
+                        continue
+                    dest = archive_root / p.name
+                    try:
+                        _shutil.move(str(p), str(dest))
+                        archived.append(p.name)
+                    except Exception:
+                        pass
+            except Exception:
+                continue
+
+    if archived:
+        _cu_feed(
+            "CU_SELF_REPAIR",
+            f"Archived {len(archived)} stale blocker(s) — plan templates are fresh again",
+            detail=json.dumps(archived[:20], ensure_ascii=True),
+        )
+        _diag(f"[CU-SELF-REPAIR] archived {len(archived)} stale results: {archived[:5]}")
+        return True
+
+    # Nothing to archive — escalate: widen age window by resetting live feed signal
+    _cu_feed(
+        "CU_SELF_REPAIR_EMPTY",
+        "No archived results found — forcing staleness bypass for next rebuild",
+    )
+    return False
 
 
 def _cu_stale_plan_report(plan: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
@@ -10288,7 +10537,7 @@ def _cu_write_stale_plan_backlog(plan: Dict[str, Any], blocked_jobs: List[Dict[s
                 "acceptance_test": job.get("acceptance_test") or "A fresh job produces a real diff or clear compliance evidence.",
                 "rollback_stage_plan": "Stage only; do not delete queues, memory, logs, backups, or staged edits.",
                 "expected_diff_type": job.get("expected_diff_type") or "fresh bounded upgrade",
-                "max_lines_changed": min(int(job.get("max_lines_changed") or 180), 220),
+                "max_lines_changed": min(int(job.get("max_lines_changed") or _CU_MICRO_MAX_LINES_CHANGED), _CU_MICRO_MAX_LINES_CHANGED),
                 "avoid_prompt_family": job.get("prompt_family", ""),
                 "prior_task_id": blocked.get("prior_task_id", ""),
                 "prior_reason": blocked.get("prior_reason", ""),
@@ -10365,7 +10614,7 @@ def _cu_jobs_from_director_refresh(director_job: Dict[str, Any]) -> List[Dict[st
             "acceptance_test": mission.get("acceptance_test") or "Fresh mission produces a real diff or compliance evidence.",
             "verify": [],
             "expected_diff_type": mission.get("expected_diff_type") or "fresh bounded upgrade",
-            "max_lines_changed": min(int(mission.get("max_lines_changed") or 180), 220),
+            "max_lines_changed": min(int(mission.get("max_lines_changed") or _CU_MICRO_MAX_LINES_CHANGED), _CU_MICRO_MAX_LINES_CHANGED),
             "director_job_path": director_job.get("path", ""),
             "source_quarantine": director_job.get("source_quarantine", ""),
         })
@@ -10514,18 +10763,29 @@ def _cu_dirty_targets(targets: List[str]) -> List[Dict[str, str]]:
 def _cu_dirty_plan_recovery_jobs(deferred_targets: List[Dict[str, Any]], max_jobs: int = 6) -> List[Dict[str, Any]]:
     """Build fallback jobs on clean existing files when the main CU plan is blocked."""
     jobs: List[Dict[str, Any]] = []
-    for candidate in _CU_RECOVERY_FILES:
+    seen_candidates: set[str] = set()
+
+    def _append_recovery_candidate(candidate: str, candidate_index: int) -> None:
+        candidate_norm = str(candidate).replace("\\", "/")
         if len(jobs) >= max_jobs:
-            break
-        candidate = str(candidate)
-        if not (_CU_PROJECT_DIR / candidate).exists():
-            continue
-        if _cu_dirty_targets([candidate]):
-            continue
+            return
+        if candidate_norm in seen_candidates:
+            return
+        seen_candidates.add(candidate_norm)
+        if not (_CU_PROJECT_DIR / candidate_norm).exists():
+            return
+        if _cu_dirty_targets([candidate_norm]):
+            return
+        stale_result = _cu_recent_non_success_for_plan_job({
+            "target_files": [candidate_norm],
+            "prompt_family": f"dirty_target_recovery_{candidate_index:02d}",
+        })
+        if stale_result:
+            return
         index = len(jobs) + 1
-        concrete_instruction = _cu_build_concrete_instruction(candidate)
+        concrete_instruction = _cu_build_concrete_instruction(candidate_norm)
         prompt = (
-            f"Edit ONLY `{candidate}`. Do not inspect, mention, or modify any other file. "
+            f"Edit ONLY `{candidate_norm}`. Do not inspect, mention, or modify any other file. "
             "Perform one bounded stability improvement that produces a non-empty staged diff."
         )
         if concrete_instruction:
@@ -10535,7 +10795,7 @@ def _cu_dirty_plan_recovery_jobs(deferred_targets: List[Dict[str, Any]], max_job
                 "Follow the concrete edit requirement exactly and touch only the target file."
             )
         jobs.append({
-            "id": f"cu_dirty_recovery_{index:02d}_{Path(candidate).stem}",
+            "id": f"cu_dirty_recovery_{index:02d}_{Path(candidate_norm).stem}",
             "origin": "dirty_target_recovery",
             "goal": "Keep continues_update moving while staged edits await review",
             "task_type": "aider_patch",
@@ -10544,14 +10804,39 @@ def _cu_dirty_plan_recovery_jobs(deferred_targets: List[Dict[str, Any]], max_job
             "apply_on_pass": False,
             "stage_only": True,
             "impact_area": "dirty_target_recovery",
-            "target_files": [candidate],
+            "target_files": [candidate_norm],
             "prompt_family": f"dirty_target_recovery_{index:02d}",
             "prompt": prompt,
-            "acceptance_test": f"{candidate} compiles and the staged diff is non-empty.",
-            "verify": [f"python -m py_compile {candidate}"],
+            "acceptance_test": f"{candidate_norm} compiles and the staged diff is non-empty.",
+            "verify": [f"python -m py_compile {candidate_norm}"],
             "expected_diff_type": "stability_recovery",
-            "max_lines_changed": 120,
+            "max_lines_changed": 60,
         })
+
+    for candidate_index, candidate in enumerate(_CU_RECOVERY_FILES, start=1):
+        if len(jobs) >= max_jobs:
+            break
+        _append_recovery_candidate(str(candidate), candidate_index)
+
+    if len(jobs) < max_jobs:
+        dynamic_roots = [
+            _CU_PROJECT_DIR / "luna_modules",
+            _CU_PROJECT_DIR / "tests",
+        ]
+        dynamic_patterns = ("*.py",)
+        dynamic_index = len(_CU_RECOVERY_FILES)
+        for root in dynamic_roots:
+            if len(jobs) >= max_jobs or not root.exists():
+                break
+            for pattern in dynamic_patterns:
+                for path in sorted(root.glob(pattern)):
+                    if len(jobs) >= max_jobs:
+                        break
+                    if not path.is_file():
+                        continue
+                    rel = str(path.relative_to(_CU_PROJECT_DIR)).replace("\\", "/")
+                    dynamic_index += 1
+                    _append_recovery_candidate(rel, dynamic_index)
     return jobs
 
 
@@ -10570,6 +10855,47 @@ def _cu_activate_rebuilt_plan(
         "dirty_recovery_added": False,
         "deferred_targets": [],
     }
+
+
+def _cu_idle_retry_wait(state: Dict[str, Any], reason: str, seconds: float) -> None:
+    """Keep continues-update alive in a visible quiet retry state."""
+    retry_seconds = max(5.0, float(seconds))
+    resume_at = datetime.now() + timedelta(seconds=retry_seconds)
+    resume_iso = resume_at.isoformat(timespec="seconds")
+    state.update({
+        "running": True,
+        "phase": reason,
+        "cooldown_until": resume_iso,
+        "next_cycle_at": resume_iso,
+        "cooldown_remaining_seconds": int(retry_seconds),
+        "pause_reason": "",
+    })
+    _cu_write_state(state)
+    slept = 0.0
+    while slept < retry_seconds and not _cu_should_stop():
+        if _CU_FORCE_START_FLAG_PATH.exists():
+            try:
+                _CU_FORCE_START_FLAG_PATH.unlink(missing_ok=True)
+            except Exception:
+                pass
+            _cu_feed("CU_FORCE_START", "User requested immediate start — skipping empty-plan retry wait")
+            break
+        step = min(5.0, retry_seconds - slept)
+        time.sleep(step)
+        slept += step
+        remaining = int(max(0.0, retry_seconds - slept))
+        if remaining != state.get("cooldown_remaining_seconds"):
+            state["cooldown_remaining_seconds"] = remaining
+            state["cooldown_until"] = resume_iso
+            state["next_cycle_at"] = resume_iso
+            _cu_write_state(state)
+    state.update({
+        "phase": "ready",
+        "cooldown_until": "",
+        "next_cycle_at": "",
+        "cooldown_remaining_seconds": 0,
+    })
+    _cu_write_state(state)
 
 
 def _cu_latest_active_director_refresh() -> Dict[str, Any]:
@@ -10762,6 +11088,123 @@ def _cu_annotate_for_section(instruction: str, target_file: str, section: Dict[s
     )
 
 
+def _cu_boot_self_diagnose() -> None:
+    """Boot-time self-diagnosis: find and archive stale blockers before any plan runs.
+
+    Luna runs this at the top of every continues_update_loop() call.  She checks every
+    template job against the done/failed/quarantine folders.  Any result older than
+    _CU_NOOP_MAX_AGE_HOURS is already ignored by the age-decay filter.  Results within
+    the window but blocking ALL templates are archived immediately — Luna never waits for
+    a human to notice she is stuck.
+
+    Research pattern (what Luna does to diagnose herself):
+      1. Build the plan template list.
+      2. For each template, call _cu_recent_non_success_for_plan_job with max_age_hours=9999
+         to find any blocker regardless of age.
+      3. Count how many templates are blocked.
+      4. If ALL are blocked: archive the blocking files, write CU_SELF_REPAIR to live feed,
+         write to cu_self_repair_history.jsonl so the lesson persists across sessions.
+      5. If only SOME are blocked: age-decay handles them naturally — no action needed.
+    """
+    import shutil as _shutil
+
+    plan = build_continues_update_plan("continues update", max_jobs=12)
+    blocked: List[Dict[str, Any]] = []
+    for job in plan.get("jobs") or []:
+        result = _cu_recent_non_success_for_plan_job(job, max_age_hours=9999.0)
+        if result is not None:
+            blocked.append({"job": job, "result": result})
+
+    all_blocked = len(blocked) == len(plan.get("jobs") or [1])
+    if not all_blocked:
+        return  # Some fresh jobs exist — proceed normally
+
+    # All templates blocked: archive the culprit files and remember the fix
+    archive_root = _CU_PROJECT_DIR / "aider_jobs" / "archived_noop"
+    try:
+        archive_root.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        return
+
+    archived: List[str] = []
+    for entry in blocked:
+        job = entry["job"]
+        blocker = entry["result"]
+        blocker_targets = frozenset(
+            str(x).replace("\\", "/").lower() for x in (blocker.get("target_files") or [])
+        )
+        for folder in (_CU_AIDER_FAILED_DIR, _CU_AIDER_QUARANTINE_DIR, _CU_AIDER_DONE_DIR):
+            try:
+                if not folder.exists():
+                    continue
+                for p in folder.glob("*.json"):
+                    if not p.is_file():
+                        continue
+                    try:
+                        d = json.loads(p.read_text(encoding="utf-8", errors="replace") or "{}")
+                    except Exception:
+                        continue
+                    if d.get("origin") != "continues_update":
+                        continue
+                    p_tgt = frozenset(
+                        str(x).replace("\\", "/").lower() for x in (d.get("target_files") or [])
+                    )
+                    if p_tgt != blocker_targets:
+                        continue
+                    status = str(d.get("status") or d.get("state") or "").lower()
+                    noop_r = str(d.get("noop_reason") or d.get("failure_reason") or "").lower()
+                    is_noop = status == "noop" or "no_diff" in noop_r
+                    fail_r = str(d.get("failure_reason") or "").lower()
+                    is_failed = (
+                        status in {"failed", "quarantined", "timeout"}
+                        or fail_r in {"aider_timeout", "timeout", "oversized_target_requires_scope"}
+                    )
+                    if not is_noop and not is_failed:
+                        continue
+                    dest = archive_root / p.name
+                    try:
+                        _shutil.move(str(p), str(dest))
+                        archived.append(p.name)
+                    except Exception:
+                        pass
+            except Exception:
+                continue
+
+    if not archived:
+        return
+
+    impact_areas = [e["job"].get("impact_area", "") for e in blocked]
+    _cu_feed(
+        "CU_SELF_REPAIR",
+        f"Boot self-diagnosis: archived {len(archived)} stale blocker(s) — all templates now fresh",
+        detail=json.dumps(impact_areas, ensure_ascii=True),
+    )
+    _diag(f"[CU-BOOT-DIAGNOSE] archived {len(archived)} blockers: {archived[:5]}")
+
+    # Remember the fix in a persistent log so future Luna instances can study this pattern
+    try:
+        repair_log = _CU_PROJECT_DIR / "memory" / "cu_self_repair_history.jsonl"
+        record = {
+            "ts": _cu_now_iso(),
+            "event": "boot_stale_blocker_archive",
+            "archived_count": len(archived),
+            "archived_files": archived[:20],
+            "impact_areas": impact_areas,
+            "root_cause": "All CU template jobs had matching NOOP/failed results blocking plan rebuild",
+            "fix": "Archived blocking result files to aider_jobs/archived_noop/",
+            "lesson": (
+                "When ALL template jobs are stale, CU_PLAN_REBUILD_EMPTY loops forever. "
+                "Fix: archive the blockers. Prevention: _CU_NOOP_MAX_AGE_HOURS age-decay "
+                "makes results older than 8h invisible to the staleness check."
+            ),
+        }
+        repair_log.parent.mkdir(parents=True, exist_ok=True)
+        with repair_log.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=True) + "\n")
+    except Exception:
+        pass
+
+
 def continues_update_loop(
     interval_seconds: float = _CU_DEFAULT_INTERVAL_SECONDS,
     job_timeout_seconds: float = _CU_DEFAULT_JOB_TIMEOUT_SECONDS,
@@ -10775,6 +11218,9 @@ def continues_update_loop(
     if _CU_STOP_FLAG_PATH.exists():
         _cu_feed("CU_START_BLOCKED", "continues-update is paused by memory/continues_update.stop")
         return {"ok": False, "reason": "continues_update_paused"}
+    # Boot-time self-diagnosis: scan for stale blockers before building the plan.
+    # This runs every time the CU loop starts so Luna never waits for a human to notice.
+    _cu_boot_self_diagnose()
     # Write PID lock so watchdog and future calls can detect us.
     _cu_write_lock(os.getpid())
     architect_paused_by_cu = _cu_pause_architect_for_cycle()
@@ -10833,54 +11279,63 @@ def continues_update_loop(
                 detail=f"director_job={director_refresh.get('path', '')}",
             )
         else:
-            _cu_feed(
-                "CU_DIRECTOR_REFRESH_EMPTY",
-                "Director refresh did not produce executable missions",
-                detail=f"director_job={director_refresh.get('path', '')}",
-            )
-            report = {
-                "cycle": 0,
-                "task_id": "",
-                "status": "quarantined",
-                "target_files": [],
-                "instructions": "continues_update plan exhausted by recent non-success history",
-                "finished_at": _cu_now_iso(),
-                "aider_rc": None,
-                "verify_passed": False,
-                "summary": "No new Aider jobs were queued. Stale plan was quarantined for Director refresh.",
-                "diff_path": "",
-                "failure_reason": "stale_plan_recent_non_success",
-                "director_backlog_path": backlog_path,
-            }
-            _cu_append_nightly(report)
-            state = _cu_load_state()
-            state.update({
-                "running": False,
-                "started_at": _cu_now_iso(),
-                "stopped_at": _cu_now_iso(),
-                "cycles": 0,
-                "last_task_id": "",
-                "last_status": "quarantined",
-                "last_cycle_at": _cu_now_iso(),
-                "pause_reason": "stale_plan_recent_non_success",
-                "director_backlog_path": backlog_path,
-                "noop_count": 0,
-                "consecutive_failures": 0,
-            })
-            _cu_write_state(state)
-            _cu_feed(
-                "CU_STALE_PLAN_PAUSED",
-                "Paused continues-update before queueing because every planned job was stale",
-                detail=f"director_backlog={backlog_path}",
-            )
-            _cu_feed(
-                "CU_STOP",
-                "Continues-update loop stopped before queueing stale plan",
-                detail="cycles=0 reason=stale_plan_recent_non_success",
-            )
-            _cu_restore_architect_after_cycle(architect_paused_by_cu)
-            _cu_clear_lock()
-            return {"ok": False, "reason": "stale_plan_recent_non_success", "director_backlog_path": backlog_path}
+            fallback_jobs = _cu_dirty_plan_recovery_jobs([], max_jobs=4)
+            if fallback_jobs:
+                plan["jobs"] = fallback_jobs
+                _cu_feed(
+                    "CU_DIRECTOR_REFRESH_FALLBACK",
+                    f"Director refresh was empty; queued {len(fallback_jobs)} clean recovery job(s) instead",
+                    detail=f"director_job={director_refresh.get('path', '')}",
+                )
+            else:
+                _cu_feed(
+                    "CU_DIRECTOR_REFRESH_EMPTY",
+                    "Director refresh did not produce executable missions",
+                    detail=f"director_job={director_refresh.get('path', '')}",
+                )
+                report = {
+                    "cycle": 0,
+                    "task_id": "",
+                    "status": "quarantined",
+                    "target_files": [],
+                    "instructions": "continues_update plan exhausted by recent non-success history",
+                    "finished_at": _cu_now_iso(),
+                    "aider_rc": None,
+                    "verify_passed": False,
+                    "summary": "No new Aider jobs were queued. Stale plan was quarantined for Director refresh.",
+                    "diff_path": "",
+                    "failure_reason": "stale_plan_recent_non_success",
+                    "director_backlog_path": backlog_path,
+                }
+                _cu_append_nightly(report)
+                state = _cu_load_state()
+                state.update({
+                    "running": False,
+                    "started_at": _cu_now_iso(),
+                    "stopped_at": _cu_now_iso(),
+                    "cycles": 0,
+                    "last_task_id": "",
+                    "last_status": "quarantined",
+                    "last_cycle_at": _cu_now_iso(),
+                    "pause_reason": "stale_plan_recent_non_success",
+                    "director_backlog_path": backlog_path,
+                    "noop_count": 0,
+                    "consecutive_failures": 0,
+                })
+                _cu_write_state(state)
+                _cu_feed(
+                    "CU_STALE_PLAN_PAUSED",
+                    "Paused continues-update before queueing because every planned job was stale",
+                    detail=f"director_backlog={backlog_path}",
+                )
+                _cu_feed(
+                    "CU_STOP",
+                    "Continues-update loop stopped before queueing stale plan",
+                    detail="cycles=0 reason=stale_plan_recent_non_success",
+                )
+                _cu_restore_architect_after_cycle(architect_paused_by_cu)
+                _cu_clear_lock()
+                return {"ok": False, "reason": "stale_plan_recent_non_success", "director_backlog_path": backlog_path}
     else:
         plan["jobs"] = fresh_jobs
     state = _cu_load_state()
@@ -10996,6 +11451,57 @@ def continues_update_loop(
                 else:
                     # Plan exhausted normally — rebuild and keep improving instead of stopping.
                     _cu_feed("CU_PLAN_COMPLETE", "Reached end of bounded plan — rebuilding for next iteration")
+
+                    # Detect all-skip tight loop: if nothing was queued this cycle,
+                    # every job was either deferred (dirty) or skipped (NOOP/failure).
+                    # Back off to prevent spinning every 6 seconds with no work done.
+                    # On streak >= 2: auto-archive blocking NOOPs so work can resume.
+                    if queued_count == 0:
+                        _all_skip_streak = state.get("_all_skip_streak", 0) + 1
+                        state["_all_skip_streak"] = _all_skip_streak
+                        backoff = min(30.0 * _all_skip_streak, 120.0)
+                        _cu_feed(
+                            "CU_ALL_SKIP_BACKOFF",
+                            f"All jobs skipped/deferred (streak={_all_skip_streak}) — waiting {backoff:.0f}s",
+                        )
+                        _cu_idle_retry_wait(state, "all_skip_backoff", backoff)
+                        if _all_skip_streak >= 2:
+                            # Self-repair: archive NOOP blockers so recovery targets can be retried.
+                            # This is the lesson Luna learned on 2026-05-01: when all jobs are
+                            # skipped because NOOPs fill the window, archive them and retry.
+                            try:
+                                import shutil as _shutil
+                                _noop_archive = PROJECT_DIR / "aider_jobs" / "archived_noop"
+                                _noop_archive.mkdir(parents=True, exist_ok=True)
+                                _archived_count = 0
+                                for _src_dir in [
+                                    PROJECT_DIR / "aider_jobs" / "done",
+                                    PROJECT_DIR / "aider_jobs" / "failed",
+                                ]:
+                                    if not _src_dir.exists():
+                                        continue
+                                    for _nf in list(_src_dir.glob("*.json")):
+                                        try:
+                                            _nd = json.loads(_nf.read_text(encoding="utf-8", errors="replace"))
+                                            _ns = str(_nd.get("status") or "")
+                                            _nr = str(_nd.get("failure_reason") or _nd.get("noop_reason") or "")
+                                            if _ns == "noop" or _nr in ("aider_timeout", "no_diff"):
+                                                _shutil.move(str(_nf), str(_noop_archive / _nf.name))
+                                                _archived_count += 1
+                                        except Exception:
+                                            pass
+                                if _archived_count:
+                                    _cu_feed(
+                                        "CU_NOOP_ARCHIVE",
+                                        f"Self-repair: archived {_archived_count} NOOP/timeout blockers — targets can now be retried",
+                                    )
+                                    state["_all_skip_streak"] = 0
+                            except Exception as _e:
+                                _cu_feed("CU_NOOP_ARCHIVE_ERROR", f"Archive attempt failed: {_e}")
+                    else:
+                        state["_all_skip_streak"] = 0
+
+                    _cu_check_bridge_staleness()
                     _new_plan = build_continues_update_plan("continues update", max_jobs=12)
                     _new_check = validate_continues_update_plan(_new_plan)
                     if not _new_check.get("ok"):
@@ -11009,8 +11515,24 @@ def continues_update_loop(
                     if _stale:
                         _fresh, _ = _cu_supplement_fresh_jobs(_fresh, _stale)
                     if not _fresh:
-                        _cu_feed("CU_PLAN_REBUILD_EMPTY", "No fresh jobs after rebuild — stopping")
-                        break
+                        # All jobs stale — short back-off then self-repair if needed
+                        _empty_rebuild_count = state.get("_empty_rebuild_count", 0) + 1
+                        state["_empty_rebuild_count"] = _empty_rebuild_count
+                        _cu_feed(
+                            "CU_PLAN_REBUILD_EMPTY",
+                            "No fresh jobs after rebuild — waiting 15s then self-repairing",
+                            detail=f"empty_rebuild_count={_empty_rebuild_count}",
+                        )
+                        _cu_idle_retry_wait(state, "waiting_for_fresh_target", _CU_EMPTY_PLAN_RETRY_SECONDS)
+                        if _empty_rebuild_count >= 2:
+                            _repaired = _cu_self_repair_staleness(_new_plan, _empty_rebuild_count)
+                            if _repaired:
+                                state["_empty_rebuild_count"] = 0
+                        deferred_targets = []
+                        dirty_recovery_added = False
+                        continue
+                    # Fresh jobs available — activate immediately, no waiting
+                    state["_empty_rebuild_count"] = 0
                     reset = _cu_activate_rebuilt_plan(plan, _fresh, file_empty_streak)
                     cycle = int(reset["cycle"])
                     deferred_count = int(reset["deferred_count"])
@@ -11133,6 +11655,7 @@ def continues_update_loop(
                             f"empty_streak={file_empty_streak.get(target_file,0)} consec_fail={consecutive_failures}")
             # Chunk large files: pick one section per cycle so aider stays within context
             section_cursor: Dict[str, str] = state.get("file_section_cursor") or {}
+            section_focus: Optional[Dict[str, Any]] = None
             for _tgt in targets:
                 _full = str(_CU_PROJECT_DIR / _tgt)
                 try:
@@ -11144,6 +11667,12 @@ def continues_update_loop(
                     if _section:
                         instructions = _cu_annotate_for_section(instructions, _tgt, _section)
                         section_cursor[_tgt] = _section["name"]
+                        section_focus = {
+                            "name": _section.get("name", ""),
+                            "kind": _section.get("kind", "section"),
+                            "start_line": _section.get("start_line"),
+                            "end_line": _section.get("end_line"),
+                        }
                         _cu_feed(
                             "CU_SECTION_FOCUS",
                             f"Cycle {cycle}: large file — focusing on {_section['kind']} "
@@ -11161,7 +11690,13 @@ def continues_update_loop(
                 "file_section_cursor": section_cursor,
             })
             _cu_write_state(state)
-            task_id = _cu_submit_aider_job(instructions, targets, apply_on_pass=False, plan_job=plan_job)
+            task_id = _cu_submit_aider_job(
+                instructions,
+                targets,
+                apply_on_pass=False,
+                plan_job=plan_job,
+                scope=section_focus,
+            )
             queued_count += 1
             _cu_feed("CU_QUEUED", f"Cycle {cycle} queued aider job", task_id=task_id,
                      detail=instructions)
@@ -11271,7 +11806,13 @@ def continues_update_loop(
             if not two_pass_review.get("satisfied"):
                 # Timeouts are capacity failures (file too large), not quality failures.
                 # Crashes (hard_failure) use the consecutive budget. Timeouts always retry.
-                if timed_out or (hard_failure and consecutive_failures < _CU_MAX_CONSECUTIVE_FAILURES):
+                if status == "noop":
+                    _cu_feed(
+                        "CU_2X_REVIEW_CONTINUE",
+                        f"Cycle {cycle} produced a no-diff result ({status}) — continuing to the next target",
+                        task_id=task_id,
+                    )
+                elif timed_out or (hard_failure and consecutive_failures < _CU_MAX_CONSECUTIVE_FAILURES):
                     _cu_feed(
                         "CU_2X_REVIEW_RETRY",
                         f"Cycle {cycle} {'timed out' if timed_out else 'hard-failed'} ({status}) — "

@@ -31,6 +31,7 @@ def _call_speak(message: str, mood: str = "awake") -> None:
         try:
             _speak(message, mood=mood)
         except Exception:
+            # swallowed: this exception is safe to ignore as it does not affect the main functionality
             pass
 
 

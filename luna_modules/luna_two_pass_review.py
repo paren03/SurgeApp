@@ -10,13 +10,22 @@ def _now_iso() -> str:
     return datetime.now().isoformat(timespec="seconds")
 
 
+def _is_status_done(status: str) -> bool:
+    return status == "done"
+
+def _has_valid_diff_path(diff_path: str) -> bool:
+    return diff_path.strip() != ""
+
+def _verify_passed(verify_passed: Any, verification_passed: Any) -> bool:
+    return bool(verify_passed or verification_passed)
+
 def _reviewer_decision(name: str, report: Dict[str, Any]) -> Dict[str, Any]:
     status = str(report.get("status") or "").lower()
     diff_path = str(report.get("diff_path") or "").strip()
-    verify_passed = bool(report.get("verify_passed") or report.get("verification_passed"))
+    verify_passed = _verify_passed(report.get("verify_passed"), report.get("verification_passed"))
     failure_reason = str(report.get("failure_reason") or report.get("summary") or "").strip()
 
-    if status == "done" and diff_path and verify_passed:
+    if _is_status_done(status) and _has_valid_diff_path(diff_path) and verify_passed:
         return {
             "reviewer": name,
             "satisfied": True,

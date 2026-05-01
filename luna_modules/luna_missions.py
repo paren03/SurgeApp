@@ -20,10 +20,6 @@ from luna_modules.luna_logging import _diag, ensure_layout, log
 from luna_modules.luna_paths import MISSIONS_DIR
 
 
-def _ensure_missions_dir() -> None:
-    MISSIONS_DIR.mkdir(parents=True, exist_ok=True)
-
-
 class LunaMission:
     """Represents a single autonomous mission with structured metadata."""
 
@@ -43,6 +39,10 @@ class LunaMission:
             "status": self.status,
         }
 
+    @staticmethod
+    def _ensure_missions_dir() -> None:
+        MISSIONS_DIR.mkdir(parents=True, exist_ok=True)
+
 
 def _mission_path(mission_id: str) -> Path:
     """Return the Path to a mission's JSON file."""
@@ -51,7 +51,7 @@ def _mission_path(mission_id: str) -> Path:
 
 def start_new_mission(title: str, objective: str) -> str:
     """Create a new mission, persist it, and return its mission_id."""
-    _ensure_missions_dir()
+    LunaMission._ensure_missions_dir()
     mission = LunaMission(title, objective)
     log(f"[MISSION] Starting: {title} ({mission.mission_id})")
     write_json_atomic(_mission_path(mission.mission_id), mission.to_dict())

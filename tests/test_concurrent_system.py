@@ -398,7 +398,9 @@ if failed:
         print(f"  ✗  {r['name']}")
         if r.get("detail"):
             print(f"       {r['detail']}")
-    sys.exit(1)
+    if __name__ == "__main__":
+        sys.exit(1)
 else:
     print("\n  All tests passed. ✓")
-    sys.exit(0)
+    if __name__ == "__main__":
+        sys.exit(0)

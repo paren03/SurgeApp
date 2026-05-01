@@ -3639,6 +3639,7 @@ if PYSIDE_AVAILABLE:
                     _r = subprocess.run(
                         ["tasklist", "/FI", f"PID eq {_cu_pid}", "/NH"],
                         capture_output=True, text=True, timeout=3,
+                        encoding="utf-8", errors="replace",
                         creationflags=CREATE_NO_WINDOW,
                     )
                     self._cu_alive_cache = str(_cu_pid) in (_r.stdout or "")

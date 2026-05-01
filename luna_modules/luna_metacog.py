@@ -34,7 +34,7 @@ def can_proceed_with_evolution() -> bool:
     return evaluate_evolution_integrity()
 
 
-def run_metacognitive_reflection(context: str = "") -> Dict[str, Any]:
+def run_metacognitive_reflection(context: str = "default_context") -> Dict[str, Any]:
     """Placeholder for metacognitive reflection cycle."""
     log(f"[METACOG] Metacognitive reflection triggered: {context}")
     return {"ok": True}

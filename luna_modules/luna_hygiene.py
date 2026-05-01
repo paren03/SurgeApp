@@ -5,8 +5,6 @@ Extracted from ``worker.py`` (step 5 of modularity refactor).
 the verification pipeline extracted in step 6).
 """
 
-from __future__ import annotations
-
 import ast
 from pathlib import Path
 from typing import List, Optional

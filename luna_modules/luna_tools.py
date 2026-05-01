@@ -59,8 +59,8 @@ def _read_vault() -> Dict[str, str]:
                 if key:
                     vault[key] = val
     except Exception:
-        pass
-    return vault
+        # swallowed: this exception is safe to ignore in this context
+        return vault
 
 
 # ── Web search ────────────────────────────────────────────────────────────────

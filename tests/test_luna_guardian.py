@@ -179,6 +179,35 @@ class TestLunaGuardian(unittest.TestCase):
         self.assertEqual(stopped, [])
         self.assertFalse(terminate.called)
 
+    def test_worker_wrapper_child_pair_is_not_treated_as_duplicate(self) -> None:
+        project = _test_dir("guardian_worker_pair")
+        lock = project / "logs" / "luna_worker.lock.json"
+        lock.parent.mkdir(parents=True)
+        rows = [
+            {
+                "command": "D:\\SurgeApp\\.aider_venv\\Scripts\\pythonw.exe D:\\SurgeApp\\worker.py",
+                "name": "pythonw.exe",
+                "parent_pid": "9352",
+                "pid": "37456",
+            },
+            {
+                "command": "pythonw.exe D:\\SurgeApp\\worker.py",
+                "name": "pythonw.exe",
+                "parent_pid": "37456",
+                "pid": "16636",
+            },
+        ]
+
+        with patch.object(luna_guardian, "SERVICE_LOCKS", {"worker": lock}), patch.object(
+            luna_guardian, "_process_rows", return_value=rows
+        ), patch.object(luna_guardian, "_terminate_pid") as terminate:
+            stopped = luna_guardian._dedupe_service_processes("worker", "worker.py")
+
+        self.assertEqual(stopped, [])
+        self.assertFalse(terminate.called)
+        payload = json.loads(lock.read_text(encoding="utf-8"))
+        self.assertEqual(payload["pid"], 16636)
+
     def test_pid_alive_requires_matching_command_marker_when_requested(self) -> None:
         with patch.object(luna_guardian, "_process_command_line_for_pid", return_value="python.exe D:\\Other\\tool.py"):
             self.assertFalse(luna_guardian._pid_alive(14280, "aider_bridge.py"))

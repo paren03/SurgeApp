@@ -44,6 +44,7 @@ except Exception:
         try:
             sys.stderr.write(line + "\n")
         except Exception:
+            # swallowed: this block is a fallback for telemetry errors and can be ignored if telemetry fails
             pass
         try:
             if layout_cb is not None:

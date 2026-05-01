@@ -17,6 +17,10 @@ HIGH_IMPACT_AREAS = (
     "duplicate_process_prevention",
 )
 
+MICRO_JOB_COUNT = 8
+MICRO_MAX_LINES = 90
+MICRO_UI_MAX_LINES = 120
+
 LOW_VALUE_MARKERS = (
     "one-line docstring",
     "one sentence docstring",
@@ -36,7 +40,7 @@ _TEMPLATES = [
         "acceptance_test": "A `/ceo` goal produces active Director jobs with all required mission fields.",
         "verify": ["python -m py_compile director_agent.py"],
         "expected_diff_type": "orchestration",
-        "max_lines_changed": 180,
+        "max_lines_changed": MICRO_MAX_LINES,
     },
     {
         "impact_area": "cu_watchdog_cycle_telemetry",
@@ -46,7 +50,7 @@ _TEMPLATES = [
         "acceptance_test": "A budget-exceeded cycle writes Inspector and nightly summary entries and stops new job creation.",
         "verify": ["python -m py_compile worker.py"],
         "expected_diff_type": "telemetry",
-        "max_lines_changed": 220,
+        "max_lines_changed": MICRO_MAX_LINES,
     },
     {
         "impact_area": "inspector_live_progress",
@@ -56,7 +60,7 @@ _TEMPLATES = [
         "acceptance_test": "Inspector can read live-feed autonomy events and show plan/job/failure summaries.",
         "verify": ["python -m py_compile SurgeApp_Claude_Terminal.py"],
         "expected_diff_type": "inspector_ui",
-        "max_lines_changed": 220,
+        "max_lines_changed": MICRO_UI_MAX_LINES,
     },
     {
         "impact_area": "function_scoped_editing",
@@ -66,7 +70,7 @@ _TEMPLATES = [
         "acceptance_test": "Aider job metadata records target function or bounded region before execution.",
         "verify": ["python -m py_compile aider_bridge.py"],
         "expected_diff_type": "safety_guard",
-        "max_lines_changed": 180,
+        "max_lines_changed": MICRO_MAX_LINES,
     },
     {
         "impact_area": "self_test_harness",
@@ -76,7 +80,7 @@ _TEMPLATES = [
         "acceptance_test": "Unit tests cover DONE, NOOP, failure, budget pause, and nightly summary behavior.",
         "verify": ["python -m unittest discover -s tests -v"],
         "expected_diff_type": "tests",
-        "max_lines_changed": 220,
+        "max_lines_changed": MICRO_UI_MAX_LINES,
     },
     {
         "impact_area": "startup_stability",
@@ -86,7 +90,7 @@ _TEMPLATES = [
         "acceptance_test": "Launcher path, icon path, working directory, and service boot order are recorded and verified.",
         "verify": ["python -m py_compile LaunchLuna.pyw luna_start.pyw"],
         "expected_diff_type": "startup",
-        "max_lines_changed": 180,
+        "max_lines_changed": MICRO_MAX_LINES,
     },
     {
         "impact_area": "duplicate_process_prevention",
@@ -96,7 +100,7 @@ _TEMPLATES = [
         "acceptance_test": "Duplicate start attempts exit cleanly and write a live-feed or log event explaining the existing PID.",
         "verify": ["python -m py_compile luna_guardian.py aider_bridge.py"],
         "expected_diff_type": "process_guard",
-        "max_lines_changed": 220,
+        "max_lines_changed": MICRO_MAX_LINES,
     },
     {
         "impact_area": "review_gate_stability",
@@ -106,7 +110,7 @@ _TEMPLATES = [
         "acceptance_test": "Two-pass review reports a clear block reason when verification evidence is missing or stale.",
         "verify": ["python -m unittest tests.test_luna_two_pass_review -v"],
         "expected_diff_type": "review_gate",
-        "max_lines_changed": 180,
+        "max_lines_changed": MICRO_MAX_LINES,
     },
 ]
 
@@ -116,8 +120,9 @@ def _now_iso() -> str:
 
 
 def build_continues_update_plan(goal: str, max_jobs: int = 12) -> Dict[str, Any]:
-    """Return 8-12 meaningful, stage-only jobs for one continues_update cycle."""
-    limit = max(8, min(12, int(max_jobs or 12)))
+    """Return a small, steady stage-only CU plan tuned for nonstop micro-upgrades."""
+
+    limit = max(MICRO_JOB_COUNT, min(MICRO_JOB_COUNT, int(max_jobs or MICRO_JOB_COUNT)))
     jobs: List[Dict[str, Any]] = []
     for index, template in enumerate(_TEMPLATES[:limit], start=1):
         jobs.append({
@@ -138,6 +143,7 @@ def build_continues_update_plan(goal: str, max_jobs: int = 12) -> Dict[str, Any]
         "verify_each_job": True,
         "stage_only": True,
         "write_morning_summary": True,
+        "micro_upgrade_mode": True,
         "jobs": jobs,
     }
 

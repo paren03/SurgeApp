@@ -13,6 +13,7 @@ import re
 import subprocess
 import sys
 import time
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
@@ -27,12 +28,22 @@ GUARDIAN_STATUS_PATH = MEMORY_DIR / "luna_guardian_status.json"
 KILL_SWITCH_PATH = PROJECT_DIR / "LUNA_STOP_NOW.flag"
 NO_WIN = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 
+OLLAMA_EXE = Path(os.environ.get(
+    "OLLAMA_EXE",
+    r"C:\Users\paren\AppData\Local\Programs\Ollama\ollama.exe",
+))
+OLLAMA_API_BASE = os.environ.get("OLLAMA_API_BASE", "http://127.0.0.1:11434").rstrip("/")
+
+# Mutable state for Ollama recovery — avoids global keyword in functions.
+_OLLAMA: Dict[str, object] = {"fail_count": 0, "cooldown_until": 0.0}
+
 PYTHONW = Path(
     r"C:\Program Files\WindowsApps"
     r"\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0"
     r"\pythonw3.11.exe"
 )
 AIDER_PYTHON = PROJECT_DIR / ".aider_venv" / "Scripts" / "python.exe"
+WORKER_PYTHONW = PROJECT_DIR / ".aider_venv" / "Scripts" / "pythonw.exe"
 
 SERVICE_SCRIPTS = {
     "worker": "worker.py",
@@ -268,19 +279,20 @@ def _dedupe_service_processes(service_name: str, script_spec: str) -> List[int]:
             row_pids.append(pid)
     if len(row_pids) <= 1:
         return []
-    if service_name == "aider_bridge" and len(row_pids) == 2:
-        parent_by_pid: Dict[int, int] = {}
-        for row in rows:
-            try:
-                pid = int(row.get("pid") or 0)
-                parent_by_pid[pid] = int(row.get("parent_pid") or 0)
-            except Exception as exc:
-                _log(f"swallowed: {exc}")
-        child_pids = [pid for pid, parent_pid in parent_by_pid.items() if parent_pid in row_pids]
-        if len(child_pids) == 1:
-            if lock:
-                _write_pid_lock(lock, child_pids[0], service_name)
-            return []
+    parent_by_pid: Dict[int, int] = {}
+    for row in rows:
+        try:
+            pid = int(row.get("pid") or 0)
+            parent_by_pid[pid] = int(row.get("parent_pid") or 0)
+        except Exception as exc:
+            _log(f"swallowed: {exc}")
+    child_pids = [pid for pid, parent_pid in parent_by_pid.items() if parent_pid in row_pids]
+    # Some Windows Python launchers spawn a child interpreter that still shows the
+    # same script in its command line. Treat that parent/child pair as one service.
+    if len(row_pids) == 2 and len(child_pids) == 1:
+        if lock:
+            _write_pid_lock(lock, child_pids[0], service_name)
+        return []
     keep_pid = lock_pid if lock_pid in row_pids and _pid_alive(lock_pid, marker) else row_pids[0]
     stopped: List[int] = []
     for pid in row_pids:
@@ -321,12 +333,18 @@ def _write_status(results: Dict[str, bool]) -> None:
             "script": script_spec.split()[0],
         }
     all_running = all(item["running"] for item in services.values()) if services else False
+    ollama_alive = _ollama_port_alive(timeout=2.0)
     payload = {
         "ts": _now_iso(),
         "guardian_pid": os.getpid(),
         "kill_switch_present": KILL_SWITCH_PATH.exists(),
-        "status": "services_healthy" if all_running else "service_attention_needed",
+        "status": "services_healthy" if (all_running and ollama_alive) else "service_attention_needed",
         "services": services,
+        "ollama": {
+            "port_alive": ollama_alive,
+            "restarted_this_tick": bool(results.get("ollama")),
+            "fail_count": int(_OLLAMA["fail_count"]),  # type: ignore[arg-type]
+        },
     }
     try:
         GUARDIAN_STATUS_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -356,6 +374,11 @@ def acquire_guardian_lock() -> bool:
 def _pythonw_for(service_name: str) -> str:
     if service_name == "aider_bridge" and AIDER_PYTHON.exists():
         return str(AIDER_PYTHON)
+    if service_name == "worker":
+        if WORKER_PYTHONW.exists():
+            return str(WORKER_PYTHONW)
+        if AIDER_PYTHON.exists():
+            return str(AIDER_PYTHON)
     return str(PYTHONW if PYTHONW.exists() else sys.executable)
 
 
@@ -398,6 +421,78 @@ def _start_service(service_name: str, script_spec: str) -> bool:
     return True
 
 
+def _ollama_port_alive(timeout: float = 3.0) -> bool:
+    try:
+        with urllib.request.urlopen(f"{OLLAMA_API_BASE}/api/tags", timeout=timeout) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
+
+
+def _recover_ollama() -> bool:
+    """Start `ollama serve` if the port is down for two consecutive ticks.
+
+    Returns True if a restart was attempted this tick.
+    Enforces a 120-second cooldown between restarts to prevent thrash.
+    """
+    if _ollama_port_alive():
+        _OLLAMA["fail_count"] = 0
+        return False
+
+    _OLLAMA["fail_count"] = int(_OLLAMA["fail_count"]) + 1  # type: ignore[arg-type]
+    if int(_OLLAMA["fail_count"]) < 2:
+        # Wait one more tick before acting — avoids false positives during slow start
+        _log("Ollama port 11434 did not respond (strike 1 of 2); waiting")
+        return False
+
+    now = time.time()
+    if now < float(_OLLAMA["cooldown_until"]):  # type: ignore[arg-type]
+        _log("Ollama down but still in restart cooldown; waiting")
+        return False
+
+    if not OLLAMA_EXE.exists():
+        _log(f"ollama.exe not found at {OLLAMA_EXE}; cannot recover")
+        _feed("OLLAMA_MISSING", "ollama.exe not found", str(OLLAMA_EXE))
+        return False
+
+    # If the process exists but the port is dead, killing and re-launching may
+    # cause data loss.  Log the anomaly and leave it for the user to resolve.
+    try:
+        result = subprocess.run(
+            ["tasklist", "/FI", "IMAGENAME eq ollama.exe", "/NH"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=5, creationflags=NO_WIN,
+        )
+        if "ollama.exe" in (result.stdout or "").lower():
+            _log("ollama.exe running but port unresponsive — skipping forced restart")
+            _feed("OLLAMA_UNRESPONSIVE", "ollama process alive but port dead; manual check needed", "")
+            _OLLAMA["cooldown_until"] = now + 60
+            return False
+    except Exception:
+        pass
+
+    _log(f"Ollama port 11434 down (strike {_OLLAMA['fail_count']}); launching ollama serve")
+    _feed("OLLAMA_RECOVER", "Ollama port down; launching ollama serve", str(OLLAMA_EXE))
+    try:
+        subprocess.Popen(
+            [str(OLLAMA_EXE), "serve"],
+            cwd=str(PROJECT_DIR),
+            creationflags=NO_WIN,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            close_fds=True,
+        )
+        _OLLAMA["fail_count"] = 0
+        _OLLAMA["cooldown_until"] = now + 120
+        return True
+    except Exception as exc:
+        _log(f"Failed to launch ollama serve: {exc}")
+        _feed("OLLAMA_RECOVER_FAIL", "ollama serve launch failed", str(exc))
+        _OLLAMA["cooldown_until"] = now + 60
+        return False
+
+
 def check_services_once() -> Dict[str, bool]:
     results: Dict[str, bool] = {}
     if KILL_SWITCH_PATH.exists():
@@ -407,6 +502,7 @@ def check_services_once() -> Dict[str, bool]:
         return results
     for service_name, script_spec in SERVICE_SCRIPTS.items():
         results[service_name] = _start_service(service_name, script_spec)
+    results["ollama"] = _recover_ollama()
     _write_status(results)
     return results
 

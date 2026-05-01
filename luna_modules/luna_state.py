@@ -17,6 +17,18 @@ class LunaState:
     
     # Threading
     lock: threading.Lock = field(default_factory=threading.Lock)
+    
+    def reset(self):
+        """Reset the state of LunaState."""
+        
+        with self.lock:
+            self.stop_requested = False
+            self.warm_reset_count = 0
+            self.heartbeat_failure_count = 0
+            self.last_heartbeat_write_mono = 0.0
+            self.active_tasks.clear()
+            self.done_tasks_count = 0
+            self.failed_tasks_count = 0
 
 # Global singleton
 CORE_STATE = LunaState()

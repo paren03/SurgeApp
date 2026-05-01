@@ -138,10 +138,7 @@ def classify_extended_prompt_route(prompt: str) -> str:
     return "standard"
 
 
-# ── Natural-language intent registry ─────────────────────────────────────────
-
-# Maps informal names the user might use to refer to files Luna can edit.
-_FILE_NICKNAMES: Dict[str, str] = {
+_FILE_NICKNAMES = {
     # Terminal / UI file
     "banner":      str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
     "terminal":    str(PROJECT_DIR / "SurgeApp_Claude_Terminal.py"),
@@ -168,8 +165,7 @@ _FILE_NICKNAMES: Dict[str, str] = {
     "itself":      str(PROJECT_DIR / "worker.py"),
 }
 
-# Maps action verbs → worker mode labels.
-_OPERATION_VERBS: Dict[str, str] = {
+_OPERATION_VERBS = {
     # self-fix: syntax / runtime error repair
     "fix":      "self-fix",
     "repair":   "self-fix",
@@ -231,6 +227,13 @@ def parse_natural_language_task(prompt: str) -> Optional[Dict[str, Any]]:
             "actually", "basically", "additionally", "furthermore",
         }
         return word in _CONVO_STARTERS
+    _CONVO_STARTERS = {
+        "i", "in", "also", "can", "could", "would", "should", "please",
+        "hey", "hi", "hello", "so", "and", "but", "what", "how", "why",
+        "when", "where", "do", "does", "is", "are", "the", "a", "an",
+        "that", "this", "will", "let", "make", "tell", "show", "just",
+        "actually", "basically", "additionally", "furthermore",
+    }
     first_word = normalized.split()[0] if normalized.split() else ""
     if first_word in _CONVO_STARTERS:
         return None

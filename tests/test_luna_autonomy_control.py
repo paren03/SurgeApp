@@ -40,6 +40,16 @@ class TestAutonomyQualityGate(unittest.TestCase):
         self.assertEqual(row["recommended_action"], "quarantine")
         self.assertTrue(item.exists())
 
+    def test_classifies_no_diff_without_deleting_new(self) -> None:
+        item = self.root / "aider_jobs" / "done" / "job.json"
+        item.write_text(json.dumps({"status": "done", "summary": "Diff empty; no changes"}), encoding="utf-8")
+
+        row = classify_autonomy_artifact(item)
+
+        self.assertTrue(row["no_diff"])
+        self.assertEqual(row["recommended_action"], "quarantine")
+        self.assertTrue(item.exists())
+
     def test_scan_writes_inspector_report(self) -> None:
         failed = self.root / "tasks" / "failed" / "task.json"
         failed.write_text(json.dumps({"status": "failed", "error": "verification failed"}), encoding="utf-8")

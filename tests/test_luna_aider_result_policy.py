@@ -90,6 +90,40 @@ class TestAiderResultPolicy(unittest.TestCase):
         self.assertTrue(record["diff_exists"])
         self.assertEqual(record["done_reason"], "real_diff")
 
+    def test_real_diff_done_records_required_fields_refactored(self) -> None:
+        record = build_aider_completion_record(
+            task_id="job-3",
+            target_file="worker.py",
+            diff_text="--- a\n+++ b\n@@\n-old\n+new\n",
+            diff_path="logic_updates/job-3/job-3.diff",
+            log_path="logs/aider_bridge.log",
+            verification_passed=True,
+            applied=False,
+            failure_reason="",
+            analysis_only=False,
+            model_used="test-model",
+            started_at=1.0,
+            finished_at=4.0,
+        )
+
+        for field in [
+            "status",
+            "diff_exists",
+            "diff_path",
+            "log_path",
+            "target_file",
+            "verification_passed",
+            "applied",
+            "failure_reason",
+            "noop_reason",
+            "model_used",
+            "duration_seconds",
+        ]:
+            self.assertIn(field, record)
+        self.assertEqual(record["status"], "done")
+        self.assertTrue(record["diff_exists"])
+        self.assertEqual(record["done_reason"], "real_diff")
+
     def test_failed_verification_records_failure(self) -> None:
         record = build_aider_completion_record(
             task_id="job-4",

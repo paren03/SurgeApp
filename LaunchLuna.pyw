@@ -60,6 +60,9 @@ PYEXE = str(REAL_PYTHONW) if REAL_PYTHONW.exists() else (
 )
 
 AIDER_PY = str(ROOT / ".aider_venv" / "Scripts" / "python.exe")
+WORKER_PY = str(ROOT / ".aider_venv" / "Scripts" / "pythonw.exe")
+if not Path(WORKER_PY).exists():
+    WORKER_PY = AIDER_PY
 
 SERVICE_LOCKS = {
     "luna_apprentice.py": LOGS / "luna_apprentice.pid.json",
@@ -407,7 +410,7 @@ def main() -> None:
     # Background services (hidden, start only if not already running). Guardian
     # starts last so it does not race the launcher and duplicate services.
     events.append({"service": "luna_apprentice.py", "action": "started" if start_if_missing("luna_apprentice.py") else "already_running_or_missing"})
-    events.append({"service": "worker.py", "action": "started" if start_if_missing("worker.py") else "already_running_or_missing"})
+    events.append({"service": "worker.py", "action": "started" if start_if_missing("worker.py", exe=WORKER_PY) else "already_running_or_missing"})
 
     # Aider bridge uses .aider_venv Python (has aider installed)
     aider_py_path = ROOT / ".aider_venv" / "Scripts" / "python.exe"
@@ -445,7 +448,7 @@ def main() -> None:
         })
     elif (ROOT / "worker.py").exists() and not _lock_alive(cu_lock) and not is_running("--continues-update-start"):
         _archive_path(MEMORY / "continues_update.stop", "one_click_resume")
-        pid = start_hidden(PYEXE, str(ROOT / "worker.py"), ["--continues-update-start"])
+        pid = start_hidden(WORKER_PY, str(ROOT / "worker.py"), ["--continues-update-start"])
         events.append({"service": "continues_update", "action": "started", "pid": pid})
     else:
         events.append({"service": "continues_update", "action": "already_running_or_missing"})

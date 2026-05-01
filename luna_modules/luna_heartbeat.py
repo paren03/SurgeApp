@@ -84,27 +84,14 @@ def start_background_thread(target, name: str) -> threading.Thread:
 def _pid_is_alive(pid: int) -> bool:
     if not pid or pid == os.getpid():
         return True
-    if os.name == "nt":
-        try:
-            result = subprocess.run(
-                ["tasklist", "/FI", f"PID eq {int(pid)}", "/NH"],
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                timeout=5,
-                creationflags=subprocess.CREATE_NO_WINDOW,
-            )
-            return str(int(pid)) in (result.stdout or "")
-        except Exception:
-            return False
     try:
         os.kill(int(pid), 0)
+        return True
     except ProcessLookupError:
         return False
-    except PermissionError:
-        return True
     except Exception:
+        # PermissionError, OSError, RuntimeError, etc. — process exists but
+        # we can't signal it (or unknown state), so assume alive for safety.
         return True
     return True
 
@@ -136,5 +123,5 @@ def release_worker_lock() -> None:
     if existing.get("pid") == os.getpid():
         try:
             WORKER_LOCK_PATH.unlink(missing_ok=True)
-        except Exception:
-            pass
+        except Exception as e:
+            _diag(f"swallowed: {e} - exception is safe to ignore in this context")

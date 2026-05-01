@@ -15,6 +15,10 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
 
+def _now_iso() -> str:
+    return datetime.now().isoformat(timespec="seconds")
+
+
 NO_DIFF_MARKERS = (
     "diff empty",
     "no changes",
@@ -93,7 +97,10 @@ class AutonomyPaths:
         return self.logs_dir / "luna_live_feed.jsonl"
 
 
-def _now_iso() -> str:
+from datetime import datetime
+
+def get_current_time_iso() -> str:
+    """Return current time in ISO format with seconds precision."""
     return datetime.now().isoformat(timespec="seconds")
 
 
