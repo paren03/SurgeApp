@@ -204,3 +204,12 @@ memory/luna_advisory_soak_report.json
 memory/luna_advisory_soak_report.md
 memory/luna_advisory_soak.jsonl
 memory/luna_next_safe_action.json
+
+# Phase 5Z: regenerable soak verdict outputs. Tracked sources of truth are
+# memory/luna_soak_verdict.schema.json and
+# memory/luna_live_enforcement_readiness_checklist.json. Runtime artifacts below
+# are rebuilt on demand by luna_soak_verdict.
+memory/luna_soak_verdict_report.json
+memory/luna_soak_verdict_report.md
+memory/luna_live_enforcement_readiness_status.json
+memory/luna_live_enforcement_readiness_status.md

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "phase": "5Z",
+  "live_enforcement_enabled": false,
+  "advisory_only": true,
+  "required_before_live_guardian_enforcement": [
+    {"id": "24_hour_advisory_soak", "required": true, "status": "pending"},
+    {"id": "manual_schema_review", "required": true, "status": "pending"},
+    {"id": "explicit_serge_approval", "required": true, "status": "pending"},
+    {"id": "guardian_dry_run_status_surface", "required": true, "status": "pending"},
+    {"id": "rollback_plan_reviewed", "required": true, "status": "pending"},
+    {"id": "non_delegable_policy_reviewed", "required": true, "status": "pending"}
+  ],
+  "forbidden_until_complete": [
+    "live_guardian_receipt_enforcement",
+    "live_aider_bridge_receipt_gate",
+    "live_worker_apply_gate",
+    "real_project_patch_apply",
+    "routine_code_edit_execution"
+  ],
+  "notes": [
+    "This checklist is informational. No automation flips live_enforcement_enabled to true.",
+    "Phase 5Z evaluates the 24_hour_advisory_soak item only.",
+    "Other items require human review and explicit Serge approval."
+  ]
+}

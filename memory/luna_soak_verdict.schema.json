@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Advisory Soak Verdict Schema",
+  "description": "Phase 5Z: verdict schema for evaluating a completed 24-hour advisory soak report. advisory_only=true, all hard safety fields stay false.",
+  "definitions": {
+    "verdict_check": {
+      "type": "object",
+      "required": ["name", "ok"],
+      "properties": {
+        "name": {"type": "string"},
+        "ok": {"type": "boolean"},
+        "evidence": {"type": "array"}
+      }
+    },
+    "soak_verdict": {
+      "type": "object",
+      "required": [
+        "schema_version", "verdict_id", "generated_at", "project_dir",
+        "advisory_only", "verdict", "checks",
+        "safe_to_execute_now", "safe_to_apply_real_project",
+        "guardian_enforcing_live", "live_enforcement_ready",
+        "checklist_item_24h_soak_satisfied",
+        "serge_summary", "recommended_next_action"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "verdict_id": {"type": "string"},
+        "generated_at": {"type": "string"},
+        "project_dir": {"type": "string"},
+        "source_report_path": {"type": "string"},
+        "source_jsonl_path": {"type": "string"},
+        "advisory_only": {"type": "boolean", "const": true},
+        "verdict": {
+          "type": "string",
+          "enum": ["PASS", "FAIL_WITH_REASONS", "NO_SOAK_FOUND", "INCOMPLETE"]
+        },
+        "required_cycles": {"type": "integer", "minimum": 0},
+        "observed_cycles": {"type": "integer", "minimum": 0},
+        "required_duration_seconds": {"type": "integer", "minimum": 0},
+        "observed_duration_seconds": {"type": "number", "minimum": 0},
+        "checks": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/verdict_check"}
+        },
+        "failures": {"type": "array", "items": {"type": "string"}},
+        "warnings": {"type": "array", "items": {"type": "string"}},
+        "stable_recommendation": {"type": "string"},
+        "recommendation_changes": {"type": "array"},
+        "safe_to_execute_now": {"type": "boolean", "const": false},
+        "safe_to_apply_real_project": {"type": "boolean", "const": false},
+        "guardian_enforcing_live": {"type": "boolean", "const": false},
+        "live_enforcement_ready": {"type": "boolean", "const": false},
+        "checklist_item_24h_soak_satisfied": {"type": "boolean"},
+        "serge_summary": {"type": "string"},
+        "recommended_next_action": {"type": "string"},
+        "notes": {"type": "array"}
+      }
+    }
+  }
+}
