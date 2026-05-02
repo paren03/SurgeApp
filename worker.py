@@ -10186,7 +10186,15 @@ def _cu_load_state() -> Dict[str, Any]:
 
 
 def _cu_compute_ui_status(state: Dict[str, Any]) -> str:
-    """Map internal CU state fields to one of 7 standardized UI status strings."""
+    """Map internal CU state fields to one of 7 standardized UI status strings.
+
+    Priority:
+      1. Blocked states (worker can't run at all)
+      2. Active state (running_real_job) — overrides informational dirty_targets
+         that just record which files were skipped this cycle
+      3. Genuinely paused states (CU loop is not progressing)
+      4. idle_clean fallback
+    """
     phase = str(state.get("phase") or "")
     last_status = str(state.get("last_status") or "")
     dirty = state.get("dirty_targets") or []
@@ -10194,22 +10202,32 @@ def _cu_compute_ui_status(state: Dict[str, Any]) -> str:
     consec_fail = int(state.get("consecutive_failures") or 0)
     noop_count = int(state.get("noop_count") or 0)
     running = bool(state.get("running"))
+    pause_reason = str(state.get("pause_reason") or "")
 
-    # Blocked states take priority
+    # 1. Blocked states take highest priority
     if last_status in ("blocked_worker_import",) or phase == "blocked_worker_import":
         return "blocked_worker_import"
     if last_status in ("blocked_aider_stale",) or phase == "blocked_aider_stale":
         return "blocked_aider_stale"
-    # Paused states
-    if dirty:
+
+    # 2. Active states beat informational dirty_targets (which lists skipped files,
+    #    not a stop signal). If CU is genuinely queueing real work, it is running.
+    if running and phase in ("queueing", "starting"):
+        return "running_real_job"
+
+    # 3. Genuinely paused states — only when CU is NOT actively progressing.
+    if pause_reason in ("all_targets_dirty", "blocked_by_staged_edits") or phase in (
+        "blocked_by_staged_edits", "deferred_dirty_target",
+    ):
         return "paused_dirty_core"
     if consec_fail >= 3:
         return "paused_recent_failures"
     if skip_streak >= 2 or noop_count >= 5:
         return "paused_noop_budget"
-    # Active vs idle
-    if running and phase == "queueing":
-        return "running_real_job"
+    # Fallback: dirty_targets present AND CU not actively running ⇒ dirty pause
+    if dirty and not running:
+        return "paused_dirty_core"
+
     return "idle_clean"
 
 
