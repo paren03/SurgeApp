@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "description": "Phase 5L Delegated AI Approval Council policy. Conservative — local simulated reviewers only, no external APIs in this phase. Tier rules drive quorum. Non-delegable actions never reach a council. Future Phase 5O may flip allow_external_reviewers=true once adapters and key handling are built.",
+  "allow_external_reviewers": false,
+  "reviewer_pool": ["local_luna", "local_safety", "local_qa", "chatgpt", "grok", "claude"],
+  "simulated_reviewer_pool": ["local_luna", "local_safety", "local_qa"],
+  "packet_expiry_minutes": 60,
+  "quorum_timeout_seconds": 30,
+  "stale_receipt_minutes": 60,
+  "max_target_files_by_tier": {
+    "0": 0,
+    "1": 0,
+    "2": 3,
+    "3": 6,
+    "4": 2,
+    "5": 1
+  },
+  "max_diff_lines_by_tier": {
+    "0": 0,
+    "1": 0,
+    "2": 200,
+    "3": 400,
+    "4": 120,
+    "5": 60
+  },
+  "tier_rules": {
+    "0": {
+      "name": "read_only",
+      "council_required": false,
+      "rule": "no council needed; verifier+resource clean",
+      "allowed_action_types": ["read_only"]
+    },
+    "1": {
+      "name": "generated_reports_memory_refresh",
+      "council_required": false,
+      "rule": "no council needed if verifier and resource status clean",
+      "allowed_action_types": ["read_only", "generated_artifact"]
+    },
+    "2": {
+      "name": "low_risk_additive",
+      "council_required": true,
+      "rule": "approve if local_luna approves and local_safety does not deny",
+      "allowed_action_types": ["low_risk_additive"]
+    },
+    "3": {
+      "name": "medium_code_edit",
+      "council_required": true,
+      "rule": "approve if at least 2 of 3 local simulated reviewers approve and no high-confidence deny",
+      "allowed_action_types": ["medium_code_edit"]
+    },
+    "4": {
+      "name": "high_risk_core_edit",
+      "council_required": true,
+      "rule": "approve only if all local simulated reviewers approve AND sandbox/rollback/verifier evidence exists; otherwise needs_human",
+      "allowed_action_types": ["high_risk_core_edit"]
+    },
+    "5": {
+      "name": "emergency_repair",
+      "council_required": true,
+      "rule": "approve only for emergency known-safe actions (restore, quarantine, stop-flag); otherwise needs_human",
+      "allowed_action_types": ["emergency_repair"]
+    }
+  },
+  "non_delegable_actions": [
+    "delete_memory",
+    "truncate_memory",
+    "delete_logs",
+    "truncate_logs",
+    "delete_backups",
+    "truncate_backups",
+    "delete_uploads",
+    "delete_queues",
+    "delete_tasks",
+    "delete_solutions",
+    "change_identity",
+    "change_personality",
+    "change_goals",
+    "leak_secrets",
+    "leak_env",
+    "leak_api_vault",
+    "leak_token",
+    "leak_key",
+    "package_install",
+    "external_network_outside_reviewer_apis",
+    "git_push",
+    "git_push_force",
+    "replace_architecture",
+    "broad_multi_file_rewrite",
+    "disable_verifier_failures",
+    "self_approve_council_policy"
+  ],
+  "secret_patterns": [
+    "(?i)\\bAWS_ACCESS_KEY_ID\\b",
+    "(?i)\\bAWS_SECRET_ACCESS_KEY\\b",
+    "(?i)\\bOPENAI_API_KEY\\b",
+    "(?i)\\bANTHROPIC_API_KEY\\b",
+    "(?i)\\b(?:GROK|XAI)_API_KEY\\b",
+    "(?i)\\bSLACK_BOT_TOKEN\\b",
+    "(?i)\\bSTRIPE_(?:LIVE|TEST)_KEY\\b",
+    "(?i)\\bbearer\\s+[A-Za-z0-9._\\-]{8,}",
+    "(?i)\\bapi[_-]?key\\b\\s*[:=]\\s*[\"']?[A-Za-z0-9._\\-]{8,}",
+    "(?i)\\btoken\\s*[:=]\\s*[\"']?[A-Za-z0-9._\\-]{8,}",
+    "(?i)\\bpassword\\s*[:=]\\s*[\"']?[^\\s\"'\\n]{4,}",
+    "(?i)\\bsecret\\s*[:=]\\s*[\"']?[^\\s\"'\\n]{4,}",
+    "\\bsk-[A-Za-z0-9]{16,}",
+    "\\bxoxb-[A-Za-z0-9-]{20,}",
+    "\\bgh[pousr]_[A-Za-z0-9]{20,}",
+    "(?i)BEGIN (?:RSA |OPENSSH |EC )?PRIVATE KEY"
+  ],
+  "secret_keyword_terms": [
+    ".env",
+    "api_key",
+    "api-key",
+    "apikey",
+    "token",
+    "bearer",
+    "password",
+    "secret",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "GROK_API_KEY",
+    "XAI_API_KEY"
+  ],
+  "high_risk_paths": [
+    "worker.py",
+    "aider_bridge.py",
+    "luna_guardian.py",
+    "LaunchLuna.pyw",
+    "SurgeApp_Claude_Terminal.py",
+    "luna_start.pyw",
+    "director_agent.py"
+  ],
+  "forbidden_paths": [
+    "luna_modules/luna_hygiene.py",
+    "luna_modules/luna_paths.py",
+    "luna_modules/luna_routing.py",
+    "luna_modules/luna_state.py",
+    "memory/luna_personality_state.json",
+    "memory/luna_active_goal.json",
+    "Luna_Post_Repair_Verify.ps1",
+    ".env"
+  ],
+  "high_confidence_deny_threshold": 70,
+  "required_evidence_for_tier_4": [
+    "sandbox_result",
+    "rollback_plan",
+    "verification_commands"
+  ]
+}

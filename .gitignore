@@ -121,3 +121,13 @@ memory/luna_limited_autonomy_report.md
 memory/luna_overnight_brief.md
 memory/luna_recommended_next_actions.json
 memory/luna_autonomy_run_lock.json
+
+# Phase 5L: regenerable AI Council outputs. Tracked sources of truth are
+# memory/luna_ai_council.schema.json and memory/luna_ai_council_policy.json.
+# Runtime council artifacts (approval ledger, reports, state) are rebuilt
+# on demand by luna_ai_council and stay gitignored.
+memory/luna_ai_council_approvals.jsonl
+memory/luna_ai_council_state.json
+memory/luna_ai_council_report.json
+memory/luna_ai_council_report.md
+memory/luna_delegated_approval_state.json

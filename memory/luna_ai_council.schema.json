@@ -1,0 +1,189 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Delegated AI Approval Council",
+  "description": "Phase 5L schemas. Local-only council foundation. Defines approval packet, reviewer response, quorum result, and approval receipt. No external APIs in this phase.",
+  "type": "object",
+  "definitions": {
+    "ApprovalPacket": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "approval_id",
+        "nonce",
+        "created_at",
+        "expires_at",
+        "goal",
+        "task_id",
+        "risk_tier",
+        "approval_tier_required",
+        "action_type",
+        "target_files",
+        "function_ranges",
+        "planned_change_summary",
+        "diff_summary",
+        "sandbox_result",
+        "verification_commands",
+        "rollback_plan",
+        "secrets_scan",
+        "resource_status",
+        "upgrade_gate_decision",
+        "capability_readiness",
+        "non_delegable_flags",
+        "question",
+        "redaction_applied",
+        "source"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "approval_id": { "type": "string" },
+        "nonce": { "type": "string" },
+        "created_at": { "type": "string" },
+        "expires_at": { "type": "string" },
+        "goal": { "type": "string" },
+        "task_id": { "type": "string" },
+        "risk_tier": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "approval_tier_required": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "action_type": {
+          "type": "string",
+          "enum": [
+            "read_only",
+            "generated_artifact",
+            "low_risk_additive",
+            "medium_code_edit",
+            "high_risk_core_edit",
+            "emergency_repair",
+            "non_delegable"
+          ]
+        },
+        "target_files": { "type": "array", "items": { "type": "string" } },
+        "function_ranges": { "type": "array" },
+        "planned_change_summary": { "type": "string" },
+        "diff_summary": { "type": "string" },
+        "sandbox_result": { "type": "string" },
+        "verification_commands": { "type": "array", "items": { "type": "string" } },
+        "rollback_plan": { "type": "string" },
+        "secrets_scan": { "type": "string", "enum": ["pass", "fail", "unknown"] },
+        "resource_status": {
+          "type": "string",
+          "enum": ["normal", "light", "pause_high_intensity", "hibernate", "blocked", "unknown"]
+        },
+        "upgrade_gate_decision": {
+          "type": "string",
+          "enum": ["allow", "deny", "needs_approval", "unknown"]
+        },
+        "capability_readiness": { "type": "string" },
+        "non_delegable_flags": { "type": "array", "items": { "type": "string" } },
+        "question": { "type": "string" },
+        "redaction_applied": { "type": "boolean" },
+        "source": { "type": "string" }
+      }
+    },
+    "ReviewerResponse": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "reviewer",
+        "reviewer_mode",
+        "decision",
+        "confidence",
+        "risk_notes",
+        "required_changes",
+        "approval_conditions",
+        "timestamp",
+        "packet_hash",
+        "nonce"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "reviewer": {
+          "type": "string",
+          "enum": ["local_luna", "local_safety", "local_qa", "chatgpt", "grok", "claude"]
+        },
+        "reviewer_mode": {
+          "type": "string",
+          "enum": ["simulated_local", "external_future"]
+        },
+        "decision": {
+          "type": "string",
+          "enum": ["approve", "deny", "needs_human", "abstain"]
+        },
+        "confidence": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "risk_notes": { "type": "array", "items": { "type": "string" } },
+        "required_changes": { "type": "array", "items": { "type": "string" } },
+        "approval_conditions": { "type": "array", "items": { "type": "string" } },
+        "timestamp": { "type": "string" },
+        "packet_hash": { "type": "string" },
+        "nonce": { "type": "string" }
+      }
+    },
+    "QuorumResult": {
+      "type": "object",
+      "required": ["decision", "rule", "responses_considered", "reasons"],
+      "properties": {
+        "decision": {
+          "type": "string",
+          "enum": ["approve", "deny", "needs_human", "stale", "abstain"]
+        },
+        "rule": { "type": "string" },
+        "responses_considered": { "type": "integer", "minimum": 0 },
+        "approve_count": { "type": "integer", "minimum": 0 },
+        "deny_count": { "type": "integer", "minimum": 0 },
+        "needs_human_count": { "type": "integer", "minimum": 0 },
+        "abstain_count": { "type": "integer", "minimum": 0 },
+        "reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "ApprovalReceipt": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "receipt_id",
+        "approval_id",
+        "task_id",
+        "nonce",
+        "packet_hash",
+        "target_files_hash",
+        "target_files",
+        "approved_action_type",
+        "approved_risk_tier",
+        "decision",
+        "quorum_summary",
+        "reviewer_decisions",
+        "created_at",
+        "expires_at",
+        "valid_for_commands",
+        "valid_for_target_files",
+        "replay_protection_hash",
+        "conditions",
+        "invalidation_rules"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "receipt_id": { "type": "string" },
+        "approval_id": { "type": "string" },
+        "task_id": { "type": "string" },
+        "nonce": { "type": "string" },
+        "packet_hash": { "type": "string" },
+        "target_files_hash": { "type": "string" },
+        "target_files": { "type": "array", "items": { "type": "string" } },
+        "approved_action_type": { "type": "string" },
+        "approved_risk_tier": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "decision": {
+          "type": "string",
+          "enum": ["approve", "deny", "needs_human", "stale", "abstain"]
+        },
+        "quorum_summary": { "type": "object" },
+        "reviewer_decisions": { "type": "array" },
+        "created_at": { "type": "string" },
+        "expires_at": { "type": "string" },
+        "valid_for_commands": { "type": "array", "items": { "type": "string" } },
+        "valid_for_target_files": { "type": "array", "items": { "type": "string" } },
+        "valid_for_diff_hash": { "type": "string" },
+        "replay_protection_hash": { "type": "string" },
+        "conditions": { "type": "array", "items": { "type": "string" } },
+        "invalidation_rules": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "additionalProperties": true
+}
