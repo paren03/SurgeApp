@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Change Ledger Record",
+  "description": "One row per Luna-driven change. Append-only. Phase 5C foundation; not yet wired into runtime services. The runtime ledger lives at memory/luna_change_ledger.jsonl and is gitignored.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "ledger_id",
+    "ts",
+    "actor",
+    "action_type",
+    "target_files",
+    "reason",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Bump only on backwards-incompatible record-shape changes."
+    },
+    "ledger_id": {
+      "type": "string",
+      "description": "Stable per-record id (chg_<ts_micro>_<8hex>)."
+    },
+    "ts": {
+      "type": "string",
+      "description": "UTC ISO-8601 timestamp with timezone offset."
+    },
+    "actor": {
+      "type": "string",
+      "description": "Who/what produced this change (luna_cu, aider_bridge, luna_self_repair, operator, claude, ...)."
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "edit",
+        "additive",
+        "refactor",
+        "rollback",
+        "delete",
+        "rename",
+        "move",
+        "create",
+        "config",
+        "telemetry",
+        "verify_only"
+      ]
+    },
+    "target_files": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "Project-relative POSIX paths normalized via normalize_target_file()."
+    },
+    "affected_functions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "kind": { "type": "string" },
+          "parent": { "type": "string" },
+          "file": { "type": "string" },
+          "start_line": { "type": "integer" },
+          "end_line": { "type": "integer" },
+          "risk_level": { "type": "string" }
+        }
+      }
+    },
+    "line_ranges": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": { "type": "integer" }
+      }
+    },
+    "reason": { "type": "string", "minLength": 1 },
+    "plan_id": {
+      "type": "string",
+      "description": "Optional pointer to a Phase 5G+ planned-change ledger row."
+    },
+    "diff_hash": {
+      "type": "string",
+      "description": "SHA-256 of the diff text or whole-file content."
+    },
+    "diff_path": {
+      "type": "string",
+      "description": "Path to a stored diff (logic_updates/<plan_id>/diff.patch or similar)."
+    },
+    "verification": {
+      "type": "object",
+      "description": "Captured verification outcomes. secret_scan defaults to 'not_run' until a secrets scanner exists.",
+      "properties": {
+        "py_compile": { "type": "string" },
+        "import_worker": { "type": "string" },
+        "verifier": { "type": "string" },
+        "tests": { "type": "string" },
+        "secret_scan": { "type": "string" }
+      }
+    },
+    "rollback_path": {
+      "type": "string",
+      "description": "Filesystem path to the .bak / backup folder used for rollback."
+    },
+    "commit_hash": {
+      "type": "string",
+      "description": "Git commit hash if this change was committed."
+    },
+    "risk_score": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 10
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "approved",
+        "applied",
+        "verified",
+        "failed",
+        "rolled_back",
+        "rejected",
+        "noop"
+      ]
+    },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": true
+}

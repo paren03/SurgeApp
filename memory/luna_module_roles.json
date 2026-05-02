@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-02T05:17:53.324408+00:00",
-  "module_count": 73,
+  "generated_at": "2026-05-02T05:30:56.545927+00:00",
+  "module_count": 74,
   "roles": {
     "LaunchLuna.pyw": "launcher",
     "SurgeApp_Claude_Terminal.py": "ui_terminal",
@@ -60,6 +60,7 @@
     "tests/test_luna_aider_result_policy.py": "tests",
     "tests/test_luna_architect_policy.py": "tests",
     "tests/test_luna_autonomy_control.py": "tests",
+    "tests/test_luna_change_ledger.py": "tests",
     "tests/test_luna_continues_update_policy.py": "tests",
     "tests/test_luna_guardian.py": "tests",
     "tests/test_luna_heartbeat.py": "tests",

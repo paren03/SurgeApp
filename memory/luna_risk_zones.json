@@ -1,6 +1,6 @@
 {
-  "file_count": 73,
-  "generated_at": "2026-05-02T05:17:53.324408+00:00",
+  "file_count": 74,
+  "generated_at": "2026-05-02T05:30:56.545927+00:00",
   "schema_version": 1,
   "zones": {
     "LaunchLuna.pyw": {
@@ -417,6 +417,12 @@
       "safe_edit_zones": []
     },
     "tests/test_luna_autonomy_control.py": {
+      "forbidden_edit_zones": [],
+      "high_risk_zones": [],
+      "risk_level": "low",
+      "safe_edit_zones": []
+    },
+    "tests/test_luna_change_ledger.py": {
       "forbidden_edit_zones": [],
       "high_risk_zones": [],
       "risk_level": "low",

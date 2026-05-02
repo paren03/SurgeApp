@@ -43,3 +43,8 @@ memory/nightly_updates.md
 # rebuild via refresh_curated_self_map() instead of committing.
 memory/luna_file_map.json
 memory/luna_function_index.json
+
+# Phase 5C: append-only runtime change ledger. Grows every time Luna records
+# a change. The schema reference (memory/luna_change_ledger.schema.json) is
+# the tracked source of truth; the runtime jsonl stays untracked.
+memory/luna_change_ledger.jsonl
