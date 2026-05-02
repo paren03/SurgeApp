@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Capability Scorecard",
+  "description": "Phase 5G capability scorecard. Rates Luna 0-100 across operational dimensions using only local evidence. Read-mostly. Not wired into runtime services.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "project_dir",
+    "overall_score",
+    "overall_status",
+    "readiness_level",
+    "dimensions"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "generated_at": { "type": "string" },
+    "project_dir": { "type": "string" },
+    "overall_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "overall_status": {
+      "type": "string",
+      "enum": ["excellent", "healthy", "watch", "degraded", "blocked", "unknown"]
+    },
+    "readiness_level": {
+      "type": "string",
+      "enum": [
+        "read_only",
+        "safe_foundation",
+        "controlled_autonomy_ready",
+        "limited_self_upgrade_ready",
+        "not_ready"
+      ]
+    },
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "score",
+          "weight",
+          "status",
+          "evidence",
+          "blockers",
+          "recommended_next_action",
+          "source_files"
+        ],
+        "properties": {
+          "name": { "type": "string" },
+          "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "weight": { "type": "integer", "minimum": 1 },
+          "status": {
+            "type": "string",
+            "enum": ["excellent", "healthy", "watch", "degraded", "blocked", "unknown"]
+          },
+          "evidence": { "type": "array", "items": { "type": "string" } },
+          "blockers": { "type": "array", "items": { "type": "string" } },
+          "recommended_next_action": { "type": "string" },
+          "source_files": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "critical_blockers": { "type": "array", "items": { "type": "string" } },
+    "safe_next_steps": { "type": "array", "items": { "type": "string" } },
+    "approval_required_for": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

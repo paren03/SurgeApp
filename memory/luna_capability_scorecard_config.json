@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "description": "Phase 5G scorecard configuration. Defines dimension weights, status thresholds, and readiness-level rules. Conservative defaults — readiness_level is intentionally capped at 'safe_foundation' until evidence justifies elevation.",
+  "status_thresholds": {
+    "excellent": 90,
+    "healthy": 75,
+    "watch": 55,
+    "degraded": 30
+  },
+  "dimension_weights": {
+    "boot_health": 9,
+    "process_discipline": 7,
+    "memory_recall": 6,
+    "file_awareness": 6,
+    "change_tracking": 6,
+    "self_healing": 6,
+    "safe_self_upgrade": 8,
+    "ui_truthfulness": 6,
+    "aider_reliability": 7,
+    "test_coverage": 6,
+    "autonomy_safety": 9,
+    "resource_awareness": 4,
+    "rollback_readiness": 7,
+    "intent_alignment": 5,
+    "context_efficiency": 4
+  },
+  "readiness_rules": {
+    "not_ready_overall_below": 40,
+    "safe_foundation_overall_below": 65,
+    "controlled_autonomy_overall_below": 80,
+    "limited_self_upgrade_overall_below": 90,
+    "block_if_any_critical_blocker": true,
+    "block_if_boot_health_below": 60,
+    "block_if_autonomy_safety_below": 60
+  },
+  "evidence_files": {
+    "verifier_log_glob": "logs/luna_post_repair_verify_*.txt",
+    "cu_status": "memory/continues_update_status.json",
+    "bridge_status": "memory/aider_bridge_status.json",
+    "self_map": "memory/luna_module_roles.json",
+    "self_map_risk": "memory/luna_risk_zones.json",
+    "change_ledger_schema": "memory/luna_change_ledger.schema.json",
+    "memory_index_schema": "memory/luna_memory_index.schema.json",
+    "memory_sources": "memory/luna_memory_sources.json",
+    "playbook_schema": "memory/luna_self_healing_playbooks.schema.json",
+    "playbook_seed": "memory/luna_self_healing_playbooks_seed.json",
+    "upgrade_gate_schema": "memory/luna_upgrade_gate_policy.schema.json",
+    "upgrade_gate_policy": "memory/luna_upgrade_gate_policy.json",
+    "noop_budget": "logs/aider_bridge_noop_budget.json",
+    "stop_flag": "LUNA_STOP_NOW.flag"
+  },
+  "core_compile_targets": [
+    "worker.py",
+    "aider_bridge.py",
+    "luna_guardian.py",
+    "director_agent.py",
+    "SurgeApp_Claude_Terminal.py",
+    "LaunchLuna.pyw",
+    "luna_start.pyw"
+  ]
+}

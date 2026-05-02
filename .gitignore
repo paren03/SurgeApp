@@ -70,3 +70,11 @@ memory/luna_playbook_match_report.json
 # rebuilt on demand by luna_upgrade_gate.write_gate_report().
 memory/luna_upgrade_gate_report.json
 memory/luna_upgrade_gate_report.md
+
+# Phase 5G: regenerable capability scorecard outputs. Tracked sources of
+# truth are memory/luna_capability_scorecard.schema.json and
+# memory/luna_capability_scorecard_config.json. The runtime artifacts below
+# are rebuilt on demand by luna_capability_scorecard.build_capability_scorecard().
+memory/luna_capability_scorecard.json
+memory/luna_capability_scorecard.md
+memory/luna_capability_scorecard_build_report.json
