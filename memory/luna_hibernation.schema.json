@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Hibernation Plan",
+  "description": "Phase 5J hibernation plan. Proposal-only — describes actions an operator (or a later phase) may take. Plan does NOT execute any of the proposed actions.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "plan_id",
+    "created_at",
+    "reason",
+    "current_mode",
+    "proposed_actions",
+    "files_not_to_touch",
+    "resume_conditions",
+    "safety_notes"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "plan_id": { "type": "string" },
+    "created_at": { "type": "string" },
+    "reason": { "type": "string" },
+    "current_mode": {
+      "type": "string",
+      "enum": ["normal", "light", "pause_high_intensity", "hibernate", "blocked"]
+    },
+    "proposed_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "rationale"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "flush_status_files",
+              "write_daily_brief",
+              "compact_memory_index",
+              "pause_high_intensity_loops",
+              "slow_heartbeat",
+              "keep_guardian_alive",
+              "keep_ui_available",
+              "refuse_aider_jobs_until_resume"
+            ]
+          },
+          "rationale": { "type": "string" },
+          "owner": { "type": "string" },
+          "side_effects": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "files_to_write": { "type": "array", "items": { "type": "string" } },
+    "files_not_to_touch": { "type": "array", "items": { "type": "string" } },
+    "resume_conditions": { "type": "array", "items": { "type": "string" } },
+    "verification_commands": { "type": "array", "items": { "type": "string" } },
+    "safety_notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

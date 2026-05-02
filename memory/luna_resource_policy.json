@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "description": "Phase 5J resource policy. Conservative defaults — block self-upgrade work when disk/memory/GPU pressure exceeds thresholds. Hibernation is recommendation-only.",
+  "disk_free_min_gb": 2.0,
+  "disk_free_warn_gb": 5.0,
+  "memory_free_min_percent": 10,
+  "memory_free_warn_percent": 20,
+  "gpu_free_min_percent": 10,
+  "gpu_free_warn_percent": 20,
+  "max_aider_active_jobs": 1,
+  "max_aider_child_processes": 1,
+  "max_total_log_mb_warn": 512,
+  "max_largest_log_mb_warn": 100,
+  "idle_hibernation_minutes": 30,
+  "high_intensity_allowed_modes": ["normal"],
+  "light_mode_allowed_tasks": [
+    "read_only",
+    "memory_index",
+    "scorecard",
+    "playbook_match",
+    "file_map_refresh"
+  ],
+  "blocked_mode_forbidden_tasks": [
+    "aider_patch",
+    "self_upgrade",
+    "package_install",
+    "multi_file_refactor"
+  ],
+  "default_check_seconds": 60,
+  "ollama_localhost_endpoints": [
+    "http://127.0.0.1:11434/api/tags",
+    "http://127.0.0.1:11434/api/ps"
+  ]
+}

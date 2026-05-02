@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Resource Snapshot",
+  "description": "Phase 5J resource snapshot. Read-only sensing of disk/memory/cpu/gpu/Ollama/processes/queues/logs. Drives recommended_mode (normal/light/pause_high_intensity/hibernate/blocked). Snapshot does not act on the system.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "project_dir",
+    "host",
+    "platform",
+    "python_executable",
+    "disk",
+    "memory",
+    "cpu",
+    "gpu",
+    "ollama",
+    "processes",
+    "queues",
+    "logs",
+    "blockers",
+    "warnings",
+    "recommended_mode"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "generated_at": { "type": "string" },
+    "project_dir": { "type": "string" },
+    "host": { "type": "string" },
+    "platform": { "type": "string" },
+    "python_executable": { "type": "string" },
+    "disk": {
+      "type": "object",
+      "required": [
+        "project_drive_total_gb",
+        "project_drive_free_gb",
+        "project_drive_free_percent",
+        "status"
+      ]
+    },
+    "memory": {
+      "type": "object",
+      "required": ["total_gb", "available_gb", "available_percent", "status", "source"]
+    },
+    "cpu": {
+      "type": "object",
+      "required": ["usage_percent", "load_status", "source"]
+    },
+    "gpu": {
+      "type": "object",
+      "required": [
+        "detected",
+        "name",
+        "total_vram_gb",
+        "used_vram_gb",
+        "free_vram_gb",
+        "free_vram_percent",
+        "status",
+        "source"
+      ]
+    },
+    "ollama": {
+      "type": "object",
+      "required": ["api_reachable", "loaded_models", "status", "source"]
+    },
+    "processes": {
+      "type": "object",
+      "required": [
+        "luna_process_count",
+        "worker_main_logical",
+        "worker_cu_logical",
+        "aider_bridge_logical",
+        "aider_child_count",
+        "status"
+      ]
+    },
+    "queues": {
+      "type": "object",
+      "required": [
+        "tasks_active",
+        "tasks_done",
+        "tasks_failed",
+        "aider_active",
+        "aider_done",
+        "aider_failed",
+        "aider_quarantine",
+        "status"
+      ]
+    },
+    "logs": {
+      "type": "object",
+      "required": ["largest_files", "total_log_bytes", "status"]
+    },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "recommended_mode": {
+      "type": "string",
+      "enum": ["normal", "light", "pause_high_intensity", "hibernate", "blocked"]
+    }
+  },
+  "additionalProperties": true
+}

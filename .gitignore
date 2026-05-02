@@ -98,3 +98,14 @@ memory/luna_sandbox_report.md
 memory/luna_snapshot_manifest.jsonl
 backups/sandbox_*/
 logic_updates/sandbox_*/
+
+# Phase 5J: regenerable resource monitor + hibernation outputs. Tracked
+# sources of truth are memory/luna_resource_monitor.schema.json,
+# memory/luna_hibernation.schema.json, and memory/luna_resource_policy.json.
+# Runtime artifacts below are rebuilt on demand by luna_resource_monitor.
+memory/luna_resource_status.json
+memory/luna_resource_status.md
+memory/luna_hibernation_plan.json
+memory/luna_hibernation_report.md
+memory/luna_hardware_profile.json
+memory/luna_resource_monitor_build_report.json
