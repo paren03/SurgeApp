@@ -175,3 +175,12 @@ memory/luna_guardian_readiness_report.json
 memory/luna_guardian_readiness_report.md
 memory/luna_guardian_enforcement_readiness.json
 memory/luna_guardian_enforcement_soak.jsonl
+
+# Phase 5T: regenerable Serge policy decision-card outputs. Tracked sources of truth are
+# memory/luna_super_ai_north_star.json, memory/luna_serge_standing_approval_policy.json,
+# memory/luna_decision_card.schema.json, and memory/luna_aider_tutor_mode_roadmap.json.
+# Runtime artifacts are rebuilt on demand by luna_serge_policy.
+memory/luna_decision_card_preview.json
+memory/luna_decision_card_preview.md
+memory/luna_serge_policy_report.json
+memory/luna_serge_policy_report.md

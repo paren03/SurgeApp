@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "status": "planned_after_safety_chain",
+  "title": "Aider Tutor Mode / Luna Coding School",
+  "core_rule": "Aider teaches. Luna learns. Luna does not let Aider blindly edit her.",
+  "purpose": "Use Aider as a coding teacher, reviewer, and example generator after safety gates are complete.",
+  "allowed_future_behavior": [
+    "ask Aider to explain coding patterns",
+    "ask Aider to review proposed sandbox patches",
+    "ask Aider to suggest tests",
+    "ask Aider to identify risks",
+    "store lessons in Luna memory",
+    "link lessons to file map, function index, playbooks, and change ledger",
+    "simulate and verify independently before any apply"
+  ],
+  "forbidden_behavior": [
+    "direct Aider edits to Luna without approval",
+    "overnight Aider code changes",
+    "package installs",
+    "architecture rewrites",
+    "core-file edits without council receipt and Guardian enforcement",
+    "bypassing sandbox, verifier, rollback, or approval gates"
+  ],
+  "future_outputs": [
+    "memory/luna_code_lessons.jsonl",
+    "memory/luna_coding_patterns.json",
+    "memory/luna_aider_tutor_sessions.jsonl"
+  ]
+}

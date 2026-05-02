@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Decision Card Schema",
+  "description": "Phase 5T: plain-English decision card schema for Serge approval. safe_to_execute_now is always false in Phase 5T.",
+  "definitions": {
+    "decision_card": {
+      "type": "object",
+      "required": [
+        "schema_version", "card_id", "created_at", "goal",
+        "recommendation", "risk_level", "goal_alignment",
+        "what_luna_wants_to_do", "plain_english_final_recommendation",
+        "serge_action_needed", "safe_to_execute_now"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "card_id": {"type": "string"},
+        "created_at": {"type": "string"},
+        "goal": {"type": "string"},
+        "recommendation": {
+          "type": "string",
+          "enum": [
+            "APPROVE_RECOMMENDED",
+            "WAIT_FOR_MORE_EVIDENCE",
+            "DO_NOT_APPROVE",
+            "SERGE_ONLY"
+          ]
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical", "unknown"]
+        },
+        "goal_alignment": {
+          "type": "string",
+          "enum": ["aligned", "watch", "misaligned", "unknown"]
+        },
+        "what_luna_wants_to_do": {"type": "string"},
+        "why_this_supports_super_ai_goal": {"type": "string"},
+        "why_it_is_or_is_not_safe": {"type": "string"},
+        "reviewer_summary": {"type": "array", "items": {"type": "string"}},
+        "sandbox_result": {"type": "string"},
+        "verifier_result": {"type": "string"},
+        "rollback_path_or_status": {"type": "string"},
+        "non_delegable_check": {"type": "string"},
+        "could_go_wrong": {"type": "array", "items": {"type": "string"}},
+        "undo_plan": {"type": "string"},
+        "plain_english_final_recommendation": {"type": "string"},
+        "serge_action_needed": {
+          "type": "string",
+          "enum": [
+            "none",
+            "approve_direction",
+            "review_morning_report",
+            "explicit_manual_approval_required"
+          ]
+        },
+        "safe_to_execute_now": {"type": "boolean", "const": false},
+        "notes": {"type": "array", "items": {"type": "string"}},
+        "green_checks": {"type": "array", "items": {"type": "string"}},
+        "yellow_checks": {"type": "array", "items": {"type": "string"}},
+        "red_checks": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}
