@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Sandbox Simulation Plan + Report",
+  "description": "Phase 5I simulation plan and report schemas. Plans describe a proposed change as patch records. Reports describe what was simulated, what changed inside the sandbox, and prove the real project files were unchanged.",
+  "type": "object",
+  "definitions": {
+    "PatchRecord": {
+      "type": "object",
+      "required": ["target_file", "patch_type"],
+      "properties": {
+        "target_file": { "type": "string" },
+        "patch_type": {
+          "type": "string",
+          "enum": ["replace_text", "append_text", "unified_diff"]
+        },
+        "find_text": { "type": "string" },
+        "replace_text": { "type": "string" },
+        "append_text": { "type": "string" },
+        "unified_diff": { "type": "string" },
+        "expected_hash_before": { "type": "string" }
+      }
+    },
+    "SimulationPlan": {
+      "type": "object",
+      "required": [
+        "plan_id",
+        "goal",
+        "target_files",
+        "patch_records",
+        "verification_commands",
+        "expected_artifacts",
+        "risk_level",
+        "approval_tier_required",
+        "rollback_required",
+        "created_at"
+      ],
+      "properties": {
+        "plan_id": { "type": "string" },
+        "goal": { "type": "string" },
+        "target_files": { "type": "array", "items": { "type": "string" } },
+        "patch_records": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PatchRecord" }
+        },
+        "verification_commands": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "expected_artifacts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "approval_tier_required": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "rollback_required": { "type": "boolean" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "SimulationReport": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "simulation_id",
+        "generated_at",
+        "plan_id",
+        "goal",
+        "target_files",
+        "snapshot_id",
+        "sandbox_dir",
+        "commands_run",
+        "verification_results",
+        "hash_delta",
+        "files_changed_in_sandbox",
+        "real_project_unchanged",
+        "success",
+        "blockers",
+        "recommended_next_action",
+        "rollback_path"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "simulation_id": { "type": "string" },
+        "generated_at": { "type": "string" },
+        "plan_id": { "type": "string" },
+        "goal": { "type": "string" },
+        "target_files": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "snapshot_id": { "type": "string" },
+        "sandbox_dir": { "type": "string" },
+        "commands_run": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "verification_results": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "hash_delta": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "files_changed_in_sandbox": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "real_project_unchanged": { "type": "boolean" },
+        "success": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "recommended_next_action": { "type": "string" },
+        "rollback_path": { "type": "string" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": true
+}

@@ -88,3 +88,13 @@ memory/luna_task_graph.json
 memory/luna_task_graph_report.md
 memory/luna_task_graph_build_report.json
 memory/luna_exit_criteria_report.json
+
+# Phase 5I: regenerable sandbox + snapshot outputs. Tracked sources of truth
+# are memory/luna_sandbox.schema.json, memory/luna_snapshot_manifest.schema.json,
+# and memory/luna_sandbox_config.json. Runtime sandbox/snapshot artifacts and
+# manifest are rebuilt on demand by luna_sandbox helpers.
+memory/luna_sandbox_report.json
+memory/luna_sandbox_report.md
+memory/luna_snapshot_manifest.jsonl
+backups/sandbox_*/
+logic_updates/sandbox_*/

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Snapshot Manifest",
+  "description": "Phase 5I snapshot manifest. Records files copied to backups/sandbox_<id>/ before any simulated edit. Manifest is append-only and gitignored at runtime.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "snapshot_id",
+    "created_at",
+    "project_dir",
+    "snapshot_dir",
+    "targets",
+    "restore_instructions"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "snapshot_id": { "type": "string" },
+    "created_at": { "type": "string" },
+    "project_dir": { "type": "string" },
+    "reason": { "type": "string" },
+    "snapshot_dir": { "type": "string" },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "relative_path",
+          "original_path",
+          "snapshot_path",
+          "exists_before",
+          "size_bytes",
+          "sha256",
+          "modified_at"
+        ],
+        "properties": {
+          "relative_path": { "type": "string" },
+          "original_path": { "type": "string" },
+          "snapshot_path": { "type": "string" },
+          "exists_before": { "type": "boolean" },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "sha256": { "type": "string" },
+          "modified_at": { "type": "string" }
+        }
+      }
+    },
+    "restore_instructions": { "type": "string" },
+    "safety_notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}
