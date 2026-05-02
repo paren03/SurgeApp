@@ -10823,6 +10823,53 @@ def _cu_dirty_targets(targets: List[str]) -> List[Dict[str, str]]:
     return dirty
 
 
+def _cu_bridge_cooldown_targets(targets: List[str]) -> List[str]:
+    """Return the subset of `targets` that aider_bridge has put in 24h cooldown.
+
+    Bridge writes per-target cooldowns to logs/aider_bridge_noop_budget.json
+    after 2 NOOPs, context overflows, or hard timeouts. Re-queueing those
+    targets just wastes another aider run that will be skipped or fail again.
+    Read the cooldown file and return the list of targets that are still
+    inside their cooldown window.
+    """
+    if not targets:
+        return []
+    budget_path = _CU_PROJECT_DIR / "logs" / "aider_bridge_noop_budget.json"
+    if not budget_path.exists():
+        return []
+    try:
+        data = json.loads(budget_path.read_text(encoding="utf-8", errors="replace") or "{}")
+    except Exception:
+        return []
+    if not isinstance(data, dict):
+        return []
+    now = datetime.now()
+    cooled: List[str] = []
+    for target in targets:
+        # Bridge keys cooldowns by absolute path (str(target_path)). CU passes
+        # repo-relative paths. Try both forms.
+        candidates = [
+            str(target),
+            str(_CU_PROJECT_DIR / target),
+            str(target).replace("/", "\\"),
+            str(_CU_PROJECT_DIR / target).replace("/", "\\"),
+        ]
+        for key in candidates:
+            entry = data.get(key)
+            if not isinstance(entry, dict):
+                continue
+            cd_until = str(entry.get("cooldown_until") or "")
+            if not cd_until:
+                continue
+            try:
+                if now < datetime.fromisoformat(cd_until):
+                    cooled.append(target)
+                    break
+            except Exception:
+                continue
+    return cooled
+
+
 def _cu_dirty_plan_recovery_jobs(deferred_targets: List[Dict[str, Any]], max_jobs: int = 6) -> List[Dict[str, Any]]:
     """Build fallback jobs on clean existing files when the main CU plan is blocked."""
     jobs: List[Dict[str, Any]] = []
@@ -11699,6 +11746,44 @@ def continues_update_loop(
                     "consecutive_failures": consecutive_failures,
                     "last_cycle_at": _cu_now_iso(),
                     "noop_count": noop_count,
+                })
+                _cu_write_state(state)
+                continue
+            cooled_targets = _cu_bridge_cooldown_targets(targets)
+            if cooled_targets:
+                deferred_count += 1
+                _cu_feed(
+                    "CU_DEFER_BRIDGE_COOLDOWN",
+                    f"Cycle {cycle}: deferred {target_file} — bridge has it in 24h cooldown",
+                    detail=json.dumps(cooled_targets[:8], ensure_ascii=True),
+                )
+                report = {
+                    "cycle": cycle,
+                    "task_id": "",
+                    "status": "deferred",
+                    "target_files": targets,
+                    "instructions": instructions,
+                    "finished_at": _cu_now_iso(),
+                    "aider_rc": None,
+                    "verify_passed": False,
+                    "consecutive_failures": consecutive_failures,
+                    "summary": "deferred — target is in aider_bridge 24h cooldown (prior overflow/timeout/2x noop)",
+                    "diff_path": "",
+                    "solution_path": "",
+                }
+                _cu_append_nightly(report)
+                state.update({
+                    "running": True,
+                    "phase": "deferred_bridge_cooldown",
+                    "cycles": cycle,
+                    "last_task_id": "",
+                    "last_status": "deferred",
+                    "last_cycle_at": _cu_now_iso(),
+                    "active_target_files": targets,
+                    "active_prompt_family": plan_job.get("prompt_family", ""),
+                    "pause_reason": "",
+                    "noop_count": noop_count,
+                    "consecutive_failures": consecutive_failures,
                 })
                 _cu_write_state(state)
                 continue

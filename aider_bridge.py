@@ -53,6 +53,11 @@ LIVE_FEED_PATH = LOGS_DIR / "luna_live_feed.jsonl"
 OLLAMA_API_BASE = os.environ.get("OLLAMA_API_BASE", "http://127.0.0.1:11434").rstrip("/")
 OLLAMA_TAGS_URL = f"{OLLAMA_API_BASE}/api/tags"
 MAX_UNSCOPED_TARGET_BYTES = int(os.environ.get("LUNA_AIDER_MAX_UNSCOPED_BYTES", "120000"))
+# Hard cap: files larger than this NEVER get sent to aider, scope or no scope.
+# Aider's --file always sends the whole file to the model; with qwen2.5-coder:7b
+# and num_ctx=8192 (~32 KB of code), files above ~200 KB will always overflow,
+# wasting 5–15 minutes per attempt. Reject these BEFORE running aider.
+MAX_TARGET_FILE_BYTES = int(os.environ.get("LUNA_AIDER_MAX_TARGET_BYTES", "200000"))
 MAX_FAILED_PER_CYCLE = 5
 MAX_NOOP_PER_CYCLE = 5
 MAX_JOBS_PER_CYCLE = 12
@@ -169,24 +174,49 @@ def _noop_budget_save(data: Dict[str, Any]) -> None:
 
 
 def _noop_budget_check(target: str) -> bool:
-    """Return True if target is in 24-hour noop cooldown — caller should skip the job."""
+    """Return True if target is in 24-hour noop cooldown — caller should skip the job.
+
+    Tries multiple key forms (absolute / relative / forward / back slashes) because
+    different callers (CU passes relative, bridge uses absolute resolved path).
+    """
     if not target:
         return False
     data = _noop_budget_load()
-    entry = data.get(target) or {}
-    cooldown_until = str(entry.get("cooldown_until") or "")
-    if not cooldown_until:
+    if not isinstance(data, dict):
         return False
+    # Build candidate keys
+    candidates = [target]
     try:
-        from datetime import datetime as _dt
-        cd = _dt.fromisoformat(cooldown_until)
-        if _dt.now() < cd:
-            return True
-        # Cooldown expired — clear it
-        data.pop(target, None)
-        _noop_budget_save(data)
+        if not Path(target).is_absolute():
+            candidates.append(str(PROJECT_DIR / target))
+        else:
+            try:
+                candidates.append(str(Path(target).resolve().relative_to(PROJECT_DIR.resolve())))
+            except Exception:
+                pass
     except Exception:
         pass
+    candidates += [c.replace("/", "\\") for c in candidates]
+    candidates += [c.replace("\\", "/") for c in candidates]
+    seen_keys: set[str] = set()
+    from datetime import datetime as _dt
+    for key in candidates:
+        if not key or key in seen_keys:
+            continue
+        seen_keys.add(key)
+        entry = data.get(key) or {}
+        cooldown_until = str(entry.get("cooldown_until") or "")
+        if not cooldown_until:
+            continue
+        try:
+            cd = _dt.fromisoformat(cooldown_until)
+            if _dt.now() < cd:
+                return True
+            # Cooldown expired — clear it
+            data.pop(key, None)
+            _noop_budget_save(data)
+        except Exception:
+            continue
     return False
 
 
@@ -304,10 +334,12 @@ def _append_job_log(task_id: str, message: str) -> None:
 def _aider_subprocess_env(workspace: Path | None = None) -> Dict[str, str]:
     env = dict(os.environ)
     env["OLLAMA_API_BASE"] = OLLAMA_API_BASE
-    # Ollama defaults to num_ctx=2048 which causes context overflow on almost
-    # any non-trivial file.  4096 doubles the window without blowing VRAM on
-    # a 7B model (8192 can exceed GPU memory and cause model-not-ready failures).
-    env.setdefault("OLLAMA_NUM_CTX", "4096")
+    # qwen2.5-coder:7b supports 32K context. With Q4_K quantization the model
+    # is ~4 GB; KV cache for 8192 tokens at fp16 adds ~50 MB. Safe on any GPU
+    # that loads the model at all. 8192 ≈ 32 KB of code which lets aider work
+    # on most luna_modules/ files in one shot. Files > MAX_TARGET_FILE_BYTES
+    # are rejected by _check_target_size() BEFORE aider runs.
+    env.setdefault("OLLAMA_NUM_CTX", "8192")
     env.setdefault("PYTHONIOENCODING", "utf-8")
     env.setdefault("PYTHONUTF8", "1")
     if workspace is not None:
@@ -375,6 +407,12 @@ def _target_scope_allowed(target_path: Path, task: Dict[str, Any]) -> Tuple[bool
         return False, "target_stat_failed"
     if size <= 0:
         return False, "empty_target_file"
+    # Hard cap: aider's --file ALWAYS sends the whole file to the model,
+    # regardless of scope hints in the prompt. Files above MAX_TARGET_FILE_BYTES
+    # cannot fit in num_ctx=8192 and would burn 5-15 min before context overflow.
+    # Reject them outright so CU can move on to other targets.
+    if size > MAX_TARGET_FILE_BYTES:
+        return False, "target_file_too_large_for_model"
     has_scope = bool(
         task.get("function_scope")
         or task.get("excerpt_mode")
@@ -920,6 +958,11 @@ def run_aider_patch(task_path: Path) -> None:
     target_path = Path(target)
     scope_ok, scope_reason = _target_scope_allowed(target_path, task)
     if not scope_ok:
+        # Hard size rejection should also engage 24h cooldown so CU stops
+        # re-queueing the same too-large file every cycle.
+        if scope_reason == "target_file_too_large_for_model":
+            _noop_budget_record(target)
+            _noop_budget_record(target)
         _finish_quarantined(task_path, task_id, target, prompt, scope_reason, started_at, analysis_only)
         return
     if _target_has_local_edits(target_path):
@@ -1022,6 +1065,10 @@ def run_aider_patch(task_path: Path) -> None:
                 pass
             _live_feed("FAILED", f"Stage 5/5: Aider timed out ({AIDER_TIMEOUT}s); process tree killed", task_id=task_id)
             _log(f"Aider timed out after {AIDER_TIMEOUT}s; process tree killed pid={_aider_pid}")
+            # 24h cooldown after a hard timeout — same target won't be retried
+            # until at least tomorrow (2 calls trigger the 2-strike cooldown).
+            _noop_budget_record(target)
+            _noop_budget_record(target)
             record = build_aider_completion_record(
                 task_id=task_id,
                 target_file=target,
@@ -1080,6 +1127,13 @@ def run_aider_patch(task_path: Path) -> None:
             task_id=task_id,
             detail=f"rc={aider_rc} target={target}",
         )
+        # Record in noop budget so this target gets a 24h cooldown — a context
+        # overflow is a "won't fit in this model" signal, not a one-time fluke.
+        # Recording twice (calling _noop_budget_record once is enough for first
+        # offence; we record TWICE here so even a single overflow triggers the
+        # 2-strike cooldown — overflows always indicate a fundamental size mismatch).
+        _noop_budget_record(target)
+        _noop_budget_record(target)
         # Track which files overflow so the CU can deprioritise them
         try:
             _ov_path = PROJECT_DIR / "memory" / "context_overflow_targets.jsonl"
