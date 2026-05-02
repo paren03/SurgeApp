@@ -3,6 +3,9 @@
 The Director converts CEO goals into small, reviewable missions. This staged
 module is intentionally self-contained so it can be reviewed before any live
 core file is changed.
+
+Phase 5P: every mission is enriched with conservative approval/council metadata.
+executor_allowed is always False in this phase.
 """
 
 from __future__ import annotations
@@ -11,10 +14,66 @@ import json
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 
 DIRECTOR_STATES = ("active", "done", "failed", "quarantine")
+
+# ---------------------------------------------------------------------------
+# Approval metadata constants
+# ---------------------------------------------------------------------------
+
+# High-risk core files — any mission touching these gets tier 4
+_HIGH_RISK_FILES: frozenset = frozenset({
+    "worker.py", "aider_bridge.py", "luna_guardian.py", "launchluna.pyw",
+    "surgeapp_claude_terminal.py", "luna_start.pyw", "director_agent.py",
+    "luna_modules/luna_hygiene.py", "luna_modules/luna_paths.py",
+    "luna_modules/luna_routing.py", "luna_modules/luna_state.py",
+})
+
+# Keyword patterns that make a mission non-delegable → needs human only
+_NON_DELEGABLE_PATTERNS: Tuple[Tuple[str, Tuple[str, ...]], ...] = (
+    ("delete_memory",   ("delete memory", "wipe memory", "truncate memory", "clear memory")),
+    ("delete_logs",     ("delete log", "wipe log", "truncate log", "clear log")),
+    ("delete_queues",   ("delete queue", "wipe queue", "truncate queue")),
+    ("delete_backups",  ("delete backup", "wipe backup")),
+    ("delete_uploads",  ("delete upload", "wipe upload")),
+    ("delete_tasks",    ("delete task", "wipe task")),
+    ("delete_solutions", ("delete solution",)),
+    ("change_identity", ("change identity", "change persona", "change name")),
+    ("change_personality", ("change personality", "change character")),
+    ("change_goals",    ("change goals", "change objectives", "change mission")),
+    ("expose_secret",   ("expose secret", "expose api key", "expose token", "expose .env",
+                         "expose vault", "leak key", "leak token")),
+    ("package_install", ("pip install", "npm install", "install package", "install module")),
+    ("external_network", ("external api", "call api", "http request", "fetch url")),
+    ("git_push",        ("git push", "force push")),
+    ("git_reset",       ("git reset", "git clean", "git checkout --")),
+    ("architecture_replacement", ("replace architecture", "rewrite from scratch",
+                                  "architectural replacement")),
+    ("disable_verifier", ("disable verifier", "comment out fail", "comment out warn",
+                          "weaken verifier", "bypass verifier", "skip verifier",
+                          "disable check", "weaken check")),
+    ("weaken_quorum",   ("weaken quorum", "reduce quorum", "approve itself")),
+)
+
+# Reviewer pools by tier
+_REVIEWER_POOLS: Dict[int, List[str]] = {
+    0: [],
+    1: [],
+    2: ["qa_review", "safety_review"],
+    3: ["qa_review", "safety_review", "senior_review"],
+    4: ["qa_review", "safety_review", "senior_review", "human_lead"],
+    5: ["human_lead"],
+}
+
+# Approval metadata version marker
+_APPROVAL_METADATA_VERSION = 1
+
+
+# ---------------------------------------------------------------------------
+# Director paths and utilities
+# ---------------------------------------------------------------------------
 
 
 @dataclass(frozen=True)
@@ -55,6 +114,214 @@ def _append_jsonl(path: Path, payload: Dict[str, Any]) -> None:
         handle.write(json.dumps(payload, ensure_ascii=True) + "\n")
 
 
+# ---------------------------------------------------------------------------
+# Approval metadata helpers
+# ---------------------------------------------------------------------------
+
+
+def _normalize_target_file(path: str) -> str:
+    """Return a posix-normalized, lowercased relative file path."""
+    return Path(str(path)).as_posix().lower()
+
+
+def _risk_to_approval_tier(risk_level: str, target_files: List[str]) -> int:
+    """Map risk_level + target_files to a conservative approval tier (0-5)."""
+    norm = [_normalize_target_file(f) for f in (target_files or [])]
+    # Any high-risk core file → tier 4 regardless of declared risk_level
+    for f in norm:
+        basename = Path(f).name
+        if basename in _HIGH_RISK_FILES or f in _HIGH_RISK_FILES:
+            return 4
+    rl = str(risk_level or "").lower().strip()
+    if rl == "high":
+        return 4
+    if rl == "medium":
+        return 3
+    # low risk: distinguish memory/docs (tier 1) from additive code (tier 2)
+    if rl == "low":
+        for f in norm:
+            if f.startswith("memory/") or f.endswith(".md") or f.endswith(".jsonl"):
+                return 1
+        return 2
+    return 3  # conservative default for unknown
+
+
+def _mission_is_non_delegable(mission: dict) -> Tuple[bool, List[str]]:
+    """Return (is_non_delegable, list_of_reasons) based on goal/purpose/targets."""
+    text = " ".join([
+        str(mission.get("purpose", "")),
+        str(mission.get("id", "")),
+        str(mission.get("goal", "")),
+        str(mission.get("acceptance_test", "")),
+    ]).lower()
+    reasons = []
+    for reason_key, keywords in _NON_DELEGABLE_PATTERNS:
+        for kw in keywords:
+            if kw in text:
+                reasons.append(reason_key)
+                break
+    return (len(reasons) > 0), reasons
+
+
+def _mission_requires_council(approval_tier_required: int, non_delegable: bool) -> bool:
+    """Council required for tier >= 2 and NOT non-delegable (which needs human instead)."""
+    if non_delegable:
+        return False
+    return approval_tier_required >= 2
+
+
+def _quorum_for_tier(approval_tier_required: int, target_files: List[str]) -> dict:
+    """Return quorum settings for a given approval tier."""
+    if approval_tier_required <= 1:
+        return {"mode": "not_required", "required_approvals": 0, "reviewer_count": 0, "unanimous": False}
+    if approval_tier_required == 2:
+        return {"mode": "local_simulated", "required_approvals": 1, "reviewer_count": 2, "unanimous": False}
+    if approval_tier_required == 3:
+        return {"mode": "local_simulated", "required_approvals": 2, "reviewer_count": 3, "unanimous": False}
+    # Tier 4 and 5: unanimous
+    return {"mode": "local_simulated", "required_approvals": 3, "reviewer_count": 3, "unanimous": True}
+
+
+def _reviewer_pool_for_tier(approval_tier_required: int) -> List[str]:
+    """Return reviewer pool list for a given tier."""
+    return list(_REVIEWER_POOLS.get(min(approval_tier_required, 5), _REVIEWER_POOLS[4]))
+
+
+def _build_planned_change_template(mission: dict) -> dict:
+    """Build a conservative planned_change_template from mission fields."""
+    targets = list(mission.get("target_files") or [])
+    return {
+        "target_files": targets,
+        "expected_diff_type": str(mission.get("expected_diff_type") or "bounded_edit"),
+        "max_lines_changed": int(mission.get("max_lines_changed") or 80),
+        "function_scope_required": bool(mission.get("function_scope_required")),
+        "function_scope": str(mission.get("function_scope") or ""),
+        "verification_commands": _default_verification_commands(targets),
+        "rollback_plan": str(mission.get("rollback_stage_plan") or "Stage only; do not apply without verification."),
+        "exit_criteria": _default_exit_criteria(mission),
+    }
+
+
+def _default_verification_commands(target_files: List[str]) -> List[str]:
+    cmds = []
+    for f in target_files:
+        nf = _normalize_target_file(f)
+        if nf.endswith(".py"):
+            cmds.append(f"py_compile {f}")
+    return cmds
+
+
+def _default_exit_criteria(mission: dict) -> List[str]:
+    criteria = []
+    at = str(mission.get("acceptance_test") or "")
+    if at:
+        criteria.append(at)
+    criteria.append("py_compile passes for all target .py files")
+    criteria.append("Luna_Post_Repair_Verify.ps1 shows no failures")
+    return criteria
+
+
+def _build_approval_packet_hint(mission: dict) -> dict:
+    """Build a conservative approval_packet_hint from mission fields."""
+    targets = list(mission.get("target_files") or [])
+    tier = mission.get("approval_tier_required", 0)
+    return {
+        "goal": str(mission.get("purpose") or mission.get("goal") or ""),
+        "task_id": str(mission.get("id") or ""),
+        "risk_tier": int(tier),
+        "target_files": targets,
+        "action_type": _diff_type_to_action_type(str(mission.get("expected_diff_type") or "")),
+        "planned_change_summary": str(mission.get("purpose") or ""),
+        "verification_commands": _default_verification_commands(targets),
+        "rollback_plan": str(mission.get("rollback_stage_plan") or "Stage only."),
+        "question": "Approve this mission? yes/no with reason.",
+    }
+
+
+def _diff_type_to_action_type(diff_type: str) -> str:
+    """Map expected_diff_type to a canonical action_type string."""
+    mapping = {
+        "memory_summary": "generated_artifact",
+        "tests": "low_risk_additive",
+        "safety_guard": "medium_code_edit",
+        "orchestration": "medium_code_edit",
+        "process_guard": "medium_code_edit",
+        "telemetry": "medium_code_edit",
+        "inspector_ui": "medium_code_edit",
+        "startup": "medium_code_edit",
+        "fresh bounded upgrade": "medium_code_edit",
+    }
+    return mapping.get(diff_type.lower().strip(), "medium_code_edit")
+
+
+def enrich_mission_with_approval_metadata(mission: dict) -> dict:
+    """Return a copy of mission enriched with conservative approval metadata.
+
+    executor_allowed is always False in Phase 5P.
+    """
+    m = dict(mission)
+    tier = _risk_to_approval_tier(
+        m.get("risk_level", "medium"),
+        list(m.get("target_files") or []),
+    )
+    non_delegable, nd_reasons = _mission_is_non_delegable(m)
+
+    if non_delegable:
+        tier = 5
+        council_required = False
+        receipt_required = False
+        needs_human = True
+        enforcement_mode = "human_only"
+        quorum = {"mode": "not_required", "required_approvals": 0, "reviewer_count": 0, "unanimous": False}
+        reviewer_pool: List[str] = ["human_lead"]
+    else:
+        council_required = _mission_requires_council(tier, non_delegable)
+        receipt_required = tier >= 2
+        needs_human = False
+        enforcement_mode = "not_required" if tier <= 1 else "receipt_required"
+        quorum = _quorum_for_tier(tier, list(m.get("target_files") or []))
+        reviewer_pool = _reviewer_pool_for_tier(tier)
+
+    m["approval_tier_required"] = tier
+    m["council_required"] = council_required
+    m["receipt_required"] = receipt_required
+    m["needs_human"] = needs_human
+    m["non_delegable"] = non_delegable
+    m["non_delegable_reasons"] = nd_reasons
+    m["reviewer_pool"] = reviewer_pool
+    m["quorum_required"] = quorum
+    m["approval_packet_hint"] = _build_approval_packet_hint({**m, "approval_tier_required": tier})
+    m["planned_change_template"] = _build_planned_change_template(m)
+    m["enforcement_mode"] = enforcement_mode
+    m["executor_allowed"] = False
+    return m
+
+
+def enrich_missions_with_approval_metadata(missions: List[dict]) -> List[dict]:
+    """Return a new list with each mission enriched with approval metadata."""
+    return [enrich_mission_with_approval_metadata(m) for m in missions]
+
+
+def validate_director_approval_metadata(mission: dict) -> Tuple[bool, List[str]]:
+    """Validate that a mission has all required approval metadata fields."""
+    required = [
+        "approval_tier_required", "council_required", "receipt_required",
+        "needs_human", "non_delegable", "non_delegable_reasons",
+        "reviewer_pool", "quorum_required", "approval_packet_hint",
+        "planned_change_template", "enforcement_mode", "executor_allowed",
+    ]
+    missing = [f for f in required if f not in mission]
+    errors = list(missing)
+    if "executor_allowed" in mission and mission["executor_allowed"] is not False:
+        errors.append("executor_allowed must be False")
+    return (len(errors) == 0), errors
+
+
+# ---------------------------------------------------------------------------
+# CEO command parsing
+# ---------------------------------------------------------------------------
+
+
 def parse_ceo_command(text: str) -> Dict[str, Any]:
     """Accept `/ceo <goal>` commands and reject everything else."""
     raw = str(text or "").strip()
@@ -79,7 +346,7 @@ def ensure_director_folders(project_dir: str | Path) -> Dict[str, str]:
 
 
 def build_director_missions(goal: str) -> List[Dict[str, Any]]:
-    """Convert one CEO goal into small, bounded engineering missions."""
+    """Convert one CEO goal into small, bounded engineering missions with approval metadata."""
     goal_text = str(goal or "").strip() or "Unspecified CEO goal"
     autonomy_focus = "autonomy" in goal_text.lower() or "luna" in goal_text.lower()
     missions = [
@@ -175,7 +442,7 @@ def build_director_missions(goal: str) -> List[Dict[str, Any]]:
     ]
     if not autonomy_focus:
         missions[0]["purpose"] = f"Create a safe Aider Bridge quality gate before starting CEO goal: {goal_text}"
-    return missions
+    return enrich_missions_with_approval_metadata(missions)
 
 
 def emit_director_event(project_dir: str | Path, event_name: str, details: Dict[str, Any] | None = None) -> Dict[str, Any]:
@@ -207,6 +474,21 @@ def _enrich_missions_with_targets(project_dir: Path, goal: str, missions: List[D
     except Exception:
         pass
     return missions
+
+
+def _approval_metadata_policy() -> Dict[str, Any]:
+    """Return the standard approval metadata policy block for Director jobs."""
+    return {
+        "approval_metadata_version": _APPROVAL_METADATA_VERSION,
+        "council_foundation_phase": "5L",
+        "approval_router_phase": "5M",
+        "council_enforcer_phase": "5O",
+        "executor_allowed": False,
+        "live_execution_enabled": False,
+        "non_delegable_requires_serge": True,
+        "receipt_required_for_tier": [2, 3, 4],
+        "human_only_for_non_delegable": True,
+    }
 
 
 def write_director_job(project_dir: str | Path, command_text: str) -> Dict[str, Any]:
@@ -245,6 +527,7 @@ def write_director_job(project_dir: str | Path, command_text: str) -> Dict[str, 
             "stage_only": True,
             "delete": "never",
             "quarantine_bad_items": True,
+            **_approval_metadata_policy(),
         },
     }
     folder = Path(folders[state])
@@ -289,7 +572,8 @@ def write_director_refresh_job(project_dir: str | Path, quarantine_path: str | P
         item["max_lines_changed"] = min(int(item.get("max_lines_changed") or 180), 220)
         targets = [str(target) for target in item.get("target_files", [])]
         item["function_scope_required"] = bool(item.get("function_scope_required") or "worker.py" in targets)
-        refreshed.append(item)
+        # Recompute approval metadata (conservative — never downgrade)
+        refreshed.append(enrich_mission_with_approval_metadata(item))
 
     payload = {
         "ts": _now_iso(),
@@ -304,6 +588,7 @@ def write_director_refresh_job(project_dir: str | Path, quarantine_path: str | P
             "delete": "never",
             "quarantine_bad_items": True,
             "avoid_prompt_families": [m.get("avoid_prompt_family", "") for m in refreshed if m.get("avoid_prompt_family")],
+            **_approval_metadata_policy(),
         },
     }
     active_path = Path(folders["active"]) / f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_refresh_continues_update.json"

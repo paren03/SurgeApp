@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "approval_metadata_version": 1,
+  "council_foundation_phase": "5L",
+  "approval_router_phase": "5M",
+  "council_enforcer_phase": "5O",
+  "executor_allowed": false,
+  "live_execution_enabled": false,
+  "non_delegable_requires_serge": true,
+  "receipt_required_for_tier": [2, 3, 4],
+  "human_only_for_non_delegable": true,
+  "tier_definitions": {
+    "0": "read-only / documentation / report-only — no council, no receipt",
+    "1": "generated artifacts / memory summaries / append-only logs — no council, no receipt",
+    "2": "low-risk additive code/test files outside core runtime — council + receipt required",
+    "3": "medium-risk code edits — council + receipt + 2-of-3 quorum",
+    "4": "high-risk core edits (worker.py, aider_bridge.py, luna_guardian.py, etc.) — council + receipt + unanimous quorum",
+    "5": "non-delegable / emergency — human only"
+  },
+  "high_risk_files": [
+    "worker.py", "aider_bridge.py", "luna_guardian.py", "LaunchLuna.pyw",
+    "SurgeApp_Claude_Terminal.py", "luna_start.pyw", "director_agent.py",
+    "luna_modules/luna_hygiene.py", "luna_modules/luna_paths.py",
+    "luna_modules/luna_routing.py", "luna_modules/luna_state.py"
+  ],
+  "stage_only": true,
+  "delete": "never",
+  "quarantine_bad_items": true
+}

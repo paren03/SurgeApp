@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LunaDirectorApprovalMetadata",
+  "description": "Schema for approval metadata fields added to every Director mission (Phase 5P).",
+  "type": "object",
+  "required": [
+    "approval_tier_required", "council_required", "receipt_required",
+    "needs_human", "non_delegable", "non_delegable_reasons",
+    "reviewer_pool", "quorum_required", "approval_packet_hint",
+    "planned_change_template", "enforcement_mode", "executor_allowed"
+  ],
+  "properties": {
+    "approval_tier_required": {"type": "integer", "minimum": 0, "maximum": 5},
+    "council_required": {"type": "boolean"},
+    "receipt_required": {"type": "boolean"},
+    "needs_human": {"type": "boolean"},
+    "non_delegable": {"type": "boolean"},
+    "non_delegable_reasons": {"type": "array", "items": {"type": "string"}},
+    "reviewer_pool": {"type": "array", "items": {"type": "string"}},
+    "quorum_required": {
+      "type": "object",
+      "required": ["mode", "required_approvals", "reviewer_count", "unanimous"],
+      "properties": {
+        "mode": {"type": "string", "enum": ["not_required", "local_simulated", "human_only"]},
+        "required_approvals": {"type": "integer"},
+        "reviewer_count": {"type": "integer"},
+        "unanimous": {"type": "boolean"}
+      }
+    },
+    "approval_packet_hint": {
+      "type": "object",
+      "required": ["goal", "task_id", "risk_tier", "target_files", "action_type", "question"],
+      "properties": {
+        "goal": {"type": "string"},
+        "task_id": {"type": "string"},
+        "risk_tier": {"type": "integer"},
+        "target_files": {"type": "array", "items": {"type": "string"}},
+        "action_type": {"type": "string"},
+        "planned_change_summary": {"type": "string"},
+        "verification_commands": {"type": "array", "items": {"type": "string"}},
+        "rollback_plan": {"type": "string"},
+        "question": {"type": "string"}
+      }
+    },
+    "planned_change_template": {
+      "type": "object",
+      "properties": {
+        "target_files": {"type": "array", "items": {"type": "string"}},
+        "expected_diff_type": {"type": "string"},
+        "max_lines_changed": {"type": "integer"},
+        "function_scope_required": {"type": "boolean"},
+        "function_scope": {"type": "string"},
+        "verification_commands": {"type": "array", "items": {"type": "string"}},
+        "rollback_plan": {"type": "string"},
+        "exit_criteria": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "enforcement_mode": {
+      "type": "string",
+      "enum": ["not_required", "receipt_required", "human_only"]
+    },
+    "executor_allowed": {"type": "boolean", "const": false}
+  }
+}
