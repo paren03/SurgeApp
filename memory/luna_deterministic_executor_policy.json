@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "description": "Phase 5R deterministic sandbox patch executor policy. sandbox_only is always true. safe_to_apply_real_project is always false in Phase 5R.",
+  "sandbox_only": true,
+  "safe_to_apply_real_project_always_false_in_phase5r": true,
+  "allow_real_apply": false,
+  "allowed_operations": [
+    "replace_text",
+    "append_text",
+    "insert_after",
+    "insert_before",
+    "create_file"
+  ],
+  "forbidden_operations": [
+    "delete_file",
+    "move_file",
+    "rename_file",
+    "chmod",
+    "binary_write",
+    "arbitrary_script",
+    "unified_diff"
+  ],
+  "max_patch_operations": 5,
+  "max_total_inserted_chars": 20000,
+  "max_target_files": 3,
+  "require_receipt_for_tiers": [2, 3, 4, 5],
+  "require_snapshot": true,
+  "require_verification_commands": true,
+  "high_risk_paths": [
+    "worker.py",
+    "aider_bridge.py",
+    "luna_guardian.py",
+    "LaunchLuna.pyw",
+    "SurgeApp_Claude_Terminal.py",
+    "luna_start.pyw",
+    "director_agent.py"
+  ],
+  "generated_report_outputs": [
+    "memory/luna_deterministic_executor_report.json",
+    "memory/luna_deterministic_executor_report.md",
+    "memory/luna_deterministic_executor_audit.jsonl"
+  ],
+  "sandbox_base_dir": "logic_updates",
+  "backup_base_dir": "backups"
+}

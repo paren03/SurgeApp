@@ -157,3 +157,13 @@ memory/luna_routine_approval_requests.jsonl
 memory/luna_routine_approval_report.json
 memory/luna_routine_approval_report.md
 memory/luna_limited_autonomy_approval_state.json
+
+# Phase 5R: regenerable deterministic executor outputs. Tracked sources of truth are
+# memory/luna_deterministic_executor.schema.json and memory/luna_deterministic_executor_policy.json.
+# Runtime report artifacts and audit log are rebuilt on demand by luna_deterministic_executor.
+memory/luna_deterministic_executor_report.json
+memory/luna_deterministic_executor_report.md
+memory/luna_deterministic_executor_audit.jsonl
+memory/luna_executor_dispatch_preview.json
+logic_updates/deterministic_executor_*/
+backups/deterministic_executor_*/

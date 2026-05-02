@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Deterministic Executor Schema",
+  "description": "Phase 5R: execution plan and report schemas for the deterministic sandbox patch executor.",
+  "definitions": {
+    "patch_operation": {
+      "type": "object",
+      "required": ["operation_id", "target_file", "operation"],
+      "properties": {
+        "operation_id": {"type": "string"},
+        "target_file": {"type": "string"},
+        "operation": {
+          "type": "string",
+          "enum": ["replace_text", "append_text", "insert_after", "insert_before", "create_file"]
+        },
+        "find_text": {"type": "string"},
+        "replace_text": {"type": "string"},
+        "anchor_text": {"type": "string"},
+        "insert_text": {"type": "string"},
+        "append_text": {"type": "string"},
+        "new_file_text": {"type": "string"},
+        "expected_occurrences": {"type": "integer", "minimum": 1},
+        "max_replacements": {"type": "integer", "minimum": 1},
+        "expected_hash_before": {"type": "string"},
+        "allow_create": {"type": "boolean"}
+      }
+    },
+    "execution_plan": {
+      "type": "object",
+      "required": [
+        "schema_version", "execution_id", "created_at", "goal",
+        "sandbox_only", "dry_run", "action_type", "target_files", "patch_operations"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "execution_id": {"type": "string"},
+        "created_at": {"type": "string", "format": "date-time"},
+        "goal": {"type": "string"},
+        "task_id": {"type": "string"},
+        "source": {"type": "string", "enum": ["operator", "director", "limited_autonomy", "test"]},
+        "dry_run": {"type": "boolean", "const": true},
+        "sandbox_only": {"type": "boolean", "const": true},
+        "real_apply_allowed": {"type": "boolean", "const": false},
+        "action_type": {
+          "type": "string",
+          "enum": ["low_risk_additive", "medium_code_edit", "high_risk_core_edit", "emergency_repair"]
+        },
+        "risk_tier": {"type": "integer", "minimum": 0, "maximum": 5},
+        "approval_tier_required": {"type": "integer", "minimum": 0, "maximum": 5},
+        "target_files": {"type": "array", "items": {"type": "string"}},
+        "receipt_id": {"type": "string"},
+        "approval_id": {"type": "string"},
+        "receipt_required": {"type": "boolean"},
+        "patch_operations": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/patch_operation"}
+        },
+        "verification_commands": {"type": "array", "items": {"type": "string"}},
+        "rollback_plan": {"type": "string"},
+        "expected_artifacts": {"type": "array", "items": {"type": "string"}},
+        "metadata": {"type": "object"}
+      }
+    },
+    "execution_report": {
+      "type": "object",
+      "required": [
+        "schema_version", "execution_id", "generated_at", "goal",
+        "sandbox_only", "real_project_modified", "safe_to_apply_real_project"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "execution_id": {"type": "string"},
+        "generated_at": {"type": "string"},
+        "goal": {"type": "string"},
+        "task_id": {"type": "string"},
+        "sandbox_only": {"type": "boolean", "const": true},
+        "real_project_modified": {"type": "boolean", "const": false},
+        "safe_to_apply_real_project": {"type": "boolean", "const": false},
+        "action_type": {"type": "string"},
+        "risk_tier": {"type": "integer"},
+        "target_files": {"type": "array", "items": {"type": "string"}},
+        "sandbox_dir": {"type": "string"},
+        "snapshot_id": {"type": "string"},
+        "patch_results": {"type": "array"},
+        "verification_results": {"type": "array"},
+        "diff_hash": {"type": "string"},
+        "file_deltas": {"type": "array"},
+        "receipt_checked": {"type": "boolean"},
+        "receipt_valid": {"type": "boolean"},
+        "blockers": {"type": "array", "items": {"type": "string"}},
+        "warnings": {"type": "array", "items": {"type": "string"}},
+        "success": {"type": "boolean"},
+        "recommended_next_action": {"type": "string"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}
