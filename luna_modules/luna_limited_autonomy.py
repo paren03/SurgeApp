@@ -1050,6 +1050,78 @@ def maybe_route_forbidden_task(
     }
 
 
+# ---------- Phase 5XY: morning decision brief refresh (advisory only) ----------
+
+
+def refresh_morning_decision_brief(
+    project_dir: Any,
+    write: bool = True,
+) -> dict:
+    """Refresh the Phase 5VW morning decision brief from current advisory artifacts.
+
+    Defensive: imports luna_decision_brief inside the function so a missing or
+    broken module degrades gracefully. Never executes anything. safe_to_execute_now
+    is False in every return shape.
+    """
+    pdir = Path(project_dir)
+    try:
+        import luna_modules.luna_decision_brief as _brief
+    except Exception as e:
+        return {
+            "ok": False,
+            "status": "unavailable",
+            "error": f"{type(e).__name__}:{str(e)[:200]}",
+            "safe_to_execute_now": False,
+            "safe_to_apply_real_project": False,
+            "guardian_enforcing_live": False,
+        }
+
+    try:
+        digest = _brief.build_decision_digest(pdir)
+        b = _brief.build_morning_decision_brief(pdir, digest=digest)
+        written: dict[str, str] = {}
+        if write:
+            try:
+                written = _brief.write_morning_brief(pdir, b)
+            except Exception as e_write:
+                return {
+                    "ok": False,
+                    "status": "failed",
+                    "error": f"write_failed:{type(e_write).__name__}:{str(e_write)[:200]}",
+                    "overall_recommendation": b.get("overall_recommendation"),
+                    "counts": b.get("counts"),
+                    "next_safe_action": b.get("next_safe_action"),
+                    "serge_summary": b.get("serge_summary"),
+                    "safe_to_execute_now": False,
+                    "safe_to_apply_real_project": False,
+                    "guardian_enforcing_live": False,
+                }
+        return {
+            "ok": True,
+            "status": "refreshed" if write else "built",
+            "overall_recommendation": b.get("overall_recommendation"),
+            "counts": b.get("counts"),
+            "next_safe_action": b.get("next_safe_action"),
+            "serge_summary": b.get("serge_summary"),
+            "files_checked": b.get("files_checked", []),
+            "missing_artifacts": b.get("missing_artifacts", []),
+            "path_json": written.get("json", "memory/luna_morning_decision_brief.json"),
+            "path_md": written.get("md", "memory/luna_morning_decision_brief.md"),
+            "safe_to_execute_now": False,
+            "safe_to_apply_real_project": False,
+            "guardian_enforcing_live": False,
+        }
+    except Exception as e:
+        return {
+            "ok": False,
+            "status": "failed",
+            "error": f"{type(e).__name__}:{str(e)[:200]}",
+            "safe_to_execute_now": False,
+            "safe_to_apply_real_project": False,
+            "guardian_enforcing_live": False,
+        }
+
+
 # ---------- foundation task runners (read-only / generated artifacts) ----------
 
 
@@ -1303,8 +1375,33 @@ def run_allowed_foundation_task(
         }
 
     elif task_class == "daily_brief_report":
-        # Brief is built later from the cycle records; this task is a placeholder.
-        out["details"] = {"would_render_brief": True}
+        # Phase 5XY: refresh the Phase 5VW morning decision brief if available.
+        # In dry_run mode, build the brief but do not write artifacts to memory/.
+        brief_result = refresh_morning_decision_brief(pdir, write=(not dry_run))
+        details: dict[str, Any] = {
+            "would_render_brief": True,
+            "decision_brief_status": brief_result.get("status", "unknown"),
+            "decision_brief_ok": bool(brief_result.get("ok", False)),
+        }
+        if brief_result.get("ok"):
+            details["overall_recommendation"] = brief_result.get("overall_recommendation")
+            details["decision_card_counts"] = brief_result.get("counts")
+            details["next_safe_action"] = brief_result.get("next_safe_action")
+            details["serge_summary"] = brief_result.get("serge_summary")
+            details["path_json"] = brief_result.get("path_json")
+            details["path_md"] = brief_result.get("path_md")
+            if not dry_run:
+                # Surface the written report paths as cycle artifacts.
+                for art in (brief_result.get("path_json"), brief_result.get("path_md")):
+                    if art and art not in out["artifacts"]:
+                        out["artifacts"].append(art)
+        else:
+            details["error"] = brief_result.get("error", "")
+        # Always preserve hard safety flags in the task output.
+        details["safe_to_execute_now"] = False
+        details["safe_to_apply_real_project"] = False
+        details["guardian_enforcing_live"] = False
+        out["details"] = details
 
     elif task_class == "recommended_next_actions_report":
         out["details"] = {"would_render_recommended_next_actions": True}
@@ -1464,6 +1561,34 @@ def run_limited_autonomy_cycle(
         routing_results: list[dict[str, Any]] = []
         ar_summary = summarize_approval_routing(routing_results)
 
+        # Phase 5XY: surface the morning decision brief from the daily_brief_report task.
+        db_summary: dict[str, Any] = {
+            "enabled": True,
+            "refreshed": False,
+            "overall_recommendation": "",
+            "counts": {},
+            "next_safe_action": "",
+            "serge_summary": "",
+            "path_json": "memory/luna_morning_decision_brief.json",
+            "path_md": "memory/luna_morning_decision_brief.md",
+            "error": "",
+        }
+        for tr in attempted:
+            if tr.get("task_class") == "daily_brief_report":
+                d = tr.get("details") or {}
+                db_summary["refreshed"] = bool(d.get("decision_brief_ok", False))
+                db_summary["overall_recommendation"] = str(d.get("overall_recommendation") or "")
+                db_summary["counts"] = dict(d.get("decision_card_counts") or {})
+                db_summary["next_safe_action"] = str(d.get("next_safe_action") or "")
+                db_summary["serge_summary"] = str(d.get("serge_summary") or "")
+                if d.get("path_json"):
+                    db_summary["path_json"] = str(d["path_json"])
+                if d.get("path_md"):
+                    db_summary["path_md"] = str(d["path_md"])
+                if d.get("error"):
+                    db_summary["error"] = str(d["error"])
+                break
+
         recommended = _recommend_next_actions(ctx, attempted, blockers, ar_summary)
 
         safe_overnight_readonly = (
@@ -1505,11 +1630,13 @@ def run_limited_autonomy_cycle(
             safe_to_continue=(not blockers),
             safe_to_run_overnight_readonly=safe_overnight_readonly,
             approval_routing_summary=ar_summary,
+            decision_brief_summary=db_summary,
             notes=[
                 "Phase 5K + 5K2 limited routine autonomy cycle (read-only/generated-artifacts).",
                 "Same safety rules apply day or night — 'routine' supersedes 'overnight'.",
                 "safe_to_run_routine_code_edits (alias safe_to_run_overnight_code_edits) is hard-coded false until Phase 5L (Delegated AI Approval Council) is built.",
                 "Phase 5Q: approval routing enabled; code-edit proposals routed to approval router (safe_to_execute_now=False always).",
+                "Phase 5XY: routine cycles refresh the morning decision brief (advisory only, no execution).",
             ],
         )
 
@@ -1569,6 +1696,7 @@ def _build_report(
     safe_to_run_overnight_readonly: bool,
     notes: list[str],
     approval_routing_summary: dict[str, Any] | None = None,
+    decision_brief_summary: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     safe_readonly = bool(safe_to_run_overnight_readonly)
     _ar = approval_routing_summary if isinstance(approval_routing_summary, dict) else {
@@ -1580,6 +1708,18 @@ def _build_report(
         "blocked_count": 0,
         "approval_request_paths": [],
         "notes": [],
+    }
+    # Phase 5XY: surface the morning decision-brief block in the cycle report.
+    _db = decision_brief_summary if isinstance(decision_brief_summary, dict) else {
+        "enabled": True,
+        "refreshed": False,
+        "overall_recommendation": "",
+        "counts": {},
+        "next_safe_action": "",
+        "serge_summary": "",
+        "path_json": "memory/luna_morning_decision_brief.json",
+        "path_md": "memory/luna_morning_decision_brief.md",
+        "error": "",
     }
     return {
         "schema_version": SCHEMA_VERSION,
@@ -1606,6 +1746,8 @@ def _build_report(
         "safe_to_run_overnight_code_edits": False,
         # Phase 5Q approval routing block.
         "approval_routing": _ar,
+        # Phase 5XY decision-brief block.
+        "decision_brief": _db,
         "notes": list(notes),
     }
 

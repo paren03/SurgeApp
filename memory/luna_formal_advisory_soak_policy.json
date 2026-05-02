@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "phase": "5XY",
+  "advisory_only": true,
+  "safe_to_execute_now": false,
+  "safe_to_apply_real_project": false,
+  "guardian_enforcing_live": false,
+  "recommended_cycles_for_24h": 144,
+  "recommended_sleep_seconds": 600,
+  "short_smoke_cycles": 3,
+  "short_smoke_sleep_seconds": 1,
+  "success_requires": [
+    "no_hard_failures",
+    "no_warnings",
+    "safe_to_execute_now_false",
+    "safe_to_apply_real_project_false",
+    "guardian_enforcing_live_false",
+    "stable_recommendation_or_explained_changes",
+    "no_source_file_modifications"
+  ],
+  "command_template": "D:\\SurgeApp\\.aider_venv\\Scripts\\python.exe -m luna_modules.luna_decision_brief --soak --cycles 144 --sleep-seconds 600 --write-soak",
+  "short_smoke_command": "D:\\SurgeApp\\.aider_venv\\Scripts\\python.exe -m luna_modules.luna_decision_brief --soak --cycles 3 --sleep-seconds 1",
+  "notes": [
+    "144 cycles x 600 seconds = 86400 seconds = 24 hours of advisory soak.",
+    "Advisory only: this command never executes code edits or live enforcement.",
+    "Run this command in a separate Powershell window so the long sleep does not block other work.",
+    "If safe_to_execute_now appears as true anywhere in the soak report, STOP and audit -- this would be a policy violation."
+  ]
+}
