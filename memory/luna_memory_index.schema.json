@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Memory Index Summary Record",
+  "description": "One compact summary per indexed source file. Phase 5D foundation; not yet wired into runtime services. Runtime artifacts memory/luna_memory_summaries.jsonl, memory/luna_memory_index.json, memory/luna_fast_recall.sqlite, and memory/luna_memory_index_build_report.json are all gitignored and regenerable.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "summary_id",
+    "source_path",
+    "summary",
+    "tags",
+    "date_range",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Bump only on backwards-incompatible record-shape changes."
+    },
+    "summary_id": {
+      "type": "string",
+      "pattern": "^mem_[0-9_a-f]+",
+      "description": "Stable per-summary id (mem_<ts>_<8hex>)."
+    },
+    "source_path": {
+      "type": "string",
+      "description": "Project-relative POSIX path of the indexed source file."
+    },
+    "source_sha256": {
+      "type": "string",
+      "description": "SHA-256 of the entire source file at index time. Empty when unavailable."
+    },
+    "source_size_bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "source_modified_at": {
+      "type": "string",
+      "description": "UTC ISO-8601 mtime of the source. Empty when unavailable."
+    },
+    "date_range": {
+      "type": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "type": "string" },
+        "end": { "type": "string" }
+      },
+      "description": "Earliest and latest ISO-8601-ish timestamp scanned in the source. Either may be empty."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Coarse tags inferred from content (worker, aider, guardian, phase3, ...)."
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 2400,
+      "description": "Compact paragraph; whitespace-collapsed; clipped near 1200 chars by default."
+    },
+    "record_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of input rows / lines summarized for this record."
+    },
+    "corrupt_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "JSONL rows that failed to parse and were skipped."
+    },
+    "line_refs": {
+      "type": "array",
+      "description": "Rough source line-range pointers so callers can drill in.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "start_line": { "type": "integer", "minimum": 0 },
+          "end_line": { "type": "integer" }
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "description": "UTC ISO-8601 timestamp this record was produced."
+    }
+  },
+  "additionalProperties": true
+}

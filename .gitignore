@@ -48,3 +48,11 @@ memory/luna_function_index.json
 # a change. The schema reference (memory/luna_change_ledger.schema.json) is
 # the tracked source of truth; the runtime jsonl stays untracked.
 memory/luna_change_ledger.jsonl
+
+# Phase 5D: regenerable memory-index outputs. The tracked sources of truth
+# are memory/luna_memory_index.schema.json and memory/luna_memory_sources.json;
+# everything below is rebuilt on demand by luna_memory_index.build_memory_index().
+memory/luna_memory_index.json
+memory/luna_memory_summaries.jsonl
+memory/luna_fast_recall.sqlite
+memory/luna_memory_index_build_report.json

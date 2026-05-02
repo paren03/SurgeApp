@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "description": "Curated source list for luna_memory_index. Order is preserved. Files that don't exist are skipped silently. Adding a file here is the operator-approved way to extend memory recall scope.",
+  "sources": [
+    "memory/nightly_updates.jsonl",
+    "memory/nightly_updates.md",
+    "memory/luna_change_ledger.jsonl",
+    "memory/luna_lessons_learned.jsonl",
+    "memory/luna_autonomy_journal.jsonl",
+    "memory/cu_self_repair_history.jsonl",
+    "memory/luna_task_memory.json",
+    "memory/luna_session_memory.json",
+    "logs/luna_live_feed.jsonl",
+    "logs/luna_audit_trail.jsonl",
+    "logs/luna_worker.log",
+    "logs/aider_bridge.log",
+    "logs/luna_guardian.log",
+    "logs/luna_recent_failures_review.txt"
+  ]
+}
