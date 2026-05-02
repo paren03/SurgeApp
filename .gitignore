@@ -29,3 +29,10 @@ Desktop.ini
 shred_test_document.txt
 .aider*
 .env
+
+# Phase 4D: runtime telemetry — append-only logs that grow every CU cycle.
+# Files stay on disk; they are simply not tracked so future appends do not
+# dirty the working tree. Use `git rm --cached` once to untrack the existing
+# tracked copy without deleting it from disk.
+memory/nightly_updates.jsonl
+memory/nightly_updates.md

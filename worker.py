@@ -10188,12 +10188,18 @@ def _cu_load_state() -> Dict[str, Any]:
 def _cu_compute_ui_status(state: Dict[str, Any]) -> str:
     """Map internal CU state fields to one of 7 standardized UI status strings.
 
+    Phase 4D fix: only return paused_dirty_core when the CURRENT cycle has a
+    genuine dirty-core pause signal — a non-empty `pause_reason`, a
+    blocked/deferred `phase`, or a `last_status == "blocked"`. A stale
+    `dirty_targets` array carrying entries from a prior run no longer
+    misclassifies a real timeout/idle cycle as "paused_dirty_core".
+
     Priority:
       1. Blocked states (worker can't run at all)
       2. Active state (running_real_job) — overrides informational dirty_targets
-         that just record which files were skipped this cycle
-      3. Genuinely paused states (CU loop is not progressing)
-      4. idle_clean fallback
+      3. Genuinely paused states (current pause_reason / blocked phase)
+      4. Capacity caps (recent failures / noop budget)
+      5. idle_clean fallback
     """
     phase = str(state.get("phase") or "")
     last_status = str(state.get("last_status") or "")
@@ -10215,19 +10221,26 @@ def _cu_compute_ui_status(state: Dict[str, Any]) -> str:
     if running and phase in ("queueing", "starting"):
         return "running_real_job"
 
-    # 3. Genuinely paused states — only when CU is NOT actively progressing.
+    # 3. Genuinely paused states — require a CURRENT pause signal, not just a
+    #    persisted dirty_targets list left over from an earlier session.
     if pause_reason in ("all_targets_dirty", "blocked_by_staged_edits") or phase in (
         "blocked_by_staged_edits", "deferred_dirty_target",
     ):
         return "paused_dirty_core"
+    # If the most recent cycle ended with last_status="blocked" (CU_BLOCKED_BY_
+    # STAGED_EDITS path) AND the dirty list is still populated, that's a current
+    # block. Any other last_status (timeout/done/noop/failed/quarantined) means
+    # the cycle reached a real outcome — dirty_targets is just informational.
+    if last_status == "blocked" and dirty and not running:
+        return "paused_dirty_core"
+
+    # 4. Capacity caps
     if consec_fail >= 3:
         return "paused_recent_failures"
     if skip_streak >= 2 or noop_count >= 5:
         return "paused_noop_budget"
-    # Fallback: dirty_targets present AND CU not actively running ⇒ dirty pause
-    if dirty and not running:
-        return "paused_dirty_core"
 
+    # 5. Fallback
     return "idle_clean"
 
 
@@ -11493,6 +11506,11 @@ def continues_update_loop(
         "cooldown_until": "",
         "cooldown_remaining_seconds": 0,
         "cycles": int(state.get("cycles", 0) or 0),
+        # Phase 4D: reset transient per-cycle fields so stale entries from a
+        # prior run do not bleed into the new cycle's truthful UI status.
+        # The CU_BLOCKED_BY_STAGED_EDITS / CU_DEFER_DIRTY_TARGET branches
+        # repopulate dirty_targets from the current scan when relevant.
+        "dirty_targets": [],
     })
     _cu_write_state(state)
     _cu_feed("CU_START", "Continues-update loop started",

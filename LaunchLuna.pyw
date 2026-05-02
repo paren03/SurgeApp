@@ -347,9 +347,13 @@ _CU_GATE_CORE_FILES = [
 def _cu_startup_gate() -> tuple[bool, str]:
     """Return (paused, reason) when CU should not be auto-started.
 
-    Phase 3 stabilization: gate now also respects continues_update.stop flag,
-    the loop's persisted ui_status (paused_*/blocked_*), and a longer stale
-    aider-job threshold (30 min vs prior 60 min).
+    Phase 4D polish: high-priority `continues_update.resume_once` check —
+    the user's explicit one-shot resume bypasses persisted-state pause
+    decisions (but NOT the stop flag, which is the explicit kill).
+
+    Phase 3 stabilization: gate respects continues_update.stop flag, the
+    loop's persisted ui_status (paused_*/blocked_*), and a 30-min stale
+    aider-job threshold.
 
     Reasons in priority order:
       paused_user_stop, paused_dirty_core, paused_noop_budget,
@@ -360,7 +364,17 @@ def _cu_startup_gate() -> tuple[bool, str]:
     if (MEMORY / "continues_update.stop").exists():
         return True, "paused_user_stop"
 
-    # 2. CU loop's own persisted ui_status — if it explicitly says paused/blocked,
+    # 2. Phase 4D: explicit one-shot resume — if the user wrote
+    #    memory/continues_update.resume_once, allow CU to start exactly once
+    #    even when persisted ui_status says paused_*/blocked_*. The wrapper's
+    #    own quiet-poll loop will consume the flag the first time it hits
+    #    backoff; LaunchLuna does NOT consume it here so the wrapper still
+    #    gets to honour it during long-pause polling. The launcher only logs
+    #    that the bypass was honoured.
+    if (MEMORY / "continues_update.resume_once").exists():
+        return False, ""  # bypass — resume_once is consumed inside the wrapper
+
+    # 3. CU loop's own persisted ui_status — if it explicitly says paused/blocked,
     #    respect it. The wrapper backoff is ALREADY waiting; LaunchLuna should
     #    not race-restart and override that.
     try:
@@ -515,6 +529,7 @@ def main() -> None:
 
     # Continues-update loop (unique flag so it's not confused with worker.py)
     cu_lock = SERVICE_LOCKS["--continues-update-start"]
+    _resume_once_present = (MEMORY / "continues_update.resume_once").exists()
     _cu_gate_paused, _cu_gate_reason = _cu_startup_gate()
     if _cu_gate_paused:
         _archive_path(cu_lock, f"gate_{_cu_gate_reason}")
@@ -533,7 +548,17 @@ def main() -> None:
     elif (ROOT / "worker.py").exists() and not _lock_alive(cu_lock) and not is_running("--continues-update-start"):
         _archive_path(MEMORY / "continues_update.stop", "one_click_resume")
         pid = start_hidden(WORKER_PY, str(ROOT / "worker.py"), ["--continues-update-start"])
-        events.append({"service": "continues_update", "action": "started", "pid": pid})
+        # Phase 4D: distinguish a resume_once-honoured launch from a normal
+        # startup so operators can see the gate bypass in the log.
+        if _resume_once_present:
+            events.append({
+                "service": "continues_update",
+                "action": "resume_once_allowed",
+                "reason": "memory/continues_update.resume_once present — gate bypass honoured",
+                "pid": pid,
+            })
+        else:
+            events.append({"service": "continues_update", "action": "started", "pid": pid})
     else:
         events.append({"service": "continues_update", "action": "already_running_or_missing"})
 
