@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Self-Healing Playbook Record",
+  "description": "One playbook per known failure class. Phase 5E foundation; the engine recommends only — it never executes commands. Operator approval is required to act on any safe_first_action.",
+  "type": "object",
+  "required": [
+    "playbook_id",
+    "title",
+    "failure_class",
+    "severity",
+    "tags",
+    "detection_signals",
+    "safe_first_actions",
+    "approval_tier_required",
+    "source",
+    "updated_at"
+  ],
+  "properties": {
+    "playbook_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Stable snake_case identifier."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "failure_class": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Free-form coarse category: import_error, syntax_error, supervisor_storm, queue_hygiene, model_capacity, control_loop_churn, gate_blocked, truthfulness, process_classification, external_service_down, ui_truthfulness, log_growth, supply_chain_risk, architecture_drift, etc."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "low", "medium", "high", "critical"]
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Lowercase tags used by the matcher to score against incoming text."
+    },
+    "detection_signals": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Natural-language phrases / log substrings the matcher will look for."
+    },
+    "likely_causes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "safe_first_actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "unsafe_actions_to_avoid": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "verification_commands": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "rollback_or_safety_rule": {
+      "type": "string"
+    },
+    "related_files": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "approval_tier_required": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "0 read-only, 1 logs/reports, 2 edit-with-preview, 3 sandbox auto-edit, 4 trusted full-auto on allowlist, 5 emergency repair only."
+    },
+    "source": {
+      "type": "string",
+      "description": "Where this playbook came from: phase5e_seed, operator, learned_from_incident, etc."
+    },
+    "updated_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

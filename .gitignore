@@ -56,3 +56,10 @@ memory/luna_memory_index.json
 memory/luna_memory_summaries.jsonl
 memory/luna_fast_recall.sqlite
 memory/luna_memory_index_build_report.json
+
+# Phase 5E: regenerable playbook engine artifacts. Tracked sources of truth
+# are memory/luna_self_healing_playbooks.schema.json (record shape) and
+# memory/luna_self_healing_playbooks_seed.json (curated seed set). Match
+# reports and runtime jsonl below are rebuildable by the engine.
+memory/luna_self_healing_playbooks.jsonl
+memory/luna_playbook_match_report.json

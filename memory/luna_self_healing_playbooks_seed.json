@@ -1,0 +1,651 @@
+{
+  "schema_version": 1,
+  "description": "Curated seed playbooks for the Luna Self-Healing Playbook engine (Phase 5E). Recommendations only; no playbook executes a command. The engine matches a failure text/log/verifier-summary to playbooks by tag and detection-signal scoring. Operator approval is always required to act.",
+  "updated_at": "2026-05-02",
+  "playbooks": [
+    {
+      "playbook_id": "worker_import_failure",
+      "title": "worker.py fails to import",
+      "failure_class": "import_error",
+      "severity": "critical",
+      "tags": ["worker", "import", "hygiene", "modules"],
+      "detection_signals": [
+        "import worker fails",
+        "ImportError",
+        "ModuleNotFoundError",
+        "NameError during import",
+        "from luna_modules.luna_hygiene import",
+        "cannot import name 'HYGIENE_"
+      ],
+      "likely_causes": [
+        "luna_hygiene export contract was reverted or weakened",
+        "a module rename broke a transitive import",
+        "stale __pycache__ holding an old module signature",
+        "an aider edit removed required top-level constants"
+      ],
+      "safe_first_actions": [
+        "Set memory/continues_update.stop to freeze CU before any edit",
+        "Run: python -c \"import worker; print('IMPORT_OK')\" and capture stderr verbatim",
+        "Inspect luna_modules/luna_hygiene.py against the export contract used by worker.py",
+        "Run py_compile on the failing file with --aider_venv python and capture stderr"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Running aider on worker.py blindly to 'fix it'",
+        "Mass-importing changes in luna_modules without a planned-change ledger row",
+        "Editing personality, identity, or goals files"
+      ],
+      "verification_commands": [
+        "py_compile worker.py",
+        "import worker",
+        "Luna_Post_Repair_Verify.ps1"
+      ],
+      "rollback_or_safety_rule": "Restore the failing file from the most recent backups/<phase>/<file>.bak; never delete memory/logs/queues.",
+      "related_files": [
+        "worker.py",
+        "luna_modules/luna_hygiene.py",
+        "luna_modules/luna_paths.py",
+        "luna_modules/luna_state.py"
+      ],
+      "approval_tier_required": 2,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "py_compile_failure",
+      "title": "py_compile reports a syntax error",
+      "failure_class": "syntax_error",
+      "severity": "high",
+      "tags": ["compile", "syntax", "python"],
+      "detection_signals": [
+        "py_compile rc=1",
+        "SyntaxError",
+        "IndentationError",
+        "TabError"
+      ],
+      "likely_causes": [
+        "an interrupted aider edit left a half-written diff on disk",
+        "a manual edit broke indentation",
+        "an encoding mismatch (BOM / UTF-8 mixed)"
+      ],
+      "safe_first_actions": [
+        "Read the exact stderr line and column from py_compile",
+        "Inspect that line in the file before editing",
+        "Restore the file from the most recent backups/<phase>/<file>.bak",
+        "Run py_compile again to confirm rc=0"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Broad refactors before fixing the exact error",
+        "Re-running aider on the same file without scoping"
+      ],
+      "verification_commands": [
+        "py_compile <target>",
+        "import worker"
+      ],
+      "rollback_or_safety_rule": "git checkout HEAD -- <target> if previously committed; otherwise restore from .bak.",
+      "related_files": [],
+      "approval_tier_required": 2,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "guardian_restart_storm",
+      "title": "Guardian thrashing service restarts",
+      "failure_class": "supervisor_storm",
+      "severity": "high",
+      "tags": ["guardian", "restart", "duplicate", "storm"],
+      "detection_signals": [
+        "RESTART_BUDGET_EXCEEDED",
+        "duplicate worker storm",
+        "GUARDIAN_DUPLICATE_STOPPED",
+        "logical_count > 1 for worker_main",
+        "luna_guardian.log shows >3 launches in 120s"
+      ],
+      "likely_causes": [
+        "two processes are racing to acquire the worker lock",
+        "stale lock file points to a dead PID and isn't aged out",
+        "Windows Python launcher parent/child pair miscounted as duplicates"
+      ],
+      "safe_first_actions": [
+        "Set memory/continues_update.stop or LUNA_STOP_NOW.flag to freeze the storm",
+        "Inspect logs/luna_worker.lock.json and memory/luna_guardian.lock.json",
+        "Use Test-InvokesScript-style logical-role classification (parent/child pair = 1 logical)",
+        "Quarantine stale locks to memory/disabled_flags/ instead of deleting"
+      ],
+      "unsafe_actions_to_avoid": [
+        "taskkill of all python processes system-wide",
+        "Deleting locks instead of quarantining",
+        "Disabling restart budgets in luna_guardian.py"
+      ],
+      "verification_commands": [
+        "Luna_Post_Repair_Verify.ps1",
+        "Get-CimInstance Win32_Process by command line + parent/child"
+      ],
+      "rollback_or_safety_rule": "Locks are append-only artifacts; never delete, only move to memory/disabled_flags/.",
+      "related_files": [
+        "luna_guardian.py",
+        "logs/luna_worker.lock.json",
+        "memory/luna_guardian.lock.json",
+        "logs/aider_bridge.pid",
+        "memory/cu_loop.lock.json"
+      ],
+      "approval_tier_required": 3,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "stale_worker_heartbeat",
+      "title": "Worker heartbeat is stale",
+      "failure_class": "liveness",
+      "severity": "medium",
+      "tags": ["worker", "heartbeat", "liveness"],
+      "detection_signals": [
+        "logs/luna_worker_heartbeat.json older than 60s",
+        "verifier reports 'Worker heartbeat is stale'",
+        "phase: unknown for many ticks"
+      ],
+      "likely_causes": [
+        "worker is busy in a long blocking call (aider, ollama)",
+        "worker crashed silently",
+        "filesystem write failed on the heartbeat path"
+      ],
+      "safe_first_actions": [
+        "Confirm worker process exists via Get-CimInstance",
+        "Tail logs/luna_worker.log for the most recent unhandled exception",
+        "Check disk-free under D:\\SurgeApp",
+        "Restart worker only if the process is genuinely gone (let guardian handle)"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Marking 'online' if heartbeat is stale just to silence the badge",
+        "Killing every python process to force a restart"
+      ],
+      "verification_commands": [
+        "Luna_Post_Repair_Verify.ps1",
+        "Test-Path logs/luna_worker_heartbeat.json"
+      ],
+      "rollback_or_safety_rule": "Never alter the heartbeat file directly; only the live worker should write it.",
+      "related_files": [
+        "logs/luna_worker_heartbeat.json",
+        "luna_modules/luna_heartbeat.py",
+        "luna_guardian.py"
+      ],
+      "approval_tier_required": 2,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "stale_aider_active_jobs",
+      "title": "Stale aider_jobs/active entries persist",
+      "failure_class": "queue_hygiene",
+      "severity": "medium",
+      "tags": ["aider", "queue", "stale", "bridge"],
+      "detection_signals": [
+        "aider_jobs/active has files older than 30 minutes",
+        "bridge state=idle but active count > 0",
+        "Luna_Post_Repair_Verify.ps1 reports 'Stale aider active job(s)'"
+      ],
+      "likely_causes": [
+        "bridge crashed mid-job",
+        "kill switch was set during processing",
+        "aider child was orphaned"
+      ],
+      "safe_first_actions": [
+        "Run aider_bridge.py _quarantine_stale_active_jobs(stale_minutes=30)",
+        "Move (don't delete) old jobs to aider_jobs/quarantine/<id>.orphaned_active_<ts>.json",
+        "Confirm no python -m aider child still references the same logic_updates path"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Deleting active job files",
+        "Re-claiming a job whose target has a 24h NOOP cooldown"
+      ],
+      "verification_commands": [
+        "ls aider_jobs/active",
+        "cat logs/aider_bridge_status.json"
+      ],
+      "rollback_or_safety_rule": "Quarantine, don't delete. Reviewable copy lives under aider_jobs/quarantine/.",
+      "related_files": [
+        "aider_bridge.py",
+        "aider_jobs/active/",
+        "aider_jobs/quarantine/",
+        "logs/aider_bridge_status.json"
+      ],
+      "approval_tier_required": 2,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "aider_timeout",
+      "title": "Aider job timed out",
+      "failure_class": "external_tool_timeout",
+      "severity": "medium",
+      "tags": ["aider", "timeout", "ollama", "subprocess"],
+      "detection_signals": [
+        "subprocess.TimeoutExpired",
+        "failure_reason: aider_timeout",
+        "RUN_AIDER_START followed by long silence then no RUN_AIDER_END",
+        "elapsed_seconds > AIDER_TIMEOUT in aider_bridge_status.json"
+      ],
+      "likely_causes": [
+        "target file too large for the model context",
+        "Ollama under VRAM pressure or producing slowly",
+        "aider hung waiting on prompt-toolkit input"
+      ],
+      "safe_first_actions": [
+        "taskkill /T /F /PID <aider_pid> to kill the entire process tree",
+        "Mark target with a 24h NOOP/timeout cooldown",
+        "Quarantine the result with failure_reason=aider_timeout_process_tree_killed"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Leaving orphan python -m aider children alive",
+        "Retrying the same target without scoping or smaller context"
+      ],
+      "verification_commands": [
+        "Get-CimInstance Win32_Process | Where -m aider",
+        "cat logs/aider_bridge_noop_budget.json"
+      ],
+      "rollback_or_safety_rule": "Cooldown the target; never delete bridge logs.",
+      "related_files": [
+        "aider_bridge.py",
+        "logs/aider_bridge_noop_budget.json",
+        "aider_jobs/quarantine/"
+      ],
+      "approval_tier_required": 1,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "aider_context_overflow",
+      "title": "Aider exceeded model context window",
+      "failure_class": "model_capacity",
+      "severity": "medium",
+      "tags": ["aider", "ollama", "context", "overflow"],
+      "detection_signals": [
+        "context limit",
+        "token limit",
+        "exceeds the",
+        "CONTEXT_OVERFLOW",
+        "failure_reason: aider_context_overflow"
+      ],
+      "likely_causes": [
+        "target file size > MAX_TARGET_FILE_BYTES (50 KB)",
+        "aider auto-pulled extra files into context",
+        "OLLAMA_NUM_CTX too low for the file"
+      ],
+      "safe_first_actions": [
+        "Reject targets above the size cap before invoking aider",
+        "Apply 24h cooldown for that target",
+        "Use function-scope edit (start_line/end_line) instead of whole-file"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Retrying the same oversized full-file job",
+        "Increasing num_ctx beyond what the GPU can hold"
+      ],
+      "verification_commands": [
+        "stat <target>",
+        "cat logs/aider_bridge_noop_budget.json"
+      ],
+      "rollback_or_safety_rule": "Cooldown is the rollback; the original file is untouched in logic_updates/.",
+      "related_files": [
+        "aider_bridge.py",
+        "memory/context_overflow_targets.jsonl"
+      ],
+      "approval_tier_required": 1,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "cu_fake_busy_loop",
+      "title": "continues_update fake-busy CU_START/CU_STOP loop",
+      "failure_class": "control_loop_churn",
+      "severity": "high",
+      "tags": ["continues_update", "cu", "loop", "churn", "phase3"],
+      "detection_signals": [
+        "CU_START followed by CU_STOP within seconds",
+        ">3 CU_START events within a 30s window",
+        "ui_status oscillating without progress",
+        "wrapper restart sleep == 5s pattern"
+      ],
+      "likely_causes": [
+        "wrapper auto-unlinks the stop flag at end of loop",
+        "loop returns no structured reason so wrapper can't compute backoff",
+        "launcher gate races wrapper backoff and respawns"
+      ],
+      "safe_first_actions": [
+        "Set memory/continues_update.stop to freeze CU",
+        "Read continues_update_state.json for current pause_reason and ui_status",
+        "Confirm Phase 3 _cu_wrapper_run + _cu_wrapper_pause_after_result are present",
+        "Audit live feed for CU_PAUSED_* events instead of raw CU_START/STOP pairs"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Letting LaunchLuna respawn worker_cu while in churn",
+        "Removing the stop flag without inspecting cause"
+      ],
+      "verification_commands": [
+        "tail -200 logs/luna_live_feed.jsonl | grep CU_",
+        "cat memory/continues_update_state.json"
+      ],
+      "rollback_or_safety_rule": "Freeze first, inspect, then resume via memory/continues_update.resume_once after the cause is understood.",
+      "related_files": [
+        "worker.py",
+        "LaunchLuna.pyw",
+        "memory/continues_update.stop",
+        "memory/continues_update.resume_once"
+      ],
+      "approval_tier_required": 3,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "dirty_core_gate",
+      "title": "CU paused because tracked core files are dirty",
+      "failure_class": "gate_blocked",
+      "severity": "low",
+      "tags": ["cu", "gate", "dirty_core", "git"],
+      "detection_signals": [
+        "ui_status: paused_dirty_core",
+        "launcher event: paused_gate reason=dirty_core_files",
+        "git status --porcelain --untracked-files=no shows tracked-modified core files"
+      ],
+      "likely_causes": [
+        "operator has uncommitted edits in core files",
+        "Luna's earlier autonomous edit hasn't been reviewed yet"
+      ],
+      "safe_first_actions": [
+        "Run git status --porcelain --untracked-files=no -- <core file list>",
+        "Review each dirty file's diff",
+        "Commit, revert, or ask operator before resuming"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Bypassing the dirty-core gate",
+        "Forcing CU to overwrite operator-uncommitted edits"
+      ],
+      "verification_commands": [
+        "git status --short",
+        "git diff --stat"
+      ],
+      "rollback_or_safety_rule": "git checkout -- <file> reverts; commit if the change is wanted.",
+      "related_files": [
+        "LaunchLuna.pyw",
+        "worker.py",
+        "memory/continues_update_state.json"
+      ],
+      "approval_tier_required": 2,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "stale_status_file",
+      "title": "Status file lies about current state",
+      "failure_class": "truthfulness",
+      "severity": "medium",
+      "tags": ["status", "truthful", "ui", "stale"],
+      "detection_signals": [
+        "bridge state=processing but last_event_at older than 5 minutes",
+        "ui_status=paused_dirty_core but tree is clean and pause_reason is empty",
+        "verifier 'Bridge processing-stuck (>30 min stale)'"
+      ],
+      "likely_causes": [
+        "stale persisted dirty_targets carried across cycles",
+        "bridge heartbeat thread died",
+        "status writer lost its write lock"
+      ],
+      "safe_first_actions": [
+        "Cross-check status against luna_live_feed.jsonl tail",
+        "Inspect process state via Get-CimInstance for the claimed PID",
+        "Trigger a one-shot CU refresh via memory/continues_update.resume_once after freeze"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Reporting running_real_job without a fresh signal",
+        "Editing the verifier to hide the staleness"
+      ],
+      "verification_commands": [
+        "cat logs/aider_bridge_status.json",
+        "cat memory/continues_update_state.json",
+        "Luna_Post_Repair_Verify.ps1"
+      ],
+      "rollback_or_safety_rule": "Truth is the ground state; never lie. Update _cu_compute_ui_status if priority is wrong.",
+      "related_files": [
+        "worker.py",
+        "aider_bridge.py",
+        "SurgeApp_Claude_Terminal.py"
+      ],
+      "approval_tier_required": 2,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "duplicate_process_false_positive",
+      "title": "Verifier flags parent/child Python launcher pair as duplicates",
+      "failure_class": "process_classification",
+      "severity": "info",
+      "tags": ["verifier", "process", "windows", "launcher"],
+      "detection_signals": [
+        "Luna_Post_Repair_Verify.ps1: 'duplicate storm' for worker_main with physical=2",
+        "Get-CimInstance shows one parent + one child process for same script"
+      ],
+      "likely_causes": [
+        "Windows Python launcher (pythonw.exe) spawns a child interpreter that shows the same script in command line",
+        "verifier counts physical PIDs without parent/child collapse"
+      ],
+      "safe_first_actions": [
+        "Use logical-role counting (parent/child pair = 1 logical)",
+        "Confirm via Test-InvokesScript regex (excludes -m aider) before flagging as duplicate"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Killing the child interpreter — it IS the running service"
+      ],
+      "verification_commands": [
+        "Get-CimInstance Win32_Process | Select ProcessId, ParentProcessId, CommandLine"
+      ],
+      "rollback_or_safety_rule": "No action; this is a classification fix, not a real duplicate.",
+      "related_files": [
+        "Luna_Post_Repair_Verify.ps1",
+        "luna_guardian.py"
+      ],
+      "approval_tier_required": 0,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "ollama_unavailable",
+      "title": "Ollama API not responding",
+      "failure_class": "external_service_down",
+      "severity": "high",
+      "tags": ["ollama", "api", "model", "infrastructure"],
+      "detection_signals": [
+        "GET /api/tags returns non-200",
+        "ConnectionRefusedError to 127.0.0.1:11434",
+        "OLLAMA_RECOVER live-feed event",
+        "OLLAMA_UNRESPONSIVE event"
+      ],
+      "likely_causes": [
+        "ollama serve is not running",
+        "ollama process alive but port-stuck (rare)",
+        "VRAM exhausted and model unable to load"
+      ],
+      "safe_first_actions": [
+        "Test-Path ollama.exe",
+        "Probe http://127.0.0.1:11434/api/tags via Invoke-WebRequest",
+        "Let luna_guardian._recover_ollama handle the restart per cooldown",
+        "Check VRAM via /api/ps if a model is loaded"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Switching to a cloud API silently",
+        "Killing ollama mid-load (data loss risk)"
+      ],
+      "verification_commands": [
+        "Invoke-WebRequest http://127.0.0.1:11434/api/tags",
+        "Invoke-WebRequest http://127.0.0.1:11434/api/ps"
+      ],
+      "rollback_or_safety_rule": "Local-only. Never silently swap to a cloud endpoint.",
+      "related_files": [
+        "luna_guardian.py",
+        "aider_bridge.py"
+      ],
+      "approval_tier_required": 2,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "ui_running_but_no_work",
+      "title": "UI claims running but no real work is progressing",
+      "failure_class": "ui_truthfulness",
+      "severity": "medium",
+      "tags": ["ui", "truthful", "live_feed", "status"],
+      "detection_signals": [
+        "terminal badge: ⠹ AIDER · ... but no aider_bridge.log entries for >5 min",
+        "ui_status=running_real_job but cycles counter not advancing",
+        "live feed silent for >120s while bridge state=processing"
+      ],
+      "likely_causes": [
+        "bridge heartbeat thread dead",
+        "model is stuck in slow generation but appears alive",
+        "live feed file rotated and reader lost track"
+      ],
+      "safe_first_actions": [
+        "Inspect logs/aider_bridge_status.json elapsed_seconds + last_event_at",
+        "Tail logs/luna_live_feed.jsonl",
+        "Check memory/continues_update_state.json cycles + last_cycle_at"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Trusting the UI badge without backing files",
+        "Force-killing services without checking the bridge heartbeat first"
+      ],
+      "verification_commands": [
+        "Get-Content logs/luna_live_feed.jsonl -Tail 20",
+        "cat logs/aider_bridge_status.json"
+      ],
+      "rollback_or_safety_rule": "Show truthful status (paused/blocked/idle/stalled) immediately; the operator decides next step.",
+      "related_files": [
+        "SurgeApp_Claude_Terminal.py",
+        "logs/luna_live_feed.jsonl",
+        "logs/aider_bridge_status.json"
+      ],
+      "approval_tier_required": 1,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "oversized_runtime_logs",
+      "title": "Runtime log/memory file is dirtying git or filling disk",
+      "failure_class": "log_growth",
+      "severity": "low",
+      "tags": ["logs", "memory", "telemetry", "disk"],
+      "detection_signals": [
+        "memory/nightly_updates.jsonl > 100 MB",
+        "logs/luna_live_feed.jsonl growing without rotation",
+        "git status repeatedly shows runtime telemetry as modified"
+      ],
+      "likely_causes": [
+        "telemetry file is tracked by git and appended every cycle",
+        "no log rotation policy in place"
+      ],
+      "safe_first_actions": [
+        "Add the runtime path to .gitignore",
+        "git rm --cached <path> (NOT delete from disk)",
+        "Plan a daily compaction job that summarizes into Phase 5D memory index"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Deleting or truncating memory/log files",
+        "Moving runtime telemetry out of memory/ or logs/"
+      ],
+      "verification_commands": [
+        "git status --short",
+        "Get-Item <path> | Select-Object Length"
+      ],
+      "rollback_or_safety_rule": "Files are kept on disk; only the git index is updated.",
+      "related_files": [
+        ".gitignore",
+        "memory/nightly_updates.jsonl",
+        "memory/nightly_updates.md",
+        "logs/luna_live_feed.jsonl"
+      ],
+      "approval_tier_required": 1,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "unsafe_package_install_request",
+      "title": "Unapproved package install proposal",
+      "failure_class": "supply_chain_risk",
+      "severity": "high",
+      "tags": ["install", "pip", "winget", "npm", "supply_chain"],
+      "detection_signals": [
+        "diff or plan contains 'pip install', 'winget install', 'npm install', 'requirements.txt' addition",
+        "new top-level dependency without operator approval"
+      ],
+      "likely_causes": [
+        "an autonomous plan tried to bring in a new dependency",
+        "a repair playbook was misclassified as Tier-3 auto-apply"
+      ],
+      "safe_first_actions": [
+        "Block the install at the upgrade gate",
+        "Create a package proposal in memory/luna_package_proposals.json (not yet built)",
+        "Ask operator with rationale, version, and risk class"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Running the install before approval",
+        "Disabling the package allowlist"
+      ],
+      "verification_commands": [
+        "pip list",
+        "git diff -- requirements.txt"
+      ],
+      "rollback_or_safety_rule": "If installed by accident, pip uninstall and revert requirements.txt.",
+      "related_files": [
+        "requirements.txt",
+        ".gitignore"
+      ],
+      "approval_tier_required": 3,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    },
+    {
+      "playbook_id": "broad_refactor_or_architecture_drift",
+      "title": "Broad refactor or architecture replacement detected",
+      "failure_class": "architecture_drift",
+      "severity": "critical",
+      "tags": ["refactor", "architecture", "drift", "identity"],
+      "detection_signals": [
+        "diff > 200 lines across multiple core files",
+        "new top-level service or framework module",
+        "core file replaced rather than edited",
+        "personality, identity, or goals files modified",
+        "missing file on the curated module list with no replacement entry"
+      ],
+      "likely_causes": [
+        "an overzealous autonomous plan attempted a wide rewrite",
+        "operator-supplied prompt that asks for a redesign was applied automatically"
+      ],
+      "safe_first_actions": [
+        "Block at the upgrade gate (Phase 5F)",
+        "Require an operator-approved planned-change ledger row",
+        "Split the change into per-file commits with rollback paths",
+        "Restate Luna's current goal and confirm no drift before any apply"
+      ],
+      "unsafe_actions_to_avoid": [
+        "Replacing worker.py / aider_bridge.py / luna_guardian.py / LaunchLuna.pyw",
+        "Editing personality/identity/goals files without approval",
+        "Mass-rewriting luna_modules in one cycle"
+      ],
+      "verification_commands": [
+        "git diff --stat",
+        "git diff -- <file>"
+      ],
+      "rollback_or_safety_rule": "Reject the plan. Revert from backups/<phase>/<file>.bak. Open a planning prompt instead.",
+      "related_files": [
+        "worker.py",
+        "aider_bridge.py",
+        "luna_guardian.py",
+        "LaunchLuna.pyw",
+        "SurgeApp_Claude_Terminal.py",
+        "luna_modules/luna_hygiene.py",
+        "luna_modules/luna_paths.py",
+        "luna_modules/luna_routing.py",
+        "luna_modules/luna_state.py"
+      ],
+      "approval_tier_required": 4,
+      "source": "phase5e_seed",
+      "updated_at": "2026-05-02"
+    }
+  ]
+}
