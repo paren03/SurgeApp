@@ -54,10 +54,12 @@ OLLAMA_API_BASE = os.environ.get("OLLAMA_API_BASE", "http://127.0.0.1:11434").rs
 OLLAMA_TAGS_URL = f"{OLLAMA_API_BASE}/api/tags"
 MAX_UNSCOPED_TARGET_BYTES = int(os.environ.get("LUNA_AIDER_MAX_UNSCOPED_BYTES", "120000"))
 # Hard cap: files larger than this NEVER get sent to aider, scope or no scope.
-# Aider's --file always sends the whole file to the model; with qwen2.5-coder:7b
-# and num_ctx=8192 (~32 KB of code), files above ~200 KB will always overflow,
-# wasting 5–15 minutes per attempt. Reject these BEFORE running aider.
-MAX_TARGET_FILE_BYTES = int(os.environ.get("LUNA_AIDER_MAX_TARGET_BYTES", "200000"))
+# Aider's --file always sends the whole file to the model. With qwen2.5-coder:7b
+# at num_ctx=16384 (~64 KB of code), the practical safe ceiling is ~50 KB once
+# you account for the system prompt, repo map, and chat history overhead.
+# Files above this cap silently consume 5–15 min before context overflow,
+# so reject them BEFORE running aider.
+MAX_TARGET_FILE_BYTES = int(os.environ.get("LUNA_AIDER_MAX_TARGET_BYTES", "50000"))
 MAX_FAILED_PER_CYCLE = 5
 MAX_NOOP_PER_CYCLE = 5
 MAX_JOBS_PER_CYCLE = 12
@@ -334,12 +336,12 @@ def _append_job_log(task_id: str, message: str) -> None:
 def _aider_subprocess_env(workspace: Path | None = None) -> Dict[str, str]:
     env = dict(os.environ)
     env["OLLAMA_API_BASE"] = OLLAMA_API_BASE
-    # qwen2.5-coder:7b supports 32K context. With Q4_K quantization the model
-    # is ~4 GB; KV cache for 8192 tokens at fp16 adds ~50 MB. Safe on any GPU
-    # that loads the model at all. 8192 ≈ 32 KB of code which lets aider work
-    # on most luna_modules/ files in one shot. Files > MAX_TARGET_FILE_BYTES
-    # are rejected by _check_target_size() BEFORE aider runs.
-    env.setdefault("OLLAMA_NUM_CTX", "8192")
+    # qwen2.5-coder:7b natively supports 32K context. KV cache at fp16 for
+    # 16384 tokens adds ~80 MB on top of the ~4 GB Q4_K model — trivial on
+    # any GPU that runs the model at all. 16384 ≈ 64 KB of code, comfortably
+    # covering all luna_modules/ files. Files > MAX_TARGET_FILE_BYTES (50 KB)
+    # are rejected by _target_scope_allowed() BEFORE aider ever starts.
+    env.setdefault("OLLAMA_NUM_CTX", "16384")
     env.setdefault("PYTHONIOENCODING", "utf-8")
     env.setdefault("PYTHONUTF8", "1")
     if workspace is not None:
