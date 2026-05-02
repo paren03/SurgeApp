@@ -213,3 +213,10 @@ memory/luna_soak_verdict_report.json
 memory/luna_soak_verdict_report.md
 memory/luna_live_enforcement_readiness_status.json
 memory/luna_live_enforcement_readiness_status.md
+
+# Phase 6A: regenerable schema-review outputs. Tracked source of truth is the optional
+# memory/luna_schema_review.schema.json. Runtime artifacts below are rebuilt on demand
+# by luna_schema_review.
+memory/luna_schema_review_report.json
+memory/luna_schema_review_report.md
+memory/luna_schema_policy_inventory.json
