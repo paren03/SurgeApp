@@ -140,22 +140,16 @@ def classify_autonomy_artifact(path: Path) -> Dict[str, Any]:
     text = _safe_read_text(path)
     payload = _safe_read_json(path) if path.suffix.lower() == ".json" else {}
     blob = "\n".join([text, json.dumps(payload, ensure_ascii=True)])
-    no_diff = _contains_any(blob, NO_DIFF_MARKERS)
-    failed = _contains_any(blob, FAILURE_MARKERS)
+    no_diff = is_no_diff(blob)
+    failed = is_failure(blob)
+
     status = str(payload.get("status") or payload.get("final_status") or "").lower()
     if "failed" in status or "timeout" in status:
         failed = True
     if status in {"no_diff", "empty_diff", "no_changes"}:
         no_diff = True
 
-    recommended_action = "allow"
-    reason = "artifact does not match no-diff or failure markers"
-    if no_diff:
-        recommended_action = "quarantine"
-        reason = "no_diff_detected"
-    elif failed:
-        recommended_action = "quarantine"
-        reason = "failure_detected"
+    recommended_action, reason = determine_action(no_diff, failed)
 
     return {
         "path": str(path),
@@ -167,6 +161,26 @@ def classify_autonomy_artifact(path: Path) -> Dict[str, Any]:
         "recommended_action": recommended_action,
         "reason": reason,
     }
+
+def is_no_diff(blob: str) -> bool:
+    return _contains_any(blob, NO_DIFF_MARKERS)
+
+def is_failure(blob: str) -> bool:
+    return _contains_any(blob, FAILURE_MARKERS)
+
+from typing import Tuple
+
+def determine_action(no_diff: bool, failed: bool) -> Tuple[str, str]:
+    recommended_action = "allow"
+    reason = "artifact does not match no-diff or failure markers"
+    if no_diff:
+        recommended_action = "quarantine"
+        reason = "no_diff_detected"
+    elif failed:
+        recommended_action = "quarantine"
+        reason = "failure_detected"
+
+    return recommended_action, reason
 
 
 def evaluate_done_policy(job: Dict[str, Any]) -> Dict[str, Any]:

@@ -418,15 +418,13 @@ def _verify_code_hygiene(source_path: str) -> Dict[str, Any]:
     result = _create_verification_result(source_path)
     path = Path(source_path)
     if not path.exists():
-        result["violations"].append(TARGET_FILE_DOES_NOT_EXIST)
-        return result
+        return _add_violation(result, TARGET_FILE_DOES_NOT_EXIST)
 
     content = safe_read_text(path)
     try:
         tree = ast.parse(content)
     except SyntaxError as exc:
-        result["violations"].append(f"hygiene parse failed: {exc}")
-        return result
+        return _add_violation(result, f"hygiene parse failed: {exc}")
 
     visitor = HygieneVisitor(str(path))
     visitor.visit(tree)
@@ -434,6 +432,10 @@ def _verify_code_hygiene(source_path: str) -> Dict[str, Any]:
     result["module_imports"] = list(module_gate.get("imports") or [])
     result["module_violations"] = list(module_gate.get("violations") or [])
     result["violations"] += visitor.violations
+    return result
+
+def _add_violation(result: Dict[str, Any], violation: str) -> Dict[str, Any]:
+    result["violations"].append(violation)
     return result
 
 def _create_verification_result(target_file: str) -> Dict[str, Any]:

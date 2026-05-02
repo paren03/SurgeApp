@@ -27,3 +27,5 @@ Thumbs.db
 Desktop.ini
 
 shred_test_document.txt
+.aider*
+.env

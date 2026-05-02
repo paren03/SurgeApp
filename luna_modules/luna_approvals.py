@@ -54,6 +54,56 @@ def count_pending_approvals() -> int:
     return len([item for item in pending if item.get("status") == "PENDING_APPROVAL"])
 
 
+def expire_stale_approvals(max_age_hours: float = 72.0) -> int:
+    """Auto-deny PENDING_APPROVAL items older than ``max_age_hours``.
+
+    Stale approvals block the heartbeat (``approval_pending`` counter) and
+    make the monitor look like Luna is "stalled" when she is actually idle
+    waiting on a request the user already moved past. Called from the
+    worker heartbeat so the queue self-cleans without manual intervention.
+    Returns the number expired. Safe to call frequently — it only writes
+    when something actually expires.
+    """
+    queue = safe_read_json(LUNA_APPROVAL_QUEUE_PATH, default={"pending": [], "history": []})
+    pending = queue.get("pending", [])
+    if not pending:
+        return 0
+    now = datetime.now()
+    cutoff_seconds = max_age_hours * 3600.0
+    kept = []
+    expired = []
+    for item in pending:
+        if item.get("status") != "PENDING_APPROVAL":
+            kept.append(item)
+            continue
+        created = str(item.get("created_at") or "")
+        try:
+            created_dt = datetime.fromisoformat(created)
+        except Exception:
+            kept.append(item)
+            continue
+        age = (now - created_dt).total_seconds()
+        if age >= cutoff_seconds:
+            item["status"] = "DENIED"
+            item["resolved_at"] = now_iso()
+            item["resolution_source"] = f"auto_expired_after_{int(max_age_hours)}h"
+            expired.append(item)
+        else:
+            kept.append(item)
+    if not expired:
+        return 0
+    queue["pending"] = kept
+    queue.setdefault("history", []).extend(expired)
+    write_json_atomic(LUNA_APPROVAL_QUEUE_PATH, queue)
+    for item in expired:
+        _call_speak(
+            f"I expired a stale approval ({item.get('approval_id', '?')}, "
+            f"{int(max_age_hours)}h old) so the queue stops blocking.",
+            mood="steady",
+        )
+    return len(expired)
+
+
 def enqueue_approval(task: Dict[str, Any], reason: str) -> str:
     queue = safe_read_json(LUNA_APPROVAL_QUEUE_PATH, default={"pending": [], "history": []})
     approval_id = task.get("approval_id") or f"approval_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"

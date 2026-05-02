@@ -84,4 +84,4 @@ class TestContinuesUpdatePolicy(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main(timeout=30)
+    unittest.main()

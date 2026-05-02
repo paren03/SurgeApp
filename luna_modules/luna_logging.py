@@ -54,6 +54,7 @@ except Exception:
             with open(worker_log_path, "a", encoding="utf-8") as handle:
                 handle.write(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {line}\n")
         except Exception:
+            # swallowed: this block is a fallback for telemetry errors and can be ignored if telemetry fails
             pass
 
     def telemetry_emit_log(message, worker_log_path, layout_cb=None):
