@@ -167,3 +167,11 @@ memory/luna_deterministic_executor_audit.jsonl
 memory/luna_executor_dispatch_preview.json
 logic_updates/deterministic_executor_*/
 backups/deterministic_executor_*/
+
+# Phase 5S: regenerable guardian readiness outputs. Tracked sources of truth are
+# memory/luna_guardian_readiness.schema.json and memory/luna_guardian_readiness_policy.json.
+# Runtime artifacts are rebuilt on demand by luna_guardian_readiness.
+memory/luna_guardian_readiness_report.json
+memory/luna_guardian_readiness_report.md
+memory/luna_guardian_enforcement_readiness.json
+memory/luna_guardian_enforcement_soak.jsonl

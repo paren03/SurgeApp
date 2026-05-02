@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Guardian Readiness Schema",
+  "description": "Phase 5RS: advisory soak readiness status schema for Guardian enforcement readiness assessment.",
+  "definitions": {
+    "readiness_action": {
+      "type": "object",
+      "required": ["action_id", "action_type", "risk_tier", "safe_to_execute_now"],
+      "properties": {
+        "action_id": {"type": "string"},
+        "action_type": {"type": "string"},
+        "risk_tier": {"type": "integer", "minimum": 0, "maximum": 5},
+        "receipt_id": {"type": "string"},
+        "target_files": {"type": "array", "items": {"type": "string"}},
+        "safe_to_execute_now": {"type": "boolean", "const": false},
+        "would_allow": {"type": "boolean"},
+        "would_block": {"type": "boolean"},
+        "needs_human": {"type": "boolean"},
+        "non_delegable": {"type": "boolean"},
+        "reason": {"type": "string"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "guardian_readiness_status": {
+      "type": "object",
+      "required": [
+        "schema_version", "generated_at", "advisory_only",
+        "guardian_enforcing_live", "ready_for_live_guardian_enforcement"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "generated_at": {"type": "string"},
+        "advisory_only": {"type": "boolean", "const": true},
+        "guardian_enforcing_live": {"type": "boolean", "const": false},
+        "ready_for_live_guardian_enforcement": {},
+        "overall_status": {
+          "type": "string",
+          "enum": ["healthy", "watch", "blocked", "unknown"]
+        },
+        "receipt_enforcer_status": {"type": "string"},
+        "executor_status": {"type": "string"},
+        "resource_mode": {"type": "string"},
+        "scorecard_readiness": {"type": "string"},
+        "pending_action_count": {"type": "integer", "minimum": 0},
+        "would_allow_count": {"type": "integer", "minimum": 0},
+        "would_block_count": {"type": "integer", "minimum": 0},
+        "needs_human_count": {"type": "integer", "minimum": 0},
+        "non_delegable_count": {"type": "integer", "minimum": 0},
+        "actions": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/readiness_action"}
+        },
+        "required_before_live_enforcement": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "recommended_next_action": {"type": "string"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

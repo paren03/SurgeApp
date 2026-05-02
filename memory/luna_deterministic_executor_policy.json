@@ -3,6 +3,7 @@
   "description": "Phase 5R deterministic sandbox patch executor policy. sandbox_only is always true. safe_to_apply_real_project is always false in Phase 5R.",
   "sandbox_only": true,
   "safe_to_apply_real_project_always_false_in_phase5r": true,
+  "safe_to_apply_real_project_always_false_in_phase5rs": true,
   "allow_real_apply": false,
   "allowed_operations": [
     "replace_text",

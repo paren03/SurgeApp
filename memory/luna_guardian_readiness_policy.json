@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "description": "Phase 5RS Guardian Readiness advisory soak policy. advisory_only is always true. guardian_enforcing_live is always false. Phase 5RS never enables live enforcement.",
+  "advisory_only": true,
+  "guardian_enforcing_live": false,
+  "ready_for_live_guardian_enforcement_always_false_in_phase5rs": true,
+  "soak_cycles_default": 3,
+  "soak_sleep_seconds_default": 1,
+  "required_before_live_enforcement": [
+    "24_hour_advisory_soak",
+    "manual_review_of_guardian_status_schema",
+    "no_verifier_failures",
+    "no_resource_blockers",
+    "no_receipt_mismatch_cases",
+    "explicit_serge_approval"
+  ],
+  "generated_report_outputs": [
+    "memory/luna_guardian_readiness_report.json",
+    "memory/luna_guardian_readiness_report.md",
+    "memory/luna_guardian_enforcement_readiness.json",
+    "memory/luna_guardian_enforcement_soak.jsonl"
+  ]
+}
