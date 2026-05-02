@@ -151,3 +151,9 @@ memory/luna_council_enforcer_report.json
 memory/luna_council_enforcer_report.md
 memory/luna_council_enforcer_audit.jsonl
 memory/luna_approval_enforcement_preview.json
+
+# Phase 5Q runtime artifacts — rebuilt on demand by luna_limited_autonomy approval routing.
+memory/luna_routine_approval_requests.jsonl
+memory/luna_routine_approval_report.json
+memory/luna_routine_approval_report.md
+memory/luna_limited_autonomy_approval_state.json

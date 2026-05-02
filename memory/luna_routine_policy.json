@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Phase 5K2 limited routine autonomy policy. Replaces 'overnight' framing with 'routine' — Luna runs the same safety rules day or night. Canonical source of truth for limited routine autonomy. memory/luna_overnight_policy.json is kept as a backwards-compatible legacy alias.",
+  "description": "Phase 5K2 + 5Q limited routine autonomy policy. Replaces 'overnight' framing with 'routine' — Luna runs the same safety rules day or night. Canonical source of truth for limited routine autonomy. memory/luna_overnight_policy.json is kept as a backwards-compatible legacy alias.",
   "default_mode": "read_only",
   "max_cycles": 12,
   "sleep_seconds": 300,
@@ -10,6 +10,16 @@
   "allow_installs": false,
   "allow_process_kill": false,
   "allow_external_network": false,
+  "approval_routing_enabled": true,
+  "approval_routing_phase": "5Q",
+  "allow_execution_from_receipt": false,
+  "route_forbidden_code_tasks_to_approval": true,
+  "approval_router_module": "luna_modules.luna_approval_router",
+  "approval_request_outputs": [
+    "memory/luna_routine_approval_requests.jsonl",
+    "memory/luna_routine_approval_report.json",
+    "memory/luna_routine_approval_report.md"
+  ],
   "allowed_task_classes": [
     "read_only_health_check",
     "file_map_refresh",

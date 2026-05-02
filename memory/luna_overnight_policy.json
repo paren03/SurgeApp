@@ -11,6 +11,19 @@
   "allow_installs": false,
   "allow_process_kill": false,
   "allow_external_network": false,
+  "approval_routing_enabled": true,
+  "approval_routing_phase": "5Q",
+  "allow_execution_from_receipt": false,
+  "route_forbidden_code_tasks_to_approval": true,
+  "approval_router_module": "luna_modules.luna_approval_router",
+  "approval_request_outputs": [
+    "memory/luna_routine_approval_requests.jsonl",
+    "memory/luna_routine_approval_report.json",
+    "memory/luna_routine_approval_report.md"
+  ],
+  "routine_autonomy": {
+    "stop": "memory/routine_autonomy.stop"
+  },
   "allowed_task_classes": [
     "read_only_health_check",
     "file_map_refresh",

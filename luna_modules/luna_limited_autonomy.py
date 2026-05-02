@@ -691,6 +691,329 @@ def evaluate_task_with_gate(
         }
 
 
+# ---------- approval routing (Phase 5Q) ----------
+
+_DELEGABLE_CODE_EDIT_CLASSES: frozenset = frozenset({
+    "code_edit", "aider_patch", "multi_file_refactor",
+    "worker_edit", "guardian_edit", "bridge_edit", "launcher_edit",
+    "continues_update_start",
+})
+
+_NON_DELEGABLE_FORBIDDEN_CLASSES: frozenset = frozenset({
+    "package_install", "external_network", "memory_delete", "log_delete",
+    "queue_delete", "git_reset", "git_clean", "git_push", "process_kill",
+})
+
+_HIGH_RISK_CORE_TASK_CLASSES: frozenset = frozenset({
+    "worker_edit", "guardian_edit", "bridge_edit", "launcher_edit",
+})
+
+_HIGH_RISK_CORE_FILES_LOWER: frozenset = frozenset({
+    "worker.py", "aider_bridge.py", "luna_guardian.py", "launchluna.pyw",
+    "surgeapp_claude_terminal.py", "luna_start.pyw", "director_agent.py",
+    "luna_modules/luna_hygiene.py", "luna_modules/luna_paths.py",
+    "luna_modules/luna_routing.py", "luna_modules/luna_state.py",
+})
+
+
+def approval_router_available() -> bool:
+    """Return True if luna_modules.luna_approval_router can be imported."""
+    try:
+        import luna_modules.luna_approval_router  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
+def _task_class_to_action_type(
+    task_class: str,
+    target_files: list | None = None,
+) -> str:
+    """Map a forbidden task class to an approval-router action_type string."""
+    if task_class in _HIGH_RISK_CORE_TASK_CLASSES or task_class == "continues_update_start":
+        return "high_risk_core_edit"
+    if task_class in _NON_DELEGABLE_FORBIDDEN_CLASSES:
+        return "non_delegable"
+    if task_class in {"code_edit", "aider_patch", "multi_file_refactor"}:
+        for tf in (target_files or []):
+            if tf.replace("\\", "/").lower() in _HIGH_RISK_CORE_FILES_LOWER:
+                return "high_risk_core_edit"
+        return "medium_code_edit"
+    return "unknown"
+
+
+def build_routine_approval_request(
+    project_dir: Any,
+    goal: str,
+    task_class: str,
+    target_files: list | None = None,
+    requested_action: str = "",
+) -> dict:
+    """Build an approval-router request dict for a forbidden task class.
+
+    Does NOT call the router, does NOT write files. Returns a request dict
+    suitable for route_blocked_task_for_approval. safe_to_execute_now=False always.
+    """
+    pdir = Path(project_dir)
+    tfiles = list(target_files or [])
+    action_type = requested_action if requested_action else _task_class_to_action_type(task_class, tfiles)
+    request_id = f"routine_{uuid.uuid4().hex[:10]}"
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "request_id": request_id,
+        "created_at": now_iso(),
+        "source": "luna_limited_autonomy",
+        "task_class": task_class,
+        "goal": str(goal or ""),
+        "target_files": tfiles,
+        "requested_action": action_type,
+        "planned_change_summary": (
+            f"Routine autonomy blocked task_class={task_class!r}; routing for approval."
+        ),
+        "safe_to_execute_now": False,
+        "project_dir": str(pdir).replace("\\", "/"),
+        "metadata": {"phase": "5Q", "routed_by": "luna_limited_autonomy"},
+    }
+
+
+def route_blocked_task_for_approval(
+    project_dir: Any,
+    goal: str,
+    task_class: str,
+    target_files: list | None = None,
+    dry_run: bool = True,
+) -> dict:
+    """Route a blocked forbidden task through the approval router (advisory only).
+
+    Degrades gracefully if router unavailable. safe_to_execute_now=False always.
+    """
+    pdir = Path(project_dir)
+    tfiles = list(target_files or [])
+    action_type = _task_class_to_action_type(task_class, tfiles)
+    routine_request = build_routine_approval_request(pdir, goal, task_class, tfiles)
+
+    if not approval_router_available():
+        return {
+            "routed": False,
+            "approval_routing_status": "router_unavailable",
+            "task_class": task_class,
+            "goal": goal,
+            "requested_action": action_type,
+            "target_files": tfiles,
+            "safe_to_execute_now": False,
+            "router_decision": "unknown",
+            "router_tier": 4,
+            "router_needs_human": True,
+            "router_non_delegable": action_type == "non_delegable",
+            "router_report": {},
+            "routine_request": routine_request,
+            "recommended_next_action": "router_unavailable -- human review required",
+            "notes": [
+                "luna_approval_router not available; manual review required.",
+                "safe_to_execute_now=False (Phase 5Q hard rule)",
+                "Execution remains blocked until future Guardian/Executor enforcement phases exist.",
+            ],
+        }
+
+    router_report: dict = {}
+    approval_routing_status = "router_unavailable"
+    router_decision = "unknown"
+    router_tier: int = 4
+    router_needs_human = True
+    router_non_delegable = action_type == "non_delegable"
+
+    try:
+        import luna_modules.luna_approval_router as _router
+        router_req = _router.build_router_request(
+            goal=goal,
+            target_files=tfiles,
+            requested_action=action_type,
+            source="luna_limited_autonomy",
+            task_id=routine_request["request_id"],
+            planned_change_summary=(
+                f"Routine autonomy blocked task_class={task_class!r}; routing for council review."
+            ),
+        )
+        router_report = _router.route_approval_request(
+            pdir,
+            router_req,
+            dry_run=dry_run,
+            write_report=False,
+            write_receipt=False,
+        )
+        approval_routing_status = "routed"
+        router_decision = str(router_report.get("decision", "unknown"))
+        router_tier = int(router_report.get("tier", 4))
+        router_needs_human = bool(router_report.get("needs_human", True))
+        router_non_delegable = bool(router_report.get("non_delegable", router_non_delegable))
+    except Exception as e:
+        approval_routing_status = "router_error"
+        router_report = {"error": f"{type(e).__name__}:{str(e)[:200]}"}
+
+    return {
+        "routed": approval_routing_status == "routed",
+        "approval_routing_status": approval_routing_status,
+        "task_class": task_class,
+        "goal": goal,
+        "requested_action": action_type,
+        "target_files": tfiles,
+        "safe_to_execute_now": False,
+        "router_decision": router_decision,
+        "router_tier": router_tier,
+        "router_needs_human": router_needs_human,
+        "router_non_delegable": router_non_delegable,
+        "router_report": router_report,
+        "routine_request": routine_request,
+        "recommended_next_action": (
+            "approval_requested -- awaiting human or council review"
+            if approval_routing_status == "routed" else
+            "router_unavailable -- human review required"
+        ),
+        "notes": [
+            "safe_to_execute_now=False (Phase 5Q hard rule)",
+            f"approval_routing_status={approval_routing_status}",
+            "Execution remains blocked until future Guardian/Executor enforcement phases exist.",
+        ],
+    }
+
+
+def append_routine_approval_request(
+    project_dir: Any,
+    request_or_report: dict,
+    *,
+    dry_run: bool = False,
+) -> dict:
+    """Append a routing result to luna_routine_approval_requests.jsonl.
+
+    Skips in dry_run mode. safe_to_execute_now is always False in the row.
+    """
+    if dry_run:
+        return {"appended": False, "reason": "dry_run"}
+    pdir = Path(project_dir)
+    out_path = pdir / "memory" / "luna_routine_approval_requests.jsonl"
+    row: dict = {
+        "ts": now_iso(),
+        "request_id": (
+            (request_or_report.get("routine_request") or {}).get("request_id")
+            or request_or_report.get("request_id")
+            or make_cycle_id("req")
+        ),
+        "task_class": request_or_report.get("task_class", ""),
+        "goal": request_or_report.get("goal", ""),
+        "requested_action": request_or_report.get("requested_action", ""),
+        "target_files": request_or_report.get("target_files", []),
+        "approval_routing_status": request_or_report.get("approval_routing_status", ""),
+        "router_decision": request_or_report.get("router_decision", ""),
+        "router_needs_human": request_or_report.get("router_needs_human", True),
+        "safe_to_execute_now": False,
+    }
+    try:
+        _ensure_under(out_path, pdir.resolve())
+        append_jsonl(out_path, row)
+        return {"appended": True, "path": str(out_path)}
+    except Exception as e:
+        return {"appended": False, "error": f"{type(e).__name__}:{str(e)[:200]}"}
+
+
+def summarize_approval_routing(
+    routing_results: list,
+) -> dict:
+    """Summarize a list of routing results into the approval_routing report block."""
+    router_ok = approval_router_available()
+    if not routing_results:
+        return {
+            "enabled": True,
+            "router_available": router_ok,
+            "requests_created": 0,
+            "reports_written": 0,
+            "needs_human_count": 0,
+            "blocked_count": 0,
+            "approval_request_paths": [],
+            "notes": [],
+        }
+    needs_human = sum(
+        1 for r in routing_results
+        if r.get("router_needs_human") or not r.get("routed")
+    )
+    blocked = sum(
+        1 for r in routing_results
+        if r.get("router_decision") in ("blocked", "needs_human") or not r.get("routed")
+    )
+    paths = [r["appended_path"] for r in routing_results if r.get("appended_path")]
+    notes: list = []
+    for r in routing_results:
+        status = r.get("approval_routing_status", "")
+        tc = r.get("task_class", "")
+        if status == "router_unavailable":
+            notes.append(f"{tc}: router_unavailable")
+        elif status == "routed":
+            notes.append(f"{tc}: routed -> {r.get('router_decision', '?')} (safe_to_execute_now=False)")
+        else:
+            notes.append(f"{tc}: {status}")
+    return {
+        "enabled": True,
+        "router_available": router_ok,
+        "requests_created": len(routing_results),
+        "reports_written": len(paths),
+        "needs_human_count": needs_human,
+        "blocked_count": blocked,
+        "approval_request_paths": paths,
+        "notes": notes[:10],
+    }
+
+
+def maybe_route_forbidden_task(
+    project_dir: Any,
+    goal: str,
+    task_class: str,
+    target_files: list | None = None,
+    dry_run: bool = True,
+) -> dict:
+    """Decide whether to route a forbidden task to the approval router or just block.
+
+    Phase 5Q routing rules:
+    - Delegable code-edit classes -> route to approval router if goal present.
+    - Non-delegable classes -> return blocked/needs_human report only.
+    - safe_to_execute_now=False always; no execution occurs.
+    """
+    tfiles = list(target_files or [])
+    if task_class in _DELEGABLE_CODE_EDIT_CLASSES and goal:
+        result = route_blocked_task_for_approval(
+            project_dir, goal, task_class, tfiles, dry_run=dry_run
+        )
+        if not dry_run:
+            append_res = append_routine_approval_request(project_dir, result, dry_run=False)
+            if append_res.get("appended"):
+                result["appended_path"] = append_res.get("path", "")
+        return result
+    return {
+        "routed": False,
+        "approval_routing_status": (
+            "non_delegable" if task_class in _NON_DELEGABLE_FORBIDDEN_CLASSES else "blocked_no_goal"
+        ),
+        "task_class": task_class,
+        "goal": goal,
+        "requested_action": _task_class_to_action_type(task_class, tfiles),
+        "target_files": tfiles,
+        "safe_to_execute_now": False,
+        "router_decision": "needs_human",
+        "router_needs_human": True,
+        "router_non_delegable": task_class in _NON_DELEGABLE_FORBIDDEN_CLASSES,
+        "router_report": {},
+        "routine_request": build_routine_approval_request(project_dir, goal, task_class, tfiles),
+        "recommended_next_action": (
+            "non_delegable -- human review required"
+            if task_class in _NON_DELEGABLE_FORBIDDEN_CLASSES else
+            "blocked -- provide goal for routing"
+        ),
+        "notes": [
+            "safe_to_execute_now=False (Phase 5Q hard rule)",
+            f"task_class={task_class!r} is {'non_delegable' if task_class in _NON_DELEGABLE_FORBIDDEN_CLASSES else 'blocked (no goal)'}",
+            "Execution remains blocked until future Guardian/Executor enforcement phases exist.",
+        ],
+    }
+
+
 # ---------- foundation task runners (read-only / generated artifacts) ----------
 
 
@@ -1101,7 +1424,11 @@ def run_limited_autonomy_cycle(
         if source_diff:
             blockers.append(f"source_files_modified: {source_diff}")
 
-        recommended = _recommend_next_actions(ctx, attempted, blockers)
+        # Phase 5Q: collect approval routing results (empty in normal read-only cycle).
+        routing_results: list[dict[str, Any]] = []
+        ar_summary = summarize_approval_routing(routing_results)
+
+        recommended = _recommend_next_actions(ctx, attempted, blockers, ar_summary)
 
         safe_overnight_readonly = (
             not blockers
@@ -1141,10 +1468,12 @@ def run_limited_autonomy_cycle(
             recommended_next_actions=recommended,
             safe_to_continue=(not blockers),
             safe_to_run_overnight_readonly=safe_overnight_readonly,
+            approval_routing_summary=ar_summary,
             notes=[
                 "Phase 5K + 5K2 limited routine autonomy cycle (read-only/generated-artifacts).",
                 "Same safety rules apply day or night — 'routine' supersedes 'overnight'.",
                 "safe_to_run_routine_code_edits (alias safe_to_run_overnight_code_edits) is hard-coded false until Phase 5L (Delegated AI Approval Council) is built.",
+                "Phase 5Q: approval routing enabled; code-edit proposals routed to approval router (safe_to_execute_now=False always).",
             ],
         )
 
@@ -1203,8 +1532,19 @@ def _build_report(
     safe_to_continue: bool,
     safe_to_run_overnight_readonly: bool,
     notes: list[str],
+    approval_routing_summary: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     safe_readonly = bool(safe_to_run_overnight_readonly)
+    _ar = approval_routing_summary if isinstance(approval_routing_summary, dict) else {
+        "enabled": True,
+        "router_available": False,
+        "requests_created": 0,
+        "reports_written": 0,
+        "needs_human_count": 0,
+        "blocked_count": 0,
+        "approval_request_paths": [],
+        "notes": [],
+    }
     return {
         "schema_version": SCHEMA_VERSION,
         "cycle_id": cycle_id,
@@ -1228,6 +1568,8 @@ def _build_report(
         # Phase 5K legacy aliases — kept identical to routine fields.
         "safe_to_run_overnight_readonly": safe_readonly,
         "safe_to_run_overnight_code_edits": False,
+        # Phase 5Q approval routing block.
+        "approval_routing": _ar,
         "notes": list(notes),
     }
 
@@ -1236,6 +1578,7 @@ def _recommend_next_actions(
     ctx: dict[str, Any],
     attempted: list[dict[str, Any]],
     blockers: list[str],
+    approval_routing_summary: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     if ctx.get("kill_switch_present"):
@@ -1248,12 +1591,30 @@ def _recommend_next_actions(
         out.append({"action": "review_aider_quarantine_top_5", "approval_required": False, "rationale": "Quarantine has accumulated."})
     if not attempted:
         out.append({"action": "rerun_cycle_after_blocker_resolution", "approval_required": False, "rationale": "No tasks ran this cycle."})
+    # Phase 5Q: surface approval routing status if any routing happened.
+    ar = approval_routing_summary or {}
+    if ar.get("requests_created", 0) > 0:
+        out.append({
+            "action": f"Approval requested for {ar['requests_created']} code-edit proposal(s)",
+            "approval_required": True,
+            "rationale": (
+                "Routine autonomy routed blocked code-edit task(s) to approval router. "
+                "Execution remains blocked until future Guardian/Executor enforcement phases exist. "
+                "safe_to_execute_now=False"
+            ),
+        })
+        if ar.get("needs_human_count", 0) > 0:
+            out.append({
+                "action": "review_human_required_approval_requests",
+                "approval_required": True,
+                "rationale": f"{ar['needs_human_count']} routed task(s) require human review.",
+            })
     out.append({
         "action": "wait_for_phase_5L_council_before_any_code_edits",
         "approval_required": True,
         "rationale": "Phase 5K2 limited routine autonomy does not delegate edits; Phase 5L Delegated AI Approval Council is the next planned phase.",
     })
-    return out[:8]
+    return out[:10]
 
 
 def _persist_cycle_artifacts(project_dir: Path, report: dict[str, Any]) -> None:
@@ -1460,7 +1821,7 @@ def self_test() -> int:
 
 def _cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Luna Limited Routine Autonomy controller (Phase 5K + 5K2)"
+        description="Luna Limited Routine Autonomy controller (Phase 5K + 5K2 + 5Q)"
     )
     parser.add_argument("--self-test", action="store_true")
     parser.add_argument("--plan", default=None, help="Build a cycle plan for the given goal and print it.")
@@ -1476,6 +1837,23 @@ def _cli(argv: list[str] | None = None) -> int:
     parser.add_argument("--print-report", action="store_true")
     parser.add_argument("--project-dir", default=str(_PROJECT_DIR_DEFAULT))
     parser.add_argument("--goal", default="Improve Luna safely (limited routine autonomy)")
+    # Phase 5Q: approval routing CLI.
+    parser.add_argument(
+        "--request-approval", default=None, metavar="GOAL",
+        help="Route a proposed code-edit task to the approval router (dry-run by default). Returns rc=0.",
+    )
+    parser.add_argument(
+        "--action", default="",
+        help="Action type for --request-approval (e.g. low_risk_additive, high_risk_core_edit, non_delegable).",
+    )
+    parser.add_argument(
+        "--target", default="",
+        help="Target file for --request-approval (relative path).",
+    )
+    parser.add_argument(
+        "--write-approval-report", action="store_true", default=False,
+        help="Append the routing result to luna_routine_approval_requests.jsonl (requires --request-approval).",
+    )
     args = parser.parse_args(argv)
 
     if args.self_test:
@@ -1483,6 +1861,52 @@ def _cli(argv: list[str] | None = None) -> int:
 
     pdir = Path(args.project_dir)
     pol = load_routine_policy(pdir)
+
+    # Phase 5Q: --request-approval routes a blocked code-edit proposal (dry-run by default).
+    if args.request_approval is not None:
+        goal_str = args.request_approval or args.goal
+        tgt = [args.target] if args.target else []
+        action_str = args.action or ""
+        # Infer task_class from action_str or default to code_edit.
+        _action_to_tc = {
+            "low_risk_additive": "code_edit",
+            "medium_code_edit": "code_edit",
+            "high_risk_core_edit": "code_edit",
+            "non_delegable": "memory_delete",
+        }
+        task_class_str = _action_to_tc.get(action_str, "code_edit")
+        # If target looks like a high-risk core file, use high_risk_core_edit action.
+        if tgt and tgt[0].replace("\\", "/").lower() in _HIGH_RISK_CORE_FILES_LOWER:
+            task_class_str = "code_edit"
+        do_write = bool(args.write_approval_report)
+        result = maybe_route_forbidden_task(
+            pdir, goal_str, task_class_str, tgt, dry_run=(not do_write)
+        )
+        # Override requested_action with explicit --action if given.
+        if action_str and action_str in (
+            "low_risk_additive", "medium_code_edit", "high_risk_core_edit",
+            "non_delegable", "unknown",
+        ):
+            result["requested_action"] = action_str
+            if result.get("routine_request"):
+                result["routine_request"]["requested_action"] = action_str
+        out = {
+            "ok": True,
+            "approval_routing_status": result.get("approval_routing_status"),
+            "task_class": result.get("task_class"),
+            "goal": result.get("goal"),
+            "requested_action": result.get("requested_action"),
+            "target_files": result.get("target_files"),
+            "safe_to_execute_now": False,
+            "router_decision": result.get("router_decision"),
+            "router_needs_human": result.get("router_needs_human"),
+            "recommended_next_action": result.get("recommended_next_action"),
+            "safe_to_run_routine_code_edits": False,
+            "safe_to_run_overnight_code_edits": False,
+            "notes": result.get("notes", []),
+        }
+        print(json.dumps(out, indent=2))
+        return 0  # rc=0 for valid blocked/routed requests
 
     if args.plan is not None:
         plan = build_autonomy_cycle_plan(pdir, goal=args.plan or args.goal, policy=pol, dry_run=True)
