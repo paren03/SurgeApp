@@ -28,6 +28,7 @@ from luna_modules.luna_limited_autonomy import (  # noqa: E402
     acquire_autonomy_lock,
     build_autonomy_cycle_plan,
     build_overnight_brief,
+    build_routine_brief,
     build_runtime_context,
     check_git_clean,
     check_operator_stop,
@@ -36,6 +37,7 @@ from luna_modules.luna_limited_autonomy import (  # noqa: E402
     evaluate_task_with_gate,
     load_autonomy_tiers,
     load_overnight_policy,
+    load_routine_policy,
     release_autonomy_lock,
     render_cycle_report_markdown,
     run_allowed_foundation_task,
@@ -367,8 +369,13 @@ class _ReportRenderTests(unittest.TestCase):
             _seed_min_project(td)
             rep = run_limited_autonomy_cycle(td, dry_run=True, write_report=False)
             md = render_cycle_report_markdown(rep)
+            # Phase 5K legacy alias must remain present.
             self.assertIn("safe_to_run_overnight_readonly", md)
-            self.assertIn("Luna Limited Autonomy Cycle Report", md)
+            # Phase 5K2 routine wording is now canonical; legacy "Limited Autonomy"
+            # text must still be a substring of the new "Limited Routine Autonomy"
+            # heading so old grep-based readers still find it.
+            self.assertIn("Luna Limited", md)
+            self.assertIn("Cycle Report", md)
 
     def test_26_report_always_says_safe_to_run_code_edits_false(self) -> None:
         with tempfile.TemporaryDirectory() as td_str:
@@ -493,6 +500,151 @@ class _PathSafetyTests(unittest.TestCase):
             written = write_cycle_report(td, rep)
             for v in written.values():
                 Path(v).resolve().relative_to(td.resolve())
+
+
+class _PhaseK2RoutineNamingTests(unittest.TestCase):
+    """Phase 5K2 — routine renaming preserves backwards compatibility."""
+
+    def test_36_load_routine_policy_alias(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            td = Path(td_str)
+            r = load_routine_policy(td)
+            o = load_overnight_policy(td)
+            self.assertEqual(r["allow_code_edits"], False)
+            self.assertEqual(o["allow_code_edits"], False)
+            self.assertEqual(r["allowed_task_classes"], o["allowed_task_classes"])
+
+    def test_37_routine_policy_file_preferred_over_overnight(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            td = Path(td_str)
+            (td / "memory").mkdir(parents=True)
+            (td / "memory" / "luna_routine_policy.json").write_text(
+                json.dumps({"schema_version": 1, "max_cycles": 7}),
+                encoding="utf-8",
+            )
+            (td / "memory" / "luna_overnight_policy.json").write_text(
+                json.dumps({"schema_version": 1, "max_cycles": 99}),
+                encoding="utf-8",
+            )
+            pol = load_routine_policy(td)
+            self.assertEqual(pol["max_cycles"], 7)
+            self.assertTrue(pol["_source"].endswith("luna_routine_policy.json"))
+
+    def test_38_overnight_policy_used_when_routine_missing(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            td = Path(td_str)
+            (td / "memory").mkdir(parents=True)
+            (td / "memory" / "luna_overnight_policy.json").write_text(
+                json.dumps({"schema_version": 1, "max_cycles": 4}),
+                encoding="utf-8",
+            )
+            pol = load_routine_policy(td)
+            self.assertEqual(pol["max_cycles"], 4)
+            self.assertTrue(pol["_source"].endswith("luna_overnight_policy.json"))
+
+    def test_39_report_has_dual_safety_keys(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            td = Path(td_str)
+            _seed_min_project(td)
+            rep = run_limited_autonomy_cycle(td, dry_run=True, write_report=False)
+            for k in (
+                "safe_to_run_routine_readonly",
+                "safe_to_run_routine_code_edits",
+                "safe_to_run_overnight_readonly",
+                "safe_to_run_overnight_code_edits",
+            ):
+                self.assertIn(k, rep)
+            self.assertIs(rep["safe_to_run_routine_code_edits"], False)
+            self.assertIs(rep["safe_to_run_overnight_code_edits"], False)
+            self.assertEqual(
+                rep["safe_to_run_routine_readonly"],
+                rep["safe_to_run_overnight_readonly"],
+            )
+
+    def test_40_routine_brief_alias_matches_overnight(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            td = Path(td_str)
+            _seed_min_project(td)
+            rep = run_limited_autonomy_cycle(td, dry_run=True, write_report=False)
+            r1 = build_routine_brief(td, [rep])
+            r2 = build_overnight_brief(td, [rep])
+            self.assertEqual(r1, r2)
+            self.assertIn("Limited Routine Autonomy", r1)
+
+    def test_41_markdown_uses_routine_wording(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            td = Path(td_str)
+            _seed_min_project(td)
+            rep = run_limited_autonomy_cycle(td, dry_run=True, write_report=False)
+            md = render_cycle_report_markdown(rep)
+            self.assertIn("Luna Limited Routine Autonomy", md)
+            self.assertIn("safe_to_run_routine_readonly", md)
+            self.assertIn("safe_to_run_routine_code_edits", md)
+            # Backwards compatibility hint preserved.
+            self.assertIn("safe_to_run_overnight_readonly", md)
+
+    def test_42_routine_stop_file_halts_cycle(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            td = Path(td_str)
+            _seed_min_project(td)
+            (td / "memory" / "routine_autonomy.stop").write_text("stop", encoding="utf-8")
+            rep = run_limited_autonomy_cycle(td, dry_run=True, write_report=False)
+            self.assertFalse(rep["safe_to_continue"])
+            self.assertTrue(any("operator_stop" in b for b in rep["blockers"]))
+            self.assertIs(rep["safe_to_run_routine_code_edits"], False)
+
+
+class _PhaseK2CliTests(unittest.TestCase):
+
+    def _run(self, *args: str) -> subprocess.CompletedProcess:
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(_PROJECT_DIR) + os.pathsep + env.get("PYTHONPATH", "")
+        return subprocess.run(
+            [sys.executable, "-m", "luna_modules.luna_limited_autonomy", *args],
+            cwd=str(_PROJECT_DIR),
+            capture_output=True,
+            text=True,
+            timeout=300,
+            env=env,
+        )
+
+    def test_43_cli_routine_once_dry_run(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            r = self._run("--routine-once", "--dry-run", "--project-dir", td_str)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            payload = json.loads(r.stdout)
+            self.assertIn("safe_to_run_routine_readonly", payload)
+            self.assertIs(payload["safe_to_run_routine_code_edits"], False)
+            self.assertIs(payload["safe_to_run_overnight_code_edits"], False)
+
+    def test_44_cli_routine_dry_run_loop(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            r = self._run(
+                "--routine-dry-run",
+                "--max-cycles", "1",
+                "--sleep-seconds", "0",
+                "--project-dir", td_str,
+            )
+            self.assertEqual(r.returncode, 0, r.stderr)
+            payload = json.loads(r.stdout)
+            self.assertEqual(payload.get("cli_alias"), "routine_dry_run")
+            self.assertGreaterEqual(payload.get("cycle_count", 0), 1)
+
+    def test_45_cli_overnight_dry_run_alias_still_works(self) -> None:
+        with tempfile.TemporaryDirectory() as td_str:
+            r = self._run(
+                "--overnight-dry-run",
+                "--max-cycles", "1",
+                "--sleep-seconds", "0",
+                "--project-dir", td_str,
+            )
+            self.assertEqual(r.returncode, 0, r.stderr)
+            payload = json.loads(r.stdout)
+            self.assertEqual(payload.get("cli_alias"), "overnight_dry_run")
+            self.assertGreaterEqual(payload.get("cycle_count", 0), 1)
+            for s in payload.get("summaries") or []:
+                self.assertIn("safe_to_run_routine_readonly", s)
+                self.assertIs(s["safe_to_run_routine_code_edits"], False)
 
 
 if __name__ == "__main__":

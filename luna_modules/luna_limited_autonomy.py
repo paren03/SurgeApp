@@ -1,23 +1,31 @@
-"""Phase 5K: Luna Limited Autonomy controller foundation.
+"""Phase 5K + 5K2: Luna Limited Routine Autonomy controller foundation.
 
 Stdlib only. Read-mostly. Coordinates Phase 5B-5J foundation modules for safe
-overnight work. Refuses code edits, Aider, installs, queue/log/memory deletion,
-worker/Guardian/bridge/launcher edits, external network, git_reset/git_clean/git_push,
-process kill, and continues_update_start.
+limited *routine* work — day or night, same safety rules. Refuses code edits,
+Aider, installs, queue/log/memory deletion, worker/Guardian/bridge/launcher
+edits, external network, git_reset/git_clean/git_push, process kill, and
+continues_update_start.
+
+Phase 5K2 renamed the operator-facing concept from "overnight" to "routine".
+Backwards compatibility is preserved: every old field/CLI flag still works as
+an alias of the new routine names.
 
 Hard rules:
-  * `safe_to_run_overnight_code_edits` is ALWAYS False until Phase 5L (Delegated
-    AI Approval Council) is built and an explicit operator config enables it.
+  * `safe_to_run_routine_code_edits` (alias: `safe_to_run_overnight_code_edits`)
+    is ALWAYS False until Phase 5L (Delegated AI Approval Council) is built and
+    an explicit operator config enables it.
   * Generated artifacts stay under `memory/luna_limited_autonomy*` and a few
     Phase-5 gitignored report files. Source files are never touched.
   * Optional Phase 5B-5J modules are imported with try/except and degrade
     gracefully if missing or broken.
   * Operator stop files (LUNA_STOP_NOW.flag, memory/limited_autonomy.stop,
-    memory/continues_update.stop) always halt the cycle.
+    memory/routine_autonomy.stop, memory/continues_update.stop) always halt
+    the cycle.
 
 Tracked schema/policy:
   memory/luna_limited_autonomy.schema.json
-  memory/luna_overnight_policy.json
+  memory/luna_routine_policy.json   (canonical, Phase 5K2)
+  memory/luna_overnight_policy.json (legacy alias, Phase 5K)
   memory/luna_autonomy_tiers.json
 
 Generated runtime artifacts (gitignored):
@@ -29,12 +37,15 @@ Generated runtime artifacts (gitignored):
   memory/luna_recommended_next_actions.json
   memory/luna_autonomy_run_lock.json
 
-CLI:
+CLI (Phase 5K2 prefers --routine-* names; --overnight-* still work):
   python -m luna_modules.luna_limited_autonomy --self-test
-  python -m luna_modules.luna_limited_autonomy --plan "Improve Luna safely overnight"
+  python -m luna_modules.luna_limited_autonomy --plan "Improve Luna safely"
   python -m luna_modules.luna_limited_autonomy --run-once --dry-run
+  python -m luna_modules.luna_limited_autonomy --routine-once --dry-run
   python -m luna_modules.luna_limited_autonomy --run-once --execute-generated-artifacts
-  python -m luna_modules.luna_limited_autonomy --overnight-dry-run --max-cycles 2
+  python -m luna_modules.luna_limited_autonomy --routine-dry-run --max-cycles 2
+  python -m luna_modules.luna_limited_autonomy --routine-loop --max-cycles 2
+  python -m luna_modules.luna_limited_autonomy --overnight-dry-run --max-cycles 2  # legacy alias
   python -m luna_modules.luna_limited_autonomy --print-report
 """
 from __future__ import annotations
@@ -148,6 +159,7 @@ _DEFAULT_POLICY: dict[str, Any] = {
     "stop_files": [
         "LUNA_STOP_NOW.flag",
         "memory/limited_autonomy.stop",
+        "memory/routine_autonomy.stop",
         "memory/continues_update.stop",
     ],
     "requires_clean_verifier": True,
@@ -175,7 +187,10 @@ _DEFAULT_TIERS: dict[str, Any] = {
     ],
 }
 
-DEFAULT_POLICY_PATH = _PROJECT_DIR_DEFAULT / "memory" / "luna_overnight_policy.json"
+DEFAULT_ROUTINE_POLICY_PATH = _PROJECT_DIR_DEFAULT / "memory" / "luna_routine_policy.json"
+DEFAULT_OVERNIGHT_POLICY_PATH = _PROJECT_DIR_DEFAULT / "memory" / "luna_overnight_policy.json"
+# Legacy alias retained for any external caller.
+DEFAULT_POLICY_PATH = DEFAULT_OVERNIGHT_POLICY_PATH
 DEFAULT_TIERS_PATH = _PROJECT_DIR_DEFAULT / "memory" / "luna_autonomy_tiers.json"
 DEFAULT_LOCK_PATH = _PROJECT_DIR_DEFAULT / "memory" / "luna_autonomy_run_lock.json"
 
@@ -229,29 +244,54 @@ def _ensure_under(path: Path, project_root: Path) -> Path:
     return p
 
 
-def load_overnight_policy(project_dir: Path | str | None = None) -> dict[str, Any]:
+def load_routine_policy(project_dir: Path | str | None = None) -> dict[str, Any]:
+    """Phase 5K2: load the canonical limited-routine-autonomy policy.
+
+    Tries memory/luna_routine_policy.json first (Phase 5K2 canonical), then
+    falls back to memory/luna_overnight_policy.json (Phase 5K legacy alias),
+    then to the in-module default. Hard rules (no code edits, no Aider, no
+    installs, no process kill, no external network) are re-applied after load
+    regardless of file contents.
+    """
     pdir = Path(project_dir) if project_dir else _PROJECT_DIR_DEFAULT
-    p = pdir / "memory" / "luna_overnight_policy.json"
-    if not p.is_file():
-        p = DEFAULT_POLICY_PATH
-    raw = load_json(p, default=None)
+    routine_p = pdir / "memory" / "luna_routine_policy.json"
+    legacy_p = pdir / "memory" / "luna_overnight_policy.json"
+    raw: Any = None
+    source = "module_fallback"
+    loaded_from_file = False
+    if routine_p.is_file():
+        raw = load_json(routine_p, default=None)
+        if isinstance(raw, dict):
+            source = str(routine_p)
+            loaded_from_file = True
+    if not isinstance(raw, dict) and legacy_p.is_file():
+        raw = load_json(legacy_p, default=None)
+        if isinstance(raw, dict):
+            source = str(legacy_p)
+            loaded_from_file = True
     if not isinstance(raw, dict):
         out = dict(_DEFAULT_POLICY)
-        out["_source"] = "module_fallback"
+        out["_source"] = source
         out["_loaded_from_file"] = False
         return out
     out = dict(_DEFAULT_POLICY)
     for k, v in raw.items():
         out[k] = v
-    out["_source"] = str(p)
-    out["_loaded_from_file"] = True
-    # Hard rule: code edits forbidden in Phase 5K regardless of file contents.
+    out["_source"] = source
+    out["_loaded_from_file"] = loaded_from_file
+    # Hard rule: code edits forbidden regardless of file contents.
     out["allow_code_edits"] = False
     out["allow_aider"] = False
     out["allow_installs"] = False
     out["allow_process_kill"] = False
     out["allow_external_network"] = False
     return out
+
+
+# Legacy alias retained — Phase 5K callers and tests still work.
+def load_overnight_policy(project_dir: Path | str | None = None) -> dict[str, Any]:
+    """Backwards-compatible alias of `load_routine_policy` (Phase 5K2)."""
+    return load_routine_policy(project_dir)
 
 
 def load_autonomy_tiers(project_dir: Path | str | None = None) -> dict[str, Any]:
@@ -1102,8 +1142,9 @@ def run_limited_autonomy_cycle(
             safe_to_continue=(not blockers),
             safe_to_run_overnight_readonly=safe_overnight_readonly,
             notes=[
-                "Phase 5K read-only/generated-artifacts cycle.",
-                "safe_to_run_overnight_code_edits is hard-coded false until Phase 5L (Delegated AI Approval Council) is built.",
+                "Phase 5K + 5K2 limited routine autonomy cycle (read-only/generated-artifacts).",
+                "Same safety rules apply day or night — 'routine' supersedes 'overnight'.",
+                "safe_to_run_routine_code_edits (alias safe_to_run_overnight_code_edits) is hard-coded false until Phase 5L (Delegated AI Approval Council) is built.",
             ],
         )
 
@@ -1163,6 +1204,7 @@ def _build_report(
     safe_to_run_overnight_readonly: bool,
     notes: list[str],
 ) -> dict[str, Any]:
+    safe_readonly = bool(safe_to_run_overnight_readonly)
     return {
         "schema_version": SCHEMA_VERSION,
         "cycle_id": cycle_id,
@@ -1180,7 +1222,11 @@ def _build_report(
         "blockers": blockers,
         "recommended_next_actions": recommended_next_actions,
         "safe_to_continue": bool(safe_to_continue),
-        "safe_to_run_overnight_readonly": bool(safe_to_run_overnight_readonly),
+        # Phase 5K2 canonical names.
+        "safe_to_run_routine_readonly": safe_readonly,
+        "safe_to_run_routine_code_edits": False,
+        # Phase 5K legacy aliases — kept identical to routine fields.
+        "safe_to_run_overnight_readonly": safe_readonly,
         "safe_to_run_overnight_code_edits": False,
         "notes": list(notes),
     }
@@ -1205,7 +1251,7 @@ def _recommend_next_actions(
     out.append({
         "action": "wait_for_phase_5L_council_before_any_code_edits",
         "approval_required": True,
-        "rationale": "Phase 5K does not delegate edits; Phase 5L Delegated AI Approval Council is the next planned phase.",
+        "rationale": "Phase 5K2 limited routine autonomy does not delegate edits; Phase 5L Delegated AI Approval Council is the next planned phase.",
     })
     return out[:8]
 
@@ -1231,6 +1277,10 @@ def _persist_cycle_artifacts(project_dir: Path, report: dict[str, Any]) -> None:
         "last_cycle_id": report["cycle_id"],
         "last_finished_at": report["finished_at"],
         "last_safe_to_continue": report["safe_to_continue"],
+        # Phase 5K2 canonical
+        "last_safe_to_run_routine_readonly": report.get("safe_to_run_routine_readonly", report["safe_to_run_overnight_readonly"]),
+        "last_safe_to_run_routine_code_edits": False,
+        # Phase 5K legacy aliases
         "last_safe_to_run_overnight_readonly": report["safe_to_run_overnight_readonly"],
         "last_safe_to_run_overnight_code_edits": False,
         "last_blockers": report["blockers"],
@@ -1251,6 +1301,10 @@ def _persist_cycle_artifacts(project_dir: Path, report: dict[str, Any]) -> None:
         "generated_at": report["finished_at"],
         "cycle_id": report["cycle_id"],
         "actions": report["recommended_next_actions"],
+        # Phase 5K2 canonical
+        "safe_to_run_routine_readonly": report.get("safe_to_run_routine_readonly", report["safe_to_run_overnight_readonly"]),
+        "safe_to_run_routine_code_edits": False,
+        # Phase 5K legacy aliases
         "safe_to_run_overnight_readonly": report["safe_to_run_overnight_readonly"],
         "safe_to_run_overnight_code_edits": False,
     })
@@ -1261,7 +1315,7 @@ def _persist_cycle_artifacts(project_dir: Path, report: dict[str, Any]) -> None:
 
 def render_cycle_report_markdown(report: dict[str, Any]) -> str:
     lines: list[str] = []
-    lines.append("# Luna Limited Autonomy Cycle Report")
+    lines.append("# Luna Limited Routine Autonomy — Cycle Report")
     lines.append("")
     lines.append(f"- **cycle_id**: `{report.get('cycle_id', '?')}`")
     lines.append(f"- **goal**: {report.get('goal', '')!r}")
@@ -1269,8 +1323,10 @@ def render_cycle_report_markdown(report: dict[str, Any]) -> str:
     lines.append(f"- **finished_at**: {report.get('finished_at', '?')}")
     lines.append(f"- **dry_run**: `{report.get('dry_run')}`")
     lines.append(f"- **safe_to_continue**: `{report.get('safe_to_continue')}`")
-    lines.append(f"- **safe_to_run_overnight_readonly**: `{report.get('safe_to_run_overnight_readonly')}`")
-    lines.append(f"- **safe_to_run_overnight_code_edits**: `{report.get('safe_to_run_overnight_code_edits')}` *(Phase 5K hard rule — always false)*")
+    safe_ro = report.get("safe_to_run_routine_readonly", report.get("safe_to_run_overnight_readonly"))
+    safe_ce = report.get("safe_to_run_routine_code_edits", report.get("safe_to_run_overnight_code_edits"))
+    lines.append(f"- **safe_to_run_routine_readonly**: `{safe_ro}` (alias: `safe_to_run_overnight_readonly={report.get('safe_to_run_overnight_readonly')}`)")
+    lines.append(f"- **safe_to_run_routine_code_edits**: `{safe_ce}` *(Phase 5K2 hard rule — always false; alias: `safe_to_run_overnight_code_edits={report.get('safe_to_run_overnight_code_edits')}`)*")
     lines.append("")
     lines.append("## Context")
     for k, v in (report.get("context_summary") or {}).items():
@@ -1312,15 +1368,17 @@ def render_cycle_report_markdown(report: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def build_overnight_brief(project_dir: Path | str, cycle_records: list[dict[str, Any]]) -> str:
+def build_routine_brief(project_dir: Path | str, cycle_records: list[dict[str, Any]]) -> str:
+    """Phase 5K2: build the routine brief (replaces 'overnight brief' wording)."""
     pdir = Path(project_dir)
     lines: list[str] = []
-    lines.append("# Luna Overnight Brief")
+    lines.append("# Luna Limited Routine Autonomy — Brief")
     lines.append("")
     lines.append(f"- **project_dir**: `{str(pdir).replace(chr(92), '/')}`")
     lines.append(f"- **generated_at**: {now_iso()}")
     lines.append(f"- **cycle_count**: {len(cycle_records)}")
-    lines.append(f"- **safe_to_run_overnight_code_edits**: `False` (Phase 5K)")
+    lines.append(f"- **safe_to_run_routine_code_edits**: `False` (Phase 5K2 hard rule)")
+    lines.append(f"- **safe_to_run_overnight_code_edits**: `False` (legacy alias)")
     lines.append("")
     for i, rep in enumerate(cycle_records, start=1):
         if not isinstance(rep, dict):
@@ -1328,7 +1386,8 @@ def build_overnight_brief(project_dir: Path | str, cycle_records: list[dict[str,
         lines.append(f"## Cycle {i} — `{rep.get('cycle_id', '?')}`")
         lines.append(f"- finished_at: {rep.get('finished_at', '?')}")
         lines.append(f"- safe_to_continue: `{rep.get('safe_to_continue')}`")
-        lines.append(f"- safe_to_run_overnight_readonly: `{rep.get('safe_to_run_overnight_readonly')}`")
+        safe_ro = rep.get("safe_to_run_routine_readonly", rep.get("safe_to_run_overnight_readonly"))
+        lines.append(f"- safe_to_run_routine_readonly: `{safe_ro}`")
         succ = [t.get("task_class") for t in rep.get("tasks_succeeded") or []]
         failed = [t.get("task_class") for t in rep.get("tasks_failed") or []]
         skipped = [s.get("task_class") if isinstance(s, dict) else s for s in rep.get("tasks_skipped") or []]
@@ -1339,6 +1398,12 @@ def build_overnight_brief(project_dir: Path | str, cycle_records: list[dict[str,
             lines.append(f"- blockers: {rep['blockers']}")
         lines.append("")
     return "\n".join(lines) + "\n"
+
+
+# Legacy alias retained — Phase 5K callers and tests still work.
+def build_overnight_brief(project_dir: Path | str, cycle_records: list[dict[str, Any]]) -> str:
+    """Backwards-compatible alias of `build_routine_brief` (Phase 5K2)."""
+    return build_routine_brief(project_dir, cycle_records)
 
 
 def write_cycle_report(project_dir: Path | str, report: dict[str, Any]) -> dict[str, Any]:
@@ -1371,6 +1436,7 @@ def self_test() -> int:
         report = run_limited_autonomy_cycle(td, goal="self-test", dry_run=True, write_report=True)
         ok = (
             isinstance(report, dict)
+            and report.get("safe_to_run_routine_code_edits") is False
             and report.get("safe_to_run_overnight_code_edits") is False
             and report.get("schema_version") == SCHEMA_VERSION
         )
@@ -1380,6 +1446,8 @@ def self_test() -> int:
             "selected_count": len(report.get("tasks_attempted") or []),
             "succeeded_count": len(report.get("tasks_succeeded") or []),
             "blockers": report.get("blockers"),
+            "safe_to_run_routine_readonly": report.get("safe_to_run_routine_readonly"),
+            "safe_to_run_routine_code_edits": report.get("safe_to_run_routine_code_edits"),
             "safe_to_run_overnight_readonly": report.get("safe_to_run_overnight_readonly"),
             "safe_to_run_overnight_code_edits": report.get("safe_to_run_overnight_code_edits"),
         }
@@ -1392,26 +1460,29 @@ def self_test() -> int:
 
 def _cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Luna Limited Autonomy controller foundation (Phase 5K)"
+        description="Luna Limited Routine Autonomy controller (Phase 5K + 5K2)"
     )
     parser.add_argument("--self-test", action="store_true")
     parser.add_argument("--plan", default=None, help="Build a cycle plan for the given goal and print it.")
-    parser.add_argument("--run-once", action="store_true")
+    parser.add_argument("--run-once", action="store_true", help="Phase 5K2 alias of --routine-once.")
+    parser.add_argument("--routine-once", action="store_true", help="Run one limited routine autonomy cycle.")
     parser.add_argument("--dry-run", action="store_true", default=False)
     parser.add_argument("--execute-generated-artifacts", action="store_true", default=False, help="Allow non-dry-run regeneration of gitignored memory artifacts only. Source files remain untouched.")
-    parser.add_argument("--overnight-dry-run", action="store_true")
+    parser.add_argument("--routine-dry-run", action="store_true", help="Run a routine dry-run loop (Phase 5K2 canonical).")
+    parser.add_argument("--routine-loop", action="store_true", help="Run a routine loop in dry-run mode by default.")
+    parser.add_argument("--overnight-dry-run", action="store_true", help="Backwards-compatible alias of --routine-dry-run (Phase 5K).")
     parser.add_argument("--max-cycles", type=int, default=1)
     parser.add_argument("--sleep-seconds", type=int, default=60)
     parser.add_argument("--print-report", action="store_true")
     parser.add_argument("--project-dir", default=str(_PROJECT_DIR_DEFAULT))
-    parser.add_argument("--goal", default="Improve Luna safely overnight")
+    parser.add_argument("--goal", default="Improve Luna safely (limited routine autonomy)")
     args = parser.parse_args(argv)
 
     if args.self_test:
         return self_test()
 
     pdir = Path(args.project_dir)
-    pol = load_overnight_policy(pdir)
+    pol = load_routine_policy(pdir)
 
     if args.plan is not None:
         plan = build_autonomy_cycle_plan(pdir, goal=args.plan or args.goal, policy=pol, dry_run=True)
@@ -1426,13 +1497,15 @@ def _cli(argv: list[str] | None = None) -> int:
         sys.stdout.write(render_cycle_report_markdown(rep))
         return 0
 
-    if args.run_once:
+    if args.run_once or args.routine_once:
         dry_run = bool(args.dry_run) or not bool(args.execute_generated_artifacts)
         report = run_limited_autonomy_cycle(pdir, goal=args.goal, dry_run=dry_run, policy=pol)
         out = {
             "cycle_id": report["cycle_id"],
             "dry_run": report["dry_run"],
             "safe_to_continue": report["safe_to_continue"],
+            "safe_to_run_routine_readonly": report.get("safe_to_run_routine_readonly", report["safe_to_run_overnight_readonly"]),
+            "safe_to_run_routine_code_edits": False,
             "safe_to_run_overnight_readonly": report["safe_to_run_overnight_readonly"],
             "safe_to_run_overnight_code_edits": report["safe_to_run_overnight_code_edits"],
             "succeeded": [t.get("task_class") for t in report.get("tasks_succeeded") or []],
@@ -1443,7 +1516,12 @@ def _cli(argv: list[str] | None = None) -> int:
         print(json.dumps(out, indent=2))
         return 0
 
-    if args.overnight_dry_run:
+    if args.routine_dry_run or args.routine_loop or args.overnight_dry_run:
+        loop_alias = (
+            "routine_dry_run" if args.routine_dry_run else
+            "routine_loop" if args.routine_loop else
+            "overnight_dry_run"
+        )
         reports = run_limited_autonomy_loop(
             pdir,
             goal=args.goal,
@@ -1453,12 +1531,16 @@ def _cli(argv: list[str] | None = None) -> int:
             policy=pol,
         )
         out = {
+            "cli_alias": loop_alias,
             "cycle_count": len(reports),
             "summaries": [
                 {
                     "cycle_id": r.get("cycle_id"),
                     "safe_to_continue": r.get("safe_to_continue"),
+                    "safe_to_run_routine_readonly": r.get("safe_to_run_routine_readonly", r.get("safe_to_run_overnight_readonly")),
+                    "safe_to_run_routine_code_edits": False,
                     "safe_to_run_overnight_readonly": r.get("safe_to_run_overnight_readonly"),
+                    "safe_to_run_overnight_code_edits": r.get("safe_to_run_overnight_code_edits", False),
                     "succeeded": [t.get("task_class") for t in (r.get("tasks_succeeded") or [])],
                     "blockers": r.get("blockers"),
                 }

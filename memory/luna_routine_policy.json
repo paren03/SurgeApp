@@ -1,7 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Phase 5K overnight policy (legacy alias). Phase 5K2 renamed this concept to 'limited routine autonomy' — see memory/luna_routine_policy.json. This file is kept for backwards compatibility; identical semantics to the routine policy. Conservative — read-only/generated-artifacts only. No code edits, no Aider, no installs, no process kills, no external network.",
-  "_legacy_alias_for": "memory/luna_routine_policy.json",
+  "description": "Phase 5K2 limited routine autonomy policy. Replaces 'overnight' framing with 'routine' — Luna runs the same safety rules day or night. Canonical source of truth for limited routine autonomy. memory/luna_overnight_policy.json is kept as a backwards-compatible legacy alias.",
   "default_mode": "read_only",
   "max_cycles": 12,
   "sleep_seconds": 300,
@@ -52,5 +51,11 @@
   "requires_clean_verifier": true,
   "requires_git_clean_for_generated_only": true,
   "max_per_cycle_runtime_seconds": 600,
-  "lock_stale_seconds": 3600
+  "lock_stale_seconds": 3600,
+  "naming": {
+    "operator_facing_name": "limited routine autonomy",
+    "legacy_alias": "overnight autonomy",
+    "policy_file": "memory/luna_routine_policy.json",
+    "legacy_policy_file": "memory/luna_overnight_policy.json"
+  }
 }
