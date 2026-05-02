@@ -31,7 +31,9 @@
     "limited_self_upgrade_overall_below": 90,
     "block_if_any_critical_blocker": true,
     "block_if_boot_health_below": 60,
-    "block_if_autonomy_safety_below": 60
+    "block_if_autonomy_safety_below": 60,
+    "cap_self_upgrade_if_intent_below": 50,
+    "cap_self_upgrade_if_resource_below": 50
   },
   "evidence_files": {
     "verifier_log_glob": "logs/luna_post_repair_verify_*.txt",

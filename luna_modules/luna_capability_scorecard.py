@@ -110,6 +110,8 @@ _DEFAULT_CONFIG: dict[str, Any] = {
         "block_if_any_critical_blocker": True,
         "block_if_boot_health_below": 60,
         "block_if_autonomy_safety_below": 60,
+        "cap_self_upgrade_if_intent_below": 50,
+        "cap_self_upgrade_if_resource_below": 50,
     },
     "evidence_files": {
         "verifier_log_glob": "logs/luna_post_repair_verify_*.txt",
@@ -1347,6 +1349,8 @@ def _derive_overall(dimensions: list[dict[str, Any]], cfg: dict[str, Any]) -> di
     rules = cfg.get("readiness_rules", {})
     boot = next((d for d in dimensions if d["name"] == "boot_health"), None)
     autonomy = next((d for d in dimensions if d["name"] == "autonomy_safety"), None)
+    intent = next((d for d in dimensions if d["name"] == "intent_alignment"), None)
+    resource = next((d for d in dimensions if d["name"] == "resource_awareness"), None)
     critical_blockers: list[str] = []
     for d in dimensions:
         for b in d.get("blockers", []):
@@ -1369,6 +1373,13 @@ def _derive_overall(dimensions: list[dict[str, Any]], cfg: dict[str, Any]) -> di
         readiness = "limited_self_upgrade_ready"
     else:
         readiness = "limited_self_upgrade_ready"
+    cap_intent = int(rules.get("cap_self_upgrade_if_intent_below", 50))
+    cap_resource = int(rules.get("cap_self_upgrade_if_resource_below", 50))
+    if readiness == "limited_self_upgrade_ready":
+        if (intent and intent["score"] < cap_intent) or (
+            resource and resource["score"] < cap_resource
+        ):
+            readiness = "controlled_autonomy_ready"
     overall_status = _status_for_score(overall, cfg["status_thresholds"])
     if any(d["status"] == "blocked" for d in dimensions) and overall_status not in ("blocked", "degraded"):
         overall_status = "degraded"
