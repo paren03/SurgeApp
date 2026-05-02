@@ -907,6 +907,61 @@ print(out or '(no aider children running)')
         "fix_verified": True,
         "date_learned": "2026-05-01",
     },
+    {
+        "id": "L025",
+        "title": "Aider stalls 5-15 min on too-large files because --file sends the whole file regardless of scope",
+        "symptom": (
+            "luna_live_feed.jsonl shows RUN_AIDER_START followed by 5-15 minutes of silence, "
+            "then a single CONTEXT_OVERFLOW or aider_timeout event. CU's cycle clock is stuck "
+            "with phase=queueing for many minutes. Same target (often worker.py at 565 KB or "
+            "SurgeApp_Claude_Terminal.py at 188 KB) appears in repeated cycles."
+        ),
+        "root_cause": (
+            "The aider CLI is invoked with `--file <full-path>`. Aider reads the ENTIRE file "
+            "into the model's prompt every iteration regardless of any 'function_scope' or "
+            "'start_line/end_line' hint in the task — those hints only flavor the natural-language "
+            "prompt, not the file content sent to the model. With qwen2.5-coder:7b at "
+            "num_ctx=4096 (~16 KB of code), any file larger than ~16 KB will inevitably "
+            "overflow context, but only after the model has spent minutes processing what it "
+            "can fit."
+        ),
+        "detection_code": """
+from pathlib import Path
+import os
+LIMIT = int(os.environ.get('LUNA_AIDER_MAX_TARGET_BYTES', '200000'))
+big_files = []
+for p in [Path(r'D:/SurgeApp/worker.py'),
+          Path(r'D:/SurgeApp/SurgeApp_Claude_Terminal.py'),
+          Path(r'D:/SurgeApp/aider_bridge.py'),
+          Path(r'D:/SurgeApp/luna_guardian.py'),
+          Path(r'D:/SurgeApp/director_agent.py')]:
+    if p.exists() and p.stat().st_size > LIMIT:
+        big_files.append((p.name, p.stat().st_size))
+if big_files:
+    print('Files exceeding MAX_TARGET_FILE_BYTES — must be in noop_budget cooldown:')
+    for n, s in big_files:
+        print(f'  {n}: {s:,} bytes')
+else:
+    print('All core files are within model-fit size.')
+""",
+        "fix": (
+            "Layered defense in aider_bridge.py: "
+            "1. MAX_TARGET_FILE_BYTES = 200000 hard cap. "
+            "2. _target_scope_allowed() returns 'target_file_too_large_for_model' for files above the cap "
+            "BEFORE running aider. "
+            "3. Run_aider_patch() calls _noop_budget_record(target) twice on rejection so the target "
+            "enters its 24h cooldown immediately (single rejection = 2 strikes). "
+            "4. Same _noop_budget_record(target) twice pattern applied to context_overflow at runtime "
+            "and aider_timeout_process_tree_killed. "
+            "5. OLLAMA_NUM_CTX bumped from 4096 to 8192 so files up to ~32 KB now fit. "
+            "6. continues_update_loop in worker.py adds _cu_bridge_cooldown_targets() check and "
+            "CU_DEFER_BRIDGE_COOLDOWN branch BEFORE _cu_dirty_targets check. "
+            "7. _noop_budget_check normalizes path keys (abs/rel, forward/back slash) so CU's "
+            "relative paths match bridge's absolute resolved paths."
+        ),
+        "fix_verified": True,
+        "date_learned": "2026-05-01",
+    },
 ]
 
 
