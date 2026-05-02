@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "default_autonomy_tier": 2,
+  "description": "Phase 5F default policy. Conservative — no installs, no external network, no personality/goal changes, no memory deletes. Tier 2 = edit-with-preview by default. Phase 5K may raise this once the upgrade gate is wired in.",
+  "max_files_changed": 1,
+  "max_insertions": 120,
+  "max_deletions": 80,
+  "max_total_line_delta": 180,
+  "allow_package_installs": false,
+  "allow_external_network": false,
+  "allow_personality_goal_changes": false,
+  "allow_memory_deletes": false,
+  "critical_files": [
+    "luna_modules/luna_hygiene.py",
+    "luna_modules/luna_paths.py",
+    "luna_modules/luna_routing.py",
+    "luna_modules/luna_state.py"
+  ],
+  "high_risk_files": [
+    "worker.py",
+    "aider_bridge.py",
+    "luna_guardian.py",
+    "LaunchLuna.pyw",
+    "SurgeApp_Claude_Terminal.py",
+    "luna_start.pyw",
+    "director_agent.py"
+  ],
+  "forbidden_delete_prefixes": [
+    "memory/",
+    "logs/",
+    "aider_jobs/",
+    "backups/",
+    "uploads/",
+    "tasks/",
+    "solutions/",
+    "logic_updates/",
+    "director_jobs/"
+  ],
+  "secret_path_patterns": [
+    "(?i)(^|/)\\.env$",
+    "(?i)api_vault",
+    "(?i)(^|/)token($|/|\\.)",
+    "(?i)(^|/)secret($|/|\\.)",
+    "(?i)(^|/)credentials($|/|\\.)"
+  ],
+  "personality_path_patterns": [
+    "personality",
+    "identity",
+    "luna_system_prompt",
+    "LUNA_SYSTEM_PROMPT",
+    "luna_core_memory",
+    "luna_personality",
+    "user_goals"
+  ],
+  "install_command_patterns": [
+    "(?i)\\bpip(?:3)?\\s+install\\b",
+    "(?i)\\bpython\\s+-m\\s+pip\\s+install\\b",
+    "(?i)\\buv\\s+pip\\s+install\\b",
+    "(?i)\\bnpm\\s+install\\b",
+    "(?i)\\byarn\\s+add\\b",
+    "(?i)\\bwinget\\s+install\\b",
+    "(?i)\\bchoco\\s+install\\b",
+    "(?i)\\bapt(?:-get)?\\s+install\\b",
+    "(?i)\\bpacman\\s+-S\\b",
+    "(?i)\\bbrew\\s+install\\b",
+    "(?i)\\b(?:msiexec|setup\\.exe)\\b",
+    "(?i)Install-Module\\b",
+    "(?i)Add-AppxPackage\\b"
+  ],
+  "external_network_patterns": [
+    "(?i)\\bhttps?://(?!127\\.0\\.0\\.1|localhost)[a-z0-9.-]+",
+    "(?i)\\bcurl\\s+(?!.*(?:127\\.0\\.0\\.1|localhost))",
+    "(?i)\\bwget\\s+(?!.*(?:127\\.0\\.0\\.1|localhost))",
+    "(?i)\\bInvoke-WebRequest\\s+(?!.*(?:127\\.0\\.0\\.1|localhost))",
+    "(?i)\\bInvoke-RestMethod\\s+(?!.*(?:127\\.0\\.0\\.1|localhost))"
+  ],
+  "generated_runtime_report_patterns": [
+    "memory/luna_upgrade_gate_report.json",
+    "memory/luna_upgrade_gate_report.md"
+  ]
+}

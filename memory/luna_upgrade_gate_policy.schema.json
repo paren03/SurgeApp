@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Safe Self-Upgrade Gate Policy",
+  "description": "Phase 5F policy/config for the Safe Self-Upgrade Gate. Conservative defaults: no installs, no external network, no personality/goal changes, no memory deletes, small max-diff sizes. Operator may override per-proposal with explicit flags, never silently.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "default_autonomy_tier",
+    "max_files_changed",
+    "max_insertions",
+    "max_deletions",
+    "max_total_line_delta",
+    "allow_package_installs",
+    "allow_external_network",
+    "allow_personality_goal_changes",
+    "allow_memory_deletes",
+    "critical_files",
+    "high_risk_files",
+    "forbidden_delete_prefixes"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "default_autonomy_tier": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "0 read-only, 1 logs/reports, 2 edit-with-preview, 3 sandbox auto-edit, 4 trusted full-auto on allowlist, 5 emergency repair only. Phase 5F default is 1 or 2 (not full-auto)."
+    },
+    "max_files_changed": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Hard ceiling on files_changed in diff_stats."
+    },
+    "max_insertions": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_deletions": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_total_line_delta": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Sum of insertions + deletions ceiling."
+    },
+    "allow_package_installs": {
+      "type": "boolean"
+    },
+    "allow_external_network": {
+      "type": "boolean"
+    },
+    "allow_personality_goal_changes": {
+      "type": "boolean"
+    },
+    "allow_memory_deletes": {
+      "type": "boolean"
+    },
+    "critical_files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Files where any edit is critical-risk and never auto-allowed without explicit operator approval."
+    },
+    "high_risk_files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Files where edits are high-risk and require approval beyond Tier 2."
+    },
+    "forbidden_delete_prefixes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Path prefixes (POSIX, project-relative) where delete/truncate/move operations are denied. memory/, logs/, aider_jobs/, backups/, uploads/, tasks/, solutions/, logic_updates/, director_jobs/."
+    },
+    "secret_path_patterns": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Regex patterns matching paths that must never be edited by autonomy. .env, api_vault*, *token*, *key*, *secret*."
+    },
+    "personality_path_patterns": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Path substrings for personality/identity/goals/system-prompt files."
+    },
+    "install_command_patterns": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Regex patterns for unapproved install/install-like commands."
+    },
+    "external_network_patterns": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Regex patterns flagging non-localhost external URLs/hostnames."
+    },
+    "generated_runtime_report_patterns": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Glob/regex hints for generated artifacts that must remain gitignored."
+    }
+  },
+  "additionalProperties": true
+}

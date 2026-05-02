@@ -63,3 +63,10 @@ memory/luna_memory_index_build_report.json
 # reports and runtime jsonl below are rebuildable by the engine.
 memory/luna_self_healing_playbooks.jsonl
 memory/luna_playbook_match_report.json
+
+# Phase 5F: regenerable upgrade-gate decision reports. Tracked sources of
+# truth are memory/luna_upgrade_gate_policy.schema.json and
+# memory/luna_upgrade_gate_policy.json. The decision artifacts below are
+# rebuilt on demand by luna_upgrade_gate.write_gate_report().
+memory/luna_upgrade_gate_report.json
+memory/luna_upgrade_gate_report.md
