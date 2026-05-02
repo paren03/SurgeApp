@@ -347,20 +347,62 @@ _CU_GATE_CORE_FILES = [
 def _cu_startup_gate() -> tuple[bool, str]:
     """Return (paused, reason) when CU should not be auto-started.
 
-    Reasons: stale_aider_job | dirty_core_files | noop_budget_exhausted
+    Phase 3 stabilization: gate now also respects continues_update.stop flag,
+    the loop's persisted ui_status (paused_*/blocked_*), and a longer stale
+    aider-job threshold (30 min vs prior 60 min).
+
+    Reasons in priority order:
+      paused_user_stop, paused_dirty_core, paused_noop_budget,
+      paused_recent_failures, blocked_worker_import, blocked_aider_stale,
+      stale_aider_job, dirty_core_files, noop_budget_exhausted, bridge_processing_stuck
     """
-    # Check for stale active aider jobs (> 60 min old — means bridge was interrupted)
+    # 1. Explicit user/stabilization stop flag wins over everything
+    if (MEMORY / "continues_update.stop").exists():
+        return True, "paused_user_stop"
+
+    # 2. CU loop's own persisted ui_status — if it explicitly says paused/blocked,
+    #    respect it. The wrapper backoff is ALREADY waiting; LaunchLuna should
+    #    not race-restart and override that.
+    try:
+        state_path = MEMORY / "continues_update_state.json"
+        if state_path.exists():
+            state = json.loads(state_path.read_text(encoding="utf-8", errors="replace") or "{}")
+            ui_status = str(state.get("ui_status") or "")
+            if ui_status.startswith("paused_") or ui_status.startswith("blocked_"):
+                return True, ui_status
+    except Exception:
+        pass
+
+    # 3. Stale active aider jobs (>30 min). Bridge will quarantine on its next
+    #    startup; gate just refuses to start CU on top of unresolved stale work.
     active_dir = ROOT / "aider_jobs" / "active"
     if active_dir.exists():
         for jf in active_dir.glob("*.json"):
             try:
-                if (time.time() - jf.stat().st_mtime) > 3600:
+                if (time.time() - jf.stat().st_mtime) > 1800:
                     return True, "stale_aider_job"
             except Exception:
                 pass
 
-    # Check for dirty core files via git status (modified tracked files only;
-    # untracked files do not represent in-progress work that could conflict).
+    # 4. Aider bridge stuck in processing >30 min (bridge heartbeat died)
+    try:
+        bs_path = ROOT / "logs" / "aider_bridge_status.json"
+        if bs_path.exists():
+            bs = json.loads(bs_path.read_text(encoding="utf-8", errors="replace") or "{}")
+            if str(bs.get("state") or "") == "processing":
+                last_evt = str(bs.get("last_event_at") or bs.get("started_at") or "")
+                if last_evt:
+                    try:
+                        from datetime import datetime as _dt
+                        age = (_dt.now() - _dt.fromisoformat(last_evt)).total_seconds()
+                        if age > 1800:
+                            return True, "bridge_processing_stuck"
+                    except Exception:
+                        pass
+    except Exception:
+        pass
+
+    # 5. Dirty core files (tracked-modified only — untracked files don't count)
     try:
         result = subprocess.run(
             ["git", "status", "--porcelain=v1", "--untracked-files=no", "--"] + _CU_GATE_CORE_FILES,
@@ -377,7 +419,7 @@ def _cu_startup_gate() -> tuple[bool, str]:
     except Exception:
         pass
 
-    # Check noop / all-skip budget exhaustion
+    # 6. Noop / all-skip budget exhaustion
     try:
         state_path = MEMORY / "continues_update_state.json"
         if state_path.exists():

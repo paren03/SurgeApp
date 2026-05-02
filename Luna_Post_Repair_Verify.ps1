@@ -420,8 +420,70 @@ foreach ($Rel in $QueuePaths) {
 }
 $AiderActive = Count-JsonFiles (Join-Path $ProjectDir "aider_jobs\active")
 if ($AiderActive -gt 0) {
-    Status-Line "WARN" "Aider active jobs remain. Check if they are current or stale."
-    [void]$Warnings.Add("Aider active jobs remain")
+    # Phase 3 stabilization: distinguish truthful processing from orphaned jobs.
+    #   PASS: bridge says state=processing AND task_id matches one in active/
+    #   WARN: bridge says processing but stale (>30 min since last_event_at),
+    #         OR active jobs are fresh (<30 min) but bridge unclear
+    #   FAIL: bridge says idle while old (>30 min) jobs sit in active/
+    $BridgeStatePath = Join-Path $LogsDir "aider_bridge_status.json"
+    $BridgeState  = ""
+    $BridgeTaskId = ""
+    $BridgeLastEvtAge = -1
+    if (Test-Path $BridgeStatePath) {
+        try {
+            $bs = Get-Content $BridgeStatePath -Raw | ConvertFrom-Json
+            $BridgeState  = [string]$bs.state
+            $BridgeTaskId = [string]$bs.task_id
+            $lastEvt = [string]($bs.last_event_at)
+            if (-not $lastEvt) { $lastEvt = [string]($bs.started_at) }
+            if ($lastEvt) {
+                try {
+                    $BridgeLastEvtAge = [int]((Get-Date) - [datetime]$lastEvt).TotalSeconds
+                } catch { $BridgeLastEvtAge = -1 }
+            }
+        } catch { }
+    }
+
+    # Find oldest active job (in seconds)
+    $OldestActiveAgeSec = -1
+    $OldestActiveTaskId = ""
+    $MatchingActiveExists = $false
+    foreach ($jf in (Get-ChildItem -Path (Join-Path $ProjectDir "aider_jobs\active") -Filter "*.json" -File -ErrorAction SilentlyContinue)) {
+        try {
+            $age = [int]((Get-Date) - $jf.LastWriteTime).TotalSeconds
+            if ($age -gt $OldestActiveAgeSec) {
+                $OldestActiveAgeSec = $age
+                $OldestActiveTaskId = $jf.BaseName
+            }
+            if ($BridgeTaskId -and $jf.BaseName -eq $BridgeTaskId) {
+                $MatchingActiveExists = $true
+            }
+        } catch { }
+    }
+
+    Add-Line ("Aider active job count : {0}" -f $AiderActive)
+    Add-Line ("Bridge state           : {0}" -f $BridgeState)
+    Add-Line ("Bridge task_id         : {0}" -f $BridgeTaskId)
+    Add-Line ("Bridge last_event age  : {0}s" -f $BridgeLastEvtAge)
+    Add-Line ("Oldest active job age  : {0}s ({1})" -f $OldestActiveAgeSec, $OldestActiveTaskId)
+
+    if ($BridgeState -eq "processing" -and $MatchingActiveExists -and $BridgeLastEvtAge -ge 0 -and $BridgeLastEvtAge -lt 1800) {
+        # Truthful processing - bridge is working on the job we see in active/
+        Status-Line "PASS" ("Aider truthfully processing task {0} (bridge fresh, {1}s)" -f $BridgeTaskId, $BridgeLastEvtAge)
+    } elseif ($BridgeState -eq "idle" -and $OldestActiveAgeSec -gt 1800) {
+        # Bridge is idle but old jobs sit in active/ - orphaned
+        Status-Line "FAIL" ("Stale aider active job(s): bridge idle but oldest job is {0}s old" -f $OldestActiveAgeSec)
+        [void]$HardFailures.Add("Stale aider active jobs while bridge idle")
+    } elseif ($BridgeState -eq "processing" -and $BridgeLastEvtAge -ge 1800) {
+        Status-Line "FAIL" ("Bridge claims processing but last_event is {0}s old (>30 min) - likely hung" -f $BridgeLastEvtAge)
+        [void]$HardFailures.Add("Bridge processing-stuck (>30 min stale)")
+    } elseif ($OldestActiveAgeSec -gt 0 -and $OldestActiveAgeSec -lt 1800) {
+        Status-Line "WARN" ("Aider active jobs are fresh ({0}s) but bridge state is '{1}' - verify next tick" -f $OldestActiveAgeSec, $BridgeState)
+        [void]$Warnings.Add("Active aider jobs present, bridge state unclear")
+    } else {
+        Status-Line "WARN" ("Aider active jobs remain (oldest {0}s) - bridge: {1}" -f $OldestActiveAgeSec, $BridgeState)
+        [void]$Warnings.Add("Aider active jobs remain")
+    }
 }
 
 Section "7. Recent log tails"

@@ -11593,6 +11593,15 @@ def continues_update_loop(
                         "consecutive_failures": consecutive_failures,
                     })
                     _cu_write_state(state)
+                    # Phase 3 stabilization: return early with a structured
+                    # reason so the wrapper can apply real backoff instead of
+                    # restarting the loop every 5 seconds (fake-busy churn).
+                    return {
+                        "ok": False,
+                        "reason": "all_targets_dirty",
+                        "deferred_targets": deferred_targets[-12:],
+                        "cycles": cycle,
+                    }
                 else:
                     # Plan exhausted normally — rebuild and keep improving instead of stopping.
                     _cu_feed("CU_PLAN_COMPLETE", "Reached end of bounded plan — rebuilding for next iteration")
@@ -12126,10 +12135,11 @@ def continues_update_loop(
         _cu_feed("CU_STOP", "Continues-update loop stopped",
                  detail=f"cycles={cycle} stop_flag={_CU_STOP_FLAG_PATH.exists()}")
         _cu_clear_lock()  # release PID lock so watchdog knows we've exited cleanly
-        try:
-            _CU_STOP_FLAG_PATH.unlink(missing_ok=True)
-        except Exception:
-            pass
+        # Phase 3 stabilization: do NOT auto-unlink the stop flag here.
+        # The wrapper relied on this to restart every 5s, which produced
+        # fake-busy churn (CU_START → CU_STOP every few seconds when blocked).
+        # The stop flag now persists until something explicitly clears it
+        # (user, force-resume, or the wrapper after dirty-core hash changes).
     return state
 
 
@@ -12158,23 +12168,188 @@ def _cu_dispatch_cli(argv: List[str]) -> Optional[int]:
             pass
         return 0
     if args.continues_update_start:
-        while not _CU_STOP_FLAG_PATH.exists():
-            try:
-                continues_update_loop(
-                    interval_seconds=float(args.cu_interval),
-                    job_timeout_seconds=float(args.cu_job_timeout),
-                    max_cycles=int(args.cu_max_cycles),
-                )
-            except Exception as exc:
-                try:
-                    _cu_feed("CU_STOP", f"continues-update crashed: {exc}")
-                except Exception:
-                    pass
-            if _CU_STOP_FLAG_PATH.exists():
-                break
-            time.sleep(5.0)  # brief pause between plan cycles before restarting
+        _cu_wrapper_run(
+            interval_seconds=float(args.cu_interval),
+            job_timeout_seconds=float(args.cu_job_timeout),
+            max_cycles=int(args.cu_max_cycles),
+        )
         return 0
     return None
+
+
+# ── Phase 3 stabilization: long-backoff CU wrapper ────────────────────────────
+# Replaces the old `while not stop_flag: loop(); sleep(5)` churn pattern.
+# Reads the loop's structured return value and the post-loop state to decide
+# how long to pause before re-running. Wakes up early if dirty-core hashes
+# change (user committed/reverted) or a force-resume flag is set.
+
+_CU_BACKOFF_BY_REASON: Dict[str, float] = {
+    "all_targets_dirty":              1800.0,   # 30 min — wait for user to commit/revert
+    "blocked_by_staged_edits":        1800.0,
+    "noop_budget_exhausted":          1800.0,
+    "paused_noop_budget":             1800.0,
+    "paused_recent_failures":         1800.0,
+    "stale_plan_recent_non_success":  1200.0,   # 20 min
+    "no_fresh_jobs":                   600.0,   # 10 min
+    "CU_BACKOFF":                      600.0,
+    "continues_update_paused":        3600.0,   # 60 min — explicit user stop
+    "duplicate":                        60.0,   # short retry, another loop is running
+    "blocked_worker_import":          1800.0,
+    "blocked_aider_stale":             900.0,
+}
+
+_CU_FORCE_RESUME_PATH = _CU_MEMORY_DIR / "continues_update.resume_once"
+_CU_HASH_PATH = _CU_MEMORY_DIR / "continues_update_dirty_core.hash"
+_CU_CORE_FILES_FOR_HASH = [
+    "worker.py", "aider_bridge.py", "luna_guardian.py",
+    "LaunchLuna.pyw", "luna_start.pyw",
+    "SurgeApp_Claude_Terminal.py", "director_agent.py",
+    "luna_modules/luna_hygiene.py", "luna_modules/luna_paths.py",
+    "luna_modules/luna_routing.py", "luna_modules/luna_io.py",
+    "luna_modules/luna_logging.py", "luna_modules/luna_state.py",
+]
+
+
+def _cu_dirty_core_hash() -> str:
+    """Hash mtime+size of core files. Used to detect 'user committed/reverted'."""
+    import hashlib as _hashlib
+    h = _hashlib.sha256()
+    for rel in _CU_CORE_FILES_FOR_HASH:
+        p = _CU_PROJECT_DIR / rel
+        try:
+            if p.exists():
+                st = p.stat()
+                h.update(f"{rel}:{int(st.st_mtime)}:{st.st_size}|".encode("utf-8"))
+            else:
+                h.update(f"{rel}:missing|".encode("utf-8"))
+        except Exception:
+            h.update(f"{rel}:err|".encode("utf-8"))
+    return h.hexdigest()
+
+
+def _cu_wrapper_pause_after_result(result: Dict[str, Any], state: Dict[str, Any]) -> Tuple[float, str]:
+    """Return (seconds, reason) — how long the wrapper should pause before re-running."""
+    reason = ""
+    if isinstance(result, dict):
+        reason = str(result.get("reason") or "").lower()
+    if not reason:
+        reason = str(state.get("pause_reason") or "").lower()
+    ui_status = str(state.get("ui_status") or "").lower()
+
+    # ui_status takes precedence over reason if it's a paused/blocked variant
+    if ui_status.startswith("paused_") or ui_status.startswith("blocked_"):
+        seconds = _CU_BACKOFF_BY_REASON.get(ui_status, 0.0)
+        if seconds:
+            return seconds, ui_status
+    if reason and reason in _CU_BACKOFF_BY_REASON:
+        return _CU_BACKOFF_BY_REASON[reason], reason
+    # Default: short pause for normal completion (matches old 5 s)
+    return 5.0, reason or "idle"
+
+
+def _cu_wrapper_run(interval_seconds: float, job_timeout_seconds: float, max_cycles: int) -> None:
+    """Phase 3 stabilization wrapper around continues_update_loop().
+
+    Behavior:
+      - run loop once
+      - read loop result + state file
+      - compute backoff seconds based on reason (paused_dirty_core → 30 min etc.)
+      - while waiting, poll every 30 s for: stop flag, force-resume flag, or
+        dirty-core hash change. Any of those wakes early.
+      - emit a single CU_PAUSED_* live-feed event when entering long backoff,
+        not CU_START every 5 s.
+    """
+    last_paused_reason = ""
+    while not _CU_STOP_FLAG_PATH.exists():
+        try:
+            _result = continues_update_loop(
+                interval_seconds=interval_seconds,
+                job_timeout_seconds=job_timeout_seconds,
+                max_cycles=int(max_cycles),
+            )
+        except Exception as exc:
+            try:
+                _cu_feed("CU_STOP", f"continues-update crashed: {exc}")
+            except Exception:
+                pass
+            _result = {"ok": False, "reason": "exception"}
+
+        if _CU_STOP_FLAG_PATH.exists():
+            break
+
+        # Read post-loop state to see what ui_status / pause_reason is set
+        try:
+            _state = _cu_load_state()
+        except Exception:
+            _state = {}
+        backoff_secs, backoff_reason = _cu_wrapper_pause_after_result(_result if isinstance(_result, dict) else {}, _state)
+
+        # Short pause = normal completion path; just sleep and continue.
+        if backoff_secs <= 30.0:
+            time.sleep(max(5.0, backoff_secs))
+            continue
+
+        # Long pause: emit ONE event, then do quiet polling.
+        if backoff_reason != last_paused_reason:
+            event_name = "CU_PAUSED_DIRTY_CORE"
+            if "noop" in backoff_reason:
+                event_name = "CU_PAUSED_NOOP_BUDGET"
+            elif "recent_failures" in backoff_reason or "stale_plan" in backoff_reason:
+                event_name = "CU_PAUSED_RECENT_FAILURES"
+            elif backoff_reason == "continues_update_paused":
+                event_name = "CU_PAUSED_USER_STOP"
+            elif "import" in backoff_reason or "stale" in backoff_reason:
+                event_name = "CU_PAUSED_BLOCKED"
+            try:
+                _cu_feed(
+                    event_name,
+                    f"continues-update paused for ~{int(backoff_secs/60)}min — reason={backoff_reason}",
+                    detail=f"will wake on dirty-core change OR resume_once flag OR after {int(backoff_secs)}s",
+                )
+            except Exception:
+                pass
+            last_paused_reason = backoff_reason
+
+        # Snapshot dirty-core hash so we can detect when user commits/reverts
+        baseline_hash = _cu_dirty_core_hash()
+        try:
+            _CU_HASH_PATH.write_text(baseline_hash, encoding="utf-8")
+        except Exception:
+            pass
+
+        # Quiet poll loop — every 30s check for early-wake conditions
+        elapsed = 0.0
+        while elapsed < backoff_secs:
+            time.sleep(30.0)
+            elapsed += 30.0
+            if _CU_STOP_FLAG_PATH.exists():
+                return
+            # Force-resume: user explicitly wants to retry now
+            if _CU_FORCE_RESUME_PATH.exists():
+                try:
+                    _CU_FORCE_RESUME_PATH.unlink(missing_ok=True)
+                except Exception:
+                    pass
+                try:
+                    _cu_feed("CU_FORCE_RESUME", "Force-resume flag detected — exiting backoff early")
+                except Exception:
+                    pass
+                last_paused_reason = ""
+                break
+            # Dirty-core hash change: user committed/reverted core files
+            try:
+                cur_hash = _cu_dirty_core_hash()
+            except Exception:
+                cur_hash = baseline_hash
+            if cur_hash != baseline_hash:
+                try:
+                    _cu_feed("CU_DIRTY_CORE_CHANGED",
+                             "Core file hash changed during pause — exiting backoff early to retry")
+                except Exception:
+                    pass
+                last_paused_reason = ""
+                break
+        # End of inner poll loop — outer while will re-enter the loop
 
 
 if __name__ == "__main__":

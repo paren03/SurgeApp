@@ -276,6 +276,83 @@ def _noop_budget_record(target: str) -> None:
     _noop_budget_save(data)
 
 
+def _quarantine_stale_active_jobs(stale_minutes: int = 30) -> int:
+    """Move active aider_patch jobs older than `stale_minutes` to quarantine.
+
+    A job is considered "stale" when:
+      - its file mtime is older than `stale_minutes` minutes ago, AND
+      - no `python -m aider` child currently has the job's logic_updates path
+        in its command line (i.e. nothing is actually working on it)
+
+    The job is moved (never deleted) to:
+      D:\\SurgeApp\\aider_jobs\\quarantine\\<name>.orphaned_active_<timestamp>.json
+
+    Returns the count of jobs moved. Called at bridge startup so the verifier's
+    "Aider active jobs remain" warning only fires when the bridge is truly
+    processing them.
+    """
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    cutoff_ts = time.time() - (stale_minutes * 60)
+    moved = 0
+    if not ACTIVE_DIR.exists():
+        return 0
+
+    # Build a set of task_id strings that currently-running aider children
+    # appear to be processing (by looking for the logic_updates/<task_id>_ prefix
+    # in their command line).
+    busy_task_ids: set[str] = set()
+    try:
+        result = subprocess.run(
+            [
+                "powershell", "-NoProfile", "-Command",
+                "Get-CimInstance Win32_Process | Where-Object {"
+                " $_.Name -match '^python' -and $_.CommandLine -match '-m aider'"
+                "} | Select-Object @{n='Cmd';e={$_.CommandLine}} | ConvertTo-Json -Compress",
+            ],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=8, creationflags=0x08000000,
+        )
+        rows = json.loads(result.stdout or "[]")
+        if isinstance(rows, dict):
+            rows = [rows]
+        for row in rows if isinstance(rows, list) else []:
+            cmd = str(row.get("Cmd") or "")
+            # logic_updates\<TASKID>_<PID>\... — extract TASKID
+            import re as _re
+            m = _re.search(r"logic_updates[\\/]([0-9_a-f]{15,})_\d+[\\/]", cmd, _re.IGNORECASE)
+            if m:
+                busy_task_ids.add(m.group(1))
+    except Exception:
+        pass
+
+    for jf in list(ACTIVE_DIR.glob("*.json")):
+        try:
+            mtime = jf.stat().st_mtime
+        except Exception:
+            continue
+        if mtime > cutoff_ts:
+            continue
+        # Old job — but is anything currently working on it?
+        task_id_guess = jf.stem
+        if task_id_guess in busy_task_ids:
+            continue  # truly processing — leave it
+        try:
+            QUARANTINE_DIR.mkdir(parents=True, exist_ok=True)
+            dest = QUARANTINE_DIR / f"{jf.stem}.orphaned_active_{stamp}.json"
+            jf.replace(dest)
+            moved += 1
+            _log(f"Quarantined stale active job: {jf.name} -> {dest.name}")
+            _live_feed(
+                "STALE_ACTIVE_QUARANTINED",
+                f"Quarantined stale aider_patch job (>{stale_minutes} min, no active processing)",
+                task_id=task_id_guess,
+                detail=f"dest={dest.name}",
+            )
+        except Exception as exc:
+            _log(f"Failed to quarantine {jf.name}: {exc}")
+    return moved
+
+
 def _cleanup_orphan_aider_children() -> None:
     """Terminate orphan 'python -m aider' children from a prior bridge crash."""
     my_pid = os.getpid()
@@ -1486,6 +1563,12 @@ def main() -> None:
     atexit.register(_release_pid_lock)
 
     _cleanup_orphan_aider_children()
+    # Phase 3 stabilization: also sweep stale aider_patch jobs left in active/
+    # by a prior bridge crash. The verifier was warning "Aider active jobs
+    # remain" because old jobs sat there forever; this runs once per startup.
+    _stale_moved = _quarantine_stale_active_jobs(stale_minutes=30)
+    if _stale_moved:
+        _log(f"Quarantined {_stale_moved} stale active job(s) on startup")
     _log("Aider Bridge started. Watching aider_jobs/active/ for aider_patch tasks.")
     _log(f"Model: {AIDER_MODEL}  timeout={AIDER_TIMEOUT}s  APPLY_ON_PASS={APPLY_ON_PASS}")
 
@@ -1575,6 +1658,18 @@ def main() -> None:
         except Exception as exc:
             _log(f"Watch loop error: {exc}")
         _write_bridge_status("idle")
+        # Phase 3 stabilization: every ~5 minutes of idle, re-sweep stale active
+        # jobs. Counter increments per POLL_INTERVAL (3 s), so 100 ticks ≈ 5 min.
+        try:
+            _idle_sweep_counter = locals().get("_idle_sweep_counter", 0) + 1
+        except Exception:
+            _idle_sweep_counter = 0
+        if _idle_sweep_counter >= 100:
+            _idle_sweep_counter = 0
+            try:
+                _quarantine_stale_active_jobs(stale_minutes=30)
+            except Exception:
+                pass
         time.sleep(POLL_INTERVAL)
 
 
