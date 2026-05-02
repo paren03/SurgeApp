@@ -36,3 +36,10 @@ shred_test_document.txt
 # tracked copy without deleting it from disk.
 memory/nightly_updates.jsonl
 memory/nightly_updates.md
+
+# Phase 5B: regenerable file self-map outputs. luna_module_roles.json and
+# luna_risk_zones.json are curated config and stay tracked. luna_file_map.json
+# and luna_function_index.json are larger runtime regenerable artifacts —
+# rebuild via refresh_curated_self_map() instead of committing.
+memory/luna_file_map.json
+memory/luna_function_index.json
