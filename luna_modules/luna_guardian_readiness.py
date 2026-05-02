@@ -63,6 +63,75 @@ try:  # pragma: no cover
 except Exception:  # pragma: no cover
     _scorecard = None
 
+
+def _serge_policy_module():
+    """Defensively import luna_serge_policy. Returns module or None."""
+    try:
+        from luna_modules import luna_serge_policy as _sp  # type: ignore
+        return _sp
+    except Exception:
+        return None
+
+
+def _build_decision_context_from_readiness_action(action_eval: dict[str, Any]) -> dict[str, Any]:
+    """Build a Serge decision_context from a readiness action evaluation."""
+    if not isinstance(action_eval, dict):
+        return {}
+    if action_eval.get("would_allow"):
+        enforcer_decision = "would_allow"
+    elif action_eval.get("would_block"):
+        enforcer_decision = "would_block"
+    elif action_eval.get("needs_human"):
+        enforcer_decision = "needs_human"
+    else:
+        enforcer_decision = "unknown"
+    return {
+        "schema_version": 1,
+        "goal": str(action_eval.get("action_type", "")),
+        "action_type": str(action_eval.get("action_type", "")),
+        "risk_tier": int(action_eval.get("risk_tier", 0)),
+        "target_files": list(action_eval.get("target_files") or []),
+        "router_decision": "unknown",
+        "council_decision": "unknown",
+        "enforcer_decision": enforcer_decision,
+        "sandbox_result": "unknown",
+        "verifier_result": "unknown",
+        "rollback_exists": False,
+        "secrets_scan": "unknown",
+        "resource_status": "unknown",
+        "non_delegable_flags": (
+            [action_eval["action_type"]] if action_eval.get("non_delegable") else []
+        ),
+        "reviewer_votes": [],
+        "summary": str(action_eval.get("reason") or ""),
+        "evidence": [f"reason={action_eval.get('reason', '')}"],
+    }
+
+
+def _attach_card_to_action(project_dir: Path | str, action_eval: dict[str, Any]) -> dict[str, Any]:
+    """Attach a Serge decision card to a readiness action evaluation. Mutates and returns."""
+    if not isinstance(action_eval, dict):
+        return action_eval
+    sp = _serge_policy_module()
+    if sp is None:
+        action_eval["decision_card_recommendation"] = "UNAVAILABLE"
+        action_eval["decision_card_status"] = "unavailable"
+        return action_eval
+    try:
+        ctx = _build_decision_context_from_readiness_action(action_eval)
+        ns = sp.load_north_star_policy(project_dir)
+        pol = sp.load_standing_approval_policy(project_dir)
+        card = sp.build_decision_card(ctx, policy=pol, north_star=ns)
+        card["safe_to_execute_now"] = False
+        action_eval["decision_card"] = card
+        action_eval["decision_card_recommendation"] = card.get("recommendation", "")
+    except Exception as e:
+        action_eval["decision_card_recommendation"] = "UNAVAILABLE"
+        action_eval["decision_card_status"] = f"error:{type(e).__name__}"
+    # Hard rule: safe_to_execute_now stays False on action.
+    action_eval["safe_to_execute_now"] = False
+    return action_eval
+
 # Action types and tier constants.
 _TIER_LABELS = {
     0: "read_only",
@@ -450,12 +519,35 @@ def build_guardian_readiness_status(
     evaluated: list[dict[str, Any]] = []
     for action in actions_to_eval:
         result = evaluate_readiness_action(pdir, action)
+        # Phase 5U: attach Serge-readable decision card to each action.
+        _attach_card_to_action(pdir, result)
         evaluated.append(result)
 
     would_allow_count = sum(1 for r in evaluated if r.get("would_allow"))
     would_block_count = sum(1 for r in evaluated if r.get("would_block"))
     needs_human_count = sum(1 for r in evaluated if r.get("needs_human"))
     non_delegable_count = sum(1 for r in evaluated if r.get("non_delegable"))
+
+    # Phase 5U: aggregate decision-card summary across actions.
+    card_summary = {
+        "approve_recommended": 0,
+        "wait_for_more_evidence": 0,
+        "do_not_approve": 0,
+        "serge_only": 0,
+        "unavailable": 0,
+    }
+    for r in evaluated:
+        rec = str(r.get("decision_card_recommendation") or "").upper()
+        if rec == "APPROVE_RECOMMENDED":
+            card_summary["approve_recommended"] += 1
+        elif rec == "WAIT_FOR_MORE_EVIDENCE":
+            card_summary["wait_for_more_evidence"] += 1
+        elif rec == "DO_NOT_APPROVE":
+            card_summary["do_not_approve"] += 1
+        elif rec == "SERGE_ONLY":
+            card_summary["serge_only"] += 1
+        else:
+            card_summary["unavailable"] += 1
 
     # Determine overall status.
     blockers: list[str] = []
@@ -496,6 +588,7 @@ def build_guardian_readiness_status(
         "needs_human_count": needs_human_count,
         "non_delegable_count": non_delegable_count,
         "actions": evaluated,
+        "decision_card_summary": card_summary,
         "required_before_live_enforcement": list(
             policy.get("required_before_live_enforcement", [])
         ),
@@ -766,6 +859,7 @@ def _cli(argv: list[str] | None = None) -> int:
             "would_block_count": status["would_block_count"],
             "needs_human_count": status["needs_human_count"],
             "non_delegable_count": status["non_delegable_count"],
+            "decision_card_summary": status.get("decision_card_summary", {}),
             "recommended_next_action": status["recommended_next_action"],
         }
         print(json.dumps(summary, indent=2))

@@ -770,6 +770,7 @@ def route_approval_request(
             warnings=[],
             recommended_next_action="fix_request_payload",
         )
+        attach_decision_card_to_router_report(pdir, report)
         if write_report:
             _persist_router_report(pdir, report)
         return report
@@ -835,6 +836,7 @@ def route_approval_request(
             recommended_next_action="route_to_operator_for_explicit_authorization",
             operator_queue_fallback=operator_fallback,
         )
+        attach_decision_card_to_router_report(pdir, report)
         if write_report:
             _persist_router_report(pdir, report)
         return report
@@ -861,6 +863,7 @@ def route_approval_request(
             recommended_next_action="proceed_via_routine_autonomy_or_operator",
             operator_queue_fallback=operator_fallback,
         )
+        attach_decision_card_to_router_report(pdir, report)
         if write_report:
             _persist_router_report(pdir, report)
         return report
@@ -916,6 +919,7 @@ def route_approval_request(
         recommended_next_action=rec_next,
         operator_queue_fallback=operator_fallback,
     )
+    attach_decision_card_to_router_report(pdir, report)
     if write_report:
         _persist_router_report(pdir, report)
     return report
@@ -1119,6 +1123,136 @@ def write_router_report(project_dir: Path | str, report: dict[str, Any]) -> dict
     return _persist_router_report(pdir, report)
 
 
+# ---------- Phase 5U: decision-card integration (advisory only) ----------
+
+
+def _serge_policy_module():
+    """Defensively import luna_serge_policy. Returns module or None."""
+    try:
+        from luna_modules import luna_serge_policy as _sp  # type: ignore
+        return _sp
+    except Exception:
+        return None
+
+
+def _router_decision_to_card_signal(routing_decision: str) -> str:
+    """Map router routing_decision to enforcer-style decision string for cards."""
+    return {
+        "approved": "approved",
+        "not_required": "not_required",
+        "denied": "denied",
+        "blocked": "blocked",
+        "needs_human": "needs_human",
+        "stale": "stale",
+        "dry_run": "dry_run",
+    }.get(routing_decision, "unknown")
+
+
+def build_decision_context_from_router_report(report: dict[str, Any]) -> dict[str, Any]:
+    """Build a decision_context dict (per Phase 5T schema) from a router report."""
+    if not isinstance(report, dict):
+        return {}
+    target_files = list(report.get("target_files") or [])
+    nd_flags = list(report.get("non_delegable_flags") or [])
+    action_type = str(report.get("action_type") or "")
+    tier = int(report.get("approval_tier_required") or 0)
+    routing_decision = str(report.get("routing_decision") or "unknown")
+    receipt = report.get("receipt") or {}
+    receipt_id = str(receipt.get("receipt_id") or "")
+    receipt_valid = bool(report.get("receipt_valid"))
+
+    rollback_exists = bool(
+        (report.get("packet") or {}).get("rollback_plan")
+        or report.get("rollback_plan")
+    )
+
+    # Verifier/sandbox/secrets are not strongly known at router level;
+    # leave as "unknown" so card classifies as WAIT_FOR_MORE_EVIDENCE
+    # unless decision is short-circuited by non-delegable flags.
+    return {
+        "schema_version": 1,
+        "goal": str(report.get("goal") or ""),
+        "action_type": action_type,
+        "risk_tier": tier,
+        "target_files": target_files,
+        "router_decision": _router_decision_to_card_signal(routing_decision),
+        "council_decision": str(((report.get("quorum_result") or {}).get("decision")) or "unknown"),
+        "enforcer_decision": (
+            "would_allow" if (routing_decision in ("approved", "not_required") and receipt_valid)
+            else ("not_required" if routing_decision == "not_required" else "unknown")
+        ),
+        "sandbox_result": "not_required" if action_type in ("generated_artifact", "read_only") else "unknown",
+        "verifier_result": "unknown",
+        "rollback_exists": rollback_exists,
+        "secrets_scan": "unknown",
+        "resource_status": "unknown",
+        "non_delegable_flags": nd_flags,
+        "reviewer_votes": [],
+        "summary": str(report.get("recommended_next_action") or ""),
+        "evidence": [
+            f"receipt_id={receipt_id!r}",
+            f"receipt_valid={receipt_valid}",
+            f"routing_decision={routing_decision}",
+        ],
+    }
+
+
+def attach_decision_card_to_router_report(
+    project_dir: Path | str,
+    report: dict[str, Any],
+) -> dict[str, Any]:
+    """Attach a Serge-readable decision card to a router report (advisory only).
+
+    safe_to_execute_now in the report stays False. Returns the (mutated) report.
+    Degrades gracefully if luna_serge_policy is unavailable.
+    """
+    if not isinstance(report, dict):
+        return report
+    sp = _serge_policy_module()
+    if sp is None:
+        report["decision_card"] = {
+            "decision_card_status": "unavailable",
+            "reason": "luna_serge_policy module not importable",
+        }
+        report["decision_card_recommendation"] = "UNAVAILABLE"
+        report["serge_plain_english_summary"] = (
+            "Decision card module unavailable. Defer to existing router report."
+        )
+        warns = list(report.get("warnings") or [])
+        warns.append("decision_card_module_unavailable")
+        report["warnings"] = warns
+        return report
+
+    try:
+        ctx = build_decision_context_from_router_report(report)
+        ns = sp.load_north_star_policy(project_dir)
+        pol = sp.load_standing_approval_policy(project_dir)
+        card = sp.build_decision_card(ctx, policy=pol, north_star=ns)
+    except Exception as e:
+        report["decision_card"] = {
+            "decision_card_status": "error",
+            "error": f"{type(e).__name__}:{str(e)[:200]}",
+        }
+        report["decision_card_recommendation"] = "UNAVAILABLE"
+        report["serge_plain_english_summary"] = (
+            "Decision card generation failed; defer to existing router report."
+        )
+        warns = list(report.get("warnings") or [])
+        warns.append(f"decision_card_error:{type(e).__name__}")
+        report["warnings"] = warns
+        return report
+
+    # Hard rule: never let attaching a card flip safe_to_execute_now.
+    card["safe_to_execute_now"] = False
+    report["decision_card"] = card
+    report["decision_card_recommendation"] = card.get("recommendation", "")
+    report["serge_plain_english_summary"] = card.get(
+        "plain_english_final_recommendation", ""
+    )
+    report["safe_to_execute_now"] = False
+    return report
+
+
 # ---------- self-test ----------
 
 
@@ -1231,6 +1365,8 @@ def _cli(argv: list[str] | None = None) -> int:
         "warnings": report["warnings"],
         "recommended_next_action": report["recommended_next_action"],
         "safe_to_execute_now": report["safe_to_execute_now"],
+        "decision_card_recommendation": report.get("decision_card_recommendation", ""),
+        "serge_plain_english_summary": report.get("serge_plain_english_summary", ""),
         "operator_queue_fallback": report["operator_queue_fallback"],
     }
     print(json.dumps(out, indent=2))

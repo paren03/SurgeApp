@@ -850,6 +850,18 @@ def route_blocked_task_for_approval(
         approval_routing_status = "router_error"
         router_report = {"error": f"{type(e).__name__}:{str(e)[:200]}"}
 
+    # Phase 5U: lift the decision-card recommendation from the router report
+    # into the routing result for downstream summaries.
+    decision_card_recommendation = ""
+    serge_plain_english_summary = ""
+    if isinstance(router_report, dict):
+        decision_card_recommendation = str(
+            router_report.get("decision_card_recommendation") or ""
+        )
+        serge_plain_english_summary = str(
+            router_report.get("serge_plain_english_summary") or ""
+        )
+
     return {
         "routed": approval_routing_status == "routed",
         "approval_routing_status": approval_routing_status,
@@ -863,6 +875,8 @@ def route_blocked_task_for_approval(
         "router_needs_human": router_needs_human,
         "router_non_delegable": router_non_delegable,
         "router_report": router_report,
+        "decision_card_recommendation": decision_card_recommendation,
+        "serge_plain_english_summary": serge_plain_english_summary,
         "routine_request": routine_request,
         "recommended_next_action": (
             "approval_requested -- awaiting human or council review"
@@ -950,6 +964,27 @@ def summarize_approval_routing(
             notes.append(f"{tc}: routed -> {r.get('router_decision', '?')} (safe_to_execute_now=False)")
         else:
             notes.append(f"{tc}: {status}")
+    # Phase 5U: aggregate decision-card recommendations across routing results.
+    card_summary = {
+        "approve_recommended": 0,
+        "wait_for_more_evidence": 0,
+        "do_not_approve": 0,
+        "serge_only": 0,
+        "unavailable": 0,
+    }
+    for r in routing_results:
+        rec = str(r.get("decision_card_recommendation") or "").upper()
+        if rec == "APPROVE_RECOMMENDED":
+            card_summary["approve_recommended"] += 1
+        elif rec == "WAIT_FOR_MORE_EVIDENCE":
+            card_summary["wait_for_more_evidence"] += 1
+        elif rec == "DO_NOT_APPROVE":
+            card_summary["do_not_approve"] += 1
+        elif rec == "SERGE_ONLY":
+            card_summary["serge_only"] += 1
+        else:
+            card_summary["unavailable"] += 1
+
     return {
         "enabled": True,
         "router_available": router_ok,
@@ -958,6 +993,7 @@ def summarize_approval_routing(
         "needs_human_count": needs_human,
         "blocked_count": blocked,
         "approval_request_paths": paths,
+        "decision_card_summary": card_summary,
         "notes": notes[:10],
     }
 
@@ -1900,6 +1936,8 @@ def _cli(argv: list[str] | None = None) -> int:
             "safe_to_execute_now": False,
             "router_decision": result.get("router_decision"),
             "router_needs_human": result.get("router_needs_human"),
+            "decision_card_recommendation": result.get("decision_card_recommendation", ""),
+            "serge_plain_english_summary": result.get("serge_plain_english_summary", ""),
             "recommended_next_action": result.get("recommended_next_action"),
             "safe_to_run_routine_code_edits": False,
             "safe_to_run_overnight_code_edits": False,

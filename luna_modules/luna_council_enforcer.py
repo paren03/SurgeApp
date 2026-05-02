@@ -359,12 +359,14 @@ def evaluate_action_enforcement(
         result["decision"] = "needs_human"
         result["reason"] = f"non_delegable:{nd_flags[0]}"
         result["receipt_required"] = True
+        attach_decision_card_to_enforcement_result(project_dir, result)
         return result
 
     optional_tiers = policy.get("receipt_optional_for_tiers", [0, 1])
     if risk_tier in optional_tiers:
         result["decision"] = "not_required"
         result["reason"] = "tier_read_only_or_generated_artifact"
+        attach_decision_card_to_enforcement_result(project_dir, result)
         return result
 
     result["receipt_required"] = True
@@ -384,6 +386,7 @@ def evaluate_action_enforcement(
     if not receipts:
         result["decision"] = "would_block"
         result["reason"] = "missing_receipt"
+        attach_decision_card_to_enforcement_result(project_dir, result)
         return result
 
     result["receipt_found"] = True
@@ -397,6 +400,7 @@ def evaluate_action_enforcement(
     if not valid:
         result["decision"] = "stale" if reason == "expired" else "invalid"
         result["reason"] = reason
+        attach_decision_card_to_enforcement_result(project_dir, result)
         return result
 
     req_diff_tiers = policy.get("require_diff_hash_for_tiers", [3, 4])
@@ -406,15 +410,124 @@ def evaluate_action_enforcement(
         if not a_diff:
             result["decision"] = "would_block"
             result["reason"] = "diff_hash_missing_in_action"
+            attach_decision_card_to_enforcement_result(project_dir, result)
             return result
         if r_diff and a_diff != r_diff:
             result["decision"] = "invalid"
             result["reason"] = "diff_hash_mismatch"
+            attach_decision_card_to_enforcement_result(project_dir, result)
             return result
 
     result["receipt_valid"] = True
     result["decision"] = "would_allow"
     result["reason"] = "valid_receipt_found"
+    attach_decision_card_to_enforcement_result(project_dir, result)
+    return result
+
+
+# ---------- Phase 5U: decision-card integration (advisory only) ----------
+
+
+def _serge_policy_module():
+    """Defensively import luna_serge_policy. Returns module or None."""
+    try:
+        from luna_modules import luna_serge_policy as _sp  # type: ignore
+        return _sp
+    except Exception:
+        return None
+
+
+def build_decision_context_from_enforcement_result(result: dict) -> dict:
+    """Build a decision_context dict (Phase 5T schema) from an enforcement result."""
+    if not isinstance(result, dict):
+        return {}
+    decision = str(result.get("decision") or "unknown")
+    receipt_valid = bool(result.get("receipt_valid"))
+    nd_flags = list(result.get("non_delegable_flags") or [])
+    return {
+        "schema_version": 1,
+        "goal": str(result.get("goal", "") or result.get("action_type", "")),
+        "action_type": str(result.get("action_type") or ""),
+        "risk_tier": int(result.get("risk_tier") or 0),
+        "target_files": list(result.get("target_files") or []),
+        "router_decision": "unknown",
+        "council_decision": "unknown",
+        "enforcer_decision": (
+            decision if decision in (
+                "not_required", "would_allow", "would_block", "needs_human",
+                "invalid", "stale", "blocked"
+            ) else "unknown"
+        ),
+        "sandbox_result": "unknown",
+        "verifier_result": "unknown",
+        "rollback_exists": bool(result.get("rollback_exists", False)),
+        "secrets_scan": "unknown",
+        "resource_status": "unknown",
+        "non_delegable_flags": nd_flags,
+        "reviewer_votes": [],
+        "summary": str(result.get("reason") or ""),
+        "evidence": [
+            f"receipt_id={result.get('receipt_id', '')!r}",
+            f"receipt_found={result.get('receipt_found', False)}",
+            f"receipt_valid={receipt_valid}",
+            f"enforcer_decision={decision}",
+        ],
+    }
+
+
+def attach_decision_card_to_enforcement_result(
+    project_dir: str,
+    result: dict,
+) -> dict:
+    """Attach a Serge-readable decision card to an enforcement result.
+
+    safe_to_execute_now stays False. advisory_only stays True. Returns the
+    (mutated) result. Degrades gracefully if luna_serge_policy is unavailable.
+    """
+    if not isinstance(result, dict):
+        return result
+    sp = _serge_policy_module()
+    if sp is None:
+        result["decision_card"] = {
+            "decision_card_status": "unavailable",
+            "reason": "luna_serge_policy module not importable",
+        }
+        result["decision_card_recommendation"] = "UNAVAILABLE"
+        result["plain_english_decision"] = (
+            "Decision card module unavailable. Defer to existing enforcer result."
+        )
+        warns = list(result.get("warnings") or [])
+        warns.append("decision_card_module_unavailable")
+        result["warnings"] = warns
+        return result
+
+    try:
+        ctx = build_decision_context_from_enforcement_result(result)
+        ns = sp.load_north_star_policy(project_dir)
+        pol = sp.load_standing_approval_policy(project_dir)
+        card = sp.build_decision_card(ctx, policy=pol, north_star=ns)
+    except Exception as e:
+        result["decision_card"] = {
+            "decision_card_status": "error",
+            "error": f"{type(e).__name__}:{str(e)[:200]}",
+        }
+        result["decision_card_recommendation"] = "UNAVAILABLE"
+        result["plain_english_decision"] = (
+            "Decision card generation failed; defer to existing enforcer result."
+        )
+        warns = list(result.get("warnings") or [])
+        warns.append(f"decision_card_error:{type(e).__name__}")
+        result["warnings"] = warns
+        return result
+
+    card["safe_to_execute_now"] = False
+    result["decision_card"] = card
+    result["decision_card_recommendation"] = card.get("recommendation", "")
+    result["plain_english_decision"] = card.get(
+        "plain_english_final_recommendation", ""
+    )
+    result["safe_to_execute_now"] = False
+    result["advisory_only"] = True
     return result
 
 
@@ -492,6 +605,27 @@ def build_guardian_approval_status(
         else "No immediate action required."
     )
 
+    # Phase 5U: aggregate decision-card recommendations across actions.
+    card_summary = {
+        "approve_recommended": 0,
+        "wait_for_more_evidence": 0,
+        "do_not_approve": 0,
+        "serge_only": 0,
+        "unavailable": 0,
+    }
+    for r in action_results:
+        rec = str(r.get("decision_card_recommendation") or "").upper()
+        if rec == "APPROVE_RECOMMENDED":
+            card_summary["approve_recommended"] += 1
+        elif rec == "WAIT_FOR_MORE_EVIDENCE":
+            card_summary["wait_for_more_evidence"] += 1
+        elif rec == "DO_NOT_APPROVE":
+            card_summary["do_not_approve"] += 1
+        elif rec == "SERGE_ONLY":
+            card_summary["serge_only"] += 1
+        else:
+            card_summary["unavailable"] += 1
+
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": now_iso(),
@@ -505,10 +639,14 @@ def build_guardian_approval_status(
         "missing_receipt_count": missing_count,
         "non_delegable_count": non_delegable_count,
         "actions": action_results,
+        "decision_card_summary": card_summary,
         "guardian_message": guardian_msg,
         "recommended_next_action": recommended,
         "files_checked": files_checked,
-        "notes": ["Phase 5O: advisory only. safe_to_execute_now is always false."],
+        "notes": [
+            "Phase 5O: advisory only. safe_to_execute_now is always false.",
+            "Phase 5U: actions include Serge-readable decision cards.",
+        ],
     }
 
 

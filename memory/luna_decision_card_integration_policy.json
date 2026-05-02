@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "phase": "5U",
+  "advisory_only": true,
+  "safe_to_execute_now": false,
+  "attach_to_router_reports": true,
+  "attach_to_enforcer_results": true,
+  "attach_to_guardian_readiness": true,
+  "attach_to_routine_approval_reports": true,
+  "preserve_existing_safety_flags": true,
+  "never_approve_non_delegable": true,
+  "never_enable_execution": true
+}

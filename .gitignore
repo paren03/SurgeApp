@@ -184,3 +184,10 @@ memory/luna_decision_card_preview.json
 memory/luna_decision_card_preview.md
 memory/luna_serge_policy_report.json
 memory/luna_serge_policy_report.md
+
+# Phase 5U: regenerable decision-card integration outputs. Tracked source of truth is
+# memory/luna_decision_card_integration_policy.json. Runtime artifacts below are rebuilt
+# on demand when router/enforcer/readiness/limited-autonomy modules attach decision cards.
+memory/luna_decision_card_integration_report.json
+memory/luna_decision_card_integration_report.md
+memory/luna_approval_decision_cards.jsonl
