@@ -3663,14 +3663,72 @@ if PYSIDE_AVAILABLE:
             except Exception:
                 online = False
 
+            # Check for guardian BLOCKED_IMPORT or import-health failure.
+            block_code = ""
+            block_reason = ""
+            try:
+                gs = _safe_read_json(MEMORY_DIR / "luna_guardian_status.json", default={}) or {}
+                for svc_data in (gs.get("services") or {}).values():
+                    if isinstance(svc_data, dict) and svc_data.get("blocked"):
+                        block_code = str(svc_data.get("block_code") or "BLOCKED")
+                        block_reason = str(svc_data.get("block_reason") or "")[:80]
+                        break
+            except Exception:
+                pass
+            if not block_code:
+                try:
+                    imp = _safe_read_json(MEMORY_DIR / "luna_worker_import_status.json", default={}) or {}
+                    if not imp.get("healthy", True):
+                        block_code = "BLOCKED_IMPORT"
+                        block_reason = str(imp.get("failure_reason") or "")[:80]
+                except Exception:
+                    pass
+
+            # Read CU ui_status and aider bridge state for richer phase display.
+            cu_ui_status = ""
+            try:
+                _cu_state = _safe_read_json(MEMORY_DIR / "continues_update_state.json", default={}) or {}
+                cu_ui_status = str(_cu_state.get("ui_status") or "")
+            except Exception:
+                pass
+            bridge_state = ""
+            bridge_target = ""
+            try:
+                _bs = _safe_read_json(LOGS_DIR / "aider_bridge_status.json", default={}) or {}
+                bridge_state = str(_bs.get("state") or "")
+                bridge_target = str(_bs.get("target") or "")
+            except Exception:
+                pass
+            _phase_extra = ""
+            if cu_ui_status and cu_ui_status not in ("idle_clean", "running_real_job", ""):
+                _phase_extra = f"  cu:{cu_ui_status}"
+            elif bridge_state and bridge_state not in ("idle", ""):
+                _short_tgt = bridge_target.split("\\")[-1] if bridge_target else ""
+                _phase_extra = f"  bridge:{bridge_state}" + (f"({_short_tgt})" if _short_tgt else "")
+            if _phase_extra:
+                self.phase.setText(f"phase: {phase}{_phase_extra}")
+
             if self._paused:
                 self.badge.setText("● paused")
                 self.badge.setStyleSheet("color: #ffbd2e;")
                 return
 
-            if online:
-                self.badge.setText("● online")
-                self.badge.setStyleSheet("color: #27c93f;")
+            if block_code:
+                self.badge.setText(f"● {block_code}")
+                self.badge.setStyleSheet("color: #ff5f56;")
+                tooltip = f"{block_code}: {block_reason}" if block_reason else block_code
+                self.badge.setToolTip(tooltip)
+            elif online:
+                # Show paused/blocked CU state in the badge even when worker is online
+                if cu_ui_status in ("paused_dirty_core", "paused_noop_budget",
+                                    "paused_recent_failures", "blocked_aider_stale"):
+                    self.badge.setText(f"● {cu_ui_status}")
+                    self.badge.setStyleSheet("color: #ffbd2e;")
+                    self.badge.setToolTip(f"continues_update: {cu_ui_status}")
+                else:
+                    self.badge.setText("● online")
+                    self.badge.setStyleSheet("color: #27c93f;")
+                    self.badge.setToolTip("")
             else:
                 if age_s is None:
                     self.badge.setText("● offline")

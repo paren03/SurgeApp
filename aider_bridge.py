@@ -112,11 +112,136 @@ AIDER_FLAGS   = [
 
 APPLY_ON_PASS  = os.environ.get("APPLY_ON_PASS", "false").lower() == "true"
 POLL_INTERVAL  = 3.0   # seconds between active dir scans
-AIDER_TIMEOUT  = 360   # seconds — extended for large-file section edits
+AIDER_TIMEOUT  = int(os.environ.get("AIDER_TIMEOUT", "900"))  # seconds — large files (luna_guardian.py, aider_bridge.py) need >360s
 BRIDGE_PID_PATH = LOGS_DIR / "aider_bridge.pid"
+BRIDGE_STATUS_PATH = LOGS_DIR / "aider_bridge_status.json"
+_NOOP_BUDGET_PATH = LOGS_DIR / "aider_bridge_noop_budget.json"
+
+# Module-level job tracking — reset on each new processing job.
+_BRIDGE_JOB_STARTED_AT: str = ""
+_BRIDGE_JOB_TARGET: str = ""
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
+
+def _write_bridge_status(state: str, task_id: str = "", detail: str = "", target: str = "") -> None:
+    global _BRIDGE_JOB_STARTED_AT, _BRIDGE_JOB_TARGET
+    now = datetime.now().isoformat(timespec="seconds")
+    if state == "processing":
+        if not _BRIDGE_JOB_STARTED_AT:
+            _BRIDGE_JOB_STARTED_AT = now
+        if target:
+            _BRIDGE_JOB_TARGET = target
+    else:
+        _BRIDGE_JOB_STARTED_AT = ""
+        _BRIDGE_JOB_TARGET = ""
+    try:
+        BRIDGE_STATUS_PATH.parent.mkdir(parents=True, exist_ok=True)
+        _write_json(BRIDGE_STATUS_PATH, {
+            "ts": now,
+            "pid": os.getpid(),
+            "state": state,
+            "task_id": task_id,
+            "target": _BRIDGE_JOB_TARGET,
+            "started_at": _BRIDGE_JOB_STARTED_AT,
+            "last_event_at": now,
+            "detail": detail[:200] if detail else "",
+        })
+    except Exception:
+        pass
+
+
+def _noop_budget_load() -> Dict[str, Any]:
+    try:
+        if _NOOP_BUDGET_PATH.exists():
+            return json.loads(_NOOP_BUDGET_PATH.read_text(encoding="utf-8", errors="replace") or "{}")
+    except Exception:
+        pass
+    return {}
+
+
+def _noop_budget_save(data: Dict[str, Any]) -> None:
+    try:
+        _NOOP_BUDGET_PATH.parent.mkdir(parents=True, exist_ok=True)
+        _NOOP_BUDGET_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=True), encoding="utf-8")
+    except Exception:
+        pass
+
+
+def _noop_budget_check(target: str) -> bool:
+    """Return True if target is in 24-hour noop cooldown — caller should skip the job."""
+    if not target:
+        return False
+    data = _noop_budget_load()
+    entry = data.get(target) or {}
+    cooldown_until = str(entry.get("cooldown_until") or "")
+    if not cooldown_until:
+        return False
+    try:
+        from datetime import datetime as _dt
+        cd = _dt.fromisoformat(cooldown_until)
+        if _dt.now() < cd:
+            return True
+        # Cooldown expired — clear it
+        data.pop(target, None)
+        _noop_budget_save(data)
+    except Exception:
+        pass
+    return False
+
+
+def _noop_budget_record(target: str) -> None:
+    """Record a noop for target; set 24-hour cooldown after 2 noops."""
+    if not target:
+        return
+    data = _noop_budget_load()
+    entry = dict(data.get(target) or {})
+    count = int(entry.get("count") or 0) + 1
+    entry["count"] = count
+    entry["last_noop_at"] = datetime.now().isoformat(timespec="seconds")
+    if count >= 2:
+        from datetime import datetime as _dt, timedelta as _td
+        entry["cooldown_until"] = (_dt.now() + _td(hours=24)).isoformat(timespec="seconds")
+        _log(f"noop_budget_exhausted for target={target} count={count}; 24h cooldown set")
+        _live_feed("NOOP_BUDGET_EXHAUSTED", f"Target {target} noop budget exhausted; 24h cooldown",
+                   detail=f"count={count}")
+    data[target] = entry
+    _noop_budget_save(data)
+
+
+def _cleanup_orphan_aider_children() -> None:
+    """Terminate orphan 'python -m aider' children from a prior bridge crash."""
+    my_pid = os.getpid()
+    try:
+        result = subprocess.run(
+            [
+                "powershell", "-NoProfile", "-Command",
+                "Get-CimInstance Win32_Process | Where-Object {"
+                " $_.Name -match '^python' -and $_.CommandLine -match 'aider'"
+                " -and ($_.CommandLine -match 'logic_updates|aider_jobs')"
+                "} | Select-Object ProcessId,ParentProcessId | ConvertTo-Json -Compress",
+            ],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=8, creationflags=0x08000000,
+        )
+        rows = json.loads(result.stdout or "[]")
+        if isinstance(rows, dict):
+            rows = [rows]
+        for row in rows if isinstance(rows, list) else []:
+            pid = int(row.get("ProcessId") or 0)
+            parent = int(row.get("ParentProcessId") or 0)
+            if pid <= 0 or pid == my_pid or parent == my_pid:
+                continue
+            _log(f"Terminating orphan aider child pid={pid} parent={parent}")
+            _live_feed("ORPHAN_CHILD_KILLED", "Terminated orphan aider process from prior crash",
+                       detail=f"pid={pid} parent={parent}")
+            subprocess.run(
+                ["taskkill", "/T", "/F", "/PID", str(pid)],
+                capture_output=True, creationflags=0x08000000, timeout=5,
+            )
+    except Exception as exc:
+        _log(f"swallowed orphan cleanup: {exc}")
+
 
 def _log(msg: str) -> None:
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -777,6 +902,7 @@ def run_aider_patch(task_path: Path) -> None:
     log_path = str(_job_log_path(task_id))
 
     _log(f"Processing aider_patch task={task_id} target={target!r}")
+    _write_bridge_status("processing", task_id=task_id, detail=f"target={target}", target=target)
 
     # ── Pre-claim validation: all checks run BEFORE marking the job "running" ──
     # Luna must know if a job will succeed before she accepts it.
@@ -868,43 +994,58 @@ def run_aider_patch(task_path: Path) -> None:
     _append_job_log(task_id, f"RUN_AIDER_START python={AIDER_PYTHON} model={AIDER_MODEL}")
     _live_feed("RUN_AIDER_START", "Stage 2/5: Aider running", task_id=task_id,
                detail=f"python={AIDER_PYTHON}")
+    _aider_proc: subprocess.Popen | None = None
     try:
-        result = subprocess.run(
+        _aider_proc = subprocess.Popen(
             cmd,
             cwd=str(workspace),
-            capture_output=True,
-            text=True,
-            timeout=AIDER_TIMEOUT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             creationflags=0x08000000,  # CREATE_NO_WINDOW
             env=_aider_subprocess_env(workspace),
         )
-        aider_stdout = result.stdout or ""
-        aider_stderr = result.stderr or ""
-        aider_rc = result.returncode
+        try:
+            _raw_out, _raw_err = _aider_proc.communicate(timeout=AIDER_TIMEOUT)
+        except subprocess.TimeoutExpired:
+            # Kill the entire process tree, not just the direct child.
+            _aider_pid = _aider_proc.pid
+            try:
+                subprocess.run(
+                    ["taskkill", "/T", "/F", "/PID", str(_aider_pid)],
+                    capture_output=True, creationflags=0x08000000, timeout=8,
+                )
+            except Exception:
+                pass
+            try:
+                _aider_proc.kill()
+            except Exception:
+                pass
+            _live_feed("FAILED", f"Stage 5/5: Aider timed out ({AIDER_TIMEOUT}s); process tree killed", task_id=task_id)
+            _log(f"Aider timed out after {AIDER_TIMEOUT}s; process tree killed pid={_aider_pid}")
+            record = build_aider_completion_record(
+                task_id=task_id,
+                target_file=target,
+                diff_text="",
+                diff_path="",
+                log_path=log_path,
+                verification_passed=False,
+                applied=False,
+                failure_reason="aider_timeout_process_tree_killed",
+                analysis_only=analysis_only,
+                model_used=AIDER_MODEL,
+                started_at=started_at,
+                finished_at=time.time(),
+            )
+            _finish(task_path, task_id, build_aider_report(record, prompt=prompt, diff_text="", stdout="", stderr=""), False, record)
+            return
+        aider_stdout = (_raw_out or b"").decode("utf-8", errors="replace")
+        aider_stderr = (_raw_err or b"").decode("utf-8", errors="replace")
+        aider_rc = _aider_proc.returncode
         _append_job_log(task_id, f"RUN_AIDER_END rc={aider_rc}")
         if aider_stdout:
             _append_job_log(task_id, "STDOUT\n" + aider_stdout[:4000])
         if aider_stderr:
             _append_job_log(task_id, "STDERR\n" + aider_stderr[:4000])
-    except subprocess.TimeoutExpired:
-        _live_feed("FAILED", f"Stage 5/5: Aider timed out ({AIDER_TIMEOUT}s)", task_id=task_id)
-        _log(f"Aider timed out after {AIDER_TIMEOUT}s")
-        record = build_aider_completion_record(
-            task_id=task_id,
-            target_file=target,
-            diff_text="",
-            diff_path="",
-            log_path=log_path,
-            verification_passed=False,
-            applied=False,
-            failure_reason="aider_timeout",
-            analysis_only=analysis_only,
-            model_used=AIDER_MODEL,
-            started_at=started_at,
-            finished_at=time.time(),
-        )
-        _finish(task_path, task_id, build_aider_report(record, prompt=prompt, diff_text="", stdout="", stderr=""), False, record)
-        return
     except FileNotFoundError:
         _log("Aider not found — is it installed in this Python env?")
         record = build_aider_completion_record(
@@ -1130,6 +1271,7 @@ def run_aider_patch(task_path: Path) -> None:
     )
     report = build_aider_report(record, prompt=prompt, diff_text=diff, stdout=aider_stdout, stderr=aider_stderr)
     _finish(task_path, task_id, report, record["status"] == "done", record)
+    _write_bridge_status("idle", task_id=task_id, detail=f"finished status={status_line}")
     _log(f"Done task={task_id} status={status_line}")
 
 
@@ -1239,6 +1381,7 @@ def main() -> None:
 
     atexit.register(_release_pid_lock)
 
+    _cleanup_orphan_aider_children()
     _log("Aider Bridge started. Watching aider_jobs/active/ for aider_patch tasks.")
     _log(f"Model: {AIDER_MODEL}  timeout={AIDER_TIMEOUT}s  APPLY_ON_PASS={APPLY_ON_PASS}")
 
@@ -1271,6 +1414,12 @@ def main() -> None:
                     continue
                 seen.add(task_file.name)
                 try:
+                    # Per-target noop budget: skip targets in 24-hour cooldown
+                    _job_target = str(task.get("target_file") or "")
+                    if _noop_budget_check(_job_target):
+                        _live_feed("NOOP_BUDGET_SKIP", f"Skipping target in 24h noop cooldown",
+                                   task_id=task_file.stem, detail=f"target={_job_target}")
+                        continue
                     # Queue governor: check cycle budgets before running
                     try:
                         from luna_modules.luna_queue_governor import can_start_job
@@ -1300,6 +1449,7 @@ def main() -> None:
                         failed_seen += 1
                     elif status == "noop":
                         noop_seen += 1
+                        _noop_budget_record(str(task.get("target_file") or ""))
                     # Queue governor: record outcome for cycle tracking
                     try:
                         from luna_modules.luna_queue_governor import record_job_outcome
@@ -1320,6 +1470,7 @@ def main() -> None:
                     )
         except Exception as exc:
             _log(f"Watch loop error: {exc}")
+        _write_bridge_status("idle")
         time.sleep(POLL_INTERVAL)
 
 

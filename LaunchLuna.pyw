@@ -337,18 +337,58 @@ def write_startup_status(events: list[dict[str, Any]]) -> None:
         pass
 
 
-def _cu_quality_gate_paused() -> bool:
-    """Return True when CU should not be auto-restarted by one-click launch."""
+_CU_GATE_CORE_FILES = [
+    "worker.py", "aider_bridge.py", "luna_guardian.py",
+    "LaunchLuna.pyw", "luna_start.pyw",
+    "SurgeApp_Claude_Terminal.py", "director_agent.py",
+]
+
+
+def _cu_startup_gate() -> tuple[bool, str]:
+    """Return (paused, reason) when CU should not be auto-started.
+
+    Reasons: stale_aider_job | dirty_core_files | noop_budget_exhausted
+    """
+    # Check for stale active aider jobs (> 60 min old — means bridge was interrupted)
+    active_dir = ROOT / "aider_jobs" / "active"
+    if active_dir.exists():
+        for jf in active_dir.glob("*.json"):
+            try:
+                if (time.time() - jf.stat().st_mtime) > 3600:
+                    return True, "stale_aider_job"
+            except Exception:
+                pass
+
+    # Check for dirty core files via git status
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain=v1", "--"] + _CU_GATE_CORE_FILES,
+            cwd=str(ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=8,
+            creationflags=NO_WIN,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return True, "dirty_core_files"
+    except Exception:
+        pass
+
+    # Check noop / all-skip budget exhaustion
     try:
         state_path = MEMORY / "continues_update_state.json"
-        if not state_path.exists():
-            return False
-        state = json.loads(state_path.read_text(encoding="utf-8", errors="replace") or "{}")
-        last_status = str(state.get("last_status") or "").lower()
-        noop_count = int(state.get("noop_count", 0) or 0)
-        return last_status == "noop" and noop_count >= 5
+        if state_path.exists():
+            state = json.loads(state_path.read_text(encoding="utf-8", errors="replace") or "{}")
+            noop_count = int(state.get("noop_count") or 0)
+            all_skip_streak = int(state.get("_all_skip_streak") or 0)
+            if noop_count >= 5 or all_skip_streak >= 3:
+                return True, "noop_budget_exhausted"
     except Exception:
-        return False
+        pass
+
+    return False, ""
 
 
 def _worker_import_ready() -> tuple[bool, str]:
@@ -432,12 +472,13 @@ def main() -> None:
 
     # Continues-update loop (unique flag so it's not confused with worker.py)
     cu_lock = SERVICE_LOCKS["--continues-update-start"]
-    if _cu_quality_gate_paused():
-        _archive_path(cu_lock, "quality_gate_paused")
+    _cu_gate_paused, _cu_gate_reason = _cu_startup_gate()
+    if _cu_gate_paused:
+        _archive_path(cu_lock, f"gate_{_cu_gate_reason}")
         events.append({
             "service": "continues_update",
-            "action": "paused_quality_gate",
-            "reason": "noop_budget_exhausted",
+            "action": "paused_gate",
+            "reason": _cu_gate_reason,
         })
     elif not worker_import_ok:
         _archive_path(cu_lock, "worker_import_blocked")

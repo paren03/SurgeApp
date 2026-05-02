@@ -37,6 +37,31 @@ OLLAMA_API_BASE = os.environ.get("OLLAMA_API_BASE", "http://127.0.0.1:11434").rs
 # Mutable state for Ollama recovery — avoids global keyword in functions.
 _OLLAMA: Dict[str, object] = {"fail_count": 0, "cooldown_until": 0.0}
 
+# Per-service restart budget state.  Tracks consecutive quick-crash restarts
+# so Guardian stops relaunching a service that cannot import or immediately dies.
+_RESTART_BUDGET: Dict[str, Dict[str, object]] = {
+    "worker": {
+        "count": 0,
+        "window_start": 0.0,
+        "last_failure_reason": "",
+        "cooldown_until": 0.0,
+    },
+    "aider_bridge": {
+        "count": 0,
+        "window_start": 0.0,
+        "last_failure_reason": "",
+        "cooldown_until": 0.0,
+    },
+}
+# Allow at most RESTART_BUDGET restarts within RESTART_WINDOW_SECONDS before
+# entering RESTART_BUDGET_EXCEEDED cooldown of RESTART_COOLDOWN_SECONDS.
+RESTART_BUDGET = 3
+RESTART_WINDOW_SECONDS = 120
+RESTART_COOLDOWN_SECONDS = 300
+
+# Path where Guardian writes import-health outcomes so the UI can read them.
+WORKER_IMPORT_STATUS_PATH = MEMORY_DIR / "luna_worker_import_status.json"
+
 PYTHONW = Path(
     r"C:\Program Files\WindowsApps"
     r"\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0"
@@ -322,6 +347,16 @@ def _service_pid(service_name: str, script_spec: str) -> int:
     return 0
 
 
+def _read_bridge_status() -> Dict[str, object]:
+    try:
+        p = LOGS_DIR / "aider_bridge_status.json"
+        if p.exists():
+            return json.loads(p.read_text(encoding="utf-8", errors="replace") or "{}")
+    except Exception:
+        pass
+    return {}
+
+
 def _write_status(results: Dict[str, bool]) -> None:
     services: Dict[str, Dict[str, object]] = {}
     for service_name, script_spec in SERVICE_SCRIPTS.items():
@@ -345,6 +380,7 @@ def _write_status(results: Dict[str, bool]) -> None:
             "restarted_this_tick": bool(results.get("ollama")),
             "fail_count": int(_OLLAMA["fail_count"]),  # type: ignore[arg-type]
         },
+        "aider_bridge": _read_bridge_status(),
     }
     try:
         GUARDIAN_STATUS_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -382,8 +418,154 @@ def _pythonw_for(service_name: str) -> str:
     return str(PYTHONW if PYTHONW.exists() else sys.executable)
 
 
+def _worker_import_healthy() -> bool:
+    """Run a lightweight import check for worker.py in a subprocess.
+
+    Returns True if ``import worker`` succeeds, False otherwise.
+    Writes the outcome to WORKER_IMPORT_STATUS_PATH so the UI can surface it.
+    """
+    python = str(AIDER_PYTHON) if AIDER_PYTHON.exists() else sys.executable
+    script = str(PROJECT_DIR / "worker.py")
+    if not Path(script).exists():
+        _write_import_status(False, "worker_script_missing")
+        return False
+    try:
+        result = subprocess.run(
+            [
+                python,
+                "-c",
+                f"import sys; sys.path.insert(0, r'{PROJECT_DIR}'); import worker; print('OK')",
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=20,
+            cwd=str(PROJECT_DIR),
+            creationflags=NO_WIN,
+        )
+        ok = result.returncode == 0 and "OK" in (result.stdout or "")
+        reason = "" if ok else (result.stderr or result.stdout or "exit_nonzero").strip()[:300]
+        _write_import_status(ok, reason)
+        return ok
+    except Exception as exc:
+        _write_import_status(False, str(exc)[:200])
+        return False
+
+
+def _write_import_status(ok: bool, reason: str) -> None:
+    try:
+        WORKER_IMPORT_STATUS_PATH.parent.mkdir(parents=True, exist_ok=True)
+        WORKER_IMPORT_STATUS_PATH.write_text(
+            json.dumps({
+                "ts": _now_iso(),
+                "healthy": ok,
+                "failure_reason": reason,
+            }, indent=2),
+            encoding="utf-8",
+        )
+    except Exception:
+        pass
+
+
+def _restart_budget_exceeded(service_name: str) -> bool:
+    """Return True if this service has exceeded its restart budget and is in cooldown."""
+    state = _RESTART_BUDGET.get(service_name)
+    if state is None:
+        return False
+    now = time.time()
+    if now < float(state["cooldown_until"]):  # type: ignore[arg-type]
+        return True
+    # Reset window if it has expired.
+    window_start = float(state["window_start"])  # type: ignore[arg-type]
+    if now - window_start > RESTART_WINDOW_SECONDS:
+        state["count"] = 0
+        state["window_start"] = now
+    return False
+
+
+def _restart_budget_record_launch(service_name: str) -> None:
+    """Record a fresh launch attempt for budget tracking."""
+    state = _RESTART_BUDGET.get(service_name)
+    if state is None:
+        return
+    now = time.time()
+    window_start = float(state["window_start"])  # type: ignore[arg-type]
+    if now - window_start > RESTART_WINDOW_SECONDS:
+        state["count"] = 0
+        state["window_start"] = now
+    state["count"] = int(state["count"]) + 1  # type: ignore[arg-type]
+    if int(state["count"]) >= RESTART_BUDGET:  # type: ignore[arg-type]
+        state["cooldown_until"] = now + RESTART_COOLDOWN_SECONDS
+        reason = str(state.get("last_failure_reason") or "rapid_crash_loop")
+        msg = (
+            f"{service_name} restart budget exceeded ({state['count']} launches "
+            f"in {RESTART_WINDOW_SECONDS}s); cooling down {RESTART_COOLDOWN_SECONDS}s"
+        )
+        _log(f"RESTART_BUDGET_EXCEEDED: {msg} reason={reason}")
+        _feed("RESTART_BUDGET_EXCEEDED", msg, f"service={service_name} reason={reason}")
+        _write_blocked_status(service_name, "RESTART_BUDGET_EXCEEDED", reason)
+
+
+def _write_blocked_status(service_name: str, block_code: str, reason: str) -> None:
+    try:
+        GUARDIAN_STATUS_PATH.parent.mkdir(parents=True, exist_ok=True)
+        existing: dict = {}
+        if GUARDIAN_STATUS_PATH.exists():
+            try:
+                existing = json.loads(GUARDIAN_STATUS_PATH.read_text(encoding="utf-8", errors="replace") or "{}")
+            except Exception:
+                pass
+        services = existing.get("services") or {}
+        services[service_name] = {
+            **services.get(service_name, {}),
+            "running": False,
+            "blocked": True,
+            "block_code": block_code,
+            "block_reason": reason,
+            "blocked_at": _now_iso(),
+        }
+        existing["ts"] = _now_iso()
+        existing["status"] = "service_attention_needed"
+        existing["services"] = services
+        GUARDIAN_STATUS_PATH.write_text(json.dumps(existing, indent=2), encoding="utf-8")
+    except Exception:
+        pass
+
+
 def _start_service(service_name: str, script_spec: str) -> bool:
     marker = script_spec.split()[0]
+
+    # Restart budget — do not re-launch if we have been rapidly crashing.
+    if _restart_budget_exceeded(service_name):
+        state = _RESTART_BUDGET.get(service_name, {})
+        cooldown_secs = max(0, float(state.get("cooldown_until", 0)) - time.time())
+        _log(
+            f"{service_name} restart budget exceeded; skipping launch "
+            f"(cooldown {cooldown_secs:.0f}s remaining)"
+        )
+        return False
+
+    # For worker: run a lightweight import health check before launching.
+    # If the import fails, record the failure and enter cooldown rather than
+    # spawning a process that will die immediately in an infinite loop.
+    if service_name == "worker":
+        if not _worker_import_healthy():
+            reason = "worker_import_failed"
+            try:
+                status = json.loads(WORKER_IMPORT_STATUS_PATH.read_text(encoding="utf-8", errors="replace") or "{}")
+                reason = status.get("failure_reason") or reason
+            except Exception:
+                pass
+            _log(f"worker import unhealthy; not launching. reason={reason[:200]}")
+            _feed("WORKER_IMPORT_BLOCKED", "worker import failed; not launching", reason[:300])
+            state = _RESTART_BUDGET.get("worker")
+            if state is not None:
+                state["last_failure_reason"] = reason
+            _restart_budget_record_launch("worker")
+            _write_blocked_status("worker", "BLOCKED_IMPORT", reason)
+            return False
+
     _dedupe_service_processes(service_name, script_spec)
     lock = SERVICE_LOCKS.get(service_name)
     if lock and _lock_alive(lock):
@@ -416,6 +598,7 @@ def _start_service(service_name: str, script_spec: str) -> bool:
     )
     if lock and service_name != "aider_bridge":
         _write_pid_lock(lock, int(proc.pid), service_name)
+    _restart_budget_record_launch(service_name)
     _log(f"launched {service_name}: {' '.join(args)}")
     _feed("GUARDIAN_SERVICE_STARTED", f"started {service_name}", " ".join(args))
     return True

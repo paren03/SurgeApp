@@ -203,6 +203,7 @@ from luna_modules.luna_heartbeat import (
 )
 
 LAST_HEARTBEAT_WRITE_MONO = time.monotonic()
+WORKER_BOOT_TS = datetime.now().isoformat(timespec="seconds")
 BACKGROUND_THREADS: Dict[str, threading.Thread] = {}
 # (default set by CORE_STATE dataclass)
 
@@ -452,6 +453,7 @@ def heartbeat_payload() -> Dict[str, Any]:
         {
             "ts": now_iso(),
             "pid": os.getpid(),
+            "started_at": WORKER_BOOT_TS,
             "alive": True,
             "recent_messages": list(AUTONOMY_MESSAGES),
             "approval_pending": count_pending_approvals(),
@@ -2752,9 +2754,23 @@ def _cleanup_old_proposals(max_keep: int = 30) -> int:
         )
     except Exception:
         return 0
+    # Build set of in-flight aider task_ids so we don't try to quarantine
+    # logic_updates/<task_id>_<pid> dirs while the bridge still has them open
+    # (causes WinError 32 spam). Dirs are named "<task_id>_<pid>".
+    active_task_ids: set = set()
+    try:
+        active_jobs_dir = PROJECT_DIR / "aider_jobs" / "active"
+        if active_jobs_dir.exists():
+            for jf in active_jobs_dir.glob("*.json"):
+                active_task_ids.add(jf.stem)
+    except Exception:
+        pass
     quarantined = 0
     for old_dir in dirs[max_keep:]:
         try:
+            # Skip dirs whose task_id prefix is currently in the active queue
+            if active_task_ids and any(old_dir.name.startswith(tid) for tid in active_task_ids):
+                continue
             if _logic_update_has_git_state(old_dir):
                 _diag(f"_cleanup_old_proposals: preserved staged/tracked proposal {old_dir.name}")
                 continue
@@ -9996,7 +10012,7 @@ _CU_KILL_SWITCH_PATH = _CU_PROJECT_DIR / "LUNA_STOP_NOW.flag"
 _CU_SHUTDOWN_FLAG_PATH = _CU_LOGS_DIR / "SHUTDOWN.flag"
 _CU_DEFAULT_INTERVAL_SECONDS = 12.0    # small cooldown keeps CU nonstop without hammering CPU/fans
 _CU_DIRECTOR_REFRESH_INTERVAL_SECONDS = 60.0  # refresh plans should keep moving but not hammer the machine
-_CU_DEFAULT_JOB_TIMEOUT_SECONDS = 420.0  # must be > AIDER_TIMEOUT so aider finishes first
+_CU_DEFAULT_JOB_TIMEOUT_SECONDS = 960.0  # must be > AIDER_TIMEOUT (default 900) so aider finishes first
 _CU_EMPTY_PLAN_RETRY_SECONDS = 15.0     # short back-off only when all jobs are stale; 0 used on normal completion
 _CU_MAX_CONSECUTIVE_FAILURES = 5         # stop loop after N back-to-back real failures
 _CU_MAX_EMPTY_ON_FILE = 2                # skip a file after this many consecutive empty diffs
@@ -10169,8 +10185,37 @@ def _cu_load_state() -> Dict[str, Any]:
     return {}
 
 
+def _cu_compute_ui_status(state: Dict[str, Any]) -> str:
+    """Map internal CU state fields to one of 7 standardized UI status strings."""
+    phase = str(state.get("phase") or "")
+    last_status = str(state.get("last_status") or "")
+    dirty = state.get("dirty_targets") or []
+    skip_streak = int(state.get("_all_skip_streak") or 0)
+    consec_fail = int(state.get("consecutive_failures") or 0)
+    noop_count = int(state.get("noop_count") or 0)
+    running = bool(state.get("running"))
+
+    # Blocked states take priority
+    if last_status in ("blocked_worker_import",) or phase == "blocked_worker_import":
+        return "blocked_worker_import"
+    if last_status in ("blocked_aider_stale",) or phase == "blocked_aider_stale":
+        return "blocked_aider_stale"
+    # Paused states
+    if dirty:
+        return "paused_dirty_core"
+    if consec_fail >= 3:
+        return "paused_recent_failures"
+    if skip_streak >= 2 or noop_count >= 5:
+        return "paused_noop_budget"
+    # Active vs idle
+    if running and phase == "queueing":
+        return "running_real_job"
+    return "idle_clean"
+
+
 def _cu_write_state(state: Dict[str, Any]) -> None:
     try:
+        state["ui_status"] = _cu_compute_ui_status(state)
         _CU_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
         tmp = _CU_STATE_PATH.with_suffix(_CU_STATE_PATH.suffix + f".{uuid.uuid4().hex[:6]}.tmp")
         tmp.write_text(json.dumps(state, indent=2, ensure_ascii=True), encoding="utf-8", errors="replace")
@@ -11218,6 +11263,41 @@ def continues_update_loop(
     if _CU_STOP_FLAG_PATH.exists():
         _cu_feed("CU_START_BLOCKED", "continues-update is paused by memory/continues_update.stop")
         return {"ok": False, "reason": "continues_update_paused"}
+
+    # Worker import health check — refuse to start if import is broken.
+    # This prevents CU from queuing work that will never execute cleanly.
+    _cu_import_status_path = _CU_MEMORY_DIR / "luna_worker_import_status.json"
+    try:
+        _cu_imp = json.loads(_cu_import_status_path.read_text(encoding="utf-8", errors="replace")) if _cu_import_status_path.exists() else {}
+        if _cu_imp and not _cu_imp.get("healthy", True):
+            _cu_reason = str(_cu_imp.get("failure_reason") or "unknown")[:200]
+            _cu_feed("CU_BLOCKED_IMPORT",
+                     "continues-update blocked: worker import is unhealthy; run guardian repair first",
+                     detail=_cu_reason)
+            try:
+                (_CU_MEMORY_DIR / "nightly_updates.md").open("a", encoding="utf-8", errors="replace").write(
+                    f"\n[{_cu_now_iso()}] CU_BLOCKED_IMPORT: {_cu_reason}\n"
+                )
+            except Exception:
+                pass
+            return {"ok": False, "reason": "CU_BLOCKED_IMPORT", "detail": _cu_reason}
+    except Exception:
+        pass  # if we can't read the file, proceed (benefit of the doubt)
+
+    # NOOP backoff — if the CU state records a recent all-skip cycle, pause briefly.
+    _cu_backoff_path = _CU_MEMORY_DIR / "continues_update_noop_backoff.json"
+    try:
+        _cu_backoff = json.loads(_cu_backoff_path.read_text(encoding="utf-8", errors="replace")) if _cu_backoff_path.exists() else {}
+        _cu_backoff_until = float(_cu_backoff.get("backoff_until", 0) or 0)
+        if _cu_backoff_until > time.time():
+            _remaining = int(_cu_backoff_until - time.time())
+            _cu_feed("CU_BACKOFF",
+                     f"continues-update in NOOP backoff — {_remaining}s remaining",
+                     detail=str(_cu_backoff.get("reason") or "repeated_noop_cycles"))
+            return {"ok": False, "reason": "CU_BACKOFF", "seconds_remaining": _remaining}
+    except Exception:
+        pass
+
     # Boot-time self-diagnosis: scan for stale blockers before building the plan.
     # This runs every time the CU loop starts so Luna never waits for a human to notice.
     _cu_boot_self_diagnose()
@@ -11852,6 +11932,26 @@ def continues_update_loop(
                 })
                 _cu_write_state(state)
                 _cu_feed("CU_NOOP_BUDGET_EXHAUSTED", "Pausing continues-update after too many no-diff jobs")
+                # Write backoff file so the next loop start detects CU_BACKOFF correctly.
+                try:
+                    _noop_backoff_until = time.time() + 300  # 5-minute backoff after NOOP budget
+                    _CU_MEMORY_DIR.mkdir(parents=True, exist_ok=True)
+                    (_CU_MEMORY_DIR / "continues_update_noop_backoff.json").write_text(
+                        json.dumps({
+                            "backoff_until": _noop_backoff_until,
+                            "reason": "noop_budget_exhausted",
+                            "set_at": _cu_now_iso(),
+                        }),
+                        encoding="utf-8",
+                    )
+                    try:
+                        (_CU_MEMORY_DIR / "nightly_updates.md").open("a", encoding="utf-8", errors="replace").write(
+                            f"\n[{_cu_now_iso()}] CU_BACKOFF: noop_budget_exhausted — 5min backoff\n"
+                        )
+                    except Exception:
+                        pass
+                except Exception:
+                    pass
                 break
             # Cooldown between cycles, also responsive to stop flag.
             cooldown_seconds = float(interval_seconds)
