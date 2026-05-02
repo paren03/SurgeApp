@@ -109,3 +109,15 @@ memory/luna_hibernation_plan.json
 memory/luna_hibernation_report.md
 memory/luna_hardware_profile.json
 memory/luna_resource_monitor_build_report.json
+
+# Phase 5K: regenerable limited-autonomy outputs. Tracked sources of truth
+# are memory/luna_limited_autonomy.schema.json,
+# memory/luna_overnight_policy.json, and memory/luna_autonomy_tiers.json.
+# Runtime artifacts below are rebuilt on demand by luna_limited_autonomy.
+memory/luna_limited_autonomy_state.json
+memory/luna_limited_autonomy_cycle.jsonl
+memory/luna_limited_autonomy_report.json
+memory/luna_limited_autonomy_report.md
+memory/luna_overnight_brief.md
+memory/luna_recommended_next_actions.json
+memory/luna_autonomy_run_lock.json

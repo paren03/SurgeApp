@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "description": "Phase 5K autonomy tier ladder. For Phase 5K the active tier is effectively tier 1 or lower. Even if config says higher, code edits remain blocked in this phase. Phase 5L (Delegated AI Approval Council) will add the delegation that lets higher tiers proceed safely overnight.",
+  "active_tier_max_for_phase_5k": 1,
+  "tiers": [
+    {
+      "tier": 0,
+      "name": "read_only",
+      "description": "Read-only health checks, status snapshots, no writes outside generated reports.",
+      "allowed_task_classes": [
+        "read_only_health_check",
+        "resource_snapshot"
+      ],
+      "forbidden": ["code_edit", "aider_patch", "package_install", "external_network"]
+    },
+    {
+      "tier": 1,
+      "name": "reports_and_memory_refresh",
+      "description": "Regenerate gitignored reports + curated memory artifacts (file map, memory index, scorecard, brief).",
+      "allowed_task_classes": [
+        "read_only_health_check",
+        "file_map_refresh",
+        "memory_index_refresh",
+        "scorecard_refresh",
+        "resource_snapshot",
+        "playbook_match_recent_failures",
+        "task_graph_plan_only",
+        "sandbox_self_test",
+        "upgrade_gate_evaluate_only",
+        "daily_brief_report",
+        "recommended_next_actions_report"
+      ],
+      "forbidden": ["code_edit", "aider_patch", "package_install", "external_network"]
+    },
+    {
+      "tier": 2,
+      "name": "proposal_only",
+      "description": "Build proposals, task graphs, and upgrade-gate evaluations. No execution.",
+      "allowed_task_classes": [
+        "task_graph_plan_only",
+        "upgrade_gate_evaluate_only"
+      ],
+      "forbidden": ["code_edit", "aider_patch", "package_install", "external_network"],
+      "phase_5k_status": "blocked — proposals via Phase 5H/5F only"
+    },
+    {
+      "tier": 3,
+      "name": "sandbox_preview_with_approval",
+      "description": "Run a sandbox simulation of a proposed change. Requires Phase 5L Delegated AI Approval Council quorum + operator approval before any apply step.",
+      "allowed_task_classes": [
+        "sandbox_self_test"
+      ],
+      "forbidden": ["code_edit", "aider_patch", "package_install", "external_network"],
+      "phase_5k_status": "blocked — Phase 5L not yet built"
+    },
+    {
+      "tier": 4,
+      "name": "limited_low_risk_auto_edit_future_disabled",
+      "description": "Future tier — limited low-risk additive edits with full council quorum + change ledger + rollback. Disabled in Phase 5K.",
+      "allowed_task_classes": [],
+      "forbidden": ["code_edit", "aider_patch", "package_install", "external_network", "worker_edit", "guardian_edit", "bridge_edit", "launcher_edit"],
+      "phase_5k_status": "disabled"
+    },
+    {
+      "tier": 5,
+      "name": "emergency_repair_future_disabled",
+      "description": "Future tier — emergency repair only with stricter council quorum + Serge as a required reviewer. Disabled in Phase 5K.",
+      "allowed_task_classes": [],
+      "forbidden": ["code_edit", "aider_patch", "package_install", "external_network", "worker_edit", "guardian_edit", "bridge_edit", "launcher_edit"],
+      "phase_5k_status": "disabled"
+    }
+  ],
+  "non_delegable": [
+    "personality_change",
+    "identity_change",
+    "goals_change",
+    "memory_delete",
+    "log_delete",
+    "queue_delete",
+    "kill_switch_remove",
+    "package_install",
+    "external_network",
+    "git_reset",
+    "git_push_force"
+  ]
+}

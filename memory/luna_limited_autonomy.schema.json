@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Limited Autonomy Cycle Plan + Report",
+  "description": "Phase 5K Limited Autonomy schemas. Plans describe one bounded overnight cycle. Reports describe what was attempted/skipped and explicitly say whether it is safe to run overnight in read-only mode and (always) NOT safe to run overnight doing code edits.",
+  "type": "object",
+  "definitions": {
+    "CyclePlan": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "cycle_id",
+        "created_at",
+        "goal",
+        "dry_run",
+        "allowed_task_classes",
+        "forbidden_task_classes",
+        "selected_tasks",
+        "skipped_tasks",
+        "approval_required",
+        "blockers",
+        "expected_artifacts",
+        "safety_checks",
+        "exit_criteria",
+        "max_runtime_seconds",
+        "one_task_at_a_time"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "cycle_id": { "type": "string" },
+        "created_at": { "type": "string" },
+        "goal": { "type": "string" },
+        "dry_run": { "type": "boolean" },
+        "allowed_task_classes": { "type": "array", "items": { "type": "string" } },
+        "forbidden_task_classes": { "type": "array", "items": { "type": "string" } },
+        "selected_tasks": { "type": "array" },
+        "skipped_tasks": { "type": "array" },
+        "approval_required": { "type": "array" },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "expected_artifacts": { "type": "array", "items": { "type": "string" } },
+        "safety_checks": { "type": "array", "items": { "type": "string" } },
+        "exit_criteria": { "type": "array", "items": { "type": "string" } },
+        "max_runtime_seconds": { "type": "integer", "minimum": 1 },
+        "one_task_at_a_time": { "type": "boolean" }
+      }
+    },
+    "CycleReport": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "cycle_id",
+        "started_at",
+        "finished_at",
+        "goal",
+        "dry_run",
+        "context_summary",
+        "tasks_attempted",
+        "tasks_succeeded",
+        "tasks_failed",
+        "tasks_skipped",
+        "approvals_required",
+        "artifacts_written",
+        "blockers",
+        "recommended_next_actions",
+        "safe_to_continue",
+        "safe_to_run_overnight_readonly",
+        "safe_to_run_overnight_code_edits"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "cycle_id": { "type": "string" },
+        "started_at": { "type": "string" },
+        "finished_at": { "type": "string" },
+        "goal": { "type": "string" },
+        "dry_run": { "type": "boolean" },
+        "context_summary": { "type": "object" },
+        "tasks_attempted": { "type": "array" },
+        "tasks_succeeded": { "type": "array" },
+        "tasks_failed": { "type": "array" },
+        "tasks_skipped": { "type": "array" },
+        "approvals_required": { "type": "array" },
+        "artifacts_written": { "type": "array", "items": { "type": "string" } },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "recommended_next_actions": { "type": "array" },
+        "safe_to_continue": { "type": "boolean" },
+        "safe_to_run_overnight_readonly": { "type": "boolean" },
+        "safe_to_run_overnight_code_edits": {
+          "type": "boolean",
+          "const": false,
+          "description": "Phase 5K hard rule — always false."
+        },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": true
+}
