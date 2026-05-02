@@ -131,9 +131,11 @@ _BRIDGE_JOB_TARGET: str = ""
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
-def _write_bridge_status(state: str, task_id: str = "", detail: str = "", target: str = "") -> None:
+def _write_bridge_status(state: str, task_id: str = "", detail: str = "", target: str = "",
+                         stage: str = "") -> None:
     global _BRIDGE_JOB_STARTED_AT, _BRIDGE_JOB_TARGET
-    now = datetime.now().isoformat(timespec="seconds")
+    now_dt = datetime.now()
+    now = now_dt.isoformat(timespec="seconds")
     if state == "processing":
         if not _BRIDGE_JOB_STARTED_AT:
             _BRIDGE_JOB_STARTED_AT = now
@@ -142,6 +144,12 @@ def _write_bridge_status(state: str, task_id: str = "", detail: str = "", target
     else:
         _BRIDGE_JOB_STARTED_AT = ""
         _BRIDGE_JOB_TARGET = ""
+    elapsed_seconds = 0
+    if _BRIDGE_JOB_STARTED_AT:
+        try:
+            elapsed_seconds = int((now_dt - datetime.fromisoformat(_BRIDGE_JOB_STARTED_AT)).total_seconds())
+        except Exception:
+            elapsed_seconds = 0
     try:
         BRIDGE_STATUS_PATH.parent.mkdir(parents=True, exist_ok=True)
         _write_json(BRIDGE_STATUS_PATH, {
@@ -152,10 +160,37 @@ def _write_bridge_status(state: str, task_id: str = "", detail: str = "", target
             "target": _BRIDGE_JOB_TARGET,
             "started_at": _BRIDGE_JOB_STARTED_AT,
             "last_event_at": now,
+            "elapsed_seconds": elapsed_seconds,
+            "stage": stage,
             "detail": detail[:200] if detail else "",
         })
     except Exception:
         pass
+
+
+def _bridge_heartbeat_loop(stop_event, task_id: str, target: str, stage: str = "aider_running") -> None:
+    """Background thread: tick bridge status every 10s while aider runs.
+
+    Updates last_event_at and elapsed_seconds so consumers (UI, guardian, verifier)
+    can tell the bridge is alive even when aider is silently generating tokens.
+    """
+    import time as _t
+    while not stop_event.is_set():
+        # Re-emit status with current timestamp; _write_bridge_status reuses the
+        # already-set _BRIDGE_JOB_STARTED_AT so elapsed_seconds counts up correctly.
+        try:
+            _write_bridge_status(
+                "processing",
+                task_id=task_id,
+                target=target,
+                stage=stage,
+                detail=f"aider running on {Path(target).name if target else '?'}",
+            )
+        except Exception:
+            pass
+        # Wait up to 10s but exit early if stop_event is set
+        if stop_event.wait(10.0):
+            return
 
 
 def _noop_budget_load() -> Dict[str, Any]:
@@ -1040,6 +1075,16 @@ def run_aider_patch(task_path: Path) -> None:
     _live_feed("RUN_AIDER_START", "Stage 2/5: Aider running", task_id=task_id,
                detail=f"python={AIDER_PYTHON}")
     _aider_proc: subprocess.Popen | None = None
+    # Start heartbeat thread so status file ticks every 10s while aider is silent.
+    import threading as _threading
+    _hb_stop = _threading.Event()
+    _hb_thread = _threading.Thread(
+        target=_bridge_heartbeat_loop,
+        args=(_hb_stop, task_id, target, "aider_running"),
+        daemon=True,
+        name=f"bridge-heartbeat-{task_id[:8]}",
+    )
+    _hb_thread.start()
     try:
         _aider_proc = subprocess.Popen(
             cmd,
@@ -1052,6 +1097,7 @@ def run_aider_patch(task_path: Path) -> None:
         try:
             _raw_out, _raw_err = _aider_proc.communicate(timeout=AIDER_TIMEOUT)
         except subprocess.TimeoutExpired:
+            _hb_stop.set()
             # Kill the entire process tree, not just the direct child.
             _aider_pid = _aider_proc.pid
             try:
@@ -1087,6 +1133,7 @@ def run_aider_patch(task_path: Path) -> None:
             )
             _finish(task_path, task_id, build_aider_report(record, prompt=prompt, diff_text="", stdout="", stderr=""), False, record)
             return
+        _hb_stop.set()
         aider_stdout = (_raw_out or b"").decode("utf-8", errors="replace")
         aider_stderr = (_raw_err or b"").decode("utf-8", errors="replace")
         aider_rc = _aider_proc.returncode
@@ -1096,6 +1143,7 @@ def run_aider_patch(task_path: Path) -> None:
         if aider_stderr:
             _append_job_log(task_id, "STDERR\n" + aider_stderr[:4000])
     except FileNotFoundError:
+        _hb_stop.set()
         _log("Aider not found — is it installed in this Python env?")
         record = build_aider_completion_record(
             task_id=task_id,

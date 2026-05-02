@@ -3693,10 +3693,12 @@ if PYSIDE_AVAILABLE:
                 pass
             bridge_state = ""
             bridge_target = ""
+            bridge_elapsed = 0
             try:
                 _bs = _safe_read_json(LOGS_DIR / "aider_bridge_status.json", default={}) or {}
                 bridge_state = str(_bs.get("state") or "")
                 bridge_target = str(_bs.get("target") or "")
+                bridge_elapsed = int(_bs.get("elapsed_seconds") or 0)
             except Exception:
                 pass
             _phase_extra = ""
@@ -3704,7 +3706,8 @@ if PYSIDE_AVAILABLE:
                 _phase_extra = f"  cu:{cu_ui_status}"
             elif bridge_state and bridge_state not in ("idle", ""):
                 _short_tgt = bridge_target.split("\\")[-1] if bridge_target else ""
-                _phase_extra = f"  bridge:{bridge_state}" + (f"({_short_tgt})" if _short_tgt else "")
+                _elapsed_str = f" {bridge_elapsed}s" if bridge_elapsed > 0 else ""
+                _phase_extra = f"  bridge:{bridge_state}" + (f"({_short_tgt}{_elapsed_str})" if _short_tgt else _elapsed_str)
             if _phase_extra:
                 self.phase.setText(f"phase: {phase}{_phase_extra}")
 
