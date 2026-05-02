@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Approval Router",
+  "description": "Phase 5M approval router schemas. Plan/evaluate-only — never executes approved actions. Defines RouterRequest, RouterReport, ReceiptCheck.",
+  "type": "object",
+  "definitions": {
+    "RouterRequest": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "request_id",
+        "created_at",
+        "goal",
+        "task_id",
+        "source",
+        "requested_action",
+        "target_files",
+        "planned_change_summary",
+        "diff_summary",
+        "verification_commands",
+        "rollback_plan",
+        "sandbox_report_path",
+        "upgrade_gate_decision",
+        "resource_status",
+        "capability_readiness",
+        "metadata"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "request_id": { "type": "string" },
+        "created_at": { "type": "string" },
+        "goal": { "type": "string" },
+        "task_id": { "type": "string" },
+        "source": {
+          "type": "string",
+          "enum": ["operator", "director", "limited_autonomy", "test"]
+        },
+        "requested_action": {
+          "type": "string",
+          "enum": [
+            "read_only",
+            "generated_artifact",
+            "low_risk_additive",
+            "medium_code_edit",
+            "high_risk_core_edit",
+            "emergency_repair",
+            "non_delegable",
+            "unknown"
+          ]
+        },
+        "target_files": { "type": "array", "items": { "type": "string" } },
+        "planned_change_summary": { "type": "string" },
+        "diff_summary": { "type": "string" },
+        "verification_commands": { "type": "array", "items": { "type": "string" } },
+        "rollback_plan": { "type": "string" },
+        "sandbox_report_path": { "type": "string" },
+        "upgrade_gate_decision": {
+          "type": "string",
+          "enum": ["allow", "deny", "needs_approval", "unknown"]
+        },
+        "resource_status": {
+          "type": "string",
+          "enum": ["normal", "light", "pause_high_intensity", "hibernate", "blocked", "unknown"]
+        },
+        "capability_readiness": { "type": "string" },
+        "metadata": { "type": "object" }
+      }
+    },
+    "RouterReport": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "request_id",
+        "created_at",
+        "goal",
+        "target_files",
+        "action_type",
+        "approval_tier_required",
+        "routing_decision",
+        "packet",
+        "responses",
+        "quorum_result",
+        "receipt",
+        "receipt_valid",
+        "non_delegable_flags",
+        "blockers",
+        "warnings",
+        "recommended_next_action",
+        "safe_to_execute_now"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "minimum": 1 },
+        "request_id": { "type": "string" },
+        "created_at": { "type": "string" },
+        "goal": { "type": "string" },
+        "target_files": { "type": "array", "items": { "type": "string" } },
+        "action_type": { "type": "string" },
+        "approval_tier_required": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "routing_decision": {
+          "type": "string",
+          "enum": ["not_required", "approved", "denied", "needs_human", "blocked", "stale", "dry_run"]
+        },
+        "packet": { "type": "object" },
+        "responses": { "type": "array" },
+        "quorum_result": { "type": "object" },
+        "receipt": { "type": "object" },
+        "receipt_valid": { "type": "boolean" },
+        "non_delegable_flags": { "type": "array", "items": { "type": "string" } },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "recommended_next_action": { "type": "string" },
+        "safe_to_execute_now": {
+          "type": "boolean",
+          "const": false,
+          "description": "Phase 5M hard rule — always false."
+        },
+        "operator_queue_fallback": { "type": "object" }
+      }
+    }
+  },
+  "additionalProperties": true
+}

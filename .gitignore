@@ -131,3 +131,13 @@ memory/luna_ai_council_state.json
 memory/luna_ai_council_report.json
 memory/luna_ai_council_report.md
 memory/luna_delegated_approval_state.json
+
+# Phase 5M: regenerable approval router outputs. Tracked sources of truth
+# are memory/luna_approval_router.schema.json and
+# memory/luna_approval_router_policy.json. Runtime artifacts below are
+# rebuilt on demand by luna_approval_router and stay gitignored.
+memory/luna_approval_router_report.json
+memory/luna_approval_router_report.md
+memory/luna_approval_router_state.json
+memory/luna_approval_requests.jsonl
+memory/luna_approval_receipt_checks.jsonl

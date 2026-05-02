@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "description": "Phase 5M approval router policy. Plan/evaluate-only. Never executes approved actions. Conservative defaults — local-only council, no external reviewers, no Aider, no installs, dry-run by default.",
+  "default_source": "operator",
+  "write_receipts_default": false,
+  "write_reports_default": true,
+  "allow_execution": false,
+  "external_reviewers_enabled": false,
+  "require_sandbox_for_tier": {
+    "3": true,
+    "4": true
+  },
+  "require_rollback_for_tier": {
+    "2": true,
+    "3": true,
+    "4": true
+  },
+  "require_verification_for_tier": {
+    "2": true,
+    "3": true,
+    "4": true
+  },
+  "generated_artifact_actions": [
+    "read_only",
+    "generated_artifact"
+  ],
+  "code_edit_actions": [
+    "low_risk_additive",
+    "medium_code_edit",
+    "high_risk_core_edit",
+    "emergency_repair"
+  ],
+  "non_delegable_actions": [
+    "delete_memory",
+    "truncate_memory",
+    "delete_logs",
+    "delete_backups",
+    "delete_uploads",
+    "delete_queues",
+    "delete_tasks",
+    "delete_solutions",
+    "change_identity",
+    "change_personality",
+    "change_goals",
+    "leak_secrets",
+    "package_install",
+    "external_network_outside_reviewer_apis",
+    "git_push",
+    "git_push_force",
+    "replace_architecture",
+    "broad_multi_file_rewrite",
+    "disable_verifier_failures",
+    "self_approve_council_policy"
+  ],
+  "high_risk_paths": [
+    "worker.py",
+    "aider_bridge.py",
+    "luna_guardian.py",
+    "LaunchLuna.pyw",
+    "SurgeApp_Claude_Terminal.py",
+    "luna_start.pyw",
+    "director_agent.py"
+  ],
+  "forbidden_paths": [
+    "luna_modules/luna_hygiene.py",
+    "luna_modules/luna_paths.py",
+    "luna_modules/luna_routing.py",
+    "luna_modules/luna_state.py",
+    "memory/luna_personality_state.json",
+    "memory/luna_active_goal.json",
+    "Luna_Post_Repair_Verify.ps1",
+    ".env"
+  ],
+  "target_file_limits": {
+    "0": 0,
+    "1": 0,
+    "2": 3,
+    "3": 6,
+    "4": 2,
+    "5": 1
+  },
+  "receipt_max_age_minutes": 60,
+  "default_request_expiry_minutes": 60
+}
