@@ -265,10 +265,24 @@ function Count-LogicalInstances {
 #   worker_main = worker.py WITHOUT --continues-update-start
 #   worker_cu   = worker.py WITH  --continues-update-start
 #   Others      = simple single-marker match
+# All matches exclude `-m aider` because aider child processes carry
+# target file paths (e.g. --file ...\worker.py) in their command line and
+# would otherwise be falsely counted as worker_main duplicates.
+
+function Test-InvokesScript {
+    param([string]$CommandLine, [string]$Marker)
+    if (-not $CommandLine) { return $false }
+    $cmd = ($CommandLine -replace '/', '\').ToLowerInvariant()
+    if ($cmd -match '\s-m\s+aider(\s|$)') { return $false }
+    # Match the marker only when it appears as a script being invoked by python(w).exe,
+    # not when it appears as a target file path in --file/--message args.
+    $escaped = [regex]::Escape($Marker.ToLowerInvariant())
+    return ($cmd -match ('python[\w.]*\.exe"?\s+"?[^"\s]*\\?' + $escaped + '(?:"|\s|$)'))
+}
 
 # worker_main
 $WorkerMainRows  = @($Rows | Where-Object {
-    ($_.CommandLine -replace '/', '\') -match [regex]::Escape('worker.py') -and
+    (Test-InvokesScript $_.CommandLine 'worker.py') -and
     ($_.CommandLine -notmatch '--continues-update-start')
 })
 $WorkerMainCount = Count-LogicalInstances $WorkerMainRows
@@ -289,7 +303,7 @@ foreach ($M in $WorkerMainRows | Select-Object -First 4) {
 
 # worker_cu
 $WorkerCuRows    = @($Rows | Where-Object {
-    ($_.CommandLine -replace '/', '\') -match [regex]::Escape('worker.py') -and
+    (Test-InvokesScript $_.CommandLine 'worker.py') -and
     ($_.CommandLine -match '--continues-update-start')
 })
 $WorkerCuCount   = Count-LogicalInstances $WorkerCuRows
@@ -307,9 +321,9 @@ foreach ($M in $WorkerCuRows | Select-Object -First 4) {
     Add-Line ("  pid={0} parent={1} cmd={2}" -f $M.ProcessId, $M.ParentProcessId, ($M.CommandLine -replace "`r`n"," "))
 }
 
-# aider_bridge (aider_bridge.py but not "python -m aider")
+# aider_bridge (aider_bridge.py but not "python -m aider" with that path in args)
 $BridgeRows  = @($Rows | Where-Object {
-    ($_.CommandLine -replace '/', '\') -match [regex]::Escape('aider_bridge.py')
+    Test-InvokesScript $_.CommandLine 'aider_bridge.py'
 })
 $BridgeCount = Count-LogicalInstances $BridgeRows
 Add-Line ""
@@ -335,7 +349,7 @@ $SingleRoles = @(
     @{Name="luna_tray";      Marker="luna_start.pyw"}
 )
 foreach ($Role in $SingleRoles) {
-    $RoleRows  = @($Rows | Where-Object { ($_.CommandLine -replace '/', '\') -match [regex]::Escape($Role.Marker) })
+    $RoleRows  = @($Rows | Where-Object { Test-InvokesScript $_.CommandLine $Role.Marker })
     $RoleCount = Count-LogicalInstances $RoleRows
     Add-Line ""
     Add-Line ("Logical role: {0} ({1})" -f $Role.Name, $Role.Marker)
