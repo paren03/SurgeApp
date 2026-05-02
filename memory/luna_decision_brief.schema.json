@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Morning Decision Brief Schema",
+  "description": "Phase 5VW: plain-English digest of all approval/decision-card signals across the advisory chain. advisory_only=true, safe_to_execute_now=false always.",
+  "definitions": {
+    "decision_card_counts": {
+      "type": "object",
+      "required": [
+        "approve_recommended",
+        "wait_for_more_evidence",
+        "do_not_approve",
+        "serge_only",
+        "unknown"
+      ],
+      "properties": {
+        "approve_recommended": {"type": "integer", "minimum": 0},
+        "wait_for_more_evidence": {"type": "integer", "minimum": 0},
+        "do_not_approve": {"type": "integer", "minimum": 0},
+        "serge_only": {"type": "integer", "minimum": 0},
+        "unknown": {"type": "integer", "minimum": 0}
+      }
+    },
+    "top_item": {
+      "type": "object",
+      "required": ["recommendation", "source"],
+      "properties": {
+        "recommendation": {
+          "type": "string",
+          "enum": [
+            "APPROVE_RECOMMENDED",
+            "WAIT_FOR_MORE_EVIDENCE",
+            "DO_NOT_APPROVE",
+            "SERGE_ONLY",
+            "UNKNOWN"
+          ]
+        },
+        "source": {"type": "string"},
+        "goal": {"type": "string"},
+        "action_type": {"type": "string"},
+        "risk_tier": {"type": "integer", "minimum": 0, "maximum": 5},
+        "plain_english": {"type": "string"},
+        "card_id": {"type": "string"}
+      }
+    },
+    "decision_digest": {
+      "type": "object",
+      "required": [
+        "schema_version", "generated_at", "advisory_only",
+        "safe_to_execute_now", "counts", "top_items", "files_checked"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "generated_at": {"type": "string"},
+        "advisory_only": {"type": "boolean", "const": true},
+        "safe_to_execute_now": {"type": "boolean", "const": false},
+        "counts": {"$ref": "#/definitions/decision_card_counts"},
+        "top_items": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/top_item"}
+        },
+        "files_checked": {"type": "array", "items": {"type": "string"}},
+        "missing_artifacts": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "morning_brief": {
+      "type": "object",
+      "required": [
+        "schema_version", "brief_id", "generated_at", "project_dir",
+        "advisory_only", "safe_to_execute_now", "safe_to_apply_real_project",
+        "guardian_enforcing_live", "overall_recommendation", "counts",
+        "top_items", "serge_summary", "next_safe_action"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "brief_id": {"type": "string"},
+        "generated_at": {"type": "string"},
+        "project_dir": {"type": "string"},
+        "advisory_only": {"type": "boolean", "const": true},
+        "safe_to_execute_now": {"type": "boolean", "const": false},
+        "safe_to_apply_real_project": {"type": "boolean", "const": false},
+        "guardian_enforcing_live": {"type": "boolean", "const": false},
+        "overall_recommendation": {
+          "type": "string",
+          "enum": [
+            "continue_safe_routine",
+            "wait_for_evidence",
+            "do_not_approve",
+            "serge_only",
+            "no_actions"
+          ]
+        },
+        "counts": {"$ref": "#/definitions/decision_card_counts"},
+        "top_items": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/top_item"}
+        },
+        "serge_summary": {"type": "string"},
+        "next_safe_action": {"type": "string"},
+        "what_luna_should_not_do": {"type": "array", "items": {"type": "string"}},
+        "files_checked": {"type": "array", "items": {"type": "string"}},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "soak_report": {
+      "type": "object",
+      "required": [
+        "schema_version", "soak_id", "started_at", "finished_at",
+        "cycles", "advisory_only", "safe_to_execute_now",
+        "safe_to_apply_real_project", "guardian_enforcing_live",
+        "cycle_results"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "soak_id": {"type": "string"},
+        "started_at": {"type": "string"},
+        "finished_at": {"type": "string"},
+        "cycles": {"type": "integer", "minimum": 0},
+        "advisory_only": {"type": "boolean", "const": true},
+        "safe_to_execute_now": {"type": "boolean", "const": false},
+        "safe_to_apply_real_project": {"type": "boolean", "const": false},
+        "guardian_enforcing_live": {"type": "boolean", "const": false},
+        "cycle_results": {"type": "array"},
+        "failures": {"type": "array"},
+        "warnings": {"type": "array"},
+        "recommended_next_action": {"type": "string"}
+      }
+    }
+  }
+}

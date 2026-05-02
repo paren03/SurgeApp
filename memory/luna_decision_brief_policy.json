@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "phase": "5VW",
+  "advisory_only": true,
+  "safe_to_execute_now": false,
+  "safe_to_apply_real_project": false,
+  "guardian_enforcing_live": false,
+  "source_artifacts": [
+    "memory/luna_approval_router_report.json",
+    "memory/luna_council_enforcer_report.json",
+    "memory/luna_guardian_readiness_report.json",
+    "memory/luna_guardian_enforcement_readiness.json",
+    "memory/luna_limited_autonomy_report.json",
+    "memory/luna_routine_approval_report.json",
+    "memory/luna_decision_card_preview.json",
+    "memory/luna_deterministic_executor_report.json",
+    "memory/luna_capability_scorecard.json",
+    "memory/luna_resource_status.json"
+  ],
+  "max_top_items": 10,
+  "never_enable_execution": true,
+  "generated_outputs": [
+    "memory/luna_morning_decision_brief.json",
+    "memory/luna_morning_decision_brief.md",
+    "memory/luna_decision_card_digest.json",
+    "memory/luna_decision_card_digest.md",
+    "memory/luna_advisory_soak_report.json",
+    "memory/luna_advisory_soak_report.md",
+    "memory/luna_advisory_soak.jsonl",
+    "memory/luna_next_safe_action.json"
+  ]
+}

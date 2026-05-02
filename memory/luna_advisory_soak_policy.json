@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "phase": "5VW",
+  "advisory_only": true,
+  "safe_to_execute_now": false,
+  "safe_to_apply_real_project": false,
+  "guardian_enforcing_live": false,
+  "default_cycles": 3,
+  "max_cycles": 20,
+  "default_sleep_seconds": 1,
+  "max_sleep_seconds": 60,
+  "never_enable_execution": true
+}

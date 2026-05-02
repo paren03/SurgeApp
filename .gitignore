@@ -191,3 +191,16 @@ memory/luna_serge_policy_report.md
 memory/luna_decision_card_integration_report.json
 memory/luna_decision_card_integration_report.md
 memory/luna_approval_decision_cards.jsonl
+
+# Phase 5VW: regenerable morning-brief and advisory-soak outputs. Tracked sources of
+# truth are memory/luna_decision_brief.schema.json, memory/luna_decision_brief_policy.json,
+# and memory/luna_advisory_soak_policy.json. Runtime artifacts below are rebuilt on
+# demand by luna_decision_brief.
+memory/luna_morning_decision_brief.json
+memory/luna_morning_decision_brief.md
+memory/luna_decision_card_digest.json
+memory/luna_decision_card_digest.md
+memory/luna_advisory_soak_report.json
+memory/luna_advisory_soak_report.md
+memory/luna_advisory_soak.jsonl
+memory/luna_next_safe_action.json
