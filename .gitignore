@@ -78,3 +78,13 @@ memory/luna_upgrade_gate_report.md
 memory/luna_capability_scorecard.json
 memory/luna_capability_scorecard.md
 memory/luna_capability_scorecard_build_report.json
+
+# Phase 5H: regenerable task graph + exit criteria outputs. Tracked sources
+# of truth are memory/luna_task_graph.schema.json,
+# memory/luna_exit_criteria.schema.json, and
+# memory/luna_task_graph_config.json. The runtime artifacts below are
+# rebuilt on demand by luna_task_graph.build_task_graph().
+memory/luna_task_graph.json
+memory/luna_task_graph_report.md
+memory/luna_task_graph_build_report.json
+memory/luna_exit_criteria_report.json

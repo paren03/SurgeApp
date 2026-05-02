@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Task Exit Criterion",
+  "description": "Phase 5H exit criterion schema. Each task carries one or more criteria. Evaluation is read-only — checks observe state but never modify it.",
+  "type": "object",
+  "required": ["criterion_id", "description", "check_type", "required", "status", "evidence"],
+  "properties": {
+    "criterion_id": { "type": "string" },
+    "description": { "type": "string" },
+    "check_type": {
+      "type": "string",
+      "enum": [
+        "file_exists",
+        "command_passes",
+        "report_contains",
+        "git_clean",
+        "verifier_clean",
+        "manual_review"
+      ]
+    },
+    "command": { "type": "string" },
+    "path": { "type": "string" },
+    "expected_text": { "type": "string" },
+    "required": { "type": "boolean" },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "passed", "failed", "skipped", "unknown"]
+    },
+    "evidence": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

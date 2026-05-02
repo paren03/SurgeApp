@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "description": "Phase 5H task graph configuration. Drives goal decomposition, risk inference, and intent-drift heuristics. Conservative — high-risk targets always require approval beyond Tier 2.",
+  "task_count_min": 3,
+  "task_count_max": 8,
+  "default_approval_tier_low": 2,
+  "default_approval_tier_medium": 3,
+  "default_approval_tier_high": 4,
+  "default_approval_tier_critical": 5,
+  "high_risk_path_substrings": [
+    "worker.py",
+    "aider_bridge.py",
+    "luna_guardian.py",
+    "LaunchLuna.pyw",
+    "SurgeApp_Claude_Terminal.py",
+    "luna_start.pyw",
+    "director_agent.py"
+  ],
+  "critical_path_substrings": [
+    "luna_modules/luna_hygiene.py",
+    "luna_modules/luna_paths.py",
+    "luna_modules/luna_routing.py",
+    "luna_modules/luna_state.py",
+    "memory/luna_personality_state.json",
+    "memory/luna_active_goal.json"
+  ],
+  "risk_keyword_high": [
+    "delete", "rm -rf", "wipe", "force", "overwrite", "reinstall",
+    "uninstall", "downgrade", "rollback all", "drop table", "kill",
+    "factory reset", "purge", "rewrite worker", "disable guardian",
+    "install package", "pip install", "npm install", "winget install",
+    "external api", "cloud api", "fetch url", "open port", "expose port",
+    "personality", "identity", "goals"
+  ],
+  "risk_keyword_medium": [
+    "edit", "modify", "patch", "refactor", "rename", "move",
+    "queue", "schedule", "config", "settings", "policy"
+  ],
+  "risk_keyword_low": [
+    "report", "summary", "scorecard", "blueprint", "design",
+    "document", "doc", "describe", "explain", "self-map",
+    "self map", "playbook", "ledger", "index", "schema",
+    "read", "view", "list", "show"
+  ],
+  "intent_drift_thresholds": {
+    "watch_below_overlap": 0.55,
+    "drift_below_overlap": 0.25,
+    "drift_keyword_bonus": 35
+  },
+  "intent_drift_unrelated_keywords": [
+    "buy", "purchase", "credit card", "bank", "wallet",
+    "password", "ssh key", "api key", "exfiltrate",
+    "scrape", "ddos", "exploit", "bypass guardian",
+    "disable safety"
+  ],
+  "stop_words": [
+    "a", "an", "the", "and", "or", "but", "to", "of", "for",
+    "in", "on", "at", "with", "by", "from", "as", "is", "are",
+    "be", "been", "being", "this", "that", "these", "those",
+    "it", "its", "i", "we", "you", "he", "she", "they",
+    "do", "does", "did", "have", "has", "had", "will", "would",
+    "should", "could", "can", "may", "might"
+  ]
+}
