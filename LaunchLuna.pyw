@@ -359,10 +359,11 @@ def _cu_startup_gate() -> tuple[bool, str]:
             except Exception:
                 pass
 
-    # Check for dirty core files via git status
+    # Check for dirty core files via git status (modified tracked files only;
+    # untracked files do not represent in-progress work that could conflict).
     try:
         result = subprocess.run(
-            ["git", "status", "--porcelain=v1", "--"] + _CU_GATE_CORE_FILES,
+            ["git", "status", "--porcelain=v1", "--untracked-files=no", "--"] + _CU_GATE_CORE_FILES,
             cwd=str(ROOT),
             capture_output=True,
             text=True,
