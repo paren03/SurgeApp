@@ -141,3 +141,13 @@ memory/luna_approval_router_report.md
 memory/luna_approval_router_state.json
 memory/luna_approval_requests.jsonl
 memory/luna_approval_receipt_checks.jsonl
+
+# Phase 5O: regenerable council enforcer outputs. Tracked sources of truth are
+# memory/luna_council_enforcer.schema.json, memory/luna_guardian_approval_status.schema.json,
+# and memory/luna_council_enforcer_policy.json. Runtime artifacts below are
+# rebuilt on demand by luna_council_enforcer and stay gitignored.
+memory/luna_guardian_approval_status.json
+memory/luna_council_enforcer_report.json
+memory/luna_council_enforcer_report.md
+memory/luna_council_enforcer_audit.jsonl
+memory/luna_approval_enforcement_preview.json

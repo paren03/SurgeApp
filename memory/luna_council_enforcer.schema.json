@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LunaCouncilEnforcerActionRecord",
+  "description": "Schema for action records evaluated by luna_council_enforcer (Phase 5O advisory only).",
+  "type": "object",
+  "required": ["schema_version", "action_id", "created_at", "source", "action_type", "risk_tier"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "action_id": {"type": "string"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "source": {"type": "string", "enum": ["director", "limited_autonomy", "operator", "test", "unknown"]},
+    "goal": {"type": "string"},
+    "task_id": {"type": "string"},
+    "action_type": {
+      "type": "string",
+      "enum": ["read_only", "generated_artifact", "low_risk_additive", "medium_code_edit", "high_risk_core_edit", "emergency_repair", "non_delegable", "unknown"]
+    },
+    "risk_tier": {"type": "integer", "minimum": 0, "maximum": 5},
+    "approval_tier_required": {"type": "integer"},
+    "target_files": {"type": "array", "items": {"type": "string"}},
+    "diff_hash": {"type": "string"},
+    "planned_commands": {"type": "array", "items": {"type": "string"}},
+    "receipt_id": {"type": "string"},
+    "approval_id": {"type": "string"},
+    "packet_hash": {"type": "string"},
+    "nonce": {"type": "string"},
+    "metadata": {"type": "object"}
+  }
+}

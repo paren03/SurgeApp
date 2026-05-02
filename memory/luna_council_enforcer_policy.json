@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "advisory_only": true,
+  "safe_to_execute_now_always_false_in_phase5o": true,
+  "receipt_max_age_minutes": 120,
+  "require_receipt_for_tiers": [2, 3, 4, 5],
+  "receipt_optional_for_tiers": [0, 1],
+  "require_diff_hash_for_tiers": [3, 4],
+  "require_command_binding_for_tiers": [3, 4],
+  "high_risk_paths": [
+    "worker.py",
+    "aider_bridge.py",
+    "luna_guardian.py",
+    "LaunchLuna.pyw",
+    "SurgeApp_Claude_Terminal.py",
+    "luna_start.pyw",
+    "director_agent.py"
+  ],
+  "non_delegable_actions": [
+    "delete_memory",
+    "delete_logs",
+    "delete_queues",
+    "delete_backups",
+    "delete_uploads",
+    "change_identity",
+    "change_personality",
+    "change_goals",
+    "expose_secret",
+    "package_install",
+    "external_network",
+    "git_push",
+    "git_reset",
+    "git_clean",
+    "architecture_replacement",
+    "disable_verifier",
+    "weaken_quorum_policy"
+  ],
+  "status_output": "memory/luna_guardian_approval_status.json"
+}

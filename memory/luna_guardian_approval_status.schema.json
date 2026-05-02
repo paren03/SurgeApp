@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LunaGuardianApprovalStatus",
+  "description": "Schema for Guardian advisory approval status produced by luna_council_enforcer (Phase 5O).",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "advisory_only", "overall_status"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "project_dir": {"type": "string"},
+    "advisory_only": {"type": "boolean", "const": true},
+    "overall_status": {"type": "string", "enum": ["healthy", "watch", "blocked", "unknown"]},
+    "pending_action_count": {"type": "integer"},
+    "receipt_count": {"type": "integer"},
+    "valid_receipt_count": {"type": "integer"},
+    "expired_receipt_count": {"type": "integer"},
+    "missing_receipt_count": {"type": "integer"},
+    "non_delegable_count": {"type": "integer"},
+    "actions": {"type": "array", "items": {"type": "object"}},
+    "guardian_message": {"type": "string"},
+    "recommended_next_action": {"type": "string"},
+    "files_checked": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  }
+}
