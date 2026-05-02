@@ -786,42 +786,309 @@ class LiveFeedThread(QThread):
 # UI (Claude-like palette)
 # =============================================================================
 LUNA_GOLD_QSS = """
-QWidget { background: #0f0f10; color: #e9e9eb; font-family: "Segoe UI"; font-size: 12px; }
-QFrame#Surface { background: #141416; border: 1px solid #242428; border-radius: 12px; }
-QFrame#SurfaceRaised { background: #17171a; border: 1px solid #2a2a30; border-radius: 12px; }
-QFrame#GlassCard { background: #17171a; border: 1px solid #2a2a30; border-radius: 12px; }
-QLabel { background: transparent; }
-QLabel#Muted { color: #a6a6ad; }
-QLabel#Title { font-size: 13px; font-weight: 600; color: #e9e9eb; }
-QLabel#LunaTitle { font-size: 20px; font-weight: 800; color: #D4AF37; letter-spacing: 3px; }
-QLabel#ClockLabel { font-size: 13px; font-weight: 600; color: #7eb8ff; font-family: Consolas; background: transparent; }
-QLabel#UpgradeBadge { color: #7ec3ff; padding: 4px 10px; background-color: rgba(60,90,140,0.18); border: 1px solid rgba(126,195,255,0.35); border-radius: 6px; font-weight: 600; font-size: 11px; }
-QPushButton { background: #1a1a1e; border: 1px solid #2a2a30; border-radius: 10px; padding: 8px 10px; color: #e9e9eb; }
-QPushButton:hover { background: #202026; }
-QPushButton:pressed { background: #26262e; }
-QPushButton#Primary { background: #1c2b4a; border: 1px solid #2f4f89; color: #e9e9eb; }
-QPushButton#Primary:hover { background: #243864; }
-QPushButton#Ghost { background: transparent; border: 1px solid #2a2a30; color: #e9e9eb; }
-QPushButton#Ghost:hover { background: #1a1a22; }
-QLineEdit { background: #141416; border: 1px solid #242428; border-radius: 10px; padding: 10px; color: #f2f2f4; selection-background-color: #2f4f89; }
-QTextBrowser { background: transparent; border: none; color: #e9e9eb; selection-background-color: #2f4f89; }
-QPlainTextEdit { background: #101012; border: 1px solid #242428; border-radius: 10px; padding: 10px; color: #e9e9eb; selection-background-color: #2f4f89; font-family: Consolas,"Courier New",monospace; font-size: 12px; }
-QListWidget { background: transparent; border: none; outline: none; }
-QListWidget::item { padding: 8px 10px; border-radius: 10px; color: #d8d8dc; }
-QListWidget::item:selected { background: #1c2b4a; color: #ffffff; }
-QListWidget::item:hover { background: #1a1a22; }
-QTreeWidget { background: transparent; border: none; outline: none; color: #d8d8dc; }
-QTreeWidget::item { padding: 5px; border-radius: 6px; }
-QTreeWidget::item:selected { background: #1c2b4a; color: #ffffff; }
-QTreeWidget::item:hover { background: #1a1a22; }
-QTabWidget::pane { border: 1px solid #242428; border-radius: 12px; top: -1px; }
-QTabBar::tab { background: #141416; border: 1px solid #242428; border-bottom: none; padding: 8px 10px; border-top-left-radius: 10px; border-top-right-radius: 10px; margin-right: 6px; color: #bdbdc4; }
-QTabBar::tab:selected { background: #17171a; color: #ffffff; border-color: #2a2a30; }
-QSplitter::handle { background: #1a1a1e; }
-QMenu { background: #141416; border: 1px solid #2a2a30; border-radius: 10px; padding: 5px; }
-QMenu::item { padding: 8px 18px; border-radius: 6px; color: #d8d8dc; }
-QMenu::item:selected { background: #1c2b4a; color: #ffffff; }
-QMenu::separator { height: 1px; background: #242428; margin: 4px 10px; }
+/* === LUNA FUTURE THEME ============================================
+   Cyberpunk console palette — deep midnight with electric cyan accents.
+   Surfaces glow on focus; selected items get a left-border neon stripe;
+   hover transitions feel kinetic without being noisy. Mono fonts for
+   technical labels, sans for UI. Borders are subtle until something is
+   active — then they hum.
+=================================================================== */
+
+/* --- Base ------------------------------------------------------- */
+QWidget {
+    background: #0a0e14;
+    color: #d6e3f1;
+    font-family: "Segoe UI Variable", "Segoe UI", "Inter", system-ui;
+    font-size: 12px;
+    selection-background-color: rgba(0, 217, 255, 0.30);
+    selection-color: #ffffff;
+}
+
+/* --- Surfaces (panels / cards) --------------------------------- */
+QFrame#Surface {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #0f1620, stop:1 #0b1018);
+    border: 1px solid #1a2738;
+    border-radius: 14px;
+}
+QFrame#SurfaceRaised {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #131c2a, stop:1 #0d1320);
+    border: 1px solid #1f2d44;
+    border-radius: 14px;
+}
+QFrame#GlassCard {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 rgba(19, 28, 42, 0.85), stop:1 rgba(11, 16, 24, 0.85));
+    border: 1px solid #1f2d44;
+    border-radius: 14px;
+}
+
+/* --- Labels ---------------------------------------------------- */
+QLabel { background: transparent; color: #d6e3f1; }
+QLabel#Muted { color: #6f8095; font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace; font-size: 11px; letter-spacing: 0.3px; }
+QLabel#Title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e6f0ff;
+    letter-spacing: 0.4px;
+}
+QLabel#LunaTitle {
+    font-size: 22px;
+    font-weight: 800;
+    color: #00d9ff;
+    letter-spacing: 4px;
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui;
+}
+QLabel#ClockLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: #00d9ff;
+    font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+    background: transparent;
+    letter-spacing: 1px;
+}
+QLabel#UpgradeBadge {
+    color: #00d9ff;
+    padding: 4px 12px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 rgba(0, 217, 255, 0.10), stop:1 rgba(155, 107, 255, 0.10));
+    border: 1px solid rgba(0, 217, 255, 0.40);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+/* --- Buttons --------------------------------------------------- */
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #1a2433, stop:1 #131c2a);
+    border: 1px solid #243349;
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: #d6e3f1;
+    font-weight: 500;
+}
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #1f2d44, stop:1 #182234);
+    border: 1px solid #00d9ff;
+    color: #ffffff;
+}
+QPushButton:pressed {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #243349, stop:1 #1a2433);
+    border: 1px solid #00d9ff;
+    padding-top: 9px;
+    padding-bottom: 7px;
+}
+QPushButton:disabled { color: #4a5a72; border-color: #1a2738; background: #0d131c; }
+
+QPushButton#Primary {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #00b8d9, stop:1 #0066ff);
+    border: 1px solid #00d9ff;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+QPushButton#Primary:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #00d9ff, stop:1 #2a7bff);
+    color: #ffffff;
+}
+
+QPushButton#Ghost {
+    background: transparent;
+    border: 1px solid #243349;
+    color: #a8b8cc;
+}
+QPushButton#Ghost:hover {
+    background: rgba(0, 217, 255, 0.08);
+    border: 1px solid #00d9ff;
+    color: #00d9ff;
+}
+
+QPushButton#Danger {
+    background: transparent;
+    border: 1px solid #43243a;
+    color: #b07590;
+}
+QPushButton#Danger:hover {
+    background: rgba(255, 75, 130, 0.10);
+    border: 1px solid #ff4b82;
+    color: #ff8fb0;
+}
+
+/* --- Inputs ---------------------------------------------------- */
+QLineEdit {
+    background: #0b1220;
+    border: 1px solid #1f2d44;
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: #e6f0ff;
+    selection-background-color: rgba(0, 217, 255, 0.35);
+}
+QLineEdit:focus { border: 1px solid #00d9ff; background: #0d1626; }
+QLineEdit:disabled { color: #4a5a72; border-color: #131c2a; }
+
+QTextBrowser {
+    background: transparent;
+    border: none;
+    color: #d6e3f1;
+    selection-background-color: rgba(0, 217, 255, 0.30);
+}
+
+QPlainTextEdit {
+    background: #07090e;
+    border: 1px solid #1a2738;
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: #d6e3f1;
+    selection-background-color: rgba(0, 217, 255, 0.30);
+    font-family: "JetBrains Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 12px;
+}
+QPlainTextEdit:focus { border: 1px solid #00d9ff; }
+
+/* --- Lists / Trees --------------------------------------------- */
+QListWidget {
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 4px;
+}
+QListWidget::item {
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: #b8c8dc;
+    border-left: 3px solid transparent;
+    margin: 2px 0;
+}
+QListWidget::item:selected {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 rgba(0, 217, 255, 0.18), stop:1 rgba(0, 217, 255, 0.04));
+    color: #ffffff;
+    border-left: 3px solid #00d9ff;
+}
+QListWidget::item:hover {
+    background: rgba(0, 217, 255, 0.06);
+    color: #e6f0ff;
+}
+
+QTreeWidget {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #b8c8dc;
+}
+QTreeWidget::item {
+    padding: 5px 8px;
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+}
+QTreeWidget::item:selected {
+    background: rgba(0, 217, 255, 0.14);
+    color: #ffffff;
+    border-left: 2px solid #00d9ff;
+}
+QTreeWidget::item:hover { background: rgba(0, 217, 255, 0.06); color: #e6f0ff; }
+
+/* --- Tabs ------------------------------------------------------ */
+QTabWidget::pane {
+    border: 1px solid #1f2d44;
+    border-radius: 12px;
+    top: -1px;
+    background: #0b1018;
+}
+QTabBar::tab {
+    background: #0d131c;
+    border: 1px solid #1a2738;
+    border-bottom: none;
+    padding: 9px 14px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    margin-right: 4px;
+    color: #6f8095;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+QTabBar::tab:hover { background: #131c2a; color: #d6e3f1; }
+QTabBar::tab:selected {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #131c2a, stop:1 #0b1018);
+    color: #00d9ff;
+    border: 1px solid #1f2d44;
+    border-top: 2px solid #00d9ff;
+    border-bottom: none;
+}
+
+/* --- Splitters ------------------------------------------------- */
+QSplitter::handle { background: #131c2a; }
+QSplitter::handle:hover { background: #00d9ff; }
+
+/* --- Menus ----------------------------------------------------- */
+QMenu {
+    background: #0d131c;
+    border: 1px solid #1f2d44;
+    border-radius: 10px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 8px 18px;
+    border-radius: 6px;
+    color: #b8c8dc;
+}
+QMenu::item:selected {
+    background: rgba(0, 217, 255, 0.14);
+    color: #00d9ff;
+}
+QMenu::separator { height: 1px; background: #1a2738; margin: 4px 10px; }
+
+/* --- Scrollbars ------------------------------------------------ */
+QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 4px 2px;
+}
+QScrollBar::handle:vertical {
+    background: #1f2d44;
+    border-radius: 4px;
+    min-height: 30px;
+}
+QScrollBar::handle:vertical:hover { background: #00d9ff; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; background: transparent; }
+QScrollBar:horizontal { background: transparent; height: 10px; margin: 2px 4px; }
+QScrollBar::handle:horizontal { background: #1f2d44; border-radius: 4px; min-width: 30px; }
+QScrollBar::handle:horizontal:hover { background: #00d9ff; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; background: transparent; }
+
+/* --- Status badges (used by phase + badge labels) -------------- */
+QLabel#StatusActive {
+    color: #00d9ff;
+    font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+QLabel#StatusIdle {
+    color: #4ade80;
+    font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+QLabel#StatusPaused {
+    color: #fbbf24;
+    font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+QLabel#StatusBlocked {
+    color: #f87171;
+    font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
 """
 
 
@@ -1450,16 +1717,19 @@ if PYSIDE_AVAILABLE:
             sb.setContentsMargins(10, 10, 10, 10)
             sb.setSpacing(8)
 
-            sb_title = QLabel("💬 Sessions")
+            sb_title = QLabel("◢ SESSIONS")
             sb_title.setObjectName("Title")
             sb.addWidget(sb_title)
 
             btn_row = QHBoxLayout()
+            btn_row.setSpacing(6)
             self.btn_new = QPushButton("+ New")
+            self.btn_new.setObjectName("Primary")
+            self.btn_new.setToolTip("Start a new chat session")
             self.btn_new.clicked.connect(self._new_session)
             btn_row.addWidget(self.btn_new)
 
-            self.btn_rename = QPushButton("✏")
+            self.btn_rename = QPushButton("✎")
             self.btn_rename.setObjectName("Ghost")
             self.btn_rename.setFixedWidth(34)
             self.btn_rename.setToolTip("Rename selected session (or double-click)")
@@ -1467,16 +1737,22 @@ if PYSIDE_AVAILABLE:
             btn_row.addWidget(self.btn_rename)
 
             self.btn_delete_session = QPushButton("✕")
-            self.btn_delete_session.setObjectName("Ghost")
+            self.btn_delete_session.setObjectName("Danger")
             self.btn_delete_session.setFixedWidth(34)
             self.btn_delete_session.setToolTip("Delete selected session")
-            self.btn_delete_session.setStyleSheet(
-                "QPushButton { color: #8A7A7A; } QPushButton:hover { background: rgba(140,20,20,0.6); color: #ffaaaa; border-color: #cc3333; }"
-            )
             self.btn_delete_session.clicked.connect(self._delete_selected_session)
             btn_row.addWidget(self.btn_delete_session)
 
             sb.addLayout(btn_row)
+
+            # Sidebar "Clear Chat" — clears the chat display for the active session.
+            # Mirrors the center-panel button so the user can wipe screen without
+            # reaching across the window. History on disk is preserved.
+            self.btn_clear_chat_sidebar = QPushButton("⊘  Clear Chat")
+            self.btn_clear_chat_sidebar.setObjectName("Ghost")
+            self.btn_clear_chat_sidebar.setToolTip("Clear the visible chat (history on disk is preserved)")
+            self.btn_clear_chat_sidebar.clicked.connect(self._clear_chat)
+            sb.addWidget(self.btn_clear_chat_sidebar)
 
             self.sessions_list = QListWidget()
             self.sessions_list.itemClicked.connect(self._on_session_clicked)
@@ -3579,6 +3855,17 @@ if PYSIDE_AVAILABLE:
         # Timers / Live feed
         # ------------------------------
         def _start_timers(self) -> None:
+            # Pulse spinner — animates the badge while CU/bridge is processing,
+            # so the operator can see Luna is alive even when aider is silently
+            # generating tokens. Stays out of the way when idle.
+            self._pulse_chars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+            self._pulse_idx = 0
+            self._pulse_active = False
+            self._pulse_label = ""
+            self._pulse_timer = QTimer(self)
+            self._pulse_timer.timeout.connect(self._tick_pulse)
+            self._pulse_timer.start(110)  # 110 ms — 9 fps spinner
+
             self._hb_timer = QTimer(self)
             self._hb_timer.timeout.connect(self._tick_heartbeat)
             self._hb_timer.start(3000)
@@ -3711,34 +3998,58 @@ if PYSIDE_AVAILABLE:
             if _phase_extra:
                 self.phase.setText(f"phase: {phase}{_phase_extra}")
 
+            # Pulse spinner is active whenever Luna is doing real work — bridge
+            # crunching tokens, or CU actively queueing. _tick_pulse paints the
+            # spinner glyph; here we just decide if it should be running and what
+            # text to show alongside it.
+            self._pulse_active = False
+            self._pulse_label = ""
+
             if self._paused:
-                self.badge.setText("● paused")
-                self.badge.setStyleSheet("color: #ffbd2e;")
+                self.badge.setText("◌  PAUSED")
+                self.badge.setStyleSheet("color: #fbbf24; font-family: 'JetBrains Mono','Cascadia Mono',Consolas,monospace; font-weight:700; letter-spacing:1px;")
+                self.badge.setToolTip("Autonomy paused")
                 return
 
             if block_code:
-                self.badge.setText(f"● {block_code}")
-                self.badge.setStyleSheet("color: #ff5f56;")
+                self.badge.setText(f"⚠  {block_code}")
+                self.badge.setStyleSheet("color: #f87171; font-family: 'JetBrains Mono','Cascadia Mono',Consolas,monospace; font-weight:700; letter-spacing:1px;")
                 tooltip = f"{block_code}: {block_reason}" if block_reason else block_code
                 self.badge.setToolTip(tooltip)
             elif online:
-                # Show paused/blocked CU state in the badge even when worker is online
-                if cu_ui_status in ("paused_dirty_core", "paused_noop_budget",
+                # Bridge actively running aider → spinner pulse with elapsed time.
+                if bridge_state == "processing":
+                    short_t = (bridge_target.split("\\")[-1] if bridge_target else "?")
+                    elapsed_str = f"{bridge_elapsed}s" if bridge_elapsed > 0 else "live"
+                    self._pulse_active = True
+                    self._pulse_label = f"AIDER · {short_t} · {elapsed_str}"
+                    self.badge.setStyleSheet("color: #00d9ff; font-family: 'JetBrains Mono','Cascadia Mono',Consolas,monospace; font-weight:700; letter-spacing:1px;")
+                    self.badge.setToolTip(f"Aider running on {bridge_target} ({bridge_elapsed}s elapsed)")
+                # CU paused / blocked
+                elif cu_ui_status in ("paused_dirty_core", "paused_noop_budget",
                                     "paused_recent_failures", "blocked_aider_stale"):
-                    self.badge.setText(f"● {cu_ui_status}")
-                    self.badge.setStyleSheet("color: #ffbd2e;")
+                    self.badge.setText(f"◌  {cu_ui_status.upper()}")
+                    self.badge.setStyleSheet("color: #fbbf24; font-family: 'JetBrains Mono','Cascadia Mono',Consolas,monospace; font-weight:700; letter-spacing:1px;")
                     self.badge.setToolTip(f"continues_update: {cu_ui_status}")
+                # CU actively running real work (no bridge job yet)
+                elif cu_ui_status == "running_real_job":
+                    self._pulse_active = True
+                    self._pulse_label = "CU · QUEUEING"
+                    self.badge.setStyleSheet("color: #00d9ff; font-family: 'JetBrains Mono','Cascadia Mono',Consolas,monospace; font-weight:700; letter-spacing:1px;")
+                    self.badge.setToolTip("continues_update is actively queueing real jobs")
                 else:
-                    self.badge.setText("● online")
-                    self.badge.setStyleSheet("color: #27c93f;")
-                    self.badge.setToolTip("")
+                    self.badge.setText("◉  ONLINE")
+                    self.badge.setStyleSheet("color: #4ade80; font-family: 'JetBrains Mono','Cascadia Mono',Consolas,monospace; font-weight:700; letter-spacing:1px;")
+                    self.badge.setToolTip("Worker heartbeat fresh, idle")
             else:
                 if age_s is None:
-                    self.badge.setText("● offline")
-                    self.badge.setStyleSheet("color: #ff5f56;")
+                    self.badge.setText("✕  OFFLINE")
+                    self.badge.setStyleSheet("color: #f87171; font-family: 'JetBrains Mono','Cascadia Mono',Consolas,monospace; font-weight:700; letter-spacing:1px;")
+                    self.badge.setToolTip("No worker heartbeat found")
                 else:
-                    self.badge.setText(f"● stale ({int(age_s)}s)")
-                    self.badge.setStyleSheet("color: #ffbd2e;")
+                    self.badge.setText(f"⚠  STALE {int(age_s)}s")
+                    self.badge.setStyleSheet("color: #fbbf24; font-family: 'JetBrains Mono','Cascadia Mono',Consolas,monospace; font-weight:700; letter-spacing:1px;")
+                    self.badge.setToolTip(f"Worker heartbeat is {int(age_s)}s old")
 
             if hasattr(self, "_q_now") and hasattr(self, "tabs") and self.tabs.currentIndex() == 4:
                 try:
@@ -3749,6 +4060,22 @@ if PYSIDE_AVAILABLE:
         def _tick_clock(self) -> None:
             if hasattr(self, 'lbl_clock'):
                 self.lbl_clock.setText(datetime.now().strftime("%H:%M:%S"))
+
+        def _tick_pulse(self) -> None:
+            """Animate the badge spinner glyph when Luna is doing real work.
+
+            _tick_heartbeat (3 s) sets self._pulse_active and self._pulse_label
+            based on bridge/CU state. This timer (110 ms) just rotates the
+            spinner character so the operator can see the system is alive.
+            """
+            if not getattr(self, "_pulse_active", False):
+                return
+            try:
+                self._pulse_idx = (self._pulse_idx + 1) % len(self._pulse_chars)
+                glyph = self._pulse_chars[self._pulse_idx]
+                self.badge.setText(f"{glyph}  {self._pulse_label}")
+            except Exception:
+                pass
 
         def _tick_sysres(self) -> None:
             if not hasattr(self, 'lbl_sysres'):
