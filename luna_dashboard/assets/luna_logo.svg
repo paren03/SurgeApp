@@ -1,56 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Luna sigil">
   <defs>
-    <radialGradient id="lunaCore" cx="50%" cy="50%" r="50%">
-      <stop offset="0%"  stop-color="#fff2cc"/>
-      <stop offset="35%" stop-color="#ffd98a"/>
-      <stop offset="75%" stop-color="#b89048"/>
-      <stop offset="100%" stop-color="#5a3e1a"/>
+    <!-- Realistic crescent: bright lit edge fading into deep bronze/black -->
+    <radialGradient id="lunaLit" cx="35%" cy="42%" r="80%">
+      <stop offset="0%"  stop-color="#fff5d4" stop-opacity="1"/>
+      <stop offset="18%" stop-color="#ffe5b3" stop-opacity="1"/>
+      <stop offset="38%" stop-color="#e8c87a" stop-opacity="0.95"/>
+      <stop offset="60%" stop-color="#a07a3c" stop-opacity="0.55"/>
+      <stop offset="82%" stop-color="#3a2912" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#0a0a0e" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="lunaCrescent" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"   stop-color="#fff2cc"/>
-      <stop offset="55%"  stop-color="#e8c87a"/>
-      <stop offset="100%" stop-color="#946a3c"/>
-    </linearGradient>
-    <radialGradient id="lunaGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%"  stop-color="#e8c87a" stop-opacity="0.45"/>
-      <stop offset="60%" stop-color="#e8c87a" stop-opacity="0.10"/>
+
+    <!-- Dark side of moon disc -->
+    <radialGradient id="lunaDark" cx="60%" cy="50%" r="65%">
+      <stop offset="0%"  stop-color="#1c1810"/>
+      <stop offset="60%" stop-color="#0c0a08"/>
+      <stop offset="100%" stop-color="#04040a"/>
+    </radialGradient>
+
+    <!-- Outer halo -->
+    <radialGradient id="lunaHalo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#e8c87a" stop-opacity="0.32"/>
+      <stop offset="55%"  stop-color="#e8c87a" stop-opacity="0.10"/>
       <stop offset="100%" stop-color="#e8c87a" stop-opacity="0"/>
     </radialGradient>
+
+    <!-- Crescent shape: full disc minus offset disc on the right -->
     <mask id="lunaCrescentMask">
       <rect width="256" height="256" fill="black"/>
-      <circle cx="128" cy="128" r="92" fill="white"/>
-      <circle cx="156" cy="118" r="86" fill="black"/>
+      <circle cx="128" cy="128" r="86" fill="white"/>
+      <circle cx="160" cy="118" r="80" fill="black"/>
     </mask>
+
+    <!-- Subtle crater texture: a few faint highlights baked in -->
+    <radialGradient id="craterA" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff5d4" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#fff5d4" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
-  <!-- Outer halo -->
-  <circle cx="128" cy="128" r="124" fill="url(#lunaGlow)"/>
+  <!-- Outer glow halo -->
+  <circle cx="128" cy="128" r="124" fill="url(#lunaHalo)"/>
 
-  <!-- Sovereign rings -->
-  <circle cx="128" cy="128" r="118" fill="none" stroke="#e8c87a" stroke-opacity="0.35" stroke-width="1"/>
-  <circle cx="128" cy="128" r="104" fill="none" stroke="#e8c87a" stroke-opacity="0.18" stroke-width="1" stroke-dasharray="2 6"/>
+  <!-- Decorative concentric rings — matches the new branding -->
+  <!-- Outer thin solid ring -->
+  <circle cx="128" cy="128" r="118" fill="none"
+          stroke="#946a3c" stroke-opacity="0.55" stroke-width="0.9"/>
+  <!-- Middle dotted ring -->
+  <circle cx="128" cy="128" r="108" fill="none"
+          stroke="#e8c87a" stroke-opacity="0.55" stroke-width="1"
+          stroke-dasharray="1.2 5.5" stroke-linecap="round"/>
+  <!-- Inner thin solid ring -->
+  <circle cx="128" cy="128" r="100" fill="none"
+          stroke="#946a3c" stroke-opacity="0.35" stroke-width="0.7"/>
 
-  <!-- Inner core glow -->
-  <circle cx="128" cy="128" r="92" fill="url(#lunaCore)" opacity="0.18"/>
+  <!-- Cardinal tick marks (N / E / S / W) -->
+  <g stroke="#e8c87a" stroke-opacity="0.85" stroke-width="1.4" stroke-linecap="round">
+    <line x1="128" y1="2"   x2="128" y2="14"/>
+    <line x1="128" y1="242" x2="128" y2="254"/>
+    <line x1="2"   y1="128" x2="14"  y2="128"/>
+    <line x1="242" y1="128" x2="254" y2="128"/>
+  </g>
 
   <!-- Crescent body -->
   <g mask="url(#lunaCrescentMask)">
-    <rect width="256" height="256" fill="url(#lunaCrescent)"/>
+    <!-- Dark base -->
+    <rect width="256" height="256" fill="url(#lunaDark)"/>
+    <!-- Lit gold gradient on top -->
+    <rect width="256" height="256" fill="url(#lunaLit)"/>
+
+    <!-- Crater highlights -->
+    <circle cx="78"  cy="100" r="9"  fill="url(#craterA)"/>
+    <circle cx="68"  cy="135" r="6"  fill="url(#craterA)"/>
+    <circle cx="92"  cy="158" r="7"  fill="url(#craterA)"/>
+    <circle cx="105" cy="80"  r="5"  fill="url(#craterA)"/>
+    <circle cx="65"  cy="80"  r="4"  fill="url(#craterA)"/>
+    <circle cx="115" cy="115" r="4"  fill="url(#craterA)" opacity="0.6"/>
+    <circle cx="80"  cy="180" r="4"  fill="url(#craterA)" opacity="0.45"/>
   </g>
 
-  <!-- Sovereign core mark -->
-  <g transform="translate(128 128)">
-    <circle r="9" fill="#fff2cc"/>
-    <circle r="22" fill="none" stroke="#ffd98a" stroke-opacity="0.7" stroke-width="1"/>
-    <circle r="40" fill="none" stroke="#e8c87a" stroke-opacity="0.4" stroke-width="0.75"/>
-  </g>
-
-  <!-- Tick marks suggesting an AI command-ring -->
-  <g stroke="#e8c87a" stroke-opacity="0.55" stroke-width="1" stroke-linecap="round">
-    <line x1="128" y1="14"  x2="128" y2="24"/>
-    <line x1="128" y1="232" x2="128" y2="242"/>
-    <line x1="14"  y1="128" x2="24"  y2="128"/>
-    <line x1="232" y1="128" x2="242" y2="128"/>
+  <!-- Tiny sparkle (echoes the diamond in your new logo) -->
+  <g transform="translate(216 218)" fill="#ffe5b3" opacity="0.85">
+    <path d="M0 -7 L1.6 -1.6 L7 0 L1.6 1.6 L0 7 L-1.6 1.6 L-7 0 L-1.6 -1.6 Z"/>
   </g>
 </svg>

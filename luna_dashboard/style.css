@@ -491,11 +491,16 @@ body {
   min-height: 180px;
   overflow: hidden;
 }
-.luna-live__panel--osc    { grid-column: 1 / span 2; }
-.luna-live__panel--radar  { grid-column: 3; grid-row: 1 / span 2; align-items: center; }
-.luna-live__panel--hist   { grid-column: 4; grid-row: 1 / span 2; }
-.luna-live__panel--gauges { grid-column: 1 / span 2; }
-.luna-live__panel--ticker { grid-column: 1 / -1; }
+.luna-live__panel--osc     { grid-column: 1 / span 2; }
+.luna-live__panel--mission { grid-column: 3; grid-row: 1 / span 2; align-items: center; justify-content: flex-start; }
+.luna-live__panel--hist    { grid-column: 4; grid-row: 1 / span 2; }
+.luna-live__panel--gauges  { grid-column: 1 / span 2; }
+.luna-live__panel--ticker  { grid-column: 1 / -1; }
+.luna-live__panel-titlewrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .luna-live__panel-head {
   display: flex;
   justify-content: space-between;
@@ -524,8 +529,57 @@ body {
   display: block;
 }
 .luna-live__panel--osc canvas { height: 160px; }
-.luna-live__panel--radar canvas { height: 320px; max-width: 100%; }
+.luna-live__panel--mission canvas { height: 280px; max-width: 100%; }
 .luna-live__panel--hist canvas { height: 120px; }
+
+/* -------- Dropdown (terminal styled) -------- */
+.luna-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(0,0,0,0.55) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><polygon points='0,0 12,0 6,8' fill='%23e8c87a'/></svg>") no-repeat right 8px center;
+  background-size: 8px 5px;
+  border: 1px solid var(--luna-line);
+  border-radius: 6px;
+  color: var(--luna-warm-white);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  padding: 4px 22px 4px 8px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.luna-select:hover  { border-color: var(--luna-line-strong); }
+.luna-select:focus  { border-color: var(--luna-gold); box-shadow: 0 0 0 2px rgba(232,200,122,0.18); }
+.luna-select option { background: #0a0c12; color: var(--luna-warm-white); }
+
+/* -------- Mission Clock caption -------- */
+.luna-mission__caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: -10px;
+  text-align: center;
+}
+.luna-mission__task {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--luna-gold-bright);
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.luna-mission__detail {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--luna-text-mute);
+  text-transform: uppercase;
+}
 .luna-live__roles {
   display: flex; flex-wrap: wrap; gap: 6px;
 }
@@ -940,11 +994,11 @@ body {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
   }
-  .luna-live__panel--osc    { grid-column: 1 / -1; }
-  .luna-live__panel--radar  { grid-column: 1; grid-row: auto; }
-  .luna-live__panel--hist   { grid-column: 2; grid-row: auto; }
-  .luna-live__panel--gauges { grid-column: 1 / -1; }
-  .luna-live__panel--ticker { grid-column: 1 / -1; }
+  .luna-live__panel--osc     { grid-column: 1 / -1; }
+  .luna-live__panel--mission { grid-column: 1; grid-row: auto; }
+  .luna-live__panel--hist    { grid-column: 2; grid-row: auto; }
+  .luna-live__panel--gauges  { grid-column: 1 / -1; }
+  .luna-live__panel--ticker  { grid-column: 1 / -1; }
 }
 @media (max-width: 1180px) {
   .luna-hero { grid-template-columns: 160px 1fr; }
@@ -969,7 +1023,7 @@ body {
   .luna-feed__role { grid-column: 1 / -1; }
   .luna-score { grid-template-columns: 1fr; justify-items: center; }
   .luna-live__grid { grid-template-columns: 1fr; }
-  .luna-live__panel--radar canvas { height: 220px; }
+  .luna-live__panel--mission canvas { height: 240px; }
   .luna-tty__line { grid-template-columns: 14px 1fr; }
   .luna-tty__ts, .luna-tty__role { display: none; }
 }

@@ -117,27 +117,43 @@
     </header>
 
     <div class="luna-live__grid">
-      <!-- Oscilloscope: live worker pulse -->
+      <!-- Oscilloscope: live worker pulse with selectable data source -->
       <div class="luna-live__panel luna-live__panel--osc">
         <div class="luna-live__panel-head">
-          <span class="luna-live__panel-title">PULSE · worker heartbeat</span>
+          <div class="luna-live__panel-titlewrap">
+            <span class="luna-live__panel-title" id="osc-title">PULSE · worker heartbeat</span>
+            <select class="luna-select" id="osc-source" aria-label="Pulse source">
+              <option value="heartbeat">Worker heartbeat (calm)</option>
+              <option value="cpu">CPU usage</option>
+              <option value="mem">Memory free</option>
+              <option value="gpu">GPU free</option>
+              <option value="queue">Queue depth</option>
+              <option value="active">Active jobs</option>
+              <option value="event_rate">Event rate · evt/min</option>
+              <option value="approval">Approval pending</option>
+              <option value="combined">Combined overlay</option>
+            </select>
+          </div>
           <span class="luna-live__panel-stat" id="osc-bpm">— hz</span>
         </div>
         <canvas id="osc-canvas" width="800" height="160"></canvas>
-        <div class="luna-live__panel-foot">
-          <span class="luna-live__legend"><i style="background:var(--luna-gold-bright)"></i>tick</span>
-          <span class="luna-live__legend"><i style="background:var(--luna-amber)"></i>queue</span>
-          <span class="luna-live__legend"><i style="background:var(--luna-good)"></i>active</span>
+        <div class="luna-live__panel-foot" id="osc-legend">
+          <span class="luna-live__legend"><i style="background:var(--luna-gold-bright)"></i><span id="osc-legend-name">heartbeat</span></span>
+          <span class="luna-live__legend"><i style="background:var(--luna-text-mute);height:6px"></i><span>240 samples · 5 s avg</span></span>
         </div>
       </div>
 
-      <!-- Service radar: nodes with concentric pulse rings -->
-      <div class="luna-live__panel luna-live__panel--radar">
+      <!-- Mission Clock: live task countdown + orbital animation -->
+      <div class="luna-live__panel luna-live__panel--mission">
         <div class="luna-live__panel-head">
-          <span class="luna-live__panel-title">SERVICE MESH</span>
-          <span class="luna-live__panel-stat" id="radar-stat">—</span>
+          <span class="luna-live__panel-title">MISSION CLOCK</span>
+          <span class="luna-live__panel-stat" id="mission-stat">—</span>
         </div>
-        <canvas id="radar-canvas" width="320" height="320"></canvas>
+        <canvas id="mission-canvas" width="320" height="320"></canvas>
+        <div class="luna-mission__caption">
+          <div class="luna-mission__task" id="mission-task">STANDBY</div>
+          <div class="luna-mission__detail" id="mission-detail">awaiting orders</div>
+        </div>
       </div>
 
       <!-- Event histogram -->
