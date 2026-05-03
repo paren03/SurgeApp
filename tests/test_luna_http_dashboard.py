@@ -274,6 +274,31 @@ class TestEndpointsAndSafety(unittest.TestCase):
                 _get(f"{fx.base}/api/does-not-exist")
             self.assertEqual(ctx.exception.code, 404)
 
+    def test_activity_endpoint_default(self) -> None:
+        with _ServerFixture() as fx:
+            with _get(f"{fx.base}/api/activity") as r:
+                data = json.loads(r.read().decode("utf-8"))
+                self.assertIn("counts", data)
+                self.assertIn("by_role", data)
+                self.assertIsInstance(data["counts"], list)
+                self.assertEqual(len(data["counts"]), data["buckets"])
+
+    def test_activity_endpoint_clamped(self) -> None:
+        # Excessive bucket count should be clamped server-side.
+        with _ServerFixture() as fx:
+            with _get(f"{fx.base}/api/activity?buckets=99999&window=10000000") as r:
+                data = json.loads(r.read().decode("utf-8"))
+                self.assertLessEqual(data["buckets"], 240)
+                self.assertLessEqual(data["window_seconds"], 24 * 3600)
+
+    def test_activity_endpoint_invalid_params_safe(self) -> None:
+        # Garbage params must not crash; defaults take over.
+        with _ServerFixture() as fx:
+            with _get(f"{fx.base}/api/activity?buckets=abc&window=xyz") as r:
+                data = json.loads(r.read().decode("utf-8"))
+                self.assertGreater(data["buckets"], 0)
+                self.assertGreater(data["window_seconds"], 0)
+
 
 class TestMethodGating(unittest.TestCase):
     def _expect_405(self, method: str) -> None:

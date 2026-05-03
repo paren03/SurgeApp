@@ -15,6 +15,30 @@
   <div class="luna-bg__halo"></div>
   <div class="luna-bg__grid"></div>
   <div class="luna-bg__noise"></div>
+  <div class="luna-bg__scanlines"></div>
+  <div class="luna-bg__vignette"></div>
+</div>
+
+<!-- Terminal-style title bar replacing the browser chrome -->
+<div class="luna-titlebar" role="presentation">
+  <div class="luna-titlebar__dots">
+    <span class="luna-titlebar__dot" data-color="r"></span>
+    <span class="luna-titlebar__dot" data-color="y"></span>
+    <span class="luna-titlebar__dot" data-color="g"></span>
+  </div>
+  <div class="luna-titlebar__path">
+    <span class="luna-titlebar__user">serge</span>
+    <span class="luna-titlebar__sep">@</span>
+    <span class="luna-titlebar__host">luna.sovereign</span>
+    <span class="luna-titlebar__sep">:</span>
+    <span class="luna-titlebar__cwd">~/command-center</span>
+    <span class="luna-titlebar__cursor"></span>
+  </div>
+  <div class="luna-titlebar__meta">
+    <span class="luna-pill" data-tone="gold">UI-1A</span>
+    <span class="luna-pill" id="meta-host">127.0.0.1:8765</span>
+    <span class="luna-pill luna-pill--ghost" id="meta-time">—</span>
+  </div>
 </div>
 
 <header class="luna-header" role="banner">
@@ -25,10 +49,10 @@
       <div class="luna-brand__sub">Command Center · Phase UI-1A</div>
     </div>
   </div>
-  <div class="luna-header__meta">
-    <span class="luna-pill" id="meta-phase" data-tone="gold">Read-Only</span>
-    <span class="luna-pill" id="meta-host">127.0.0.1:8765</span>
-    <span class="luna-pill luna-pill--ghost" id="meta-time">—</span>
+  <div class="luna-header__prompt" aria-hidden="true">
+    <span class="luna-prompt__sigil">›</span>
+    <span class="luna-prompt__text" id="prompt-text">luna --status --watch</span>
+    <span class="luna-prompt__caret"></span>
   </div>
 </header>
 
@@ -40,7 +64,7 @@
     </div>
     <div class="luna-hero__body">
       <div class="luna-hero__title">
-        <span class="luna-hero__eyebrow">Sovereign AI Core</span>
+        <span class="luna-hero__eyebrow">// SOVEREIGN AI CORE</span>
         <h1 class="luna-hero__heading">Luna is online</h1>
         <p class="luna-hero__quote" id="luna-quote">Standing by.</p>
       </div>
@@ -85,11 +109,95 @@
     </div>
   </section>
 
+  <!-- LIVE OPERATIONS — the entertaining live view -->
+  <section class="luna-card luna-card--wide luna-live" aria-label="Live Operations">
+    <header class="luna-card__head">
+      <h2 class="luna-card__title">// Live Operations</h2>
+      <span class="luna-card__sub" id="live-meta">awaiting telemetry</span>
+    </header>
+
+    <div class="luna-live__grid">
+      <!-- Oscilloscope: live worker pulse -->
+      <div class="luna-live__panel luna-live__panel--osc">
+        <div class="luna-live__panel-head">
+          <span class="luna-live__panel-title">PULSE · worker heartbeat</span>
+          <span class="luna-live__panel-stat" id="osc-bpm">— hz</span>
+        </div>
+        <canvas id="osc-canvas" width="800" height="160"></canvas>
+        <div class="luna-live__panel-foot">
+          <span class="luna-live__legend"><i style="background:var(--luna-gold-bright)"></i>tick</span>
+          <span class="luna-live__legend"><i style="background:var(--luna-amber)"></i>queue</span>
+          <span class="luna-live__legend"><i style="background:var(--luna-good)"></i>active</span>
+        </div>
+      </div>
+
+      <!-- Service radar: nodes with concentric pulse rings -->
+      <div class="luna-live__panel luna-live__panel--radar">
+        <div class="luna-live__panel-head">
+          <span class="luna-live__panel-title">SERVICE MESH</span>
+          <span class="luna-live__panel-stat" id="radar-stat">—</span>
+        </div>
+        <canvas id="radar-canvas" width="320" height="320"></canvas>
+      </div>
+
+      <!-- Event histogram -->
+      <div class="luna-live__panel luna-live__panel--hist">
+        <div class="luna-live__panel-head">
+          <span class="luna-live__panel-title">EVENT FREQUENCY · last 30 min</span>
+          <span class="luna-live__panel-stat" id="hist-stat">0 events</span>
+        </div>
+        <canvas id="hist-canvas" width="800" height="120"></canvas>
+        <div class="luna-live__roles" id="hist-roles"></div>
+      </div>
+
+      <!-- Resource gauges -->
+      <div class="luna-live__panel luna-live__panel--gauges">
+        <div class="luna-live__panel-head">
+          <span class="luna-live__panel-title">RESOURCE TELEMETRY</span>
+          <span class="luna-live__panel-stat" id="gauge-stat">—</span>
+        </div>
+        <div class="luna-gauges">
+          <div class="luna-gauge" data-id="cpu">
+            <canvas width="120" height="120"></canvas>
+            <div class="luna-gauge__num">—</div>
+            <div class="luna-gauge__label">CPU</div>
+          </div>
+          <div class="luna-gauge" data-id="mem">
+            <canvas width="120" height="120"></canvas>
+            <div class="luna-gauge__num">—</div>
+            <div class="luna-gauge__label">MEM FREE</div>
+          </div>
+          <div class="luna-gauge" data-id="gpu">
+            <canvas width="120" height="120"></canvas>
+            <div class="luna-gauge__num">—</div>
+            <div class="luna-gauge__label">GPU FREE</div>
+          </div>
+          <div class="luna-gauge" data-id="disk">
+            <canvas width="120" height="120"></canvas>
+            <div class="luna-gauge__num">—</div>
+            <div class="luna-gauge__label">DISK FREE</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terminal-style live ticker -->
+      <div class="luna-live__panel luna-live__panel--ticker">
+        <div class="luna-live__panel-head">
+          <span class="luna-live__panel-title">TTY · live stream</span>
+          <span class="luna-live__panel-stat" id="ticker-stat">—</span>
+        </div>
+        <ol class="luna-tty" id="luna-tty">
+          <li class="luna-tty__line"><span class="luna-tty__sigil">$</span> luna --watch <span class="luna-tty__cursor"></span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
   <div class="luna-grid">
     <!-- DECISION CENTER -->
     <section class="luna-card" aria-label="Decision Center">
       <header class="luna-card__head">
-        <h2 class="luna-card__title">Decision Center</h2>
+        <h2 class="luna-card__title">// Decision Center</h2>
         <span class="luna-card__sub" id="brief-recommendation">—</span>
       </header>
       <div class="luna-counts">
@@ -111,7 +219,7 @@
         </div>
       </div>
       <div class="luna-divider"></div>
-      <div class="luna-section-label">Top decision cards</div>
+      <div class="luna-section-label">// top decision cards</div>
       <ul class="luna-cards" id="brief-top-items">
         <li class="luna-cards__empty">No morning brief available yet.</li>
       </ul>
@@ -121,8 +229,8 @@
     <!-- ROUTINE AUTONOMY -->
     <section class="luna-card" aria-label="Routine Autonomy">
       <header class="luna-card__head">
-        <h2 class="luna-card__title">Routine Autonomy</h2>
-        <span class="luna-card__sub">Read-only routine ledger</span>
+        <h2 class="luna-card__title">// Routine Autonomy</h2>
+        <span class="luna-card__sub">read-only routine ledger</span>
       </header>
       <ul class="luna-keyvals" id="routine-keyvals">
         <li><span>routine status</span><b id="routine-status">advisory</b></li>
@@ -136,7 +244,7 @@
     <!-- ADVISORY SOAK -->
     <section class="luna-card" aria-label="Advisory Soak">
       <header class="luna-card__head">
-        <h2 class="luna-card__title">Advisory Soak</h2>
+        <h2 class="luna-card__title">// Advisory Soak</h2>
         <span class="luna-card__sub" id="soak-verdict">—</span>
       </header>
       <div class="luna-progress" aria-label="Soak progress">
@@ -148,14 +256,14 @@
           <span id="soak-last">last —</span>
         </div>
       </div>
-      <div class="luna-section-label">24-hour soak command</div>
+      <div class="luna-section-label">// 24-hour soak command</div>
       <code class="luna-code" id="soak-cmd">—</code>
     </section>
 
     <!-- SYSTEM HEALTH -->
     <section class="luna-card" aria-label="System Health">
       <header class="luna-card__head">
-        <h2 class="luna-card__title">System Health</h2>
+        <h2 class="luna-card__title">// System Health</h2>
         <span class="luna-card__sub" id="health-readiness">—</span>
       </header>
       <div class="luna-score">
@@ -175,21 +283,21 @@
       <ul class="luna-warnings" id="health-warnings"></ul>
     </section>
 
-    <!-- LIVE FEED -->
+    <!-- LIVE FEED (raw events, terminal style) -->
     <section class="luna-card luna-card--wide" aria-label="Live Feed">
       <header class="luna-card__head">
-        <h2 class="luna-card__title">Live Feed</h2>
+        <h2 class="luna-card__title">// Live Feed</h2>
         <span class="luna-card__sub" id="feed-meta">—</span>
       </header>
       <ol class="luna-feed" id="live-feed">
-        <li class="luna-feed__empty">Awaiting telemetry…</li>
+        <li class="luna-feed__empty">awaiting telemetry…</li>
       </ol>
     </section>
 
     <!-- ARCHIVE -->
     <section class="luna-card luna-card--wide" aria-label="Archive">
       <header class="luna-card__head">
-        <h2 class="luna-card__title">Phase Archive</h2>
+        <h2 class="luna-card__title">// Phase Archive</h2>
         <span class="luna-card__sub" id="archive-meta">Luna New UpGrades</span>
       </header>
       <ul class="luna-archive" id="archive-list">
@@ -200,11 +308,13 @@
 </main>
 
 <footer class="luna-footer" role="contentinfo">
-  <span>LUNA · 2090 Sovereign Console</span>
+  <span class="luna-footer__cell"><b>SOVEREIGN</b> 2090 Console</span>
   <span class="luna-footer__sep">·</span>
-  <span id="footer-phase">Phase UI-1A</span>
+  <span class="luna-footer__cell" id="footer-phase">Phase UI-1A</span>
   <span class="luna-footer__sep">·</span>
-  <span>read-only · loopback only</span>
+  <span class="luna-footer__cell">read-only · loopback only</span>
+  <span class="luna-footer__sep">·</span>
+  <span class="luna-footer__cell" id="footer-uptime">uptime —</span>
 </footer>
 
 <script src="/app.js" defer></script>

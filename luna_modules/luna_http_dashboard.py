@@ -367,6 +367,75 @@ def build_archive_payload() -> dict[str, Any]:
     }
 
 
+def build_activity_payload(window_seconds: int = 1800, buckets: int = 60) -> dict[str, Any]:
+    """Return a time-bucketed activity histogram of the live feed.
+
+    Buckets the most recent ``window_seconds`` of live-feed events into
+    ``buckets`` equal slices and counts events per bucket per role/source.
+    Used by the front-end oscilloscope and event-frequency chart.
+    The dashboard derives this client-side too, but providing a clean
+    server payload keeps the JS small and the contract explicit.
+    """
+    if buckets <= 0:
+        buckets = 1
+    if buckets > 240:
+        buckets = 240
+    if window_seconds <= 0:
+        window_seconds = 60
+    if window_seconds > 24 * 3600:
+        window_seconds = 24 * 3600
+
+    records = _safe_tail_jsonl(READONLY_SOURCES["live_feed"], limit=LIVE_FEED_MAX_LINES)
+    now = time.time()
+    bucket_size = max(1.0, window_seconds / buckets)
+    counts = [0] * buckets
+    by_role: dict[str, int] = {}
+    last_role = ""
+    last_event = ""
+    last_ts = ""
+
+    for rec in records:
+        if not isinstance(rec, dict):
+            continue
+        role = str(rec.get("role") or rec.get("source") or "unknown")[:24]
+        by_role[role] = by_role.get(role, 0) + 1
+        last_role = role
+        last_event = str(rec.get("event") or "")
+        last_ts = str(rec.get("ts") or "")
+        # Bucketing: live_feed.jsonl uses HH:MM:SS strings, not full ISO,
+        # so we approximate by spacing events evenly across the window. The
+        # client sees the order as a "recent activity" signal — exact wall
+        # time isn't required for the visualization.
+    n = len(records)
+    if n > 0:
+        for i in range(n):
+            # Map the i-th most-recent record to a bucket from "now" backward.
+            offset_seconds = (n - 1 - i) * (window_seconds / max(1, n))
+            bidx = int((window_seconds - offset_seconds) / bucket_size)
+            if bidx < 0:
+                bidx = 0
+            if bidx >= buckets:
+                bidx = buckets - 1
+            counts[bidx] += 1
+
+    # Top roles, sorted, capped at 6 — for the role frequency strip.
+    top_roles = sorted(by_role.items(), key=lambda kv: kv[1], reverse=True)[:6]
+
+    return {
+        "generated_at": _now_iso(),
+        "window_seconds": window_seconds,
+        "buckets": buckets,
+        "bucket_size_seconds": bucket_size,
+        "counts": counts,
+        "total_events": n,
+        "by_role": [{"role": r, "count": c} for r, c in top_roles],
+        "last_role": last_role,
+        "last_event": last_event,
+        "last_ts": last_ts,
+        "now_epoch": now,
+    }
+
+
 def build_health_payload() -> dict[str, Any]:
     """Tiny health endpoint — useful for tests and the hero pulse animation."""
     sources_present = {
@@ -506,6 +575,18 @@ class LunaDashboardHandler(BaseHTTPRequestHandler):
                 payload = build_live_feed_payload(limit=limit)
             elif path == "/api/archive":
                 payload = build_archive_payload()
+            elif path == "/api/activity":
+                w_raw = params.get("window", ["1800"])[0]
+                b_raw = params.get("buckets", ["60"])[0]
+                try:
+                    window = int(w_raw)
+                except (TypeError, ValueError):
+                    window = 1800
+                try:
+                    buckets = int(b_raw)
+                except (TypeError, ValueError):
+                    buckets = 60
+                payload = build_activity_payload(window_seconds=window, buckets=buckets)
             elif path == "/api/health":
                 payload = build_health_payload()
             else:

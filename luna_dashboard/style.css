@@ -1,6 +1,6 @@
 /* Luna Command Center — Phase UI-1A
- * 2090 cinematic AI command-center theme.
- * Black + charcoal + gold + frosted glass. No CDNs, no rainbow, no defaults.
+ * 2090 cinematic AI command-center theme + terminal-frame skin.
+ * Black + charcoal + gold + frosted glass + subtle CRT.
  */
 
 :root {
@@ -26,6 +26,7 @@
   --luna-good:         #6fdcb1;
   --luna-warn:         #f0b455;
   --luna-bad:          #d96a6a;
+  --luna-phosphor:     #b8d8a9; /* faint terminal phosphor for tty body */
 
   --luna-glass:        rgba(20, 24, 34, 0.55);
   --luna-glass-strong: rgba(28, 32, 44, 0.72);
@@ -63,7 +64,7 @@ body {
     linear-gradient(180deg, #05060a 0%, #07080d 50%, #05060a 100%);
 }
 
-/* -------- Background ambience -------- */
+/* -------- Background ambience + CRT vibe -------- */
 .luna-bg {
   position: fixed;
   inset: 0;
@@ -111,6 +112,86 @@ body {
   mix-blend-mode: overlay;
   opacity: 0.55;
 }
+.luna-bg__scanlines {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(232,200,122,0.025) 0px,
+    rgba(232,200,122,0.025) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.35;
+  animation: luna-scan 9s linear infinite;
+}
+@keyframes luna-scan {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 200px; }
+}
+.luna-bg__vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
+}
+
+/* -------- Terminal-style title bar (replaces browser chrome) -------- */
+.luna-titlebar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 18px;
+  background: linear-gradient(180deg, #0d1018 0%, #07080d 100%);
+  border-bottom: 1px solid var(--luna-line);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  -webkit-app-region: drag;
+}
+.luna-titlebar__dots {
+  display: flex; gap: 7px;
+}
+.luna-titlebar__dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: #2c3140;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
+}
+.luna-titlebar__dot[data-color="r"] { background: #4a2228; box-shadow: 0 0 10px rgba(217,106,106,0.35); }
+.luna-titlebar__dot[data-color="y"] { background: #4a3a18; box-shadow: 0 0 10px rgba(240,180,85,0.35); }
+.luna-titlebar__dot[data-color="g"] { background: #1f3a2a; box-shadow: 0 0 10px rgba(111,220,177,0.35); }
+
+.luna-titlebar__path {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  color: var(--luna-text-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.luna-titlebar__user { color: var(--luna-gold-bright); }
+.luna-titlebar__host { color: var(--luna-amber); }
+.luna-titlebar__cwd  { color: var(--luna-warm-white); }
+.luna-titlebar__sep  { color: var(--luna-text-mute); padding: 0 1px; }
+.luna-titlebar__cursor {
+  display: inline-block;
+  width: 8px; height: 14px;
+  margin-left: 6px;
+  background: var(--luna-gold-bright);
+  vertical-align: -2px;
+  animation: luna-blink 1s steps(2, end) infinite;
+}
+@keyframes luna-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.05; }
+}
+.luna-titlebar__meta {
+  display: flex; gap: 8px;
+}
 
 /* -------- Header -------- */
 .luna-header {
@@ -119,7 +200,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 22px 36px;
+  gap: 24px;
+  padding: 18px 36px;
   border-bottom: 1px solid var(--luna-line);
   background: linear-gradient(180deg, rgba(10,12,18,0.85) 0%, rgba(10,12,18,0.0) 100%);
   backdrop-filter: blur(14px) saturate(140%);
@@ -145,13 +227,34 @@ body {
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
-.luna-header__meta { display: flex; gap: 10px; }
+.luna-header__prompt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--luna-text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.luna-prompt__sigil { color: var(--luna-gold-bright); font-weight: 700; }
+.luna-prompt__text  { color: var(--luna-warm-white); }
+.luna-prompt__caret {
+  display: inline-block;
+  width: 9px; height: 14px;
+  background: var(--luna-gold-bright);
+  vertical-align: -2px;
+  animation: luna-blink 1s steps(2, end) infinite;
+}
+
 .luna-pill {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  padding: 7px 12px;
+  padding: 6px 11px;
   border-radius: 999px;
   background: var(--luna-glass);
   border: 1px solid var(--luna-line);
@@ -171,15 +274,15 @@ body {
   z-index: 1;
   max-width: 1480px;
   margin: 0 auto;
-  padding: 28px 36px 64px;
+  padding: 24px 28px 60px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 22px;
 }
 .luna-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 22px;
+  gap: 20px;
 }
 .luna-card {
   position: relative;
@@ -187,7 +290,7 @@ body {
   background: linear-gradient(160deg, var(--luna-glass-strong) 0%, var(--luna-glass) 100%);
   border: 1px solid var(--luna-line);
   border-radius: var(--luna-radius);
-  padding: 22px 24px;
+  padding: 20px 22px;
   box-shadow: var(--luna-shadow);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
@@ -216,12 +319,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 .luna-card__title {
   margin: 0;
-  font-size: 14px;
-  letter-spacing: 0.32em;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--luna-warm-white);
 }
@@ -245,7 +349,7 @@ body {
   display: grid;
   grid-template-columns: 220px 1fr;
   gap: 28px;
-  padding: 32px 36px;
+  padding: 28px 32px;
   background:
     radial-gradient(800px 400px at 80% 120%, rgba(232, 200, 122, 0.10), transparent 60%),
     linear-gradient(160deg, rgba(28, 32, 44, 0.85) 0%, rgba(10, 12, 18, 0.65) 100%);
@@ -284,7 +388,7 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--luna-gold);
-  letter-spacing: 0.28em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   margin-bottom: 8px;
 }
@@ -306,7 +410,7 @@ body {
 .luna-hero__statbar {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
   margin-bottom: 18px;
 }
 .luna-stat {
@@ -367,11 +471,162 @@ body {
 .luna-safelock--locked .luna-safelock__dot     { background: var(--luna-amber); }
 .luna-safelock--disabled .luna-safelock__dot   { background: var(--luna-bronze); }
 
+/* -------- LIVE OPERATIONS -------- */
+.luna-live { padding: 22px 24px; }
+.luna-live__grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1.6fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 16px;
+}
+.luna-live__panel {
+  position: relative;
+  background: rgba(7, 8, 13, 0.65);
+  border: 1px solid var(--luna-line);
+  border-radius: var(--luna-radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 180px;
+  overflow: hidden;
+}
+.luna-live__panel--osc    { grid-column: 1 / span 2; }
+.luna-live__panel--radar  { grid-column: 3; grid-row: 1 / span 2; align-items: center; }
+.luna-live__panel--hist   { grid-column: 4; grid-row: 1 / span 2; }
+.luna-live__panel--gauges { grid-column: 1 / span 2; }
+.luna-live__panel--ticker { grid-column: 1 / -1; }
+.luna-live__panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.luna-live__panel-title { color: var(--luna-gold); }
+.luna-live__panel-stat  { color: var(--luna-text-mute); }
+.luna-live__panel-foot  {
+  display: flex; gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--luna-text-mute);
+  letter-spacing: 0.1em;
+}
+.luna-live__legend { display: inline-flex; align-items: center; gap: 6px; }
+.luna-live__legend i {
+  width: 10px; height: 2px; border-radius: 2px; display: inline-block;
+}
+.luna-live__panel canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.luna-live__panel--osc canvas { height: 160px; }
+.luna-live__panel--radar canvas { height: 320px; max-width: 100%; }
+.luna-live__panel--hist canvas { height: 120px; }
+.luna-live__roles {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.luna-live__role {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(232, 200, 122, 0.06);
+  border: 1px solid var(--luna-line);
+  color: var(--luna-text-soft);
+  letter-spacing: 0.1em;
+}
+.luna-live__role b { color: var(--luna-gold-bright); margin-left: 6px; }
+
+.luna-gauges {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.luna-gauge {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--luna-line);
+  border-radius: var(--luna-radius-sm);
+}
+.luna-gauge canvas {
+  width: 110px !important;
+  height: 110px !important;
+}
+.luna-gauge__num {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--luna-warm-white);
+  letter-spacing: 0.04em;
+}
+.luna-gauge__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--luna-text-mute);
+}
+
+/* -------- TTY ticker -------- */
+.luna-tty {
+  list-style: none;
+  margin: 0; padding: 8px 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.4));
+  border: 1px solid var(--luna-line);
+  border-radius: var(--luna-radius-sm);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--luna-phosphor);
+  max-height: 240px;
+  overflow-y: auto;
+  line-height: 1.55;
+}
+.luna-tty__line {
+  display: grid;
+  grid-template-columns: 18px 78px 110px 1fr;
+  gap: 12px;
+  padding: 2px 0;
+  align-items: baseline;
+}
+.luna-tty__sigil  { color: var(--luna-gold-bright); }
+.luna-tty__ts     { color: var(--luna-gold); }
+.luna-tty__role   { color: var(--luna-amber); text-transform: uppercase; letter-spacing: 0.12em; font-size: 10.5px; }
+.luna-tty__msg    { color: var(--luna-warm-white); white-space: pre-wrap; word-break: break-word; }
+.luna-tty__msg em { color: var(--luna-text-mute); font-style: normal; }
+.luna-tty__cursor {
+  display: inline-block;
+  width: 8px; height: 13px;
+  background: var(--luna-gold-bright);
+  vertical-align: -2px;
+  margin-left: 4px;
+  animation: luna-blink 1s steps(2, end) infinite;
+}
+.luna-tty .luna-tty--new {
+  animation: luna-typein 0.5s ease-out;
+}
+@keyframes luna-typein {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 /* -------- Decision Center -------- */
 .luna-counts {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  gap: 12px;
 }
 .luna-count {
   background: rgba(10, 12, 18, 0.55);
@@ -412,7 +667,7 @@ body {
 .luna-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--luna-line-strong), transparent);
-  margin: 18px 0 14px;
+  margin: 16px 0 12px;
 }
 .luna-section-label {
   font-family: var(--font-mono);
@@ -603,7 +858,7 @@ body {
   background: rgba(240, 180, 85, 0.05);
 }
 
-/* -------- Live feed -------- */
+/* -------- Live feed list (raw events) -------- */
 .luna-feed {
   list-style: none;
   margin: 0; padding: 0;
@@ -662,14 +917,15 @@ body {
   justify-content: center;
   align-items: center;
   gap: 12px;
-  padding: 24px;
+  padding: 18px;
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--luna-text-mute);
   border-top: 1px solid var(--luna-line);
 }
+.luna-footer__cell b { color: var(--luna-gold-bright); margin-right: 6px; }
 .luna-footer__sep { opacity: 0.4; }
 
 /* -------- Scrollbars (subtle, dark) -------- */
@@ -679,6 +935,17 @@ body {
 *::-webkit-scrollbar-thumb:hover { background: rgba(232, 200, 122, 0.35); }
 
 /* -------- Responsive -------- */
+@media (max-width: 1280px) {
+  .luna-live__grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+  .luna-live__panel--osc    { grid-column: 1 / -1; }
+  .luna-live__panel--radar  { grid-column: 1; grid-row: auto; }
+  .luna-live__panel--hist   { grid-column: 2; grid-row: auto; }
+  .luna-live__panel--gauges { grid-column: 1 / -1; }
+  .luna-live__panel--ticker { grid-column: 1 / -1; }
+}
 @media (max-width: 1180px) {
   .luna-hero { grid-template-columns: 160px 1fr; }
   .luna-hero__crest { width: 160px; height: 160px; }
@@ -687,10 +954,13 @@ body {
   .luna-card { grid-column: span 12; }
   .luna-hero__statbar { grid-template-columns: repeat(3, 1fr); }
   .luna-counts { grid-template-columns: repeat(2, 1fr); }
+  .luna-gauges { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 720px) {
-  .luna-header { padding: 16px 18px; }
-  .luna-main { padding: 18px; }
+  .luna-titlebar__path { font-size: 10.5px; }
+  .luna-header { padding: 14px 18px; }
+  .luna-header__prompt { display: none; }
+  .luna-main { padding: 16px; }
   .luna-hero { grid-template-columns: 1fr; padding: 22px 20px; }
   .luna-hero__crest { margin: 0 auto; }
   .luna-hero__heading { font-size: 26px; }
@@ -698,7 +968,12 @@ body {
   .luna-feed li { grid-template-columns: 70px 1fr; }
   .luna-feed__role { grid-column: 1 / -1; }
   .luna-score { grid-template-columns: 1fr; justify-items: center; }
+  .luna-live__grid { grid-template-columns: 1fr; }
+  .luna-live__panel--radar canvas { height: 220px; }
+  .luna-tty__line { grid-template-columns: 14px 1fr; }
+  .luna-tty__ts, .luna-tty__role { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .luna-bg__halo, .luna-hero__sigil { animation: none; }
+  .luna-bg__halo, .luna-hero__sigil, .luna-bg__scanlines,
+  .luna-titlebar__cursor, .luna-prompt__caret, .luna-tty__cursor { animation: none; }
 }
