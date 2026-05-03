@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Luna sigil">
+  <defs>
+    <radialGradient id="lunaCore" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#fff2cc"/>
+      <stop offset="35%" stop-color="#ffd98a"/>
+      <stop offset="75%" stop-color="#b89048"/>
+      <stop offset="100%" stop-color="#5a3e1a"/>
+    </radialGradient>
+    <linearGradient id="lunaCrescent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#fff2cc"/>
+      <stop offset="55%"  stop-color="#e8c87a"/>
+      <stop offset="100%" stop-color="#946a3c"/>
+    </linearGradient>
+    <radialGradient id="lunaGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#e8c87a" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#e8c87a" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#e8c87a" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="lunaCrescentMask">
+      <rect width="256" height="256" fill="black"/>
+      <circle cx="128" cy="128" r="92" fill="white"/>
+      <circle cx="156" cy="118" r="86" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- Outer halo -->
+  <circle cx="128" cy="128" r="124" fill="url(#lunaGlow)"/>
+
+  <!-- Sovereign rings -->
+  <circle cx="128" cy="128" r="118" fill="none" stroke="#e8c87a" stroke-opacity="0.35" stroke-width="1"/>
+  <circle cx="128" cy="128" r="104" fill="none" stroke="#e8c87a" stroke-opacity="0.18" stroke-width="1" stroke-dasharray="2 6"/>
+
+  <!-- Inner core glow -->
+  <circle cx="128" cy="128" r="92" fill="url(#lunaCore)" opacity="0.18"/>
+
+  <!-- Crescent body -->
+  <g mask="url(#lunaCrescentMask)">
+    <rect width="256" height="256" fill="url(#lunaCrescent)"/>
+  </g>
+
+  <!-- Sovereign core mark -->
+  <g transform="translate(128 128)">
+    <circle r="9" fill="#fff2cc"/>
+    <circle r="22" fill="none" stroke="#ffd98a" stroke-opacity="0.7" stroke-width="1"/>
+    <circle r="40" fill="none" stroke="#e8c87a" stroke-opacity="0.4" stroke-width="0.75"/>
+  </g>
+
+  <!-- Tick marks suggesting an AI command-ring -->
+  <g stroke="#e8c87a" stroke-opacity="0.55" stroke-width="1" stroke-linecap="round">
+    <line x1="128" y1="14"  x2="128" y2="24"/>
+    <line x1="128" y1="232" x2="128" y2="242"/>
+    <line x1="14"  y1="128" x2="24"  y2="128"/>
+    <line x1="232" y1="128" x2="242" y2="128"/>
+  </g>
+</svg>

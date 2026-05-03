@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "policy_id": "luna_http_dashboard_policy",
+  "phase": "UI-1A",
+  "phase_name": "Luna Futuristic HTTP Dashboard Foundation",
+  "generated_at": "2026-05-02",
+  "advisory_only": true,
+  "safe_to_execute_now": false,
+  "safe_to_apply_real_project": false,
+  "guardian_enforcing_live": false,
+  "live_enforcement_enabled": false,
+  "allow_aider": false,
+  "allow_code_edits": false,
+  "dashboard": {
+    "host": "127.0.0.1",
+    "port": 8765,
+    "url": "http://127.0.0.1:8765",
+    "bind_loopback_only": true,
+    "methods_allowed": ["GET", "HEAD"],
+    "methods_rejected": ["POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    "code_execution_state": "LOCKED",
+    "guardian_live_enforcement": "DISABLED",
+    "live_feed_max_lines": 100,
+    "static_whitelist": [
+      "/",
+      "/index.html",
+      "/style.css",
+      "/app.js",
+      "/assets/luna_logo.svg",
+      "/assets/luna_icon.png",
+      "/assets/luna_icon.ico"
+    ],
+    "api_endpoints": [
+      "/api/status",
+      "/api/decision-brief",
+      "/api/soak",
+      "/api/scorecard",
+      "/api/resources",
+      "/api/live-feed",
+      "/api/archive",
+      "/api/health"
+    ],
+    "readonly_sources": [
+      "memory/luna_morning_decision_brief.json",
+      "memory/luna_morning_decision_brief.md",
+      "memory/luna_decision_card_digest.json",
+      "memory/luna_advisory_soak_report.json",
+      "memory/luna_soak_verdict_report.json",
+      "memory/luna_schema_review_report.json",
+      "memory/luna_capability_scorecard.json",
+      "memory/luna_resource_status.json",
+      "memory/luna_guardian_readiness_report.json",
+      "memory/luna_guardian_status.json",
+      "logs/luna_worker_heartbeat.json",
+      "logs/aider_bridge_status.json",
+      "logs/luna_live_feed.jsonl"
+    ],
+    "writes_allowed": false,
+    "shell_execution": false,
+    "file_writes_from_requests": false,
+    "external_apis": false,
+    "package_install": false,
+    "path_traversal_blocked": true,
+    "arbitrary_file_serving": false
+  },
+  "launcher": {
+    "pyw": "LaunchLunaDashboard.pyw",
+    "shortcut_helper": "create_luna_dashboard_shortcut.py",
+    "shortcut_name": "Luna Dashboard.lnk"
+  },
+  "branding": {
+    "logo_svg": "luna_dashboard/assets/luna_logo.svg",
+    "icon_png": "luna_dashboard/assets/luna_icon.png",
+    "icon_ico": "luna_dashboard/assets/luna_icon.ico",
+    "palette": ["black", "charcoal", "graphite", "gold", "warm-white", "amber", "muted-bronze"],
+    "aesthetic": "2090 cinematic AI command center / luxury glassmorphism"
+  },
+  "notes": [
+    "Phase UI-1A: read-only, UI-only, advisory-only foundation.",
+    "No core runtime file (worker.py, aider_bridge.py, luna_guardian.py, etc.) was modified.",
+    "Live execution flags remain false; this phase does not promote any safety gate."
+  ]
+}

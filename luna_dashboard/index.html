@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<meta name="referrer" content="no-referrer" />
+<title>Luna Command Center</title>
+<link rel="icon" type="image/svg+xml" href="/assets/luna_logo.svg" />
+<link rel="alternate icon" href="/assets/luna_icon.ico" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="luna-bg" aria-hidden="true">
+  <div class="luna-bg__halo"></div>
+  <div class="luna-bg__grid"></div>
+  <div class="luna-bg__noise"></div>
+</div>
+
+<header class="luna-header" role="banner">
+  <div class="luna-brand">
+    <img class="luna-brand__mark" src="/assets/luna_logo.svg" alt="" aria-hidden="true" />
+    <div class="luna-brand__text">
+      <div class="luna-brand__title">LUNA</div>
+      <div class="luna-brand__sub">Command Center · Phase UI-1A</div>
+    </div>
+  </div>
+  <div class="luna-header__meta">
+    <span class="luna-pill" id="meta-phase" data-tone="gold">Read-Only</span>
+    <span class="luna-pill" id="meta-host">127.0.0.1:8765</span>
+    <span class="luna-pill luna-pill--ghost" id="meta-time">—</span>
+  </div>
+</header>
+
+<main class="luna-main" role="main">
+  <!-- HERO / TOP COMMAND BAR -->
+  <section class="luna-card luna-hero" aria-label="Top Command Bar">
+    <div class="luna-hero__crest">
+      <img class="luna-hero__sigil" src="/assets/luna_logo.svg" alt="" aria-hidden="true" />
+    </div>
+    <div class="luna-hero__body">
+      <div class="luna-hero__title">
+        <span class="luna-hero__eyebrow">Sovereign AI Core</span>
+        <h1 class="luna-hero__heading">Luna is online</h1>
+        <p class="luna-hero__quote" id="luna-quote">Standing by.</p>
+      </div>
+      <div class="luna-hero__statbar">
+        <div class="luna-stat" data-id="state">
+          <div class="luna-stat__label">Luna State</div>
+          <div class="luna-stat__value" id="stat-luna-state">—</div>
+        </div>
+        <div class="luna-stat" data-id="worker">
+          <div class="luna-stat__label">Worker</div>
+          <div class="luna-stat__value" id="stat-worker">—</div>
+        </div>
+        <div class="luna-stat" data-id="guardian">
+          <div class="luna-stat__label">Guardian</div>
+          <div class="luna-stat__value" id="stat-guardian">—</div>
+        </div>
+        <div class="luna-stat" data-id="aider">
+          <div class="luna-stat__label">Aider Bridge</div>
+          <div class="luna-stat__value" id="stat-aider">—</div>
+        </div>
+        <div class="luna-stat" data-id="verifier">
+          <div class="luna-stat__label">Verifier</div>
+          <div class="luna-stat__value" id="stat-verifier">—</div>
+        </div>
+        <div class="luna-stat" data-id="soak">
+          <div class="luna-stat__label">Soak</div>
+          <div class="luna-stat__value" id="stat-soak">—</div>
+        </div>
+      </div>
+      <div class="luna-hero__safety">
+        <div class="luna-safelock luna-safelock--locked" id="safe-exec">
+          <span class="luna-safelock__dot"></span>
+          <span class="luna-safelock__label">Code Execution</span>
+          <span class="luna-safelock__value">LOCKED</span>
+        </div>
+        <div class="luna-safelock luna-safelock--disabled" id="safe-guardian">
+          <span class="luna-safelock__dot"></span>
+          <span class="luna-safelock__label">Guardian Live Enforcement</span>
+          <span class="luna-safelock__value">DISABLED</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="luna-grid">
+    <!-- DECISION CENTER -->
+    <section class="luna-card" aria-label="Decision Center">
+      <header class="luna-card__head">
+        <h2 class="luna-card__title">Decision Center</h2>
+        <span class="luna-card__sub" id="brief-recommendation">—</span>
+      </header>
+      <div class="luna-counts">
+        <div class="luna-count" data-tone="approve">
+          <div class="luna-count__num" id="count-approve">0</div>
+          <div class="luna-count__label">Approve recommended</div>
+        </div>
+        <div class="luna-count" data-tone="wait">
+          <div class="luna-count__num" id="count-wait">0</div>
+          <div class="luna-count__label">Wait</div>
+        </div>
+        <div class="luna-count" data-tone="deny">
+          <div class="luna-count__num" id="count-deny">0</div>
+          <div class="luna-count__label">Do not approve</div>
+        </div>
+        <div class="luna-count" data-tone="serge">
+          <div class="luna-count__num" id="count-serge">0</div>
+          <div class="luna-count__label">Serge-only</div>
+        </div>
+      </div>
+      <div class="luna-divider"></div>
+      <div class="luna-section-label">Top decision cards</div>
+      <ul class="luna-cards" id="brief-top-items">
+        <li class="luna-cards__empty">No morning brief available yet.</li>
+      </ul>
+      <p class="luna-card__footnote" id="brief-summary"></p>
+    </section>
+
+    <!-- ROUTINE AUTONOMY -->
+    <section class="luna-card" aria-label="Routine Autonomy">
+      <header class="luna-card__head">
+        <h2 class="luna-card__title">Routine Autonomy</h2>
+        <span class="luna-card__sub">Read-only routine ledger</span>
+      </header>
+      <ul class="luna-keyvals" id="routine-keyvals">
+        <li><span>routine status</span><b id="routine-status">advisory</b></li>
+        <li><span>safe_to_run_routine_readonly</span><b class="luna-true">true</b></li>
+        <li><span>safe_to_run_routine_code_edits</span><b class="luna-false">false</b></li>
+        <li><span>advisory_only</span><b class="luna-true">true</b></li>
+      </ul>
+      <p class="luna-card__footnote">Code edits are gated. Live enforcement remains disabled.</p>
+    </section>
+
+    <!-- ADVISORY SOAK -->
+    <section class="luna-card" aria-label="Advisory Soak">
+      <header class="luna-card__head">
+        <h2 class="luna-card__title">Advisory Soak</h2>
+        <span class="luna-card__sub" id="soak-verdict">—</span>
+      </header>
+      <div class="luna-progress" aria-label="Soak progress">
+        <div class="luna-progress__track">
+          <div class="luna-progress__fill" id="soak-fill" style="width:0%"></div>
+        </div>
+        <div class="luna-progress__meta">
+          <span><b id="soak-observed">0</b> / <span id="soak-required">144</span> cycles</span>
+          <span id="soak-last">last —</span>
+        </div>
+      </div>
+      <div class="luna-section-label">24-hour soak command</div>
+      <code class="luna-code" id="soak-cmd">—</code>
+    </section>
+
+    <!-- SYSTEM HEALTH -->
+    <section class="luna-card" aria-label="System Health">
+      <header class="luna-card__head">
+        <h2 class="luna-card__title">System Health</h2>
+        <span class="luna-card__sub" id="health-readiness">—</span>
+      </header>
+      <div class="luna-score">
+        <div class="luna-score__ring" id="health-ring" style="--pct:0">
+          <div class="luna-score__num" id="health-num">—</div>
+          <div class="luna-score__label">Score</div>
+        </div>
+        <div class="luna-score__details">
+          <div class="luna-detail"><span>Resource mode</span><b id="health-mode">—</b></div>
+          <div class="luna-detail"><span>CPU</span><b id="health-cpu">—</b></div>
+          <div class="luna-detail"><span>Memory</span><b id="health-mem">—</b></div>
+          <div class="luna-detail"><span>GPU</span><b id="health-gpu">—</b></div>
+          <div class="luna-detail"><span>Queue depth</span><b id="health-queue">—</b></div>
+          <div class="luna-detail"><span>Approval pending</span><b id="health-pending">—</b></div>
+        </div>
+      </div>
+      <ul class="luna-warnings" id="health-warnings"></ul>
+    </section>
+
+    <!-- LIVE FEED -->
+    <section class="luna-card luna-card--wide" aria-label="Live Feed">
+      <header class="luna-card__head">
+        <h2 class="luna-card__title">Live Feed</h2>
+        <span class="luna-card__sub" id="feed-meta">—</span>
+      </header>
+      <ol class="luna-feed" id="live-feed">
+        <li class="luna-feed__empty">Awaiting telemetry…</li>
+      </ol>
+    </section>
+
+    <!-- ARCHIVE -->
+    <section class="luna-card luna-card--wide" aria-label="Archive">
+      <header class="luna-card__head">
+        <h2 class="luna-card__title">Phase Archive</h2>
+        <span class="luna-card__sub" id="archive-meta">Luna New UpGrades</span>
+      </header>
+      <ul class="luna-archive" id="archive-list">
+        <li class="luna-archive__empty">No archive items detected.</li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="luna-footer" role="contentinfo">
+  <span>LUNA · 2090 Sovereign Console</span>
+  <span class="luna-footer__sep">·</span>
+  <span id="footer-phase">Phase UI-1A</span>
+  <span class="luna-footer__sep">·</span>
+  <span>read-only · loopback only</span>
+</footer>
+
+<script src="/app.js" defer></script>
+</body>
+</html>
