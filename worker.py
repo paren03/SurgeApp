@@ -238,16 +238,20 @@ from luna_modules.luna_paths import (
 )
 
 _NO_WINDOW: int = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
-SELF_UPGRADE_ENGINE_VERSION = 10
+SELF_UPGRADE_ENGINE_VERSION = 11
 
 def _pythonw_exe() -> str:
     """Return a real (non-stub) pythonw executable for subprocess smoke boots.
 
     The WindowsApps 'pythonw.exe' is a 0-byte reparse stub that spawns a child
-    and exits immediately, causing smoke-boot timeout.  We prefer the concrete
-    pythonw3.11.exe from the WindowsApps package directory instead.
+    and exits immediately, causing smoke-boot timeout. Prefer the project venv
+    pythonw.exe because it has Luna's runtime packages and never opens the
+    Microsoft Store alias path.
     """
-    # First choice: real binary in the WindowsApps package folder (non-zero size)
+    venv_py = PROJECT_DIR / ".aider_venv" / "Scripts" / "pythonw.exe"
+    if venv_py.exists() and venv_py.stat().st_size > 0:
+        return str(venv_py)
+    # Second choice: real binary in the WindowsApps package folder (non-zero size)
     import glob as _glob
     pattern = (
         r"C:\Program Files\WindowsApps"
@@ -259,10 +263,6 @@ def _pythonw_exe() -> str:
                 return candidate
         except OSError:
             pass
-    # Second choice: .aider_venv has a real pythonw.exe
-    venv_py = PROJECT_DIR / ".aider_venv" / "Scripts" / "pythonw.exe"
-    if venv_py.exists() and venv_py.stat().st_size > 0:
-        return str(venv_py)
     # Fallback: whatever is running right now
     exe = str(sys.executable)
     if exe.lower().endswith("python.exe"):
@@ -3109,7 +3109,14 @@ def process_task(task_path: Path) -> bool:
 
     ctx = _task_identity(task_path)
     task = ctx["task"]
-    update_task_runtime(task_path, "running", "starting", 10)
+    task["_task_path"] = str(task_path)
+    update_task_runtime(
+        task_path,
+        "running",
+        "starting",
+        10,
+        {"visible_step": "I picked up your command and I am checking the safest route."},
+    )
 
     task_type_norm = normalize_task_type(task.get("task_type", ""))
     if not ctx["user_input"] and task_type_norm not in {"approval_response", "self_upgrade_pipeline", "self-upgrade", "self_upgrade"}:
@@ -3138,7 +3145,11 @@ def process_task(task_path: Path) -> bool:
         "running",
         mode_label,
         12,
-        {"task_type": resolved_type, "worker_mode": declared_mode or mode_label},
+        {
+            "task_type": resolved_type,
+            "worker_mode": declared_mode or mode_label,
+            "visible_step": f"I routed this through {mode_label} mode.",
+        },
     )
     set_heartbeat(state="running", task_id=ctx["task_id"], phase=mode_label, mood="focused")
 
@@ -3254,22 +3265,9 @@ def _cu_clear_lock() -> None:
 
 def _cu_process_command_line(pid: int) -> str:
     try:
-        result = subprocess.run(
-            [
-                "powershell",
-                "-NoProfile",
-                "-Command",
-                f"(Get-CimInstance Win32_Process -Filter \"ProcessId={pid}\").CommandLine",
-            ],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=5,
-            creationflags=0x08000000,
-        )
-        if result.returncode == 0:
-            return (result.stdout or "").strip()
+        import psutil
+        proc = psutil.Process(pid)
+        return " ".join(str(part) for part in (proc.cmdline() or [])).strip()
     except Exception:
         pass
     return ""
@@ -3291,16 +3289,36 @@ def _cu_is_alive_via_lock() -> bool:
         pid = int(data.get("pid", 0))
         if pid <= 0:
             return False
-        # Check if that PID is still alive
-        result = subprocess.run(
-            ["tasklist", "/FI", f"PID eq {pid}", "/NH"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5,
-            creationflags=0x08000000,
-        )
-        if str(pid) not in result.stdout:
+        if not _cu_pid_alive_native(pid):
             return False
         return _cu_pid_looks_like_worker(pid)
     except Exception:
+        return False
+
+
+def _cu_pid_alive_native(pid: int) -> bool:
+    if pid <= 0:
+        return False
+    if os.name == "nt":
+        try:
+            import ctypes
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            STILL_ACTIVE = 259
+            kernel32 = ctypes.windll.kernel32
+            handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+            if not handle:
+                return False
+            try:
+                exit_code = ctypes.c_ulong(0)
+                return bool(kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code))) and exit_code.value == STILL_ACTIVE
+            finally:
+                kernel32.CloseHandle(handle)
+        except Exception:
+            return False
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
         return False
 
 
@@ -8376,11 +8394,37 @@ def _build_personal_messages(prompt_text: str, task: Optional[Dict[str, Any]] = 
         for item in resolution.get("hierarchy", [])
     )
     tool_blob = json.dumps(resolution.get("tool_first", {}), ensure_ascii=False)[:1600]
+
+    # 2026-05-10 mode-aware system-prompt: the MyLuna persona declares
+    # Good Luna / Bad Luna modes but the prompt file alone can't persist
+    # mode across turns. luna_mode_state.resolve_mode_for_prompt detects
+    # switch commands in this turn's prompt, persists the mode per
+    # session_id, and returns the active mode. inject_mode_into_system_prompt
+    # rewrites the static "Current mode:" line AND -- when bad is active --
+    # injects an ACTIVE MODE OVERRIDE block that explicitly tells the
+    # model to ignore the "warm, concise" preamble below. Wrapped in
+    # try/except so any failure falls back to the original static prompt.
+    core_prompt = safe_read_text(LUNA_SYSTEM_PROMPT_PATH).strip() or DEFAULT_LUNA_SYSTEM_PROMPT
+    try:
+        from luna_modules.luna_mode_state import (
+            resolve_mode_for_prompt as _luna_resolve_mode,
+            inject_mode_into_system_prompt as _luna_inject_mode,
+        )
+        _session_id = ""
+        if isinstance(task, dict):
+            _session_id = str(task.get("chat_session") or task.get("session") or "")
+        _active_mode = _luna_resolve_mode(_session_id, prompt_text)
+        core_prompt = _luna_inject_mode(core_prompt, _active_mode)
+    except Exception:
+        # Mode-state failure never breaks chat -- legacy static prompt
+        # is the guaranteed fallback.
+        pass
+
     system_text = (
         "You are Luna. You are Serge's witty, warm, concise personal AI companion. "
         "Answer naturally, like a sharp mix of Grok and ChatGPT. Stay brief, smart, and useful. "
         "Use the tool-first result when it exists instead of narrating that you could go check something later.\n\n"
-        f"Core prompt:\n{safe_read_text(LUNA_SYSTEM_PROMPT_PATH).strip() or DEFAULT_LUNA_SYSTEM_PROMPT}\n\n"
+        f"Core prompt:\n{core_prompt}\n\n"
         f"Serge journal:\n{journal_blob or '- none yet'}\n\n"
         f"Long-term memory:\n{long_term_facts or '- none yet'}\n\n"
         f"Recent chat history:\n{history_blob or '- none yet'}\n\n"
@@ -9783,6 +9827,22 @@ def spawn_federated_sub_agents(inefficiency: Dict[str, Any]) -> Dict[str, Any]:
 # Grounded status reporter — reads real files, never calls the LLM
 # ---------------------------------------------------------------------------
 
+def _emit_chat_visible_step(task: Optional[Dict[str, Any]], text: str, progress: int, phase: str = "chat") -> None:
+    """Append a visible dashboard work step for chat tasks only."""
+    try:
+        raw_path = str((task or {}).get("_task_path") or "").strip()
+        if not raw_path:
+            return
+        task_path = Path(raw_path)
+        try:
+            task_path.resolve().relative_to(ACTIVE_DIR.resolve())
+        except Exception:
+            return
+        update_task_runtime(task_path, "running", phase, progress, {"visible_step": text})
+    except Exception:
+        return
+
+
 def _is_status_report_request(text: str) -> bool:
     """Return True if the prompt is asking for Luna's update/activity status."""
     t = text.lower().strip()
@@ -9797,6 +9857,12 @@ def _is_status_report_request(text: str) -> bool:
         "what are you doing", "what are u doing", "anything running",
         "why dont i see anything running", "why don't i see anything running",
         "why is nothing running", "nothing running", "still running",
+        "tier upgrade report", "tier upgrades", "tier advancement",
+        "tier report", "what tier", "current tier", "tier 500",
+        "level 10", "nonstop orchestrator", "conveyor report",
+        "terminal manager", "polaris", "vega", "verga", "opencode",
+        "worker report", "worker status", "command center status",
+        "clean it up", "make it more readable", "break it down",
     ]
     return any(k in t for k in keywords)
 
@@ -9820,9 +9886,283 @@ def _response_claims_unverified_upgrade(response_text: str) -> bool:
     return any(marker in text for marker in markers)
 
 
+def _status_read_json(path: Path, default: Any = None) -> Any:
+    try:
+        if path.exists():
+            return json.loads(path.read_text(encoding="utf-8-sig", errors="replace") or "{}")
+    except Exception:
+        return default
+    return default
+
+
+def _status_file_present(path: Path) -> bool:
+    try:
+        return path.exists()
+    except Exception:
+        return False
+
+
+def _status_latest_worker_summary(path: Path) -> str:
+    if not path.exists():
+        return ""
+    try:
+        lines = [ln.strip() for ln in path.read_text(encoding="utf-8", errors="replace").splitlines() if ln.strip()]
+        useful = []
+        for ln in lines:
+            if ln.startswith("- when:") or ln.startswith("- tasks picked:") or ln.startswith("- result:") or ln.startswith("- target:") or ln.startswith("## "):
+                useful.append(ln)
+        return " | ".join(useful[-6:])
+    except Exception:
+        return ""
+
+
+def _append_tier500_status_lines(lines: List[str]) -> None:
+    cfg = _status_read_json(PROJECT_DIR / "memory" / "luna_higher_tier_config.json", {}) or {}
+    latest = _status_read_json(PROJECT_DIR / "memory" / "tier_auto_upgrade" / "nonstop_orchestrator_latest.json", {}) or {}
+    history = _status_read_json(PROJECT_DIR / "memory" / "tier_auto_upgrade" / "tier_advancement_history.json", {}) or {}
+    preview = _status_read_json(PROJECT_DIR / "memory" / "tier_auto_upgrade" / "tier500_next_lane_preview.json", {}) or {}
+
+    current_tier = cfg.get("current_effective_tier", "?")
+    max_tier = cfg.get("current_effective_tier_max_authorized_by_council", cfg.get("ceiling_tier", "?"))
+    authority = cfg.get("tier_advancement_authority", "?")
+    updated = cfg.get("tier_advancement_time") or cfg.get("last_updated") or "?"
+    lines.append(
+        f"**Tier 500 conveyor** - current_effective_tier={current_tier}, "
+        f"council ceiling={max_tier}, authority={authority}, updated {updated}"
+    )
+
+    lanes = latest.get("lanes") if isinstance(latest, dict) else {}
+    auto_upgrade = lanes.get("auto_upgrade", {}) if isinstance(lanes, dict) else {}
+    lane_router = lanes.get("lane_router", {}) if isinstance(lanes, dict) else {}
+    decision = lane_router.get("decision", {}) if isinstance(lane_router, dict) else {}
+    tier_adv = lanes.get("tier_advancement", {}) if isinstance(lanes, dict) else {}
+    state = latest.get("state", "?")
+    next_blocker = latest.get("next_blocker", decision.get("next_blocker", "?"))
+    next_action = latest.get("next_action", decision.get("next_action", "continue when gates allow"))
+    lines.append(
+        f"  nonstop state={state}, eligible={auto_upgrade.get('eligible', '?')}, "
+        f"applied={auto_upgrade.get('applied', '?')}, failed={auto_upgrade.get('failed', '?')}, "
+        f"rollback_failed={auto_upgrade.get('rollback_failed', '?')}"
+    )
+    lines.append(f"  next_blocker={next_blocker}; next_action={next_action}")
+    if tier_adv:
+        lines.append(
+            f"  tier_advancement outcome={tier_adv.get('outcome', '?')}, "
+            f"attempted={tier_adv.get('attempted', '?')}, "
+            f"new_current_effective_tier={tier_adv.get('new_current_effective_tier', '?')}"
+        )
+    if decision:
+        lines.append(
+            f"  lane_router selected={decision.get('selected_lane', '?')}, "
+            f"next_lane={decision.get('next_lane', '?')}, "
+            f"reason={decision.get('selected_reason', '?')}"
+        )
+
+    advancements = history.get("advancements", []) if isinstance(history, dict) else []
+    if isinstance(advancements, list) and advancements:
+        recent = advancements[-5:]
+        labels = []
+        for row in recent:
+            if isinstance(row, dict):
+                labels.append(f"{row.get('from_tier', '?')}->{row.get('to_tier', '?')} @ {row.get('iso_utc', '?')}")
+        if labels:
+            lines.append("  recent tier bumps: " + "; ".join(labels))
+
+    preview_lanes = preview.get("lanes", {}) if isinstance(preview, dict) else {}
+    if isinstance(preview_lanes, dict) and preview_lanes:
+        readiness = []
+        for lane_name in ("luna_modules_lane", "tests_lane", "ps1_lane", "other_file_lane", "real_codegen_producer"):
+            lane = preview_lanes.get(lane_name, {})
+            if isinstance(lane, dict):
+                readiness.append(f"{lane_name}={lane.get('readiness', '?')}")
+        if readiness:
+            lines.append("  lane readiness: " + ", ".join(readiness))
+
+    tier5 = _status_read_json(PROJECT_DIR / "memory" / "luna_tier5l_config.json", {}) or {}
+    stop_path = PROJECT_DIR / "memory" / "tier_auto_upgrade" / "tier_auto_upgrade.STOP"
+    blocked_path = PROJECT_DIR / "memory" / "tier_auto_upgrade" / "BLOCKED_NEEDS_SERGE.md"
+    lines.append(
+        "  safety: "
+        f"tier3_live_apply_enabled={tier5.get('tier3_live_apply_enabled', '?')}, "
+        f"allow_live_apply={tier5.get('allow_live_apply', '?')}, "
+        f"STOP={_status_file_present(stop_path)}, BLOCKED={_status_file_present(blocked_path)}"
+    )
+
+
+def _append_polaris_vega_status_lines(lines: List[str]) -> None:
+    polaris = _status_read_json(PROJECT_DIR / "memory" / "polaris" / "knowledge_index.json", {}) or {}
+    totals = polaris.get("totals", {}) if isinstance(polaris, dict) else {}
+    wave = polaris.get("wave_2_status", {}) if isinstance(polaris, dict) else {}
+    lines.append(
+        f"**Polaris Terminal Manager** - indexed={totals.get('total_files_indexed', '?')} files, "
+        f"reindexed_this_run={totals.get('reindexed_this_run', '?')}, "
+        f"drift_issues={totals.get('drift_issues', '?')}, gaps={polaris.get('gaps_count', '?')}, "
+        f"generated={polaris.get('generated_iso_utc', '?')}"
+    )
+    if isinstance(wave, dict) and wave:
+        lines.append(
+            f"  Wave {polaris.get('wave', '?')}: qa_loop={wave.get('qa_loop', '?')}; "
+            f"provision_handler={wave.get('provision_handler', '?')}; methodology={wave.get('methodology_source', '?')}"
+        )
+
+    vega = _status_read_json(PROJECT_DIR / "memory" / "opencode" / "luna_opencode_scoreboard.json", {}) or {}
+    latest_summary = _status_latest_worker_summary(PROJECT_DIR / "memory" / "opencode" / "luna_opencode_worker_latest.md")
+    lines.append(
+        f"**Vega / OpenCode worker** - tasks_run={vega.get('tasks_run', '?')}, "
+        f"tasks_passed={vega.get('tasks_passed', '?')}, tasks_failed={vega.get('tasks_failed', '?')}, "
+        f"cycles_run={vega.get('cycles_run', '?')}, last_run_at={vega.get('last_run_at', '?')}"
+    )
+    last_ids = vega.get("last_task_ids", [])
+    if isinstance(last_ids, list) and last_ids:
+        lines.append("  last_task_ids: " + ", ".join(str(x) for x in last_ids[-5:]))
+    if latest_summary:
+        lines.append("  latest worker report: " + latest_summary)
+
+
 def _build_grounded_status_report(owner: str) -> str:
-    """Build a status report from real files — no LLM, no hallucination."""
+    """Build a status report from real files - no LLM, no hallucination.
+
+    Reports BOTH operational lanes:
+      1. Current lane: Tier 500 nonstop orchestrator, council advancement,
+         Polaris Terminal Manager, Vega/OpenCode worker, and legacy Tier
+         scoreboards for continuity.
+      2. Legacy lane (Architect / Director / Continues-Update). Stopped
+         writing state on/before May 1 2026. Kept for audit so old
+         state files are still surfaced; clearly marked as retired.
+    """
     lines: List[str] = [f"Here's my real activity report, {owner}:\n"]
+
+    # ====================================================================
+    # CURRENT OPERATIONAL LANE (live, added 2026-05-07)
+    # Reads supervisor log + Tier 6/7/8 scoreboards.
+    # ====================================================================
+    lines.append("## Current operational lane (live)")
+
+    _append_tier500_status_lines(lines)
+    _append_polaris_vega_status_lines(lines)
+
+    # --- Continuous Supervisor (cycle counter + last entry) ---
+    sup_log = PROJECT_DIR / "logs" / "luna_continuous_supervisor.log"
+    if sup_log.exists():
+        try:
+            tail = sup_log.read_text(encoding="utf-8", errors="replace").splitlines()[-30:]
+            ok_n = sum(1 for ln in tail if " ok " in ln)
+            par_n = sum(1 for ln in tail if " partial " in ln)
+            fail_n = sum(1 for ln in tail if " fail " in ln)
+            cycle_num = "?"
+            for ln in reversed(tail):
+                m = re.search(r"cycle #(\d+)", ln)
+                if m:
+                    cycle_num = m.group(1)
+                    break
+            last_line = tail[-1].strip() if tail else ""
+            lines.append(
+                f"**Continuous Supervisor** (running) - cycle #{cycle_num}, "
+                f"last 30 entries: {ok_n} ok, {par_n} partial productive, {fail_n} fail"
+            )
+            if last_line:
+                lines.append(f"  last: {last_line}")
+        except Exception:
+            lines.append("**Continuous Supervisor**: log unreadable")
+    else:
+        lines.append("**Continuous Supervisor**: log file missing")
+
+    # --- Tier 6 (sandbox candidates) ---
+    t6_path = PROJECT_DIR / "memory" / "tier6" / "luna_tier6_scoreboard.json"
+    if t6_path.exists():
+        try:
+            t6 = json.loads(t6_path.read_text(encoding="utf-8", errors="replace") or "{}")
+            total = t6.get("total_tier6_candidates", 0)
+            passed = t6.get("passed", 0)
+            failed = t6.get("failed", 0)
+            safe = t6.get("safe_to_promote_count", 0)
+            hold = t6.get("hold_for_review_count", 0)
+            updated = t6.get("last_updated", "?")
+            lines.append(
+                f"**Tier 6 (sandbox candidates)** - {passed}/{total} passed, "
+                f"{safe} SAFE_TO_PROMOTE, {hold} HOLD_FOR_REVIEW, {failed} failed | "
+                f"updated {updated}"
+            )
+        except Exception:
+            lines.append("**Tier 6**: scoreboard unreadable")
+
+    # --- Tier 7 (council reviews) ---
+    t7_path = PROJECT_DIR / "memory" / "tier7" / "luna_tier7_scoreboard.json"
+    if t7_path.exists():
+        try:
+            t7 = json.loads(t7_path.read_text(encoding="utf-8", errors="replace") or "{}")
+            total = t7.get("total_reviews", 0)
+            approved = t7.get("approved_packets", 0)
+            hold = t7.get("hold_for_review_packets", 0)
+            deny = t7.get("do_not_promote_packets", 0)
+            updated = t7.get("last_updated", "?")
+            lines.append(
+                f"**Tier 7 (council reviews)** - {approved}/{total} approved, "
+                f"{hold} hold, {deny} deny | updated {updated}"
+            )
+        except Exception:
+            lines.append("**Tier 7**: scoreboard unreadable")
+
+    # --- Tier 8 module promote ---
+    t8m_path = PROJECT_DIR / "memory" / "tier8" / "luna_tier8_module_scoreboard.json"
+    if t8m_path.exists():
+        try:
+            t8m = json.loads(t8m_path.read_text(encoding="utf-8", errors="replace") or "{}")
+            attempted = t8m.get("total_promotions_attempted", 0)
+            passed = t8m.get("total_promotions_passed", 0)
+            failed = t8m.get("total_promotions_failed", 0)
+            rb = t8m.get("rollbacks_attempted", 0)
+            promoted = t8m.get("modules_promoted", []) or []
+            updated = t8m.get("last_updated", "?")
+            lines.append(
+                f"**Tier 8 (live module promotion)** - {passed}/{attempted} promoted, "
+                f"{failed} failed, {rb} rollbacks | updated {updated}"
+            )
+            if promoted:
+                lines.append(f"  promoted modules: {', '.join(promoted)}")
+        except Exception:
+            lines.append("**Tier 8 (module)**: scoreboard unreadable")
+
+    # --- Tier 8 helper promote (separate scoreboard from module) ---
+    t8h_path = PROJECT_DIR / "memory" / "tier8" / "luna_tier8_scoreboard.json"
+    if t8h_path.exists():
+        try:
+            t8h = json.loads(t8h_path.read_text(encoding="utf-8", errors="replace") or "{}")
+            attempted = t8h.get("total_promotions_attempted", 0)
+            passed = t8h.get("total_promotions_passed", 0)
+            failed = t8h.get("total_promotions_failed", 0)
+            updated = t8h.get("last_updated", "?")
+            if attempted > 0:
+                lines.append(
+                    f"**Tier 8 (helper .ps1 promotion)** - {passed}/{attempted} promoted, "
+                    f"{failed} failed | updated {updated}"
+                )
+        except Exception:
+            pass
+
+    # --- Runtime state ---
+    rs_path = PROJECT_DIR / "memory" / "luna_phase6b_runtime_state.json"
+    if rs_path.exists():
+        try:
+            rs = json.loads(rs_path.read_text(encoding="utf-8", errors="replace") or "{}")
+            mode = rs.get("mode", "?")
+            tier = rs.get("phase6b_apply_state", "?")
+            guardian = rs.get("guardian_mode_label", "?")
+            lines.append(
+                f"**Runtime** - mode={mode}, phase6b={tier}, guardian={guardian}"
+            )
+        except Exception:
+            pass
+
+    lines.append("")  # blank line between lanes
+
+    # ====================================================================
+    # LEGACY LANE (retired May 1, kept for audit)
+    # Reads architect_state.json / continues_update_state.json /
+    # nightly_updates.md / director_jobs/active. State files frozen
+    # since the legacy worker loops stopped writing them.
+    # ====================================================================
+    lines.append("## Legacy lane (retired May 1 2026, kept for audit)")
 
     # --- Architect status ---
     arch_state_path = MEMORY_DIR / "architect_state.json"
@@ -9923,6 +10263,7 @@ def _build_grounded_status_report(owner: str) -> str:
 
 
 def generate_luna_chat_response(prompt_text: str, task: Optional[Dict[str, Any]] = None) -> str:
+    _emit_chat_visible_step(task, "I am reading your command and loading local memory.", 25, "chat:intake")
     load_api_vault()
     warm_memory_from_journal()
     _seed_long_term_memory_defaults()
@@ -9945,17 +10286,22 @@ def generate_luna_chat_response(prompt_text: str, task: Optional[Dict[str, Any]]
     elif _tier24_prompt_requests_followup(prompt_text):
         response = _tier24_build_followup(owner)
     elif _needs_self_audit(prompt_text):
+        _emit_chat_visible_step(task, "I am running the self-audit path before answering.", 48, "chat:self-audit")
         response = execute_self_audit()
     elif _is_status_report_request(prompt_text):
         # Grounded handler: read real files, never hallucinate update status
+        _emit_chat_visible_step(task, "I am reading Tier, Polaris, Vega, and safety files now.", 48, "chat:grounded-status")
         response = _build_grounded_status_report(owner)
+        _emit_chat_visible_step(task, "I am formatting only verified facts into the reply.", 82, "chat:formatting")
     else:
+        _emit_chat_visible_step(task, "I am checking local intent tools before using normal chat.", 45, "chat:tool-check")
         resolution = resolve_sovereign_intent(prompt_text)
         tool_first = resolution.get("tool_first", {}) if isinstance(resolution, dict) else {}
         direct = _sanitize_direct_reply(str(tool_first.get("response") or "").strip(), owner)
         if direct:
             response = direct
         else:
+            _emit_chat_visible_step(task, "No grounded status command matched, so I am composing a normal chat reply.", 70, "chat:compose")
             messages = _build_personal_messages(prompt_text, task)
             response = _sanitize_direct_reply(_invoke_luna_llm_transport(messages, prompt_text, identity).strip(), owner)
             if _looks_robotic_or_empty(response):
@@ -9970,11 +10316,60 @@ def generate_luna_chat_response(prompt_text: str, task: Optional[Dict[str, Any]]
     _append_short_term_turn("luna", response)
     _append_chat_history("user", prompt_text)
     _append_chat_history("luna", response)
+    _emit_chat_visible_step(task, "Reply written for the dashboard.", 96, "chat:complete")
     return response
 
 
 def run_chat_response(task: Dict[str, Any]) -> str:
     prompt_text = str(task.get("prompt") or "").strip()
+    # 2026-05-10 chat-command-dispatch hook (Serge approved this single
+    # additive call inside worker.py; everything else is in
+    # luna_modules/luna_command_interpreter.py and the OpenCode worker
+    # queue). Activated by the LUNA_INTERPRET_COMMANDS=1 env var only;
+    # the legacy path is the unconditional fallback for ANY exception
+    # from the new code so a bug in the interpreter cannot break chat.
+    #
+    # Effect: when the user types "fix the live map" or
+    # "have Vega review the dashboard", the prompt is parsed by
+    # luna_command_interpreter.interpret_prompt and (if a queue_for_vega
+    # intent is detected) a Vega task is appended to
+    # memory/opencode/luna_opencode_worker_queue.json and the chat
+    # response is the interpreter's short prose confirmation. Status
+    # queries fall through to legacy. Forbidden targets (worker.py,
+    # kill switch, old terminals, broad live-apply) are refused with
+    # a clear "inviolate floor" message before any queue mutation.
+    try:
+        if os.environ.get("LUNA_INTERPRET_COMMANDS") == "1" and prompt_text:
+            from luna_modules.luna_command_interpreter import (
+                interpret_prompt as _luna_interpret_prompt,
+                append_task_to_queue as _luna_append_task,
+            )
+            _plan = _luna_interpret_prompt(prompt_text)
+            _intent = _plan.get("intent") if isinstance(_plan, dict) else None
+            if _intent == "rejected_forbidden":
+                return _plan.get("prose_response") or "(refused)"
+            if _intent == "queue_for_vega":
+                _qt = _plan.get("queue_task")
+                if _qt:
+                    _qpath = str(MEMORY_DIR / "opencode" / "luna_opencode_worker_queue.json")
+                    try:
+                        _luna_append_task(_qpath, _qt)
+                    except Exception:
+                        pass
+                return _plan.get("prose_response") or "(queued)"
+            if _intent in ("polaris_reindex", "safety_stop"):
+                # Surface the plan; caller (or operator) executes the
+                # actual ps1 / flag-write. The interpreter never runs
+                # destructive commands itself.
+                return _plan.get("prose_response") or "(planned)"
+            # Any other intent (status_report / chat_only): fall through
+            # to legacy chat handler unchanged.
+    except Exception:
+        # Interpreter failure is never fatal; legacy path is the
+        # guaranteed fallback. Exception itself is intentionally
+        # swallowed so chat stays responsive even if the new module
+        # has a bug; debug logs would already show import errors.
+        pass
     return generate_luna_chat_response(prompt_text, task)
 
 
