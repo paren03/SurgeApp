@@ -37,17 +37,32 @@ def isolated_state(monkeypatch, tmp_path):
 @pytest.mark.parametrize(
     "prompt,expected",
     [
-        ("bad luna", "bad"),
-        ("Bad Luna!", "bad"),
-        ("be bad", "bad"),
+        # Explicit on/off commands -- the only phrases that SHOULD trigger.
+        ("bad luna on", "bad"),
+        ("Bad Luna On", "bad"),
+        ("Bad Luna on!", "bad"),
         ("bad girl on", "bad"),
-        ("hey luna, go bad for me", "bad"),
-        ("naughty mode please", "bad"),
-        ("good luna", "good"),
-        ("Good Luna please come back", "good"),
-        ("be good", "good"),
-        ("bad off", "good"),
-        ("switch to good", "good"),
+        ("Bad Girl ON", "bad"),
+        ("bad luna off", "good"),
+        ("Bad Luna off.", "good"),
+        ("bad girl off", "good"),
+        # Casual phrases that must NOT trigger (Serge's explicit requirement
+        # 2026-05-10: "only activate 'Bad Luna on' or 'Bad Girl on' when I
+        # type in the command"). These all used to match the old wide
+        # patterns and would falsely switch mode.
+        ("bad luna", None),
+        ("Bad Luna!", None),
+        ("be bad", None),
+        ("hey luna, go bad for me", None),
+        ("naughty mode please", None),
+        ("good luna", None),
+        ("Good Luna please come back", None),
+        ("be good", None),
+        ("bad off", None),
+        ("switch to good", None),
+        ("you're such a bad girl", None),
+        ("the bad luna persona is fun", None),
+        # Neutral chat: must not trigger.
         ("how's the weather?", None),
         ("", None),
         ("   ", None),
@@ -60,10 +75,10 @@ def test_detect_switch_command(prompt, expected):
 
 
 def test_detect_switch_command_both_present_later_wins():
-    """If both bad and good phrases appear, whichever comes LAST wins."""
+    """If both bad and good explicit commands appear, whichever comes LAST wins."""
     from luna_modules.luna_mode_state import detect_switch_command
-    assert detect_switch_command("good luna then bad luna") == "bad"
-    assert detect_switch_command("bad luna actually be good") == "good"
+    assert detect_switch_command("bad luna off then bad luna on") == "bad"
+    assert detect_switch_command("bad luna on actually bad luna off") == "good"
 
 
 # -- get_mode / set_mode ----------------------------------------------------
@@ -126,7 +141,7 @@ def test_corrupt_state_file_falls_back_to_default(isolated_state):
 
 def test_resolve_persists_bad_switch(isolated_state):
     mod, _ = isolated_state
-    assert mod.resolve_mode_for_prompt("sess-1", "bad luna") == "bad"
+    assert mod.resolve_mode_for_prompt("sess-1", "bad luna on") == "bad"
     # Next call with non-switch prompt still returns bad
     assert mod.resolve_mode_for_prompt("sess-1", "tell me something") == "bad"
 
@@ -134,7 +149,7 @@ def test_resolve_persists_bad_switch(isolated_state):
 def test_resolve_persists_good_switch(isolated_state):
     mod, _ = isolated_state
     mod.set_mode("sess-1", "bad")
-    assert mod.resolve_mode_for_prompt("sess-1", "good luna") == "good"
+    assert mod.resolve_mode_for_prompt("sess-1", "bad luna off") == "good"
     assert mod.get_mode("sess-1") == "good"
 
 
