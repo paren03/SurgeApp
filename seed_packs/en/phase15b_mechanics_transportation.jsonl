@@ -1,0 +1,82 @@
+{"word": "piston", "definition": "cylindrical engine part that moves up and down in the cylinder", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "cylinder_engine", "definition": "chamber in which a piston moves in an internal combustion engine", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "crankshaft", "definition": "shaft converting piston motion into rotation", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "camshaft", "definition": "shaft operating engine intake and exhaust valves", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "valve_engine", "definition": "device controlling flow of gas in and out of the cylinder", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "timing_belt", "definition": "belt that synchronizes crankshaft and camshaft", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "timing_chain", "definition": "chain version of the timing belt, often longer-lived", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "head_gasket", "definition": "seal between engine block and cylinder head", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "engine_block", "definition": "main structure of the engine housing the cylinders", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "fuel_pump", "definition": "device delivering fuel from tank to engine", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "fuel_filter", "definition": "filter removing impurities from fuel", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "air_filter", "definition": "filter cleaning air entering the engine", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "oil_filter", "definition": "filter removing contaminants from engine oil", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "oil_pan", "definition": "reservoir at the bottom of the engine holding lubricating oil", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "catalytic_converter", "definition": "exhaust device reducing harmful emissions", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "muffler", "definition": "exhaust component reducing engine noise", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "tailpipe", "definition": "rear exhaust pipe where gases exit the vehicle", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "exhaust_manifold", "definition": "set of pipes collecting exhaust gases from cylinders", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "intake_manifold", "definition": "set of pipes delivering air/fuel mixture to cylinders", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "turbocharger", "definition": "compressor driven by exhaust gases to boost engine power", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "supercharger", "definition": "engine-driven compressor boosting intake pressure", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "intercooler", "definition": "heat exchanger cooling compressed air before the engine", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "radiator", "definition": "heat exchanger cooling engine coolant", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "coolant", "definition": "fluid circulating to absorb and dissipate engine heat", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "antifreeze", "definition": "chemical added to coolant to prevent freezing", "register_tags": ["technical", "standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "thermostat_vehicle", "definition": "valve regulating coolant flow based on engine temperature", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "water_pump", "definition": "pump circulating coolant through the engine", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "shock_absorber", "definition": "device damping vehicle suspension movement", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "strut", "definition": "structural suspension element combining shock and spring", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "control_arm", "definition": "linkage connecting wheel hub to vehicle frame", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "tie_rod", "definition": "connecting rod transferring force in steering", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "ball_joint", "definition": "pivot connecting steering and suspension components", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "cv_joint", "definition": "constant velocity joint transmitting torque through varying angles", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "differential_vehicle", "definition": "gear allowing wheels to rotate at different speeds", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "transfer_case", "definition": "gearbox sending power to multiple axles in 4WD vehicles", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "drive_shaft", "definition": "rotating shaft transmitting torque to wheels or axles", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "wheel_hub", "definition": "central part of a wheel connecting it to the axle", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "bearing", "definition": "device allowing relative motion with reduced friction", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "lug_nut", "definition": "fastener securing a wheel to the hub", "register_tags": ["technical", "standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "tread_tire", "definition": "patterned outer surface of a tire providing grip", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "tire_pressure", "definition": "internal air pressure of a tire", "register_tags": ["standard", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "rotate_tires", "definition": "to swap tire positions for even wear", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "alignment_wheel", "definition": "adjustment of wheel angles for proper steering and wear", "register_tags": ["standard", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "brake_pad", "definition": "friction material that presses against brake rotor", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "brake_rotor", "definition": "disc against which brake pads press to slow a vehicle", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "brake_caliper", "definition": "component squeezing pads against the rotor", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "brake_fluid", "definition": "hydraulic fluid that transmits force in the braking system", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "parking_brake", "definition": "secondary brake that holds a parked vehicle in place", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "emergency_brake", "definition": "alternate name for parking brake, used in emergencies", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "diagnostic_code", "definition": "code from a vehicle's onboard diagnostics indicating a problem", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "obd_ii", "definition": "on-board diagnostics, version 2; standardized vehicle interface", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "scan_tool", "definition": "device that reads diagnostic codes from a vehicle", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "tune_up", "definition": "scheduled set of maintenance tasks on a vehicle", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "oil_change", "definition": "service replacing engine oil and oil filter", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "brake_job", "definition": "service replacing pads and inspecting rotors and calipers", "register_tags": ["standard", "informal"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "exhaust_leak", "definition": "leak from cracked or loose exhaust components", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "compression_test", "definition": "test of pressure inside engine cylinders", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "leak_down_test", "definition": "test of how quickly pressurized air leaks from a cylinder", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "blown_engine", "definition": "informal term for a catastrophically damaged engine", "register_tags": ["informal", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "blown_gasket", "definition": "failed gasket allowing fluid or gas leakage", "register_tags": ["informal", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "rack_and_pinion", "definition": "steering mechanism converting rotation to linear motion", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "power_steering", "definition": "system reducing effort needed to steer", "register_tags": ["technical", "standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "drive_by_wire", "definition": "electronic control replacing mechanical linkages", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "cruise_control", "definition": "system maintaining a set vehicle speed", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "adaptive_cruise", "definition": "cruise control that adjusts speed to traffic", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "abs_brake", "definition": "anti-lock braking system preventing wheel lock-up", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "esc_vehicle", "definition": "electronic stability control system", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "abs_warning_light", "definition": "dashboard indicator for ABS issues", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "check_engine_light", "definition": "dashboard indicator that a diagnostic code is stored", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "owner_manual", "definition": "vehicle manufacturer's manual for the owner", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation", "food_home_daily_life"]}
+{"word": "vehicle_registration", "definition": "official document recording vehicle ownership", "register_tags": ["legal", "standard"], "coverage_categories": ["mechanics_transportation", "law_government"]}
+{"word": "vin", "definition": "vehicle identification number; unique vehicle code", "register_tags": ["technical", "legal"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "odometer", "definition": "instrument showing total distance a vehicle has traveled", "register_tags": ["technical", "standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "tachometer", "definition": "gauge showing engine RPM", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "speedometer", "definition": "gauge showing vehicle speed", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "gauge_cluster", "definition": "panel of instruments in front of the driver", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "infotainment", "definition": "combined information and entertainment system in a vehicle", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "lane_departure_warning", "definition": "alert when the vehicle drifts from its lane", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "blind_spot_monitor", "definition": "sensor warning of vehicles in the blind spot", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "freight_forwarder", "definition": "company arranging shipping on behalf of shippers", "register_tags": ["professional", "business"], "coverage_categories": ["mechanics_transportation", "business_finance"]}
+{"word": "container_ship", "definition": "ship designed to carry intermodal containers", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "intermodal", "definition": "describing freight using multiple transport modes seamlessly", "register_tags": ["professional"], "coverage_categories": ["mechanics_transportation"]}

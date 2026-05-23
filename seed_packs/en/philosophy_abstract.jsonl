@@ -1,0 +1,30 @@
+{"word": "epistemology", "definition": "the philosophical study of knowledge and justified belief", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "ontology", "definition": "the philosophical study of being and existence", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "ethics", "definition": "the philosophical study of moral principles", "register_tags": ["philosophical", "standard"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "metaphysics", "definition": "the branch of philosophy examining first principles of reality", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "phenomenology", "definition": "the philosophical study of conscious experience from a first-person view", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "dialectic", "definition": "reasoning by the juxtaposition of opposing ideas", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "syllogism", "definition": "a logical argument from two premises to a conclusion", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "premise", "definition": "a statement assumed true as basis for argument", "register_tags": ["philosophical", "standard"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "inference", "definition": "a conclusion drawn from evidence and reasoning", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "deduction", "definition": "reasoning from general principles to specific conclusions", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "induction", "definition": "reasoning from specific observations to general conclusions", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "abduction", "definition": "inference to the best explanation from incomplete evidence", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "axiom", "definition": "a statement accepted without proof as a basis for reasoning", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "science_math"]}
+{"word": "paradox", "definition": "a statement that contradicts itself yet may reveal truth", "register_tags": ["philosophical"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "tautology", "definition": "a statement true by its logical structure alone", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "fallacy", "definition": "a flaw in reasoning that weakens an argument", "register_tags": ["philosophical", "standard"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "empiricism", "definition": "the view that knowledge comes mainly from sensory experience", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "rationalism", "definition": "the view that reason is the chief source of knowledge", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "skepticism", "definition": "the attitude of doubting accepted opinions", "register_tags": ["philosophical", "standard"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "nihilism", "definition": "the view that life lacks objective meaning or value", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "existentialism", "definition": "philosophy emphasizing individual freedom and meaning-making", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "stoicism", "definition": "an ancient philosophy emphasizing virtue and acceptance of fate", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "history_geography"]}
+{"word": "hedonism", "definition": "the doctrine that pleasure is the highest good", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "utilitarianism", "definition": "the ethical view that actions are right if they maximize well-being", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "deontology", "definition": "an ethics centered on duties and rules rather than outcomes", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "virtue", "definition": "a trait of character valued as morally good", "register_tags": ["philosophical", "standard"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "agency", "definition": "the capacity of an entity to act and choose", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "consciousness", "definition": "the state of being aware of one's environment and self", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "psychology_education"]}
+{"word": "qualia", "definition": "individual instances of subjective conscious experience", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "essence", "definition": "the intrinsic nature that defines what something is", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}

@@ -1,0 +1,105 @@
+{"word": "modus_ponens", "definition": "valid deduction form: if P then Q; P; therefore Q", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "modus_tollens", "definition": "valid deduction form: if P then Q; not Q; therefore not P", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "non_sequitur", "definition": "a conclusion that does not logically follow from its premises", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "ad_hominem", "definition": "fallacy of attacking the person rather than their argument", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "straw_man", "definition": "fallacy of misrepresenting an argument to attack it more easily", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "false_dichotomy", "definition": "fallacy of presenting only two options when more exist", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "circular_reasoning", "definition": "argument whose conclusion is assumed in its premises", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "begging_the_question", "definition": "argument that takes its conclusion for granted in the premises", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "appeal_to_authority", "definition": "fallacy of accepting a claim solely because an authority makes it", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "appeal_to_nature", "definition": "fallacy of treating 'natural' as inherently good", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "slippery_slope", "definition": "fallacy that one step inevitably leads to extreme consequences", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "post_hoc", "definition": "fallacy of assuming sequence implies causation", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "categorical_imperative", "definition": "Kant's moral law applying universally without exception", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "consequentialism", "definition": "ethical view judging actions by their outcomes", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "virtue_ethics", "definition": "ethics focused on character traits rather than rules or outcomes", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "moral_realism", "definition": "view that there are objective moral facts", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "moral_relativism", "definition": "view that moral truths depend on cultural or individual context", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "moral_subjectivism", "definition": "view that moral judgments express individual attitudes", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "metaethics", "definition": "branch of ethics studying the nature of moral claims", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "applied_ethics", "definition": "ethics focused on concrete real-world dilemmas", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "bioethics", "definition": "ethics applied to biology, medicine, and life sciences", "register_tags": ["philosophical", "academic", "medical"], "coverage_categories": ["philosophy_abstract", "medicine_health"]}
+{"word": "social_contract", "definition": "the idea that political legitimacy rests on consent of the governed", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "liberalism", "definition": "political philosophy emphasizing individual liberty and equality", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "libertarianism", "definition": "political philosophy emphasizing minimal state interference", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "communitarianism", "definition": "philosophy emphasizing community and shared values over individualism", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "anarchism", "definition": "political philosophy advocating abolition of hierarchical state authority", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "republicanism", "definition": "political theory emphasizing common good and civic virtue", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "justice", "definition": "the moral principle of fair treatment and due reward or punishment", "register_tags": ["philosophical", "academic", "legal"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "distributive_justice", "definition": "fairness in how goods and burdens are distributed in society", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "procedural_justice", "definition": "fairness of the processes that produce outcomes", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "rights", "definition": "moral or legal entitlements held by persons or groups", "register_tags": ["philosophical", "academic", "legal"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "duty", "definition": "an obligation a person is morally or legally required to fulfill", "register_tags": ["philosophical", "standard"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "obligation", "definition": "binding commitment to act or refrain from acting in a certain way", "register_tags": ["philosophical", "standard"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "autonomy", "definition": "self-governance; the capacity to make one's own decisions", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "heteronomy", "definition": "rule by external authority rather than self", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "free_will", "definition": "the capacity to choose between alternatives unforced", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "determinism", "definition": "view that all events are caused by prior conditions", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "compatibilism", "definition": "view that free will is compatible with determinism", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "libertarian_free_will", "definition": "view that genuinely free choices are not fully determined", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "hard_determinism", "definition": "view that determinism is true and free will is illusory", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "qualia", "definition": "the felt qualities of subjective experience", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "psychology_education"]}
+{"word": "hard_problem_of_consciousness", "definition": "the problem of explaining why physical processes feel like anything", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "psychology_education"]}
+{"word": "philosophical_zombie", "definition": "a thought experiment of a being behaviorally identical to humans but lacking inner experience", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "intentionality", "definition": "the property of mental states being about something", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "psychology_education"]}
+{"word": "functionalism", "definition": "view that mental states are defined by their functional role", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "physicalism", "definition": "view that everything is ultimately physical", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "dualism", "definition": "view that mind and body are distinct kinds of substance", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "monism", "definition": "view that reality consists of a single substance", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "panpsychism", "definition": "view that mental properties are fundamental and ubiquitous", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "personal_identity", "definition": "what makes a person the same person over time", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "narrative_identity", "definition": "view that the self is constituted by the story one tells about it", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "psychology_education"]}
+{"word": "ship_of_theseus", "definition": "classic puzzle of identity through replacement of parts", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "thought_experiment", "definition": "imagined scenario used to test concepts or theories", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "trolley_problem", "definition": "ethical thought experiment about diverting a runaway trolley", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "veil_of_ignorance", "definition": "Rawlsian device for choosing fair principles without knowing one's position", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "original_position", "definition": "Rawls's hypothetical bargaining situation behind the veil of ignorance", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "aesthetics", "definition": "philosophical study of beauty, art, and taste", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "art_music_culture"]}
+{"word": "beauty", "definition": "a quality giving pleasure to the senses or mind", "register_tags": ["philosophical"], "coverage_categories": ["philosophy_abstract", "art_music_culture"]}
+{"word": "sublime_aesthetic", "definition": "aesthetic experience of vastness, awe, or terror", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "art_music_culture"]}
+{"word": "kitsch", "definition": "art or design considered tacky or superficial", "register_tags": ["philosophical"], "coverage_categories": ["philosophy_abstract", "art_music_culture"]}
+{"word": "mimesis", "definition": "imitation or representation of reality, especially in art", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "art_music_culture"]}
+{"word": "telos", "definition": "the end purpose or goal of a thing", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "teleology", "definition": "study of design or purpose in nature or actions", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "eudaimonia", "definition": "flourishing or living well, central to Aristotelian ethics", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "phronesis", "definition": "practical wisdom; knowing how to act well in particular cases", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "sophia", "definition": "theoretical wisdom about first principles in ancient Greek thought", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "logos_philosophy", "definition": "in philosophy, reason or the rational principle ordering the cosmos", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "pathos_philosophy", "definition": "emotion or suffering as a philosophical category", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "eros", "definition": "in Plato, the desire that drives the soul toward beauty and truth", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "agape", "definition": "selfless, unconditional love", "register_tags": ["philosophical"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "absurd", "definition": "Camus's term for the conflict between human meaning-seeking and a silent universe", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "angst", "definition": "deep existential anxiety about freedom and meaning", "register_tags": ["philosophical"], "coverage_categories": ["philosophy_abstract", "psychology_education"]}
+{"word": "bad_faith", "definition": "Sartre's term for self-deception denying one's freedom", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "facticity", "definition": "the given features of one's existence one did not choose", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "thrownness", "definition": "Heidegger's term for being cast into a particular world", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "dasein", "definition": "Heidegger's term for being there; the specifically human mode of being", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "weltanschauung", "definition": "a comprehensive worldview", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "zeitgeist", "definition": "the defining spirit or mood of a historical period", "register_tags": ["academic"], "coverage_categories": ["philosophy_abstract", "history_geography"]}
+{"word": "dialectic_hegelian", "definition": "Hegel's process of thesis, antithesis, and synthesis", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "alienation", "definition": "estrangement of a person from themselves or society, esp. in Marx", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "praxis", "definition": "the practical activity through which theory is enacted", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "ideology", "definition": "a system of ideas shaping social and political life", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "hegemony", "definition": "dominance of one group or set of ideas over others", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "law_government"]}
+{"word": "power", "definition": "the capacity to influence outcomes or shape behavior", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "agency_philosophy", "definition": "the capacity of an entity to act intentionally in the world", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "structure_vs_agency", "definition": "debate over whether structures or individual action shape society", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "phenomenon", "definition": "an observable event or experience", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "science_math"]}
+{"word": "noumenon", "definition": "Kant's term for things as they are in themselves, beyond appearance", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "a_priori", "definition": "knowledge or reasoning prior to experience", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "a_posteriori", "definition": "knowledge derived from experience or evidence", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "analytic_statement", "definition": "a statement true by virtue of its meaning", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "synthetic_statement", "definition": "a statement whose truth depends on the world", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "necessary_truth", "definition": "a truth that holds in all possible worlds", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "contingent_truth", "definition": "a truth that is true but could have been otherwise", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "modal_logic", "definition": "logic of necessity and possibility", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract", "science_math"]}
+{"word": "predicate_logic", "definition": "logic involving quantifiers and predicates", "register_tags": ["academic"], "coverage_categories": ["philosophy_abstract", "science_math"]}
+{"word": "propositional_logic", "definition": "logic dealing with whole propositions and their connectives", "register_tags": ["academic"], "coverage_categories": ["philosophy_abstract", "science_math"]}
+{"word": "truth_value", "definition": "the truth or falsity of a proposition", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "soundness", "definition": "an argument is sound if it is valid and its premises are true", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "validity", "definition": "an argument is valid if its conclusion follows from its premises", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "coherentism", "definition": "view that beliefs are justified by mutual coherence", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "foundationalism", "definition": "view that some beliefs are basic and ground others", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "skeptic_problem", "definition": "challenge of justifying knowledge against radical doubt", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "epoche", "definition": "phenomenology's suspension of judgment about the world's existence", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}
+{"word": "intersubjectivity", "definition": "shared understanding between conscious beings", "register_tags": ["philosophical", "academic"], "coverage_categories": ["philosophy_abstract"]}

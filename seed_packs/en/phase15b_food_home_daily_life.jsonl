@@ -1,0 +1,84 @@
+{"word": "saute", "definition": "to cook quickly in a small amount of fat over high heat", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "braise", "definition": "to cook slowly in a covered pan with some liquid", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "deglaze", "definition": "to add liquid to a hot pan to dissolve browned bits", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "blanch", "definition": "to briefly boil and then plunge food into ice water", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "simmer", "definition": "to cook in liquid just below boiling", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "boil", "definition": "to cook in water at high temperature with bubbles", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "roast", "definition": "to cook with dry heat in an oven", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "bake", "definition": "to cook by dry heat in an oven, often for bread or cakes", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "broil", "definition": "to cook with intense overhead heat", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "grill", "definition": "to cook over direct heat, often outdoors", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "fry", "definition": "to cook in hot oil", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "deep_fry", "definition": "to fully submerge food in hot oil", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "steam_food", "definition": "to cook with vapor over boiling water", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "knead", "definition": "to work dough by pressing and folding", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "whisk", "definition": "to beat ingredients together to incorporate air", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "fold_culinary", "definition": "to gently combine a light mixture into a heavier one", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "season", "definition": "to add salt, pepper, or other flavorings", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "garnish", "definition": "to decorate a dish with a small added item", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "zest_culinary", "definition": "outer peel of citrus, used for flavor", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "stock_culinary", "definition": "savory liquid made from simmered bones or vegetables", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "broth", "definition": "thin savory liquid from simmered meat or vegetables", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "stew", "definition": "dish of meat and vegetables slowly simmered in liquid", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "soup", "definition": "liquid dish, usually savory and warm", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "salad", "definition": "dish of mixed cold ingredients, often vegetables", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "side_dish", "definition": "smaller dish accompanying the main course", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "entree", "definition": "main course of a meal", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "appetizer", "definition": "small dish served before the main course", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "dessert", "definition": "sweet course served at the end of a meal", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "leftover_meal", "definition": "remaining food from a meal saved for later", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "meal_prep", "definition": "preparing meals or ingredients in advance", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "grocery_list", "definition": "list of items to buy at the store", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "pantry_staple", "definition": "common, long-lasting ingredient kept on hand", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "spice_rack", "definition": "rack for organizing cooking spices", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "cutting_board", "definition": "board used as a surface for cutting food", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "chef_knife", "definition": "all-purpose kitchen knife with a broad blade", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "paring_knife", "definition": "small knife for delicate cutting tasks", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "measuring_cup", "definition": "vessel used to measure volume of ingredients", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "measuring_spoon", "definition": "spoon-shaped measure for small amounts", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "kitchen_scale", "definition": "scale used to weigh ingredients", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "rolling_pin", "definition": "cylindrical tool for flattening dough", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "colander", "definition": "perforated bowl for draining liquids", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "tongs_kitchen", "definition": "tool with two arms for gripping food", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "ladle", "definition": "long-handled spoon used to serve soup", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "saucepan_kitchen", "definition": "deep cooking pan with a long handle and lid", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "stockpot", "definition": "tall pot for making stock or large batches", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "cast_iron_skillet", "definition": "heavy iron pan that retains heat well", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "nonstick_pan", "definition": "pan coated to prevent food from sticking", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "blender", "definition": "appliance for mixing or pureeing", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "food_processor", "definition": "appliance for chopping, slicing, and mixing", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "stand_mixer", "definition": "powered mixer with a stationary base", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "slow_cooker", "definition": "countertop appliance that cooks at low temperatures over hours", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "pressure_cooker", "definition": "sealed pot that cooks under pressure to speed up cooking", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "instant_pot", "definition": "multi-function programmable pressure cooker", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "microwave_oven", "definition": "appliance that heats food using microwave radiation", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "toaster_oven", "definition": "small countertop oven", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "air_fryer", "definition": "small convection oven marketed as a low-oil fryer", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "coffee_maker", "definition": "appliance brewing coffee from grounds and water", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "espresso_machine", "definition": "appliance producing espresso under pressure", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "fridge", "definition": "informal for refrigerator", "register_tags": ["informal", "standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "deep_freezer", "definition": "large freezer separate from refrigerator", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "dishwasher_machine", "definition": "appliance that washes dishes automatically", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "garbage_disposal", "definition": "device under the sink that grinds food scraps", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "trash_compactor", "definition": "appliance that compresses household trash", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "vacuum_cleaner", "definition": "machine using suction to clean floors and surfaces", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "iron_clothes", "definition": "appliance that smooths fabric with heat", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "ironing_board", "definition": "padded board used as a surface for ironing", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "laundry_basket", "definition": "container for carrying laundry", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "lint_trap", "definition": "filter in a dryer that catches fibers", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "fabric_softener", "definition": "laundry product softening clothes", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "stain_remover", "definition": "product designed to lift stains from fabric", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "broom_household", "definition": "long-handled brush for sweeping floors", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "dustpan", "definition": "flat scoop for sweeping up debris", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "feather_duster", "definition": "tool of soft fibers for dusting surfaces", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "household_cleaner", "definition": "general-purpose cleaning solution", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "disinfectant", "definition": "agent that kills germs on surfaces", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life", "medicine_health"]}
+{"word": "sponge", "definition": "absorbent porous material used for cleaning", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "scrub_brush", "definition": "stiff-bristled brush for scrubbing surfaces", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "trash_bag", "definition": "plastic bag used to line a trash can", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "recycling_bin", "definition": "container for recyclable materials", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "compost_bin", "definition": "container for organic waste turning into compost", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "doorknob", "definition": "handle used to open and close a door", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "doorbell", "definition": "button that rings a chime to announce a visitor", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "porch", "definition": "covered structure at a building's entrance", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "patio", "definition": "paved outdoor area adjoining a house", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}

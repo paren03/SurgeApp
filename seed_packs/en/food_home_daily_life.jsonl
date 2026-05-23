@@ -1,0 +1,38 @@
+{"word": "kitchen", "definition": "the room where food is prepared and cooked", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "stove", "definition": "an appliance for cooking with heat from gas or electricity", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "oven", "definition": "an enclosed appliance for baking and roasting", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "refrigerator", "definition": "an appliance for keeping food cold", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "freezer", "definition": "an appliance for keeping food frozen", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "pantry", "definition": "a room or closet for storing food", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "cutlery", "definition": "knives, forks, and spoons used at meals", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "spatula", "definition": "a flat utensil used for lifting or spreading food", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "skillet", "definition": "a heavy flat-bottomed pan for frying", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "saucepan", "definition": "a deep pan with a long handle for cooking on a stove", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "recipe", "definition": "a set of instructions for preparing a dish", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "ingredient", "definition": "a component used to make a dish", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "marinade", "definition": "a seasoned liquid in which food is soaked before cooking", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "leftovers", "definition": "food remaining after a meal, saved for later", "register_tags": ["standard", "informal"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "grocery", "definition": "food and small household items sold by a store", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "errand", "definition": "a short trip to do a specific task, often shopping", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "laundry", "definition": "clothes and linens that need washing or have been washed", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "vacuum", "definition": "a machine using suction to clean floors", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "broom", "definition": "a long-handled brush for sweeping", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "mop", "definition": "a tool with absorbent material for cleaning floors", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "dishwasher", "definition": "a machine that washes dishes automatically", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "thermostat", "definition": "a device that regulates temperature in a space", "register_tags": ["standard", "technical"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "outlet", "definition": "a socket where electrical devices are plugged in", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "mortgage", "definition": "a loan secured by real estate", "register_tags": ["standard", "business"], "coverage_categories": ["food_home_daily_life", "business_finance"]}
+{"word": "lease", "definition": "a contract granting use of property for a period in exchange for rent", "register_tags": ["standard", "legal"], "coverage_categories": ["food_home_daily_life", "law_government"]}
+{"word": "utilities", "definition": "essential services like electricity, water, and gas", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "appliance", "definition": "a device or machine used in the home for a specific task", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "blanket", "definition": "a large piece of warm cloth used for covering on a bed", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "pillow", "definition": "a soft support for the head while sleeping", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "linen", "definition": "household cloth items such as sheets and towels", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "spice", "definition": "a strongly flavored substance from a plant used to season food", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "herb", "definition": "a plant used in cooking for flavor or scent", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "produce", "definition": "fresh fruits and vegetables sold in a store", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "leftovers_box", "definition": "a container used to store leftover food", "register_tags": ["informal", "standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "trash", "definition": "items thrown away as waste", "register_tags": ["standard", "informal"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "recycling", "definition": "the practice of reusing materials instead of discarding them", "register_tags": ["standard"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "chore", "definition": "a routine household task", "register_tags": ["standard", "informal"], "coverage_categories": ["food_home_daily_life"]}
+{"word": "errand_list", "definition": "a list of small tasks to do during the day", "register_tags": ["informal"], "coverage_categories": ["food_home_daily_life"]}

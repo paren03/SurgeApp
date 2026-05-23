@@ -1,0 +1,12 @@
+{"word": "joist", "definition": "a horizontal structural member supporting a floor or ceiling", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"], "tags": ["framing"]}
+{"word": "rafter", "definition": "a sloping beam supporting a roof", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"], "tags": ["roofing"]}
+{"word": "stud", "definition": "a vertical wood or metal framing member in a wall", "register_tags": ["construction"], "coverage_categories": ["trades_construction"], "tags": ["framing"]}
+{"word": "lintel", "definition": "a horizontal support across the top of a door or window opening", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "sheathing", "definition": "structural panels applied to walls or roof framing", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "drywall", "definition": "gypsum board used for interior walls and ceilings", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "mortise", "definition": "a cavity cut into wood to receive a tenon", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"], "tags": ["joinery"]}
+{"word": "tenon", "definition": "a projection on the end of a piece of wood that fits into a mortise", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"], "tags": ["joinery"]}
+{"word": "plumb", "definition": "exactly vertical", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "osha", "definition": "U.S. Occupational Safety and Health Administration", "register_tags": ["legal", "professional", "construction"], "coverage_categories": ["trades_construction", "law_government"]}
+{"word": "lockout", "definition": "isolating a machine's energy source to prevent accidental startup during service", "register_tags": ["construction", "technical", "professional"], "coverage_categories": ["trades_construction"], "tags": ["safety"]}
+{"word": "ppe", "definition": "personal protective equipment such as hard hats, gloves, and eye protection", "register_tags": ["construction", "professional"], "coverage_categories": ["trades_construction"], "tags": ["safety"]}

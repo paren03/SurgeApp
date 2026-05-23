@@ -1,0 +1,80 @@
+{"word": "sneakers", "definition": "athletic shoes (US standard term)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "trainers", "definition": "athletic shoes (British English)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "runners", "definition": "athletic shoes (Australian/Irish English)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["australian", "irish"]}
+{"word": "trolley_brit", "definition": "shopping cart (British English)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "shopping_cart", "definition": "wheeled cart for groceries (US standard)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "trash_can", "definition": "bin for refuse (US standard)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "bin_brit", "definition": "trash can / dustbin (British)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "dustbin", "definition": "trash can (British English)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "rubbish", "definition": "trash; also informal for nonsense (British)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "garbage", "definition": "trash (US standard)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "diapers", "definition": "absorbent garments for babies (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["american"]}
+{"word": "nappies", "definition": "absorbent garments for babies (British/Australian)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["british", "australian"]}
+{"word": "pacifier", "definition": "soothing nipple for babies (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "dummy_baby", "definition": "pacifier (British/Australian)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british", "australian"]}
+{"word": "pram", "definition": "baby carriage (British)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "stroller_us", "definition": "wheeled chair for a baby (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "fridge_uk", "definition": "refrigerator (British informal, also US)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["british", "american"]}
+{"word": "tap_water", "definition": "water from a tap (faucet) — 'tap' is the British standard", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["british"]}
+{"word": "faucet", "definition": "fixture controlling water flow (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["american"]}
+{"word": "elevator_us", "definition": "vertical lift between floors (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "ground_floor", "definition": "the floor at street level (British)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "first_floor_us", "definition": "the floor at street level (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "torch_brit", "definition": "flashlight (British English)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "flashlight", "definition": "portable handheld light (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "trolley_us", "definition": "streetcar (US, regional informal)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["american"]}
+{"word": "underground_brit", "definition": "subway system, especially London Underground", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["british"]}
+{"word": "subway_us", "definition": "underground urban rail (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["american"]}
+{"word": "metro_aus", "definition": "subway/urban rail (used in Australia, parts of US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["australian", "american"]}
+{"word": "yall_southern", "definition": "you (plural) — Southern US informal", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["southern_us"]}
+{"word": "fixing_to", "definition": "about to do (Southern US)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["southern_us"]}
+{"word": "cattywampus", "definition": "askew or crooked (Southern/Midwest US)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["southern_us", "midwest_us"]}
+{"word": "hella", "definition": "very (Northern California informal)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["northern_california"]}
+{"word": "jawn", "definition": "thing, anything (Philadelphia)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["philadelphia"]}
+{"word": "spaghetti_western", "definition": "an Italian-made Western film (loanword)", "register_tags": ["regional"], "coverage_categories": ["regional_dialect", "art_music_culture"]}
+{"word": "outback", "definition": "the remote interior of Australia", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "history_geography"], "tags": ["australian"]}
+{"word": "barbie_aus", "definition": "barbecue (Australian)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["australian"]}
+{"word": "arvo", "definition": "afternoon (Australian informal)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["australian"]}
+{"word": "servo", "definition": "service/gas station (Australian)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["australian"]}
+{"word": "loonie", "definition": "Canadian one-dollar coin", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "business_finance"], "tags": ["canadian"]}
+{"word": "toonie", "definition": "Canadian two-dollar coin", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "business_finance"], "tags": ["canadian"]}
+{"word": "toque", "definition": "knit winter hat (Canadian English)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["canadian"]}
+{"word": "double_double", "definition": "coffee with two creams and two sugars (Canadian)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["canadian"]}
+{"word": "boot_brit", "definition": "trunk of a car (British)", "register_tags": ["regional"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["british"]}
+{"word": "trunk_us", "definition": "rear storage of a car (US)", "register_tags": ["regional"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["american"]}
+{"word": "bonnet_brit", "definition": "hood of a car (British)", "register_tags": ["regional"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["british"]}
+{"word": "hood_us", "definition": "the front cover over the engine (US)", "register_tags": ["regional"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["american"]}
+{"word": "windscreen", "definition": "front window of a vehicle (British)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["british"]}
+{"word": "windshield", "definition": "front window of a vehicle (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["american"]}
+{"word": "lorry_brit_2", "definition": "large goods vehicle (British)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["british"]}
+{"word": "truck_us_2", "definition": "large goods vehicle (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["american"]}
+{"word": "ute_aus", "definition": "utility vehicle / pickup (Australian)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["australian"]}
+{"word": "esky", "definition": "portable cooler (Australian, originally brand name)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["australian"]}
+{"word": "cooler_us", "definition": "insulated container for keeping food and drinks cold (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["american"]}
+{"word": "cookout", "definition": "outdoor meal cooked on a grill (US Southern)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["southern_us"]}
+{"word": "barbecue_us", "definition": "outdoor cooking event or grilled food (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["american"]}
+{"word": "bagel_ny", "definition": "ring-shaped boiled bread, iconic in New York", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["new_york"]}
+{"word": "deep_dish", "definition": "thick pizza style associated with Chicago", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["chicago"]}
+{"word": "tex_mex", "definition": "Texan-Mexican fusion cuisine", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["texas"]}
+{"word": "cajun", "definition": "Louisiana cuisine and culture rooted in Acadian heritage", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life", "history_geography"], "tags": ["louisiana"]}
+{"word": "creole", "definition": "Louisiana cuisine and culture blending European, African, and Caribbean elements", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life", "history_geography"], "tags": ["louisiana"]}
+{"word": "wicked_pissah", "definition": "great or excellent (Boston/New England)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["boston", "new_england"]}
+{"word": "bahston", "definition": "phonetic spelling reflecting Boston accent for 'Boston'", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["boston"]}
+{"word": "youse_guys", "definition": "you all (Philadelphia/NJ informal plural)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["northeast_us"]}
+{"word": "ope", "definition": "exclamation of mild surprise/apology (Midwest US)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["midwest_us"]}
+{"word": "uff_da", "definition": "exclamation of mild dismay (Upper Midwest, Scandinavian-influenced)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["upper_midwest"]}
+{"word": "wicked_cold", "definition": "very cold (New England intensifier)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["new_england"]}
+{"word": "no_worries", "definition": "casual phrase for 'no problem' (Australian-led but widely adopted)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "idioms_phrases"], "tags": ["australian"]}
+{"word": "cheers_brit", "definition": "thanks / goodbye / toast (British)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "ta_brit", "definition": "thanks (British informal)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "innit", "definition": "isn't it? (British informal tag)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "fortnight_brit", "definition": "two weeks (British/Commonwealth)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british", "commonwealth"]}
+{"word": "carpark", "definition": "parking lot (British)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["british"]}
+{"word": "parking_lot", "definition": "open paved area for parking (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect"], "tags": ["american"]}
+{"word": "garage_brit", "definition": "structure for parking a car; also auto-repair shop (UK)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "mechanics_transportation"], "tags": ["british"]}
+{"word": "garage_us", "definition": "structure for parking a car (US)", "register_tags": ["regional", "standard"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["american"]}
+{"word": "ya_betcha", "definition": "you bet (Upper Midwest)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["upper_midwest"]}
+{"word": "fish_fry", "definition": "communal fried-fish meal (Wisconsin tradition)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["wisconsin"]}
+{"word": "tim_hortons", "definition": "Canadian coffee-and-doughnut chain, culturally iconic", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["canadian"]}
+{"word": "kit_kiwi", "definition": "informal Kiwi (New Zealand) speech style", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect"], "tags": ["new_zealand"]}
+{"word": "bach", "definition": "small holiday home (New Zealand)", "register_tags": ["regional", "informal"], "coverage_categories": ["regional_dialect", "food_home_daily_life"], "tags": ["new_zealand"]}

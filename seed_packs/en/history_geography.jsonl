@@ -1,0 +1,32 @@
+{"word": "civilization", "definition": "a complex society marked by cities, government, and shared culture", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "empire", "definition": "a large political unit ruling over many peoples or territories", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "republic", "definition": "a state in which power rests with elected representatives", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "monarchy", "definition": "a system of government with a single ruler, often hereditary", "register_tags": ["academic"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "revolution", "definition": "a forcible overthrow of a government or social order", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "treaty", "definition": "a formal agreement between sovereign states", "register_tags": ["academic", "legal"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "colonization", "definition": "the establishment of settlements and rule over distant territories", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "independence", "definition": "the state of self-governance free of outside rule", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "renaissance", "definition": "the European cultural revival from the 14th to 17th centuries", "register_tags": ["academic"], "coverage_categories": ["history_geography", "art_music_culture"]}
+{"word": "enlightenment", "definition": "the 17th–18th century intellectual movement emphasizing reason", "register_tags": ["academic"], "coverage_categories": ["history_geography", "philosophy_abstract"]}
+{"word": "industrial_revolution", "definition": "the shift to machine-based manufacturing in 18th–19th century Britain and beyond", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "world_war", "definition": "a war involving many of the world's major nations", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "cold_war", "definition": "the post-WWII geopolitical tension between the US and USSR", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "continent", "definition": "one of Earth's main continuous expanses of land", "register_tags": ["standard"], "coverage_categories": ["history_geography"]}
+{"word": "peninsula", "definition": "a piece of land almost surrounded by water", "register_tags": ["standard"], "coverage_categories": ["history_geography"]}
+{"word": "archipelago", "definition": "a chain or cluster of islands", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "isthmus", "definition": "a narrow strip of land connecting two larger landmasses", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "delta", "definition": "a triangular landform at a river mouth", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "tundra", "definition": "a treeless polar region with permanently frozen subsoil", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "savanna", "definition": "a grassy plain with scattered trees", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "tropics", "definition": "the region of Earth near the equator with warm climates", "register_tags": ["standard"], "coverage_categories": ["history_geography"]}
+{"word": "equator", "definition": "the imaginary line dividing Earth into north and south hemispheres", "register_tags": ["standard", "academic"], "coverage_categories": ["history_geography"]}
+{"word": "longitude", "definition": "angular distance east or west of the Prime Meridian", "register_tags": ["academic", "technical"], "coverage_categories": ["history_geography", "science_math"]}
+{"word": "latitude", "definition": "angular distance north or south of the equator", "register_tags": ["academic", "technical"], "coverage_categories": ["history_geography", "science_math"]}
+{"word": "border", "definition": "a line separating two political or geographic regions", "register_tags": ["standard"], "coverage_categories": ["history_geography"]}
+{"word": "capital", "definition": "the city where a country's government is centered", "register_tags": ["standard"], "coverage_categories": ["history_geography"]}
+{"word": "province", "definition": "a principal administrative subdivision of some countries", "register_tags": ["standard"], "coverage_categories": ["history_geography"]}
+{"word": "diaspora", "definition": "the dispersion of a people from their original homeland", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "migration", "definition": "the movement of people from one region to another", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "nomad", "definition": "a member of a people who move from place to place", "register_tags": ["standard"], "coverage_categories": ["history_geography"]}
+{"word": "antiquity", "definition": "the ancient past, especially before the Middle Ages", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "medieval", "definition": "of or relating to the Middle Ages", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}

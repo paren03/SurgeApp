@@ -1,0 +1,35 @@
+{"word": "engine", "definition": "a machine that converts energy into motion", "register_tags": ["standard", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "transmission", "definition": "the system that transfers power from engine to wheels", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "clutch", "definition": "a mechanism for engaging and disengaging power transmission", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "gearbox", "definition": "a housing containing the gears of a transmission", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "axle", "definition": "a rod or shaft on which wheels rotate", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "chassis", "definition": "the structural frame of a vehicle", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "drivetrain", "definition": "the components delivering power to the driving wheels", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "suspension", "definition": "the system of springs and shock absorbers supporting a vehicle", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "carburetor", "definition": "a device mixing air and fuel for internal combustion", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "alternator", "definition": "a generator that produces alternating current in a vehicle", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "spark_plug", "definition": "a device that ignites the air-fuel mixture in a gasoline engine", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "diesel", "definition": "a compression-ignition engine; the fuel used in such engines", "register_tags": ["technical", "standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "torque", "definition": "rotational force produced by an engine or motor", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation", "science_math"]}
+{"word": "horsepower", "definition": "a unit of mechanical power equal to about 745.7 watts", "register_tags": ["technical", "standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "rpm", "definition": "revolutions per minute; a measure of rotational speed", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "brake", "definition": "a device for slowing or stopping motion", "register_tags": ["standard", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "abs", "definition": "anti-lock braking system that prevents wheels from locking up", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "fuel_injection", "definition": "a system that delivers fuel into the engine intake or cylinder", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "hybrid", "definition": "a vehicle using two power sources, typically engine plus electric", "register_tags": ["standard", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "ev", "definition": "electric vehicle; a vehicle powered by electric motors", "register_tags": ["standard", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "cargo", "definition": "goods carried by a vehicle, ship, or aircraft", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "freight", "definition": "goods transported in bulk for commerce", "register_tags": ["standard", "professional"], "coverage_categories": ["mechanics_transportation", "business_finance"]}
+{"word": "logistics", "definition": "the planning and coordination of moving goods", "register_tags": ["professional", "business"], "coverage_categories": ["mechanics_transportation", "business_finance"]}
+{"word": "fleet", "definition": "a group of vehicles operated by an organization", "register_tags": ["professional"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "aviation", "definition": "the operation of aircraft", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "cockpit", "definition": "the area where the pilot operates an aircraft", "register_tags": ["standard", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "runway", "definition": "the strip of ground on which aircraft take off and land", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "harbor", "definition": "a sheltered port where ships dock", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation", "history_geography"]}
+{"word": "stevedore", "definition": "a worker who loads and unloads cargo at ports", "register_tags": ["professional"], "coverage_categories": ["mechanics_transportation", "professions_jobs"]}
+{"word": "rail", "definition": "the track and system for trains", "register_tags": ["standard"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "locomotive", "definition": "a powered rail vehicle for pulling trains", "register_tags": ["standard", "technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "wrench", "definition": "a hand tool for tightening or loosening nuts and bolts", "register_tags": ["standard", "construction"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "torque_wrench", "definition": "a wrench that applies a specified amount of torque", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation"]}
+{"word": "calipers", "definition": "an instrument for measuring small distances precisely", "register_tags": ["technical"], "coverage_categories": ["mechanics_transportation", "science_math"]}
+{"word": "lubricant", "definition": "a substance reducing friction between moving parts", "register_tags": ["standard", "technical"], "coverage_categories": ["mechanics_transportation"]}

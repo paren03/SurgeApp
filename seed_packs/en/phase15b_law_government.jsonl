@@ -1,0 +1,81 @@
+{"word": "common_law", "definition": "law derived from court decisions and custom rather than statutes", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "civil_law_tradition", "definition": "legal tradition rooted in comprehensive written codes", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "case_law", "definition": "the body of past judicial decisions used to guide rulings", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "statutory_law", "definition": "law enacted by a legislature", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "regulatory_law", "definition": "rules made by executive agencies under statutory authority", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "ordinance_municipal", "definition": "law enacted by a local government", "register_tags": ["legal", "standard"], "coverage_categories": ["law_government"]}
+{"word": "executive_order", "definition": "directive issued by a head of the executive branch", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "rule_of_law", "definition": "principle that all are subject to and accountable under law", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government", "philosophy_abstract"]}
+{"word": "separation_of_powers", "definition": "division of government into branches with distinct functions", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government", "philosophy_abstract"]}
+{"word": "checks_and_balances", "definition": "system where branches limit one another's powers", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "federalism", "definition": "system of shared sovereignty between national and state levels", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government", "philosophy_abstract"]}
+{"word": "preemption", "definition": "doctrine that higher-level law overrides conflicting lower-level law", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "due_process_legal", "definition": "fair procedures required before depriving life, liberty, or property", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "equal_protection", "definition": "constitutional guarantee that laws apply equally to people", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "standing_legal", "definition": "right to bring a case based on a concrete stake", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "subject_matter_jurisdiction", "definition": "court's authority over the type of case", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "personal_jurisdiction", "definition": "court's authority over the specific parties", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "venue_legal", "definition": "the proper geographic location for trying a case", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "complaint_legal", "definition": "initial document that starts a civil lawsuit", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "answer_legal", "definition": "defendant's formal response to a complaint", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "motion_to_dismiss", "definition": "request to dismiss a case for legal insufficiency", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "summary_judgment", "definition": "court ruling when there is no genuine dispute of material fact", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "discovery_legal", "definition": "pretrial exchange of information between parties", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "interrogatories", "definition": "written questions one party serves on another in discovery", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "deposition_legal", "definition": "sworn out-of-court testimony recorded for evidence", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "affidavit_legal", "definition": "written statement confirmed by oath", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "burden_of_proof", "definition": "obligation to prove one's assertions in a legal dispute", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "preponderance_of_evidence", "definition": "civil standard: more likely than not", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "beyond_a_reasonable_doubt", "definition": "criminal standard of proof for a conviction", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "hearsay", "definition": "out-of-court statement offered for the truth of its contents", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "objection_legal", "definition": "lawyer's challenge to evidence or a question at trial", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "sustained_objection", "definition": "judge's ruling that an objection is valid", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "overruled_objection", "definition": "judge's ruling that an objection is not valid", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "voir_dire", "definition": "questioning of prospective jurors to assess fitness", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "grand_jury", "definition": "jury that decides whether to issue an indictment", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "petit_jury", "definition": "trial jury that decides facts in a case", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "plea_bargain", "definition": "negotiated agreement where a defendant pleads guilty for concessions", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "habeas_corpus_legal", "definition": "legal action challenging unlawful detention", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "writ_legal", "definition": "formal court order requiring or prohibiting an action", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "mandamus", "definition": "writ ordering a government official to perform a duty", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "certiorari", "definition": "writ by which a higher court reviews a lower-court decision", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "remand_legal", "definition": "to send a case back to a lower court for further proceedings", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "affirm_legal", "definition": "to uphold a lower-court decision", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "reverse_legal", "definition": "to overturn a lower-court decision", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "concurring_opinion", "definition": "judge's opinion that agrees with the outcome but for different reasons", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "dissenting_opinion", "definition": "judge's opinion disagreeing with the majority", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "stare_decisis", "definition": "principle of standing by prior decisions", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "binding_precedent", "definition": "earlier decision that must be followed by lower courts", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "persuasive_authority", "definition": "source a court may consider but is not required to follow", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "tort_law", "definition": "branch of law for civil wrongs causing harm", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "negligence", "definition": "failure to take reasonable care, causing harm", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "strict_liability", "definition": "responsibility without need to show fault", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "damages_legal", "definition": "monetary compensation awarded to a wronged party", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "punitive_damages", "definition": "damages meant to punish and deter, beyond compensation", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "compensatory_damages", "definition": "damages restoring the injured party's actual losses", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "statute_of_limitations", "definition": "deadline within which a case must be filed", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "right_to_counsel", "definition": "right to be represented by a lawyer in criminal proceedings", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "search_warrant", "definition": "court order authorizing a search of a place", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "arrest_warrant", "definition": "court order authorizing a person's arrest", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "probable_cause", "definition": "reasonable basis for believing a crime occurred", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "fourth_amendment", "definition": "US constitutional protection against unreasonable searches", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government", "history_geography"]}
+{"word": "first_amendment", "definition": "US constitutional protections including speech and religion", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government", "history_geography"]}
+{"word": "fifth_amendment", "definition": "US constitutional protection including against self-incrimination", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government", "history_geography"]}
+{"word": "sixth_amendment", "definition": "US constitutional rights of the accused including counsel", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government", "history_geography"]}
+{"word": "fourteenth_amendment", "definition": "US constitutional protection of due process and equal protection", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government", "history_geography"]}
+{"word": "incorporation_doctrine", "definition": "doctrine extending Bill of Rights protections to states", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "qualified_immunity", "definition": "doctrine limiting government officials' civil liability under certain conditions", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "sovereign_immunity", "definition": "doctrine that the state cannot be sued without its consent", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "easement", "definition": "right to use part of another's land for a specific purpose", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "encumbrance", "definition": "claim or restriction on real property", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "deed", "definition": "legal document transferring real estate ownership", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government", "business_finance"]}
+{"word": "title_deed", "definition": "deed evidencing legal ownership of property", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "lien_law", "definition": "legal claim on property as security for debt", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government", "business_finance"]}
+{"word": "probate", "definition": "court process of administering a deceased person's estate", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "intestate", "definition": "having died without a valid will", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "testate", "definition": "having died with a valid will", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "executor_legal", "definition": "person appointed to carry out a will", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "trustee_legal", "definition": "person who holds property for the benefit of another", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "fiduciary_legal", "definition": "person who owes a duty of care to act in another's interest", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "license_government", "definition": "official permission to do something otherwise restricted", "register_tags": ["legal", "standard"], "coverage_categories": ["law_government"]}
+{"word": "permit_government", "definition": "specific authorization to do something for a limited purpose", "register_tags": ["legal", "standard"], "coverage_categories": ["law_government"]}

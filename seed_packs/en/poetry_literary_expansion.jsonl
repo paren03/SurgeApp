@@ -1,0 +1,107 @@
+{"word": "anaphora", "definition": "rhetorical repetition of a word or phrase at the start of successive clauses", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "epistrophe", "definition": "repetition of a word or phrase at the end of successive clauses", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "chiasmus", "definition": "reversal in the order of words in two parallel phrases", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "antithesis", "definition": "juxtaposition of contrasting ideas in balanced phrases", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "polysyndeton", "definition": "the deliberate use of many conjunctions in succession", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "asyndeton", "definition": "omission of conjunctions between coordinated phrases", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "synecdoche", "definition": "a figure of speech in which a part stands for the whole", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "metonymy", "definition": "substituting a related concept for the thing meant", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "oxymoron", "definition": "joining two contradictory terms for effect", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}
+{"word": "paradox_literary", "definition": "a seemingly self-contradictory statement that reveals truth", "register_tags": ["poetic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "antimetabole", "definition": "repetition of words in reverse order in successive clauses", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "apostrophe_literary", "definition": "direct address to an absent person, abstraction, or thing", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "enjambment", "definition": "continuation of a sentence without pause beyond the end of a verse line", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "caesura", "definition": "a deliberate pause within a line of verse", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "iamb", "definition": "metrical foot of one unstressed and one stressed syllable", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "trochee", "definition": "metrical foot of one stressed and one unstressed syllable", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "dactyl", "definition": "metrical foot of one stressed and two unstressed syllables", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "anapest", "definition": "metrical foot of two unstressed and one stressed syllable", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "spondee", "definition": "metrical foot of two stressed syllables", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "iambic_pentameter", "definition": "verse line of five iambic feet", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "blank_verse", "definition": "unrhymed iambic pentameter", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "couplet", "definition": "a pair of successive rhyming lines", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "tercet", "definition": "a stanza of three lines, often rhymed", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "quatrain", "definition": "a stanza of four lines", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "sestet", "definition": "a six-line stanza, especially the closing six lines of an Italian sonnet", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "octave", "definition": "the first eight lines of an Italian sonnet", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "volta", "definition": "the thematic turn in a sonnet, often between octave and sestet", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "refrain", "definition": "a recurring line or group of lines in a poem or song", "register_tags": ["poetic", "standard"], "coverage_categories": ["poetry_literary", "art_music_culture"]}
+{"word": "envoi", "definition": "a short concluding stanza addressing the poem itself", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "epigraph", "definition": "a brief quotation at the start of a work that hints at its theme", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "epilogue", "definition": "a closing section reflecting on the events of a work", "register_tags": ["poetic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "prologue", "definition": "an introductory section preceding the main body of a work", "register_tags": ["poetic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "anachronism", "definition": "something placed outside its proper historical period", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "history_geography"]}
+{"word": "allusion", "definition": "an indirect reference to another text or event", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "ambiguity", "definition": "openness to more than one interpretation", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "archetype", "definition": "a recurring character or motif type in literature", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "bildungsroman", "definition": "a novel about the moral and psychological growth of its protagonist", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "epistolary", "definition": "written in the form of letters or documents", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "frame_narrative", "definition": "a story within which another story is told", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "unreliable_narrator", "definition": "a narrator whose credibility is compromised", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "stream_of_consciousness", "definition": "narrative mode following a character's flow of thought", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "foreshadowing", "definition": "early hints that suggest later developments", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "flashback", "definition": "a scene set earlier than the main narrative time", "register_tags": ["standard", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "in_medias_res", "definition": "narrative technique that opens in the middle of action", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "deus_ex_machina", "definition": "an unexpected device that resolves a story's plot", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "tragic_flaw", "definition": "a character defect that leads to a hero's downfall", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "catharsis", "definition": "emotional release felt by an audience experiencing art", "register_tags": ["poetic", "academic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "hubris", "definition": "excessive pride that brings about a downfall", "register_tags": ["academic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "pathos", "definition": "appeal to emotion in a literary or rhetorical work", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "ethos", "definition": "appeal to credibility of the speaker", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "logos", "definition": "appeal to logic and reason in argument", "register_tags": ["academic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "kairos", "definition": "the opportune or right moment in rhetoric", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "muse_invocation", "definition": "the poet's address to a divine source of inspiration", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}
+{"word": "epic", "definition": "a long narrative poem about heroic deeds", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "ballad", "definition": "a narrative poem or song, often in quatrains", "register_tags": ["poetic", "standard"], "coverage_categories": ["poetry_literary", "art_music_culture"]}
+{"word": "lyric_poem", "definition": "a short poem expressing personal emotion", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}
+{"word": "dramatic_monologue", "definition": "poem spoken in character to an implied listener", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "soliloquy", "definition": "a speech delivered by a character alone on stage", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "aside", "definition": "remark by a stage character intended for the audience", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "satire", "definition": "literary work that uses humor or irony to criticize", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "parody", "definition": "a humorous imitation of a serious work", "register_tags": ["poetic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "pastiche", "definition": "a work that openly imitates the style of another", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "homage", "definition": "a respectful reference to another artist or work", "register_tags": ["standard", "academic"], "coverage_categories": ["poetry_literary", "art_music_culture"]}
+{"word": "verse_libre", "definition": "free verse (French term); poetry without fixed meter", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "imagism", "definition": "early-20th-century movement valuing precise images in poetry", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary", "history_geography"]}
+{"word": "modernism", "definition": "early-20th-century literary movement breaking with tradition", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "history_geography"]}
+{"word": "postmodernism", "definition": "later-20th-century movement that questions grand narratives", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "romanticism", "definition": "early-19th-century movement emphasizing emotion and nature", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "history_geography"]}
+{"word": "realism", "definition": "literary mode aiming to depict life truthfully", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "naturalism", "definition": "literary mode emphasizing deterministic forces shaping life", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "symbolism_movement", "definition": "late-19th-century movement using symbols to express ideas", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "history_geography"]}
+{"word": "transcendence", "definition": "going beyond ordinary limits, often spiritual or intellectual", "register_tags": ["poetic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "sublime", "definition": "a quality of awe-inspiring greatness", "register_tags": ["poetic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "pathetic_fallacy", "definition": "attributing human feelings to nature or weather", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "couleur_locale", "definition": "local color; descriptive features of a region in fiction", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "leitmotif", "definition": "a recurring theme associated with a character or idea", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "art_music_culture"]}
+{"word": "doppelganger", "definition": "a double or alter ego of a character", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "memento_mori", "definition": "a reminder of mortality", "register_tags": ["poetic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "elegiac", "definition": "having a mournful or reflective tone", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}
+{"word": "elegiac_couplet", "definition": "ancient Greco-Roman verse pairing a hexameter with a pentameter", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary", "history_geography"]}
+{"word": "epigram", "definition": "a brief witty saying, often in verse", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}
+{"word": "aphorism", "definition": "a concise statement of a general truth", "register_tags": ["poetic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "maxim", "definition": "a short rule or principle expressed in a memorable form", "register_tags": ["poetic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "proverb", "definition": "a traditional saying that expresses common wisdom", "register_tags": ["standard"], "coverage_categories": ["poetry_literary", "idioms_phrases"]}
+{"word": "fable", "definition": "a short tale, often with animal characters, conveying a moral", "register_tags": ["standard", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "parable", "definition": "a brief allegorical story illustrating a moral lesson", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "vignette", "definition": "a brief, evocative descriptive scene", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}
+{"word": "novella", "definition": "a prose narrative shorter than a novel and longer than a story", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "short_story", "definition": "a brief fictional narrative complete in itself", "register_tags": ["standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "anthology", "definition": "a collection of literary works by various authors", "register_tags": ["standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "compendium", "definition": "a concise but comprehensive summary of a subject", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "concordance", "definition": "an alphabetical index of words in a major text", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "exegesis", "definition": "critical interpretation of a text", "register_tags": ["academic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "hermeneutics", "definition": "the theory and methodology of interpretation", "register_tags": ["academic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "philology", "definition": "the historical study of language and texts", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "history_geography"]}
+{"word": "lexicon", "definition": "the vocabulary of a language or a person", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "etymology", "definition": "the study of word origins and how meanings change", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "history_geography"]}
+{"word": "neologism", "definition": "a newly coined word or expression", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "archaism", "definition": "a word or style retained from an earlier era", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "register_literary", "definition": "the level of formality and style chosen for a text", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "tone_shift", "definition": "a deliberate change in the speaker's attitude within a work", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "voice_literary", "definition": "the distinctive style or persona of a writer", "register_tags": ["academic"], "coverage_categories": ["poetry_literary", "voice_personality"]}
+{"word": "diction", "definition": "the choice of words in writing or speech", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "syntax_literary", "definition": "the arrangement of words to form sentences in a work", "register_tags": ["academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "cadence", "definition": "the rhythmic flow of language", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary", "art_music_culture"]}
+{"word": "lyricism", "definition": "expressive, song-like quality in writing", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}
+{"word": "meter_iambic", "definition": "verse rhythm built on iambic feet", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}

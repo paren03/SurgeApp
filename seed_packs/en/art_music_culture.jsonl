@@ -1,0 +1,34 @@
+{"word": "canvas", "definition": "a fabric surface for painting", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "palette", "definition": "a board on which a painter mixes colors; also a chosen color range", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "sculpture", "definition": "three-dimensional art created by carving, modeling, or assembling", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "gallery", "definition": "a place where art is exhibited", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "exhibition", "definition": "a public display of art or other works", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "perspective", "definition": "the technique of representing depth on a flat surface", "register_tags": ["standard", "technical"], "coverage_categories": ["art_music_culture"]}
+{"word": "composition", "definition": "the arrangement of elements within a work of art or music", "register_tags": ["standard", "academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "harmony", "definition": "the combination of musical notes sounding together pleasantly", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "melody", "definition": "a sequence of musical notes perceived as a tune", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "rhythm", "definition": "the pattern of beats in music or movement", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "tempo", "definition": "the speed at which a piece of music is performed", "register_tags": ["standard", "technical"], "coverage_categories": ["art_music_culture"]}
+{"word": "chord", "definition": "two or more notes played together", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "scale", "definition": "a series of notes ordered by pitch", "register_tags": ["standard", "technical"], "coverage_categories": ["art_music_culture"]}
+{"word": "octave", "definition": "the interval between one musical pitch and another of double its frequency", "register_tags": ["technical"], "coverage_categories": ["art_music_culture"]}
+{"word": "symphony", "definition": "an extended musical composition for orchestra", "register_tags": ["standard", "academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "concerto", "definition": "a composition featuring a solo instrument with orchestra", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "opera", "definition": "a dramatic work set to music with singing throughout", "register_tags": ["standard", "academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "ballet", "definition": "a classical dance form with formal technique", "register_tags": ["standard", "academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "choreography", "definition": "the sequence of steps composed for a dance", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "renaissance", "definition": "the European cultural and artistic revival of the 14th–17th centuries", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "impressionism", "definition": "a 19th-century art movement capturing light and momentary impressions", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "cubism", "definition": "an early 20th-century art movement using geometric forms", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "abstract", "definition": "art not depicting recognizable subjects directly", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "minimalism", "definition": "a style emphasizing simplicity and minimal elements", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "jazz", "definition": "a musical genre originating in Black American communities with improvisation", "register_tags": ["standard"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "blues", "definition": "a musical genre rooted in African-American work songs and spirituals", "register_tags": ["standard"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "folk", "definition": "music or art originating in the traditions of a community", "register_tags": ["standard"], "coverage_categories": ["art_music_culture", "regional_dialect"]}
+{"word": "orchestra", "definition": "a large group of musicians playing together", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "ensemble", "definition": "a small group performing together", "register_tags": ["standard", "academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "exhibit", "definition": "to display or show a work to the public", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "muralist", "definition": "an artist who paints large works directly on walls", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "fresco", "definition": "painting done on freshly laid wet plaster", "register_tags": ["academic", "technical"], "coverage_categories": ["art_music_culture"]}
+{"word": "tradition", "definition": "long-standing customs or practices passed through generations", "register_tags": ["standard"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "heritage", "definition": "inherited cultural traditions and history of a people", "register_tags": ["standard"], "coverage_categories": ["art_music_culture", "history_geography"]}

@@ -1,0 +1,32 @@
+{"word": "metaphor", "definition": "a figure of speech that identifies one thing with another for effect", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "simile", "definition": "a comparison of two unlike things using 'like' or 'as'", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "alliteration", "definition": "the repetition of initial consonant sounds in nearby words", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "assonance", "definition": "the repetition of vowel sounds within nearby words", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "consonance", "definition": "the repetition of consonant sounds across nearby words", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "imagery", "definition": "vivid descriptive language that appeals to the senses", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}
+{"word": "symbolism", "definition": "the use of objects or images to represent ideas", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "stanza", "definition": "a grouped set of lines in a poem", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "sonnet", "definition": "a fourteen-line poem with a fixed rhyme scheme", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "haiku", "definition": "a Japanese poetic form of three lines in five-seven-five syllables", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary", "art_music_culture"]}
+{"word": "elegy", "definition": "a poem of serious reflection, often mourning the dead", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "ode", "definition": "a lyric poem of formal tone celebrating a subject", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "free_verse", "definition": "poetry without regular meter or rhyme", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}
+{"word": "rhyme", "definition": "correspondence of sound between words, especially line endings", "register_tags": ["poetic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "meter", "definition": "the rhythmic structure of a verse", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "verse", "definition": "writing arranged with a metrical rhythm; a single line of poetry", "register_tags": ["poetic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "prose", "definition": "ordinary written language without metrical structure", "register_tags": ["standard", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "narrator", "definition": "the voice telling a story in a text", "register_tags": ["academic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "protagonist", "definition": "the leading character or main figure in a narrative", "register_tags": ["academic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "antagonist", "definition": "a character or force opposing the protagonist", "register_tags": ["academic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "allegory", "definition": "a story with a hidden symbolic meaning", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "irony", "definition": "expression where intended meaning is the opposite of the literal one", "register_tags": ["poetic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "hyperbole", "definition": "deliberate exaggeration for effect", "register_tags": ["poetic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "litotes", "definition": "understatement that affirms by negating its opposite", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "onomatopoeia", "definition": "words that imitate the sound they describe", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "personification", "definition": "attributing human qualities to non-human things", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "epiphany", "definition": "a sudden, striking realization", "register_tags": ["poetic", "philosophical"], "coverage_categories": ["poetry_literary", "philosophy_abstract"]}
+{"word": "motif", "definition": "a recurring element or idea in a work", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary", "art_music_culture"]}
+{"word": "theme", "definition": "the central idea or message of a work", "register_tags": ["academic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "tone", "definition": "the writer's attitude conveyed through word choice", "register_tags": ["academic", "standard"], "coverage_categories": ["poetry_literary"]}
+{"word": "denouement", "definition": "the resolution of a story's plot", "register_tags": ["poetic", "academic"], "coverage_categories": ["poetry_literary"]}
+{"word": "muse", "definition": "a source of artistic inspiration", "register_tags": ["poetic"], "coverage_categories": ["poetry_literary"]}

@@ -1,0 +1,36 @@
+{"word": "asset", "definition": "a resource of economic value owned or controlled by an entity", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "liability", "definition": "a financial obligation owed by an entity to another party", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "equity", "definition": "ownership interest in a company; assets minus liabilities", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "revenue", "definition": "income from normal business activities", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "profit", "definition": "revenue minus costs over a period", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "margin", "definition": "profit expressed as a percentage of revenue", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "dividend", "definition": "a portion of profit paid to shareholders", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "invoice", "definition": "a document requesting payment for goods or services delivered", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "receivable", "definition": "money owed to a business by its customers", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "payable", "definition": "money owed by a business to its suppliers", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "depreciation", "definition": "the accounting allocation of an asset's cost over its useful life", "register_tags": ["business", "technical"], "coverage_categories": ["business_finance"]}
+{"word": "amortization", "definition": "spreading the cost of an intangible asset or loan over time", "register_tags": ["business", "technical"], "coverage_categories": ["business_finance"]}
+{"word": "ledger", "definition": "the principal book of accounts in which transactions are recorded", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "audit", "definition": "an independent examination of financial records", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "budget", "definition": "an estimate of income and expenditure for a period", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "forecast", "definition": "a projection of future financial performance", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "cashflow", "definition": "the net movement of cash into and out of a business", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "valuation", "definition": "the estimated worth of an asset or company", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "ipo", "definition": "initial public offering; the first sale of a company's stock to the public", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "merger", "definition": "the combination of two companies into one", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "acquisition", "definition": "the purchase of one company by another", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "stakeholder", "definition": "anyone affected by or affecting an organization's actions", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "shareholder", "definition": "an owner of one or more shares in a company", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "portfolio", "definition": "a collection of investments held by an entity", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "hedge", "definition": "an investment used to offset risk from another position", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "derivative", "definition": "a financial contract whose value depends on an underlying asset", "register_tags": ["business", "technical"], "coverage_categories": ["business_finance"]}
+{"word": "bond", "definition": "a debt security promising periodic interest and return of principal", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "yield", "definition": "the income return on an investment, often as a percentage", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "inflation", "definition": "a general rise in price levels over time", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "deflation", "definition": "a general decline in price levels over time", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "recession", "definition": "a significant, sustained decline in economic activity", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "liquidity", "definition": "the ease with which an asset can be converted to cash", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "leverage", "definition": "use of borrowed capital to amplify returns or risk", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "compliance", "definition": "conforming to laws, regulations, and internal policies", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "kpi", "definition": "key performance indicator; a quantifiable measure of progress", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "roi", "definition": "return on investment; gain relative to cost", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}

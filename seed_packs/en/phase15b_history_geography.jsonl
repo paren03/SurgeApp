@@ -1,0 +1,80 @@
+{"word": "neolithic", "definition": "the New Stone Age, when farming and pottery emerged", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "mesolithic", "definition": "the Middle Stone Age between Paleolithic and Neolithic", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "paleolithic", "definition": "the Old Stone Age", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "bronze_age", "definition": "period defined by bronze tool use after the Stone Age", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "iron_age", "definition": "period of widespread iron tool use", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "classical_antiquity", "definition": "Greek and Roman civilizations of the ancient Mediterranean", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "byzantine_empire", "definition": "eastern Roman Empire centered on Constantinople", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "feudalism", "definition": "medieval system of land tenure and obligations", "register_tags": ["academic"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "crusades", "definition": "medieval military campaigns originating in Europe", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "reformation", "definition": "16th-century movement reforming Western Christianity", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "counter_reformation", "definition": "Catholic response to the Protestant Reformation", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "age_of_exploration", "definition": "15th-17th-century period of European overseas exploration", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "columbian_exchange", "definition": "transfer of plants, animals, and diseases between continents post-1492", "register_tags": ["academic"], "coverage_categories": ["history_geography", "science_math"]}
+{"word": "manifest_destiny", "definition": "19th-century US belief in expanding across the continent", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "industrial_age", "definition": "period of widespread industrialization", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "gilded_age", "definition": "late-19th-century US era of rapid wealth and inequality", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "interwar_period", "definition": "years between WWI and WWII", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "decolonization", "definition": "process by which colonies became independent states", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "post_industrial", "definition": "describing societies dominated by services and information", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "globalization", "definition": "increasing interconnection of economies and cultures", "register_tags": ["academic"], "coverage_categories": ["history_geography", "business_finance"]}
+{"word": "cartography", "definition": "the science and craft of map-making", "register_tags": ["academic"], "coverage_categories": ["history_geography", "science_math"]}
+{"word": "topography", "definition": "shape and features of the land surface", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "hydrography", "definition": "study of bodies of water for navigation", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "geomorphology", "definition": "study of landforms and the processes that shape them", "register_tags": ["academic"], "coverage_categories": ["history_geography", "science_math"]}
+{"word": "elevation", "definition": "height above a reference level, usually sea level", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "altitude", "definition": "height above ground or sea level, especially in flight", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography", "mechanics_transportation"]}
+{"word": "watershed", "definition": "area of land where water drains into a common outlet", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "biome", "definition": "large community of plants and animals defined by climate", "register_tags": ["academic"], "coverage_categories": ["history_geography", "science_math"]}
+{"word": "ecotone", "definition": "transition zone between two ecological communities", "register_tags": ["academic"], "coverage_categories": ["history_geography", "science_math"]}
+{"word": "permafrost", "definition": "permanently frozen subsoil in polar regions", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "fjord", "definition": "narrow, deep inlet of the sea between cliffs", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "strait", "definition": "narrow body of water connecting two larger bodies", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "isthmus_geo", "definition": "narrow strip of land joining two larger landmasses", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "lagoon", "definition": "shallow body of water near or connected to a larger one", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "estuary", "definition": "where a river meets the sea, with mixed fresh and salt water", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "continental_shelf", "definition": "shallow seafloor extending from a continent", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "abyssal_plain", "definition": "deep, flat ocean floor", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "cardinal_direction", "definition": "the four main compass directions: N, E, S, W", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "intercardinal_direction", "definition": "directions between cardinals, like NE, SE", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "prime_meridian", "definition": "the line of zero longitude", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "international_date_line", "definition": "imaginary line where the date changes by one day", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "demographic", "definition": "of or relating to population structure", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "census", "definition": "official count and survey of a population", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "urbanization", "definition": "growth of cities and movement of people to them", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "suburbanization", "definition": "growth of areas around cities", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "gentrification", "definition": "transformation of a neighborhood by an influx of wealthier residents", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "rural", "definition": "of or relating to the countryside", "register_tags": ["standard"], "coverage_categories": ["history_geography"]}
+{"word": "metropolitan_area", "definition": "city and its surrounding settlements", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "megacity", "definition": "very large city, often with over 10 million inhabitants", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "country_state", "definition": "a sovereign nation in international relations", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "nation_state", "definition": "state whose population shares a common identity", "register_tags": ["academic"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "city_state", "definition": "sovereign city governing itself", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "principality", "definition": "territory ruled by a prince", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "duchy", "definition": "territory ruled by a duke or duchess", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "kingdom", "definition": "state ruled by a king or queen", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "caliphate", "definition": "Islamic state led by a caliph", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "dynasty", "definition": "succession of rulers from the same family", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "regicide", "definition": "killing of a monarch (term only)", "register_tags": ["academic", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["history_geography", "recognition_only_sensitive"]}
+{"word": "coup_d_etat", "definition": "sudden overthrow of a government (term only)", "register_tags": ["academic", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["history_geography", "recognition_only_sensitive", "law_government"]}
+{"word": "treaty_of_westphalia", "definition": "1648 treaties establishing modern state sovereignty principles", "register_tags": ["academic"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "treaty_of_versailles", "definition": "1919 treaty ending WWI and reshaping Europe", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "treaty_of_tordesillas", "definition": "1494 treaty dividing the New World between Spain and Portugal", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "ottoman_empire", "definition": "Turkic empire spanning 14th-20th centuries across three continents", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "mongol_empire", "definition": "largest contiguous land empire in history, 13th-14th century", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "silk_road", "definition": "network of trade routes connecting East and West", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography", "business_finance"]}
+{"word": "trans_atlantic", "definition": "across the Atlantic Ocean, often referring to trade or travel", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "trans_pacific", "definition": "across the Pacific Ocean", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "diaspora_history", "definition": "dispersion of a people from their original homeland", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "indigenous_peoples", "definition": "original inhabitants of a region", "register_tags": ["academic", "standard"], "coverage_categories": ["history_geography"]}
+{"word": "first_nations", "definition": "indigenous peoples of Canada other than Inuit and Métis", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "primary_source", "definition": "original record from the time studied", "register_tags": ["academic"], "coverage_categories": ["history_geography", "psychology_education"]}
+{"word": "secondary_source", "definition": "interpretation or analysis based on primary sources", "register_tags": ["academic"], "coverage_categories": ["history_geography", "psychology_education"]}
+{"word": "historiography", "definition": "the study of how history is written", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "periodization", "definition": "dividing history into named periods", "register_tags": ["academic"], "coverage_categories": ["history_geography"]}
+{"word": "longue_duree", "definition": "Braudel's emphasis on long-term historical structures", "register_tags": ["academic"], "coverage_categories": ["history_geography", "philosophy_abstract"]}
+{"word": "geopolitics", "definition": "study of how geography influences politics and international relations", "register_tags": ["academic"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "sphere_of_influence", "definition": "region where a state has significant cultural, economic, or military influence", "register_tags": ["academic"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "buffer_state", "definition": "small state lying between two rivals", "register_tags": ["academic"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "neutral_state", "definition": "state not taking sides in a conflict", "register_tags": ["academic"], "coverage_categories": ["history_geography", "law_government"]}
+{"word": "land_bridge", "definition": "former land connection between currently separated landmasses", "register_tags": ["academic"], "coverage_categories": ["history_geography", "science_math"]}

@@ -1,0 +1,83 @@
+{"word": "array", "definition": "ordered collection of elements accessed by index", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "linked_list", "definition": "linear data structure of nodes pointing to the next node", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "stack", "definition": "last-in-first-out data structure", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "queue", "definition": "first-in-first-out data structure", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "hash_map", "definition": "data structure mapping keys to values via hashing", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "tree_data", "definition": "hierarchical data structure of nodes and children", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "binary_search_tree", "definition": "tree where left subtree keys are smaller and right keys larger", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "graph_data", "definition": "data structure of nodes (vertices) and edges", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "big_o", "definition": "notation describing the upper bound of an algorithm's complexity", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology", "science_math"]}
+{"word": "time_complexity", "definition": "how runtime grows with input size", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology", "science_math"]}
+{"word": "space_complexity", "definition": "how memory use grows with input size", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology", "science_math"]}
+{"word": "memoization", "definition": "caching results of expensive function calls", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "dynamic_programming", "definition": "solving problems by combining solutions of subproblems", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "greedy_algorithm", "definition": "algorithm that makes locally optimal choices", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "divide_and_conquer", "definition": "strategy of splitting a problem into smaller subproblems", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "tail_recursion", "definition": "recursion where the recursive call is the function's last action", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "depth_first_search", "definition": "graph traversal that explores deeply before backtracking", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "breadth_first_search", "definition": "graph traversal exploring neighbors before going deeper", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "dijkstra", "definition": "shortest-path algorithm for graphs with non-negative weights", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "git", "definition": "distributed version control system", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "github", "definition": "popular hosting service for Git repositories", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "pull_request", "definition": "proposal to merge a branch into another in version control", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "code_review", "definition": "peer examination of code before merging", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "continuous_integration", "definition": "practice of integrating and testing code changes often", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "continuous_deployment", "definition": "practice of automatically deploying every successful change", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "unit_test", "definition": "test of a single small piece of code", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "integration_test", "definition": "test combining multiple parts of a system", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "end_to_end_test", "definition": "test exercising a system as a user would", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "mock_object", "definition": "test stand-in mimicking real dependencies", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "stub_object", "definition": "minimal placeholder used in testing", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "fixture_test", "definition": "fixed state set up for tests", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "tdd", "definition": "test-driven development; tests written before code", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "bdd", "definition": "behavior-driven development; tests in human-readable form", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "code_smell", "definition": "surface symptom suggesting deeper code quality issues", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "refactoring", "definition": "improving code structure without changing behavior", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "monorepo", "definition": "single repository containing many projects", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "polyrepo", "definition": "many separate repositories for related projects", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "container", "definition": "lightweight isolated runtime for an application", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "docker", "definition": "popular container platform", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "kubernetes", "definition": "container orchestration platform", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "microservice", "definition": "small, independently deployable service in a system", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "monolith", "definition": "application built and deployed as a single unit", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "load_balancer", "definition": "system distributing requests across multiple servers", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "cdn", "definition": "content delivery network distributing static content globally", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "cache", "definition": "high-speed storage for frequently used data", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "rate_limiting", "definition": "controlling the number of requests over time", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "throttling", "definition": "intentional slowing of activity to avoid overload", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "circuit_breaker_pattern", "definition": "design pattern that stops calls to a failing service", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "idempotent", "definition": "operation safe to repeat without changing the result", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "ack", "definition": "acknowledgment that a message or packet was received", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "tcp", "definition": "transmission control protocol; reliable connection-oriented protocol", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "udp", "definition": "user datagram protocol; lightweight connectionless protocol", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "ip_address", "definition": "numerical address identifying a device on a network", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "dns", "definition": "domain name system mapping names to IP addresses", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "http", "definition": "hypertext transfer protocol for web communication", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "https", "definition": "HTTP secured with TLS encryption", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "rest_api", "definition": "API design pattern using stateless HTTP verbs", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "graphql", "definition": "API query language with flexible data fetching", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "websocket", "definition": "protocol for full-duplex client-server communication", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "json", "definition": "lightweight text-based data interchange format", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "yaml", "definition": "human-friendly data serialization format", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "xml", "definition": "markup language for structured data", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "schema_data", "definition": "formal description of structure for data", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "primary_key", "definition": "column or columns uniquely identifying a database row", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "foreign_key", "definition": "column referencing a primary key in another table", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "index_database", "definition": "data structure speeding up database queries", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "normalization_db", "definition": "structuring data to reduce redundancy", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "denormalization_db", "definition": "intentional redundancy for performance", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "transaction_db", "definition": "atomic group of database operations", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "acid", "definition": "atomicity, consistency, isolation, durability — DB transaction properties", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "vector_database", "definition": "database optimized for high-dimensional vector search", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "embedding_vector", "definition": "numerical representation of data in a vector space", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "neural_network", "definition": "machine-learning model inspired by biological neurons", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "transformer_model", "definition": "neural architecture using self-attention", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "gradient_descent", "definition": "optimization algorithm moving toward lower loss", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology", "science_math"]}
+{"word": "backpropagation", "definition": "method for computing gradients in neural networks", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "overfitting", "definition": "model fits training data too closely and generalizes poorly", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "underfitting", "definition": "model is too simple to capture patterns", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "regularization", "definition": "techniques to reduce overfitting", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "fine_tuning", "definition": "adapting a pretrained model to a specific task", "register_tags": ["coding", "academic"], "coverage_categories": ["coding_technology"]}
+{"word": "phishing_term", "definition": "social-engineering technique impersonating trustworthy entities (term only)", "register_tags": ["coding", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["coding_technology", "recognition_only_sensitive"]}
+{"word": "malware_term", "definition": "category label for hostile software (term only)", "register_tags": ["coding", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["coding_technology", "recognition_only_sensitive"]}
+{"word": "ransomware_term", "definition": "category label for malware demanding payment (term only)", "register_tags": ["coding", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["coding_technology", "recognition_only_sensitive"]}

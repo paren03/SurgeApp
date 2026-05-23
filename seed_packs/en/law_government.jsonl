@@ -1,0 +1,35 @@
+{"word": "statute", "definition": "a written law passed by a legislature", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "ordinance", "definition": "a law or regulation made by a local authority", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "jurisdiction", "definition": "the authority of a court or agency to act on a matter", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "precedent", "definition": "an earlier court decision that guides later similar cases", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "litigation", "definition": "the process of resolving disputes through the courts", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "plaintiff", "definition": "the party who brings a civil case to court", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "defendant", "definition": "the party accused or sued in a court case", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "subpoena", "definition": "a legal order requiring a person to appear or produce evidence", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "deposition", "definition": "sworn out-of-court testimony recorded for later use", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "affidavit", "definition": "a written statement confirmed by oath", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "indictment", "definition": "a formal charge of a serious crime by a grand jury", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "arraignment", "definition": "a court hearing where charges are formally read to a defendant", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "warrant", "definition": "a written authorization for arrest, search, or other action", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "tort", "definition": "a civil wrong causing harm or loss that may be sued over", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "felony", "definition": "a serious criminal offense, typically punishable by over a year of imprisonment", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "misdemeanor", "definition": "a less serious criminal offense than a felony", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "constitution", "definition": "the fundamental written or unwritten law of a state", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government", "history_geography"]}
+{"word": "amendment", "definition": "a formal change or addition to a law or document", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "legislature", "definition": "the lawmaking body of a government", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "executive", "definition": "the branch of government that enforces laws", "register_tags": ["legal", "standard"], "coverage_categories": ["law_government"]}
+{"word": "judiciary", "definition": "the branch of government that interprets laws", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "regulation", "definition": "a rule made by an executive authority under statutory power", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "agency", "definition": "a government body with a specific administrative role", "register_tags": ["legal", "standard"], "coverage_categories": ["law_government"]}
+{"word": "treaty", "definition": "a formal binding agreement between sovereign states", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government", "history_geography"]}
+{"word": "sanction", "definition": "an authorized penalty or coercive measure", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "appeal", "definition": "a request to a higher court to review a lower court's decision", "register_tags": ["legal", "standard"], "coverage_categories": ["law_government"]}
+{"word": "verdict", "definition": "the decision reached by a jury or judge at trial", "register_tags": ["legal", "standard"], "coverage_categories": ["law_government"]}
+{"word": "settlement", "definition": "a resolution of a dispute, usually without trial", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "injunction", "definition": "a court order requiring or forbidding a specific act", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "habeas_corpus", "definition": "a legal action to challenge unlawful detention", "register_tags": ["legal", "academic"], "coverage_categories": ["law_government"]}
+{"word": "due_process", "definition": "fair treatment through the normal judicial system", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "miranda_rights", "definition": "rights that must be read to a suspect upon arrest in the U.S.", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "extradition", "definition": "the formal surrender of a person from one jurisdiction to another", "register_tags": ["legal", "professional"], "coverage_categories": ["law_government"]}
+{"word": "ministry", "definition": "a department of government led by a minister", "register_tags": ["legal", "standard"], "coverage_categories": ["law_government"]}
+{"word": "parliament", "definition": "a national legislative body, especially in the UK and similar systems", "register_tags": ["legal", "standard"], "coverage_categories": ["law_government", "history_geography"]}

@@ -1,0 +1,79 @@
+{"word": "constructivism_learning", "definition": "theory that learners build understanding through experience", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "behaviorism", "definition": "approach focused on observable behavior over inner states", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "cognitivism", "definition": "approach focused on internal mental processes", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "social_learning", "definition": "learning by observation and imitation of others", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "experiential_learning", "definition": "learning through direct experience and reflection", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "blooms_taxonomy", "definition": "framework classifying educational goals by complexity", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "zone_of_proximal_development", "definition": "Vygotsky's range between independent and guided performance", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "scaffolding_learning", "definition": "structured support that fades as learners gain skill", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "spaced_repetition", "definition": "review technique with increasing intervals to aid memory", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "retrieval_practice", "definition": "learning by actively recalling information", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "interleaving", "definition": "mixing different topics to strengthen learning", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "elaboration", "definition": "explaining concepts in one's own words to deepen learning", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "dual_coding", "definition": "combining words and images to aid memory", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "concrete_examples", "definition": "specific cases used to illustrate abstract ideas", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "transfer_of_learning", "definition": "applying skills learned in one context to another", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "fluency_skill", "definition": "automatic, accurate performance of a skill", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "automaticity", "definition": "ability to perform a task with minimal conscious effort", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "expertise", "definition": "high level of skill or knowledge developed through experience", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "deliberate_practice", "definition": "focused, effortful practice with feedback to improve", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "flow_state", "definition": "Csikszentmihalyi's state of focused immersion in an activity", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "working_memory", "definition": "system holding and manipulating information temporarily", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "long_term_memory", "definition": "system storing information for extended periods", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "episodic_memory", "definition": "memory of personally experienced events", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "semantic_memory", "definition": "memory of facts and meanings", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "procedural_memory", "definition": "memory of how to perform tasks", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "encoding_memory", "definition": "process of converting information into memory", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "retrieval_memory", "definition": "process of recalling stored information", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "forgetting_curve", "definition": "rate at which information is forgotten over time", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "interference_memory", "definition": "competition between memories reducing recall", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "attention_span", "definition": "length of time someone can focus on a task", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "selective_attention", "definition": "ability to focus on relevant stimuli while ignoring others", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "divided_attention", "definition": "splitting attention across multiple tasks", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "metacognitive_skill", "definition": "skill of monitoring and managing one's own thinking", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "intrinsic_motivation", "definition": "motivation arising from internal satisfaction", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "extrinsic_motivation", "definition": "motivation driven by external rewards or pressures", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "self_determination_theory", "definition": "theory of motivation emphasizing autonomy, competence, relatedness", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "growth_mindset_concept", "definition": "Dweck's concept that abilities can grow with effort", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "fixed_mindset_concept", "definition": "Dweck's contrasting view that abilities are static", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "self_regulation", "definition": "ability to manage one's emotions, behaviors, and thoughts", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "executive_function", "definition": "set of cognitive skills enabling planning, focus, and self-control", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "neuroplasticity", "definition": "brain's ability to reorganize and form new connections", "register_tags": ["academic"], "coverage_categories": ["psychology_education", "medicine_health"]}
+{"word": "developmental_stage", "definition": "phase in psychological growth, often associated with age", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "piaget_stage", "definition": "Piaget's stages of cognitive development", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "erikson_stage", "definition": "Erikson's stages of psychosocial development", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "attachment_theory", "definition": "framework on emotional bonds between children and caregivers", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "secure_attachment", "definition": "healthy bond marked by trust and confidence", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "avoidant_attachment", "definition": "attachment style with emotional distance and self-reliance", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "anxious_attachment", "definition": "attachment style marked by clinginess and worry about availability", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "disorganized_attachment", "definition": "attachment style with inconsistent and fearful behaviors", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "self_concept", "definition": "the set of beliefs one holds about oneself", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "self_esteem", "definition": "overall evaluation of one's own worth", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "self_compassion", "definition": "kindness and understanding toward oneself in failure or suffering", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "stereotype_threat", "definition": "performance harm from awareness of negative group stereotypes", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "confirmation_bias", "definition": "tendency to favor evidence supporting one's beliefs", "register_tags": ["academic"], "coverage_categories": ["psychology_education", "philosophy_abstract"]}
+{"word": "anchoring_bias", "definition": "tendency to rely on the first piece of information offered", "register_tags": ["academic"], "coverage_categories": ["psychology_education", "philosophy_abstract"]}
+{"word": "availability_heuristic", "definition": "judging frequency by ease of recall", "register_tags": ["academic"], "coverage_categories": ["psychology_education", "philosophy_abstract"]}
+{"word": "dunning_kruger", "definition": "phenomenon where the unskilled overestimate their competence", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "self_efficacy_concept", "definition": "Bandura's belief in one's capacity to perform tasks", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "locus_of_control", "definition": "extent to which one feels control over events", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "internal_locus", "definition": "perception that outcomes are largely under one's control", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "external_locus", "definition": "perception that outcomes are largely outside one's control", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "rapport", "definition": "harmonious relationship marked by mutual understanding", "register_tags": ["academic", "professional"], "coverage_categories": ["psychology_education", "voice_personality"]}
+{"word": "active_listening", "definition": "fully concentrating, understanding, and responding to a speaker", "register_tags": ["professional", "teacher"], "coverage_categories": ["psychology_education", "voice_personality"]}
+{"word": "empathic_response", "definition": "reply that conveys understanding of another's feelings", "register_tags": ["professional", "teacher"], "coverage_categories": ["psychology_education", "voice_personality"]}
+{"word": "open_question", "definition": "question that invites detailed response, not just yes or no", "register_tags": ["professional", "teacher"], "coverage_categories": ["psychology_education", "voice_personality"]}
+{"word": "closed_question", "definition": "question with a limited set of answers, often yes or no", "register_tags": ["professional", "teacher"], "coverage_categories": ["psychology_education", "voice_personality"]}
+{"word": "open_classroom", "definition": "instructional model with flexible spaces and student-led work", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "flipped_classroom", "definition": "model where direct instruction is done at home and practice in class", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "project_based_learning", "definition": "learning by completing meaningful projects", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "inquiry_based_learning", "definition": "learning driven by student questions and investigations", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "iep", "definition": "individualized education program for a student with special needs", "register_tags": ["academic", "teacher", "legal"], "coverage_categories": ["psychology_education", "law_government"]}
+{"word": "504_plan", "definition": "US plan providing accommodations for students with disabilities", "register_tags": ["academic", "teacher", "legal"], "coverage_categories": ["psychology_education", "law_government"]}
+{"word": "rti", "definition": "response to intervention; tiered support for struggling learners", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "udl", "definition": "Universal Design for Learning; flexible curriculum framework", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "trauma_informed_care", "definition": "approach recognizing the prevalence and impact of trauma", "register_tags": ["academic", "professional", "medical"], "coverage_categories": ["psychology_education", "medicine_health"]}
+{"word": "burnout_psychology", "definition": "exhaustion and reduced effectiveness from chronic stress", "register_tags": ["academic", "professional"], "coverage_categories": ["psychology_education", "medicine_health"]}
+{"word": "boundary_setting", "definition": "communicating and protecting personal limits", "register_tags": ["academic", "professional"], "coverage_categories": ["psychology_education", "voice_personality"]}
+{"word": "compassion_fatigue", "definition": "emotional toll from sustained care work", "register_tags": ["academic", "medical"], "coverage_categories": ["psychology_education", "medicine_health"]}
+{"word": "wellbeing", "definition": "state of being comfortable, healthy, or happy", "register_tags": ["standard", "academic"], "coverage_categories": ["psychology_education"]}

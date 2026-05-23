@@ -1,0 +1,104 @@
+{"word": "balloon_framing", "definition": "older framing method with continuous studs from sill to top plate", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "platform_framing", "definition": "modern framing built one platform/story at a time", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "kerf", "definition": "the width of material removed by a saw cut", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "dado_cut", "definition": "a flat-bottomed groove cut across the grain of wood", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "rabbet_joint", "definition": "an L-shaped step cut along the edge of a piece of wood", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "scarf_joint", "definition": "an angled splice joining two pieces of wood end-to-end", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "dovetail_joint", "definition": "interlocking trapezoidal joinery between two boards", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "biscuit_joiner", "definition": "tool that cuts slots for oval wood biscuits in joinery", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "router_woodworking", "definition": "handheld or table-mounted tool for hollowing out an area of wood", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "thickness_planer", "definition": "machine that dimensions boards to a uniform thickness", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "jointer", "definition": "machine that produces a flat reference surface on a board", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "band_saw", "definition": "stationary saw with a continuous looped blade", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "post_hole_digger", "definition": "manual tool for digging narrow vertical holes for posts", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "auger", "definition": "rotating helical tool used to bore holes in earth or wood", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "tamping", "definition": "compressing soil or material by repeated impact", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "compaction_test", "definition": "field test of how well soil or fill has been densified", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "proctor_density", "definition": "lab-derived target density for compacted soil", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "rebar_chair", "definition": "support that holds rebar at correct cover above formwork", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "concrete_cover", "definition": "distance between rebar and the outside of cured concrete", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "cure_time", "definition": "the period during which concrete reaches its design strength", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "cold_joint", "definition": "an unintended seam between two pours of concrete", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "expansion_joint", "definition": "deliberate gap allowing materials to expand or contract", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "control_joint", "definition": "scored line that controls where concrete cracks", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "rough_in", "definition": "first installation stage of MEP systems before finishes", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "trim_out", "definition": "final installation stage of fixtures and finishes", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "mep", "definition": "mechanical, electrical, and plumbing systems as a trade group", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "panel_box", "definition": "the main electrical service panel of a building", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "service_drop", "definition": "overhead conductors from utility line to a building", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "service_lateral", "definition": "underground conductors from utility line to a building", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "ground_fault", "definition": "an unintended path of current to ground", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "gfci", "definition": "ground-fault circuit interrupter that trips on leakage to ground", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "afci", "definition": "arc-fault circuit interrupter that trips on dangerous arcing", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "breaker_panel", "definition": "enclosure containing circuit breakers protecting wiring", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "romex", "definition": "common nonmetallic-sheathed cable used in residential wiring", "register_tags": ["construction", "informal"], "coverage_categories": ["trades_construction"]}
+{"word": "thhn", "definition": "thermoplastic nylon-insulated single-conductor wire type", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "conduit", "definition": "pipe or tubing protecting electrical conductors", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "junction_box", "definition": "enclosure for joining electrical conductors", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "p_trap", "definition": "U-shaped drain fitting that retains water as a vapor seal", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "s_trap", "definition": "older S-shaped drain trap prone to siphoning", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "drain_waste_vent", "definition": "DWV system of pipes for drainage and venting", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "supply_line", "definition": "pressurized line bringing water to fixtures", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "shut_off_valve", "definition": "valve isolating a fixture from the supply line", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "ball_valve", "definition": "quarter-turn valve with a perforated ball as the closure", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "gate_valve", "definition": "multi-turn valve using a gate to start/stop flow", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "pex_tubing", "definition": "cross-linked polyethylene tubing used in plumbing", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "copper_pipe", "definition": "rigid copper tubing used in plumbing", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "cast_iron_drain", "definition": "older drain piping in cast iron", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "duct_seal", "definition": "sealing of HVAC ducts to prevent air leakage", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "btu", "definition": "British thermal unit; common HVAC heat measure", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "cfm", "definition": "cubic feet per minute; HVAC airflow measure", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "static_pressure", "definition": "pressure exerted by HVAC air against the duct walls", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "refrigerant", "definition": "fluid that transfers heat in an HVAC or refrigeration cycle", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "evaporator_coil", "definition": "HVAC coil where refrigerant absorbs heat from air", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "condenser_unit", "definition": "outdoor part of an AC system that rejects heat", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "asphalt_shingle", "definition": "common residential roofing shingle made of asphalt", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "drip_edge", "definition": "metal flashing that directs water off the roof edge", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "ice_and_water_shield", "definition": "self-adhered membrane preventing ice-dam leaks", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "ridge_vent", "definition": "vent along the roof ridge for attic exhaust", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "soffit_vent", "definition": "intake vent at the eave for attic ventilation", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "vinyl_siding", "definition": "PVC siding panels for exterior cladding", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "fiber_cement_siding", "definition": "cement-based siding board often called HardiePlank", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "house_wrap", "definition": "weather-resistive barrier behind exterior cladding", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "tyvek", "definition": "common brand of house wrap (DuPont)", "register_tags": ["construction", "informal"], "coverage_categories": ["trades_construction"]}
+{"word": "self_leveling_compound", "definition": "flowing material that smooths uneven floors", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "thinset", "definition": "cement-based adhesive used for setting tile", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "grout", "definition": "filling between tiles or masonry joints", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "backer_board", "definition": "cement panel used as a substrate for tile", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "tile_spacer", "definition": "small plastic cross used to keep tile joints uniform", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "level_two_finish", "definition": "lower drywall finish level for utility areas", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "level_five_finish", "definition": "highest drywall finish level with skim coat overall", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "outside_corner_bead", "definition": "metal or plastic protective edge on outside drywall corners", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "cut_off_saw", "definition": "abrasive saw used to cut metal or masonry", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "chop_saw", "definition": "stationary saw used for cross-cutting metal stock", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "punch_lift", "definition": "list of remaining items at the end of a project (slang for punch list)", "register_tags": ["construction", "informal"], "coverage_categories": ["trades_construction"]}
+{"word": "closeout", "definition": "final administrative end-phase of a construction project", "register_tags": ["construction", "business"], "coverage_categories": ["trades_construction", "business_finance"]}
+{"word": "certificate_of_occupancy", "definition": "official approval that a building is safe to occupy", "register_tags": ["construction", "legal"], "coverage_categories": ["trades_construction", "law_government"]}
+{"word": "lien_release", "definition": "document waiving a contractor's right to file a lien once paid", "register_tags": ["construction", "legal", "business"], "coverage_categories": ["trades_construction", "law_government", "business_finance"]}
+{"word": "mechanic_lien", "definition": "claim placed against property for unpaid construction work", "register_tags": ["construction", "legal"], "coverage_categories": ["trades_construction", "law_government"]}
+{"word": "bid_bond", "definition": "guarantee from a contractor that they will honor a winning bid", "register_tags": ["construction", "business", "legal"], "coverage_categories": ["trades_construction", "business_finance"]}
+{"word": "performance_bond", "definition": "guarantee that a contractor will complete the contracted work", "register_tags": ["construction", "business", "legal"], "coverage_categories": ["trades_construction", "business_finance"]}
+{"word": "payment_bond", "definition": "guarantee that a contractor will pay subs and suppliers", "register_tags": ["construction", "business", "legal"], "coverage_categories": ["trades_construction", "business_finance"]}
+{"word": "subcontract_agreement", "definition": "contract between a contractor and a subcontractor", "register_tags": ["construction", "legal", "business"], "coverage_categories": ["trades_construction", "law_government", "business_finance"]}
+{"word": "field_office", "definition": "temporary administrative trailer on a jobsite", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "lay_down_area", "definition": "designated jobsite zone for staging materials", "register_tags": ["construction", "informal"], "coverage_categories": ["trades_construction"]}
+{"word": "exclusion_zone", "definition": "area on a jobsite where unauthorized entry is prohibited", "register_tags": ["construction", "professional"], "coverage_categories": ["trades_construction"]}
+{"word": "spotter", "definition": "worker assigned to watch for hazards near moving equipment", "register_tags": ["construction", "professional"], "coverage_categories": ["trades_construction", "professions_jobs"]}
+{"word": "swing_radius", "definition": "the rotation path of a crane or excavator boom", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "blind_lift", "definition": "crane lift where the operator cannot see the load", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "tag_line", "definition": "rope used by ground crew to control a swinging load", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "cherry_picker", "definition": "informal term for an articulating boom lift", "register_tags": ["construction", "informal"], "coverage_categories": ["trades_construction"]}
+{"word": "scissor_lift", "definition": "vertical lift on a folding cross-brace platform", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "manlift", "definition": "any powered access platform used to lift workers", "register_tags": ["construction", "informal"], "coverage_categories": ["trades_construction"]}
+{"word": "torque_value", "definition": "specified tightening force for a bolted joint", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "calibrated_torque_wrench", "definition": "tool verified to deliver a specified torque accurately", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "cutting_torch", "definition": "oxy-fuel torch used to cut steel", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "plasma_cutter", "definition": "tool that uses an electrically heated plasma jet to cut metal", "register_tags": ["construction", "technical"], "coverage_categories": ["trades_construction"]}
+{"word": "rebar_bender", "definition": "tool for bending steel reinforcement bar", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "tile_saw", "definition": "wet saw for cutting ceramic and stone tile", "register_tags": ["construction"], "coverage_categories": ["trades_construction"]}
+{"word": "rod_buster", "definition": "informal name for an ironworker tying rebar", "register_tags": ["construction", "informal"], "coverage_categories": ["trades_construction", "professions_jobs"]}
+{"word": "duct_doctor", "definition": "informal term for an HVAC duct cleaner", "register_tags": ["construction", "informal"], "coverage_categories": ["trades_construction"]}
+{"word": "crash_course_safety", "definition": "intensive short safety training before high-risk work", "register_tags": ["construction", "professional"], "coverage_categories": ["trades_construction"]}
+{"word": "incident_report", "definition": "documented record of a jobsite incident or near-miss", "register_tags": ["construction", "professional", "legal"], "coverage_categories": ["trades_construction", "law_government"]}
+{"word": "near_miss", "definition": "an unplanned event that could have caused harm but did not", "register_tags": ["construction", "professional"], "coverage_categories": ["trades_construction"]}
+{"word": "root_cause_analysis", "definition": "systematic process to identify the underlying cause of a problem", "register_tags": ["construction", "professional", "technical"], "coverage_categories": ["trades_construction"]}

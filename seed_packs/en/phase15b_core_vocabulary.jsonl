@@ -1,0 +1,81 @@
+{"word": "consider", "definition": "to think carefully about", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "decide", "definition": "to come to a resolution after thought", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "choose", "definition": "to select from options", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "discuss", "definition": "to talk about a topic in depth", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "argue", "definition": "to give reasons in support or opposition", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "agree", "definition": "to reach a common view", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "disagree", "definition": "to hold a different view", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "describe", "definition": "to give a detailed account of something", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "explain_core", "definition": "to make something clear by describing it", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "summarize", "definition": "to give a brief account of the main points", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "outline", "definition": "to give a structured overview", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "plan", "definition": "to decide on a course of action in advance", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "schedule", "definition": "to arrange a planned time for something", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "prepare", "definition": "to get something ready", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "begin", "definition": "to start", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "finish_core", "definition": "to bring something to an end", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "continue", "definition": "to keep going with an action", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "pause", "definition": "to stop temporarily", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "stop_core", "definition": "to cease doing something", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "expect", "definition": "to anticipate something", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "assume", "definition": "to take as true without checking", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "verify", "definition": "to confirm something is true", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "check", "definition": "to examine to confirm or detect", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "compare", "definition": "to look at the similarities and differences", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "contrast", "definition": "to highlight differences", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "evaluate", "definition": "to judge the value or quality of something", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "estimate", "definition": "to roughly calculate", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "measure", "definition": "to find a precise amount or extent", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "calculate", "definition": "to determine an answer by reasoning or math", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "observe", "definition": "to notice carefully", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "investigate", "definition": "to look into something carefully", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "research_core", "definition": "to study a subject in depth", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "learn", "definition": "to gain knowledge or skill", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "teach", "definition": "to share knowledge or skill with others", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "improve", "definition": "to make better", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "develop", "definition": "to grow or progress", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "change", "definition": "to make or become different", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "adapt", "definition": "to modify to fit new conditions", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "transform", "definition": "to change dramatically", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "increase", "definition": "to make or become larger", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "decrease", "definition": "to make or become smaller", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "support", "definition": "to back, hold up, or assist", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "oppose", "definition": "to act against", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "encourage", "definition": "to give support and confidence", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "discourage", "definition": "to cause to lose confidence", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "remember_core", "definition": "to keep in mind or recall", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "forget", "definition": "to fail to recall", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "recall", "definition": "to bring back into mind", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "understand", "definition": "to grasp the meaning of", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "realize", "definition": "to become fully aware of", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "notice", "definition": "to become aware of", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "important", "definition": "of great significance", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "essential", "definition": "absolutely necessary", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "useful", "definition": "able to be used for a beneficial purpose", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "helpful", "definition": "giving assistance", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "difficult", "definition": "needing much effort or skill", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "easy", "definition": "needing little effort", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "simple", "definition": "easy to understand or do", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "complex", "definition": "made of many interconnected parts", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "complicated", "definition": "having many parts and difficult to follow", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "clear", "definition": "easy to understand or see", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "vague", "definition": "uncertain or imprecise", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "precise", "definition": "exact and accurate", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "approximate", "definition": "close to but not exact", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "while_connector", "definition": "during the same time that", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "although", "definition": "in spite of the fact that", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "because", "definition": "for the reason that", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "therefore", "definition": "for that reason", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "thus", "definition": "consequently", "register_tags": ["formal"], "coverage_categories": ["core_vocabulary"]}
+{"word": "so_connector", "definition": "in consequence", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "however", "definition": "used to introduce a contrast", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "meanwhile", "definition": "at the same time", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "moreover", "definition": "in addition to what was said", "register_tags": ["formal"], "coverage_categories": ["core_vocabulary"]}
+{"word": "furthermore", "definition": "additionally", "register_tags": ["formal"], "coverage_categories": ["core_vocabulary"]}
+{"word": "in_addition", "definition": "as well; also", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "specifically", "definition": "precisely; especially", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "generally", "definition": "usually; in most cases", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "approximately", "definition": "about; roughly", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "later", "definition": "at a future point in time", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "earlier", "definition": "at a previous point in time", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}
+{"word": "soon", "definition": "in or after a short time", "register_tags": ["standard"], "coverage_categories": ["core_vocabulary"]}

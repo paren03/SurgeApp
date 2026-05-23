@@ -1,0 +1,12 @@
+{"word": "function", "definition": "a named block of code that performs a specific task", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "variable", "definition": "a named storage location for a value", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "loop", "definition": "a control structure that repeats a block of code", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "recursion", "definition": "a function that calls itself, usually with a base case", "register_tags": ["coding", "technical", "academic"], "coverage_categories": ["coding_technology", "science_math"]}
+{"word": "lambda", "definition": "an anonymous inline function", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "closure", "definition": "a function that captures variables from its enclosing scope", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "repository", "definition": "a stored collection of code, typically version-controlled", "register_tags": ["coding", "professional"], "coverage_categories": ["coding_technology"]}
+{"word": "merge", "definition": "to combine changes from different code branches", "register_tags": ["coding"], "coverage_categories": ["coding_technology"]}
+{"word": "rebase", "definition": "to move a sequence of commits onto a new base commit", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "mutex", "definition": "a synchronization primitive that grants exclusive access", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "async", "definition": "non-blocking; a function that yields while waiting", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}
+{"word": "callback", "definition": "a function passed to another function to be invoked later", "register_tags": ["coding", "technical"], "coverage_categories": ["coding_technology"]}

@@ -1,0 +1,32 @@
+{"word": "cognition", "definition": "the mental processes of perceiving, thinking, and remembering", "register_tags": ["academic", "professional"], "coverage_categories": ["psychology_education"]}
+{"word": "memory", "definition": "the faculty of encoding, storing, and recalling information", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "perception", "definition": "the process of interpreting sensory information", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "attention", "definition": "the focusing of awareness on a stimulus or task", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "motivation", "definition": "the internal drive directing behavior toward a goal", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "behavior", "definition": "the actions and reactions of an organism, especially in response to stimuli", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "conditioning", "definition": "learning that links a stimulus to a response", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "reinforcement", "definition": "a consequence that increases the likelihood of a behavior", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "schema", "definition": "a mental framework organizing knowledge", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "metacognition", "definition": "thinking about one's own thinking processes", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "bias", "definition": "a systematic deviation from objective judgment", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education", "philosophy_abstract"]}
+{"word": "heuristic", "definition": "a mental shortcut for problem-solving", "register_tags": ["academic"], "coverage_categories": ["psychology_education", "philosophy_abstract"]}
+{"word": "trauma", "definition": "deeply distressing experience with lasting psychological effects", "register_tags": ["academic", "medical"], "coverage_categories": ["psychology_education", "medicine_health"]}
+{"word": "resilience", "definition": "the ability to recover from difficulty or adversity", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "empathy", "definition": "the capacity to share and understand others' feelings", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "self_efficacy", "definition": "one's belief in one's ability to accomplish a task", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "curriculum", "definition": "a planned course of study", "register_tags": ["academic", "professional", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "pedagogy", "definition": "the method and practice of teaching", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "andragogy", "definition": "the method and practice of teaching adults", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "scaffolding", "definition": "structured support that helps a learner reach a higher level", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "assessment", "definition": "the evaluation of learning or performance", "register_tags": ["academic", "professional"], "coverage_categories": ["psychology_education"]}
+{"word": "rubric", "definition": "a scoring guide describing criteria for evaluation", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "differentiation", "definition": "tailoring instruction to varied learner needs", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "formative_assessment", "definition": "ongoing assessment used to guide further learning", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "summative_assessment", "definition": "end-of-unit assessment of cumulative learning", "register_tags": ["academic", "teacher"], "coverage_categories": ["psychology_education"]}
+{"word": "literacy", "definition": "the ability to read and write at a useful level", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "numeracy", "definition": "the ability to understand and work with numbers", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education", "science_math"]}
+{"word": "cognitive_load", "definition": "the total mental effort required to perform a task", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "growth_mindset", "definition": "the belief that abilities develop through effort and learning", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "fixed_mindset", "definition": "the belief that abilities are largely innate and unchanging", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}
+{"word": "feedback", "definition": "information given about performance to guide improvement", "register_tags": ["academic", "standard"], "coverage_categories": ["psychology_education"]}
+{"word": "rehearsal", "definition": "the mental repetition of information to aid memory", "register_tags": ["academic"], "coverage_categories": ["psychology_education"]}

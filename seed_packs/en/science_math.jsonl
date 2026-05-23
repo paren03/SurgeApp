@@ -1,0 +1,35 @@
+{"word": "hypothesis", "definition": "a proposed explanation that can be tested by experiment", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "theory", "definition": "a well-substantiated explanation supported by evidence", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "experiment", "definition": "a controlled procedure carried out to test a hypothesis", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "variable", "definition": "a factor that can change in an experiment or equation", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "control", "definition": "a baseline group or condition used for comparison", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "correlation", "definition": "a statistical relationship between two variables", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "causation", "definition": "the relationship of one event causing another", "register_tags": ["academic", "philosophical"], "coverage_categories": ["science_math", "philosophy_abstract"]}
+{"word": "atom", "definition": "the smallest unit of an element that retains its properties", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "molecule", "definition": "a group of atoms bonded together", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "electron", "definition": "a negatively charged subatomic particle", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "photon", "definition": "a quantum of electromagnetic radiation", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "entropy", "definition": "a measure of disorder or uncertainty in a system", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "evolution", "definition": "change in heritable traits of populations across generations", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "ecosystem", "definition": "a community of living things and their physical environment", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "cell", "definition": "the basic structural and functional unit of living organisms", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "gene", "definition": "a unit of heredity carrying a trait from parent to offspring", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "vector", "definition": "a quantity with both magnitude and direction", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "scalar", "definition": "a quantity with magnitude but no direction", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "matrix", "definition": "a rectangular array of numbers arranged in rows and columns", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "derivative", "definition": "the instantaneous rate of change of a function", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "integral", "definition": "the accumulated area under a curve of a function", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "probability", "definition": "the measure of how likely an event is to occur", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "distribution", "definition": "a description of how values of a variable are spread", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "mean", "definition": "the arithmetic average of a set of numbers", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "median", "definition": "the middle value in a sorted set of numbers", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "variance", "definition": "the expected squared deviation of a variable from its mean", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "regression", "definition": "a method of modeling relationships between variables", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "quantum", "definition": "the smallest discrete unit of a physical property", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "relativity", "definition": "physical theories of Einstein concerning space, time, and gravity", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "gravity", "definition": "the force of attraction between masses", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "momentum", "definition": "the product of mass and velocity", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "energy", "definition": "the capacity to do work, in many physical forms", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "frequency", "definition": "the number of cycles or events per unit of time", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "wavelength", "definition": "the distance between successive crests of a wave", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "proof", "definition": "a logical demonstration that a statement is true", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}

@@ -1,0 +1,80 @@
+{"word": "accounts_receivable", "definition": "money owed to a business by customers", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "accounts_payable", "definition": "money a business owes to suppliers", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "general_ledger", "definition": "the master record of all financial transactions", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "trial_balance", "definition": "a list of all ledger account balances at a point in time", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "balance_sheet", "definition": "statement of assets, liabilities, and equity at a moment in time", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "income_statement", "definition": "statement of revenues and expenses over a period", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "cash_flow_statement", "definition": "statement of cash inflows and outflows over a period", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "retained_earnings", "definition": "cumulative profits a company has kept rather than distributed", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "operating_margin", "definition": "operating income as a percentage of revenue", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "gross_margin", "definition": "revenue minus cost of goods sold, as a percentage of revenue", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "ebitda", "definition": "earnings before interest, taxes, depreciation, and amortization", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "working_capital", "definition": "current assets minus current liabilities", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "current_ratio", "definition": "current assets divided by current liabilities", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "debt_to_equity", "definition": "ratio of total debt to shareholder equity", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "checking_account", "definition": "a bank account intended for everyday transactions", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "savings_account", "definition": "a bank account that pays interest on deposits", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "certificate_of_deposit", "definition": "a time deposit that pays a fixed interest rate", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "money_market_account", "definition": "savings account with higher interest tied to money-market rates", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "overdraft", "definition": "withdrawing more than the available balance, causing a negative", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "wire_transfer", "definition": "electronic transfer of funds between banks", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "ach_transfer", "definition": "automated clearing house transfer between US bank accounts", "register_tags": ["business", "technical"], "coverage_categories": ["business_finance"]}
+{"word": "letter_of_credit", "definition": "bank's promise to pay on behalf of a buyer if terms are met", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "etf", "definition": "exchange-traded fund; a basket of assets trading like a stock", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "mutual_fund", "definition": "pooled investment in a managed portfolio of securities", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "index_fund", "definition": "fund tracking a market index like the S&P 500", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "dollar_cost_averaging", "definition": "investing a fixed amount on a schedule regardless of price", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "compound_interest", "definition": "interest earned on both principal and previously earned interest", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance", "science_math"]}
+{"word": "simple_interest", "definition": "interest calculated only on the principal", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance", "science_math"]}
+{"word": "credit_score", "definition": "numerical estimate of a borrower's creditworthiness", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "credit_utilization", "definition": "share of available credit used", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "apr_finance", "definition": "annual percentage rate; the yearly cost of borrowing", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "apy_finance", "definition": "annual percentage yield, accounting for compounding", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "principal", "definition": "the original amount of a loan or investment", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "collateral", "definition": "asset pledged to secure a loan", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "underwrite", "definition": "to evaluate and assume the risk of a loan, security, or policy", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "escrow_account", "definition": "a third-party account holding funds until conditions are met", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "appraisal", "definition": "professional estimate of a property's value", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "amortization_schedule", "definition": "table showing each payment of a loan as principal and interest", "register_tags": ["business", "technical"], "coverage_categories": ["business_finance"]}
+{"word": "refinance", "definition": "to replace an existing loan with a new one, often at better terms", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "second_mortgage", "definition": "additional loan on a property after the first mortgage", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "heloc", "definition": "home equity line of credit", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "fica_tax", "definition": "US payroll tax funding Social Security and Medicare", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "w2_form", "definition": "US tax form reporting employee wages and withholdings", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "1099_form", "definition": "US tax form reporting contractor or miscellaneous income", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "withholding", "definition": "tax amount deducted from a paycheck by the employer", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "payroll", "definition": "the process of paying employees and tracking related taxes", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "gross_pay", "definition": "total earnings before deductions", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "net_pay", "definition": "take-home pay after deductions", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "deductible_insurance", "definition": "amount the insured pays before coverage begins", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "premium_insurance", "definition": "amount paid for an insurance policy", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance"]}
+{"word": "co_pay", "definition": "fixed fee paid by an insured at the time of service", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance", "medicine_health"]}
+{"word": "fiduciary_duty", "definition": "legal duty to act in another party's best interest", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "earnout", "definition": "deal structure where seller is paid more based on future performance", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "due_diligence", "definition": "thorough investigation before a deal or commitment", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "term_sheet", "definition": "non-binding summary of proposed deal terms", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "cap_table", "definition": "capitalization table showing equity ownership in a company", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "vesting_schedule", "definition": "timeline on which equity grants become owned outright", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "stock_option", "definition": "right to buy company stock at a fixed price in the future", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "rsu", "definition": "restricted stock unit; deferred equity grant", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "convertible_note", "definition": "short-term debt that converts to equity in a future round", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "safe_note", "definition": "simple agreement for future equity, a startup funding instrument", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "burn_rate", "definition": "the rate at which a startup spends cash reserves", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "runway_finance", "definition": "months of operation possible before cash runs out", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "go_to_market", "definition": "plan for how a product reaches and grows with customers", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "customer_acquisition_cost", "definition": "average cost of gaining a new customer", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "lifetime_value", "definition": "projected total revenue from a customer over the relationship", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "churn_rate", "definition": "rate at which customers stop doing business with a company", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "arpu", "definition": "average revenue per user", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "fundraising_round", "definition": "a distinct stage in which a startup raises capital", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "seed_round", "definition": "the earliest formal funding round of a startup", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "series_a", "definition": "first major institutional funding round after seed", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance"]}
+{"word": "scope_of_work", "definition": "formal description of work to be performed under a contract", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "statement_of_work", "definition": "detailed deliverables and schedule for a project", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "master_services_agreement", "definition": "overarching contract governing future work between parties", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "nda_business", "definition": "non-disclosure agreement protecting confidential information", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "force_majeure", "definition": "clause excusing performance due to extraordinary events", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "indemnify", "definition": "to compensate another party for harm or loss", "register_tags": ["business", "professional", "legal"], "coverage_categories": ["business_finance", "law_government"]}
+{"word": "negotiate_in_good_faith", "definition": "phrase for honest, fair bargaining", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance", "idioms_phrases"]}
+{"word": "follow_up", "definition": "to check in or pursue a next step after an initial contact", "register_tags": ["business", "standard"], "coverage_categories": ["business_finance", "voice_personality"]}
+{"word": "table_a_topic", "definition": "to set a topic aside for later discussion (US business meaning)", "register_tags": ["business", "professional"], "coverage_categories": ["business_finance", "idioms_phrases"]}

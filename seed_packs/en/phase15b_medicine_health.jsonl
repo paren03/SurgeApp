@@ -1,0 +1,82 @@
+{"word": "skeleton", "definition": "the body's framework of bones", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "musculoskeletal_system", "definition": "system of bones, muscles, and connective tissues", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "cardiovascular_system", "definition": "heart and blood vessels", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "respiratory_system", "definition": "organs involved in breathing", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "digestive_system", "definition": "organs that process food and absorb nutrients", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "endocrine_system", "definition": "glands and hormones regulating body functions", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "nervous_system", "definition": "network of neurons coordinating actions and sensations", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "immune_system", "definition": "body's defense against infection and disease", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "lymphatic_system", "definition": "network of vessels and nodes carrying lymph", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "urinary_system", "definition": "organs filtering blood and excreting urine", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "blood_pressure", "definition": "force of blood against artery walls", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "hypertension", "definition": "chronically elevated blood pressure", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "hypotension", "definition": "abnormally low blood pressure", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "tachycardia", "definition": "abnormally fast heart rate", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "bradycardia", "definition": "abnormally slow heart rate", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "arrhythmia", "definition": "irregular heart rhythm", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "myocardial_infarction", "definition": "clinical term for heart attack", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "stroke_medical", "definition": "interruption of blood supply to part of the brain", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "ischemia", "definition": "reduced blood supply to a tissue", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "hemorrhage", "definition": "uncontrolled bleeding", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "edema", "definition": "swelling caused by fluid retention", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "inflammation", "definition": "body's protective response involving redness, heat, swelling, pain", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "fever", "definition": "elevated body temperature, usually due to infection", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "rash", "definition": "area of red, inflamed skin", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "fatigue", "definition": "extreme physical or mental tiredness", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "nausea", "definition": "feeling of sickness with an inclination to vomit", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "dizziness", "definition": "feeling of being lightheaded or unsteady", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "chest_pain", "definition": "discomfort or pain in the chest area", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "shortness_of_breath", "definition": "feeling of not being able to breathe enough air", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "first_aid", "definition": "immediate care given before professional medical help arrives", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "cpr", "definition": "cardiopulmonary resuscitation; emergency life-saving technique", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "aed", "definition": "automated external defibrillator", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "heimlich_maneuver", "definition": "abdominal-thrust technique to relieve choking", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "tourniquet", "definition": "device or band used to control severe bleeding", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "splint", "definition": "rigid support to immobilize a broken bone", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "iv_drip", "definition": "intravenous drip; fluid given through a vein", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "saline", "definition": "salt solution used in medical procedures", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "vital_signs", "definition": "key measures like temperature, pulse, respiration, blood pressure", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "pulse_oximeter", "definition": "device measuring oxygen saturation in blood", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "stethoscope", "definition": "medical device used to listen to internal body sounds", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "otoscope", "definition": "instrument used to examine the ear", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "blood_test", "definition": "laboratory analysis of a blood sample", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "urinalysis", "definition": "laboratory analysis of urine", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "biopsy", "definition": "removal of tissue for diagnostic analysis", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "mri", "definition": "magnetic resonance imaging, a noninvasive scan", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "ct_scan", "definition": "computed tomography; a cross-sectional X-ray scan", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "ultrasound", "definition": "imaging using high-frequency sound waves", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "ekg", "definition": "electrocardiogram; recording of heart's electrical activity", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "eeg", "definition": "electroencephalogram; recording of brain's electrical activity", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "anesthetic", "definition": "agent that causes loss of sensation, used in procedures", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "analgesic", "definition": "medication that relieves pain", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "antipyretic", "definition": "medication that reduces fever", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "anti_inflammatory", "definition": "medication that reduces inflammation", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "antihistamine", "definition": "medication for allergic reactions", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "controlled_substance", "definition": "drug regulated by law due to abuse potential", "register_tags": ["medical", "legal", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["medicine_health", "law_government", "recognition_only_sensitive"]}
+{"word": "opioid_term", "definition": "class of drugs (term only) used for severe pain", "register_tags": ["medical", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["medicine_health", "recognition_only_sensitive"]}
+{"word": "narcotic_term", "definition": "legal-medical category (term only) of certain controlled drugs", "register_tags": ["medical", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["medicine_health", "recognition_only_sensitive"]}
+{"word": "prescription", "definition": "written order from a clinician for medication", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "over_the_counter", "definition": "medication available without a prescription", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "side_effect", "definition": "unintended secondary effect of a treatment", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "contraindication", "definition": "condition or factor making a treatment inadvisable", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "allergy", "definition": "immune reaction to a substance the body sees as harmful", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "asthma", "definition": "chronic condition with airway inflammation and narrowing", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "diabetes", "definition": "metabolic disease of elevated blood sugar", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "insulin", "definition": "hormone regulating blood sugar", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "obesity_term", "definition": "medical category of excess body fat affecting health", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "vaccination", "definition": "administration of a vaccine to provide immunity", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "immunization", "definition": "process by which a person becomes protected against disease", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "quarantine", "definition": "isolation imposed to prevent disease spread", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "epidemic", "definition": "widespread disease in a community at a particular time", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "pandemic", "definition": "epidemic spread across multiple countries", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "public_health", "definition": "field protecting and improving community health", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "preventive_care", "definition": "healthcare aimed at preventing illness", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "informed_consent", "definition": "patient's voluntary agreement to a treatment after disclosure", "register_tags": ["medical", "legal"], "coverage_categories": ["medicine_health", "law_government"]}
+{"word": "hipaa", "definition": "US law regulating health information privacy", "register_tags": ["medical", "legal"], "coverage_categories": ["medicine_health", "law_government"]}
+{"word": "icu", "definition": "intensive care unit", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "er", "definition": "emergency room", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "primary_care", "definition": "first-contact care provided by general clinicians", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "specialist", "definition": "clinician focused on a particular medical field", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "referral", "definition": "redirection of a patient to a specialist or other service", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "telemedicine", "definition": "remote medical care via electronic communication", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "differential_diagnosis", "definition": "clinical process of distinguishing possible causes of symptoms", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}

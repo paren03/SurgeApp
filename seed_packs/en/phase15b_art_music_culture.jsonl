@@ -1,0 +1,80 @@
+{"word": "hue", "definition": "the attribute of color identifying it as red, blue, etc.", "register_tags": ["academic", "standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "saturation_color", "definition": "the intensity or purity of a color", "register_tags": ["academic", "standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "value_color", "definition": "lightness or darkness of a color", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "complementary_colors", "definition": "color pairs opposite on the color wheel", "register_tags": ["standard", "academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "analogous_colors", "definition": "colors adjacent on the color wheel", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "monochrome", "definition": "single-hue artwork or palette", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "chiaroscuro", "definition": "use of strong contrasts between light and dark", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "tenebrism", "definition": "extreme chiaroscuro associated with Caravaggio", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "sfumato", "definition": "soft blurring of edges in painting, Leonardo's technique", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "impasto", "definition": "paint applied so thickly that brush marks are visible", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "watercolor", "definition": "painting medium using water-soluble pigments", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "acrylic_paint", "definition": "fast-drying water-based painting medium", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "oil_paint", "definition": "painting medium of pigment in drying oil", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "etching", "definition": "printmaking technique using acid to incise lines into metal", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "lithograph", "definition": "print made from a stone or metal plate with greasy crayon image", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "silkscreen", "definition": "printmaking using stencils on a fine mesh", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "collage", "definition": "artwork assembled from disparate materials", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "mixed_media", "definition": "artwork combining multiple artistic media", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "still_life", "definition": "artwork depicting inanimate objects", "register_tags": ["standard", "academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "portraiture", "definition": "art of representing a person", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "self_portrait", "definition": "portrait of the artist by themselves", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "landscape_art", "definition": "artwork depicting natural scenery", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "abstract_art", "definition": "art not depicting recognizable subjects", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "surrealism", "definition": "20th-century movement exploring dreams and the unconscious", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "expressionism", "definition": "movement emphasizing emotional experience over realism", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "minimalism_art", "definition": "movement using simple geometry and bare forms", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "pop_art", "definition": "movement using imagery from popular culture", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "art_deco", "definition": "1920s-30s decorative arts style of geometric forms", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "art_nouveau", "definition": "late-19th-century style of flowing organic lines", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "bauhaus", "definition": "early-20th-century German design school", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "treble_clef", "definition": "musical symbol indicating the G above middle C", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "bass_clef", "definition": "musical symbol for lower pitches", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "time_signature", "definition": "numerical notation for beats per measure and beat unit", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "key_signature", "definition": "set of sharps or flats defining a piece's key", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "major_key", "definition": "key based on the major scale", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "minor_key", "definition": "key based on a minor scale, often sounding sadder", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "diminished_chord", "definition": "chord with a flatted third and fifth", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "augmented_chord", "definition": "chord with a raised fifth", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "tonic", "definition": "the first note of a scale, the home note", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "dominant_chord", "definition": "chord built on the fifth scale degree", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "subdominant", "definition": "chord built on the fourth scale degree", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "modulation_music", "definition": "change of key within a piece", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "counterpoint", "definition": "combining independent melodic lines", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "fugue", "definition": "contrapuntal composition with a recurring subject", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "sonata_form", "definition": "musical structure of exposition, development, recapitulation", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "rondo", "definition": "form where a main theme returns between contrasting episodes", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "improvisation", "definition": "music created spontaneously in performance", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "session_musician", "definition": "professional player hired for recordings", "register_tags": ["standard", "professional"], "coverage_categories": ["art_music_culture", "professions_jobs"]}
+{"word": "stage_left", "definition": "the actor's left when facing the audience", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "stage_right", "definition": "the actor's right when facing the audience", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "blocking_theater", "definition": "planned movement of actors on stage", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "ad_lib", "definition": "improvised addition to a script", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "method_acting", "definition": "acting technique drawing on personal experience", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "psychology_education"]}
+{"word": "auteur_theory", "definition": "view of a director as the primary author of a film", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "mise_en_scene", "definition": "everything placed before the camera or on stage", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "cinematography", "definition": "art of motion-picture photography", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "depth_of_field", "definition": "range of distance in which an image is acceptably sharp", "register_tags": ["academic", "technical"], "coverage_categories": ["art_music_culture"]}
+{"word": "long_take", "definition": "unbroken shot of extended duration", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "montage_film", "definition": "editing technique combining short shots for effect", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "diegetic_sound", "definition": "sound originating within the world of the film", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "non_diegetic_sound", "definition": "sound outside the world of the film, like score", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "score_film", "definition": "original music composed for a film", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "soundtrack", "definition": "recorded music accompanying a film or game", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "culture_clash", "definition": "conflict from differing cultural values", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "cultural_appropriation", "definition": "adoption of elements from another culture, often with controversy", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "philosophy_abstract"]}
+{"word": "cultural_relativism", "definition": "view that cultural practices are understood in their own context", "register_tags": ["academic", "philosophical"], "coverage_categories": ["art_music_culture", "philosophy_abstract"]}
+{"word": "subculture", "definition": "smaller cultural group within a broader culture", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "counterculture", "definition": "subculture opposed to mainstream values", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "ritual", "definition": "established ceremonial action with cultural meaning", "register_tags": ["academic", "standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "folklore_art", "definition": "traditional beliefs, customs, and stories of a community", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "iconography", "definition": "study of visual symbols and their meanings", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "aesthetic_distance", "definition": "perceptual gap that lets the audience contemplate art", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "philosophy_abstract"]}
+{"word": "curation", "definition": "selection and organization of works for an exhibition or platform", "register_tags": ["academic"], "coverage_categories": ["art_music_culture"]}
+{"word": "patronage", "definition": "financial or social support of artists, especially historically", "register_tags": ["academic"], "coverage_categories": ["art_music_culture", "history_geography"]}
+{"word": "studio_album", "definition": "album recorded in a studio rather than live", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "live_album", "definition": "album recorded in concert performance", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "ep_music", "definition": "extended play; shorter than a full album", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "remix", "definition": "alternative version of a song with new mixing", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "sample_music", "definition": "portion of an existing recording reused in a new track", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}
+{"word": "vinyl_record", "definition": "analog audio storage on a flat disc with grooves", "register_tags": ["standard"], "coverage_categories": ["art_music_culture"]}

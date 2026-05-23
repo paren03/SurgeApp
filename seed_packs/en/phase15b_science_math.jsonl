@@ -1,0 +1,82 @@
+{"word": "mitosis", "definition": "cell division producing two identical daughter cells", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "meiosis", "definition": "cell division that produces gametes with half the chromosomes", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "chromosome", "definition": "thread-like structure of DNA carrying genetic information", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "dna", "definition": "deoxyribonucleic acid; molecule carrying genetic instructions", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "rna", "definition": "ribonucleic acid; molecule involved in coding and protein synthesis", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "protein", "definition": "biological macromolecule essential to cell function", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math", "medicine_health"]}
+{"word": "enzyme", "definition": "protein that catalyzes biochemical reactions", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "photosynthesis", "definition": "process by which plants convert light to chemical energy", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "cellular_respiration", "definition": "metabolic process releasing energy from nutrients", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "ph_value", "definition": "scale of how acidic or basic a solution is", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "acid", "definition": "substance that donates protons; pH below 7", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "base_chemistry", "definition": "substance that accepts protons; pH above 7", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "ion", "definition": "atom or molecule with a net electric charge", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "isotope", "definition": "variant of an element with different number of neutrons", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "valence", "definition": "combining power of an element based on outer electrons", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "covalent_bond", "definition": "chemical bond formed by sharing electrons", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "ionic_bond", "definition": "bond formed by transfer of electrons between atoms", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "stoichiometry", "definition": "quantitative relationships in chemical reactions", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "thermodynamics", "definition": "branch of physics studying heat and energy", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "kinetic_energy", "definition": "energy of motion", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "potential_energy", "definition": "stored energy due to position or state", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "newtonian_mechanics", "definition": "classical physics based on Newton's laws of motion", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "acceleration", "definition": "rate of change of velocity with time", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "velocity", "definition": "speed with direction", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "friction", "definition": "force resisting relative motion between surfaces", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "torque_physics", "definition": "rotational equivalent of force", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math", "mechanics_transportation"]}
+{"word": "electromagnetism", "definition": "physics of electric and magnetic forces", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "voltage", "definition": "electric potential difference between two points", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "current_electric", "definition": "flow of electric charge per unit time", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "resistance_electric", "definition": "opposition to electric current flow", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "ohms_law", "definition": "voltage equals current times resistance", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "plate_tectonics", "definition": "theory of large-scale movement of Earth's lithosphere", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "fault_line", "definition": "fracture where rocks have moved relative to each other", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "magnitude_earthquake", "definition": "measure of energy released by an earthquake", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "richter_scale", "definition": "logarithmic scale for earthquake magnitude", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "climate", "definition": "long-term weather patterns of a region", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "weather", "definition": "short-term atmospheric conditions", "register_tags": ["standard"], "coverage_categories": ["science_math"]}
+{"word": "greenhouse_effect", "definition": "warming due to gases trapping heat in the atmosphere", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "biodiversity", "definition": "variety of life in a region or ecosystem", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "habitat", "definition": "natural environment where an organism lives", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "astronomy_field", "definition": "the scientific study of celestial objects and the universe", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "galaxy", "definition": "vast system of stars, gas, and dust bound by gravity", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "nebula", "definition": "cloud of gas and dust in space, often a stellar nursery", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "supernova", "definition": "powerful stellar explosion at the end of a star's life", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "black_hole", "definition": "region of spacetime with gravity so strong nothing escapes", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "neutron_star", "definition": "extremely dense remnant of a massive star", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "light_year", "definition": "distance light travels in one year, about 9.46 trillion km", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "parsec", "definition": "astronomical distance unit, about 3.26 light-years", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "data_set", "definition": "a structured collection of data", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math", "coding_technology"]}
+{"word": "sample_statistics", "definition": "subset of a population used to make inferences", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "population_statistics", "definition": "entire group under study", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "standard_deviation", "definition": "measure of variability around the mean", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "p_value", "definition": "probability of observing data at least as extreme under the null", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "confidence_interval", "definition": "range plausibly containing a parameter at a given confidence level", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "null_hypothesis", "definition": "default claim of no effect or no difference", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "alternative_hypothesis", "definition": "claim that contradicts the null hypothesis", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "anova", "definition": "analysis of variance; statistical test comparing group means", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "chi_squared", "definition": "statistical test of association between categorical variables", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "t_test", "definition": "statistical test for comparing two means", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "linear_equation", "definition": "an equation graphing as a straight line", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "quadratic_equation", "definition": "polynomial equation of degree two", "register_tags": ["academic", "standard"], "coverage_categories": ["science_math"]}
+{"word": "polynomial", "definition": "expression of variables and coefficients with non-negative integer exponents", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "exponential_function", "definition": "function of the form a*b^x", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "logarithm", "definition": "the inverse operation of exponentiation", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "factorial", "definition": "product of all positive integers up to n", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "permutation", "definition": "ordered arrangement of items", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "combination", "definition": "selection of items without regard to order", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "set_theory", "definition": "branch of math studying collections of objects", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "subset", "definition": "set whose elements are all in another set", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "union_set", "definition": "set of all elements in either of two sets", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "intersection_set", "definition": "set of all elements in both of two sets", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "matrix_inverse", "definition": "matrix that when multiplied with the original gives identity", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "determinant_matrix", "definition": "scalar value derived from a square matrix", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "eigenvalue", "definition": "scalar associated with a linear transformation eigenvector", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "limit_calculus", "definition": "the value a function approaches as input approaches some value", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "differential_equation", "definition": "equation involving functions and their derivatives", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "fourier_transform", "definition": "decomposition of signals into frequency components", "register_tags": ["academic", "technical"], "coverage_categories": ["science_math"]}
+{"word": "control_group", "definition": "baseline group used for comparison in an experiment", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "treatment_group", "definition": "group receiving the experimental intervention", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "double_blind", "definition": "study where neither participants nor researchers know assignments", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "peer_review", "definition": "evaluation of work by experts in the field", "register_tags": ["academic"], "coverage_categories": ["science_math"]}
+{"word": "preprint", "definition": "manuscript shared before formal peer review", "register_tags": ["academic"], "coverage_categories": ["science_math"]}

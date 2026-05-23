@@ -1,0 +1,81 @@
+{"word": "assist", "definition": "formal for 'help'", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "aid", "definition": "formal noun/verb for 'help'", "register_tags": ["formal", "standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "lend_a_hand", "definition": "informal idiom for 'help'", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "give_a_hand", "definition": "informal phrase for offering help", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "obtain", "definition": "formal for 'get'", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "get_informal", "definition": "common informal for 'receive' or 'acquire'", "register_tags": ["informal", "standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "grab_informal", "definition": "informal for 'quickly obtain'", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "kindly", "definition": "polite formal modifier in requests", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "please", "definition": "standard polite modifier", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "could_you_kindly", "definition": "very polite formal request preface", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "would_you_mind", "definition": "polite request preface", "register_tags": ["standard", "formal"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "any_chance_you_could", "definition": "casual but polite request preface", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "many_thanks", "definition": "formal thank-you", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "much_appreciated", "definition": "polite informal thank-you", "register_tags": ["informal", "professional"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "you_re_a_lifesaver", "definition": "informal warm thank-you", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "apologies", "definition": "formal apology", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "im_sorry", "definition": "standard apology", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "my_bad", "definition": "informal admission of fault", "register_tags": ["informal", "slang"], "coverage_categories": ["formal_informal_speech", "slang_street_talk"]}
+{"word": "good_morning", "definition": "standard polite morning greeting", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "morning_informal", "definition": "casual abbreviation of 'good morning'", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "good_afternoon", "definition": "standard polite afternoon greeting", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "afternoon_informal", "definition": "casual short form of greeting", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "good_evening", "definition": "standard polite evening greeting", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "hey_there", "definition": "casual friendly greeting", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "to_whom_it_may_concern", "definition": "formal opening when recipient is unknown", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "dear_recipient", "definition": "formal letter opening with named recipient", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "hi_recipient", "definition": "informal email opening", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "sincerely", "definition": "formal letter closing", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "best_regards", "definition": "common professional closing", "register_tags": ["professional", "standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "kind_regards", "definition": "warm professional closing", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "cheers_close", "definition": "informal closing in British or casual contexts", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "talk_soon", "definition": "warm informal closing", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "look_forward_to_hearing", "definition": "polite professional sign-off phrase", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "as_per", "definition": "formal phrasing for 'according to'", "register_tags": ["formal", "business"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "according_to", "definition": "standard phrase referencing a source", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "in_accordance_with", "definition": "formal phrasing aligning with a rule or policy", "register_tags": ["formal", "legal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "going_forward", "definition": "professional phrase for 'from now on'", "register_tags": ["professional", "business"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "from_now_on", "definition": "standard phrase indicating future change", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "moving_on", "definition": "phrase to transition to a new topic", "register_tags": ["standard", "professional"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "by_the_way", "definition": "casual phrase introducing a side topic", "register_tags": ["standard", "informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "incidentally", "definition": "formal alternative to 'by the way'", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "speaking_of_which", "definition": "phrase linking to a related topic", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "let_me_clarify", "definition": "professional phrase for restating a point", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "just_to_clarify", "definition": "polite informal phrase for restating", "register_tags": ["informal", "standard"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "in_short", "definition": "phrase preceding a summary", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "long_story_short", "definition": "informal phrase preceding a summary", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "tldr", "definition": "internet phrase for too-long-didn't-read summary", "register_tags": ["informal", "coding"], "coverage_categories": ["formal_informal_speech", "slang_street_talk"]}
+{"word": "in_other_words", "definition": "phrase introducing a restatement", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "put_simply", "definition": "phrase introducing a simpler restatement", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "to_be_clear", "definition": "phrase emphasizing precision", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "off_the_record", "definition": "phrase indicating non-public conversation", "register_tags": ["professional", "informal"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "on_the_record", "definition": "phrase indicating a quotable, public statement", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "i_appreciate_you", "definition": "warm informal phrase of gratitude", "register_tags": ["informal", "voice_safe"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "we_appreciate_your_time", "definition": "polite professional acknowledgment", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "i_hear_what_you_re_saying", "definition": "phrase acknowledging another's view", "register_tags": ["professional", "informal", "voice_safe"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "fair_enough", "definition": "phrase conceding a reasonable point", "register_tags": ["standard", "informal"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "noted", "definition": "professional acknowledgment", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "got_it", "definition": "casual acknowledgment", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "understood", "definition": "professional acknowledgment", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "copy_that", "definition": "radio/professional acknowledgment, also informal", "register_tags": ["professional", "informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "if_i_may", "definition": "formal preface to an interjection", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "if_i_can_jump_in", "definition": "polite informal phrase to enter a conversation", "register_tags": ["informal", "professional"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "to_play_devils_advocate", "definition": "phrase signaling a contrary view for discussion", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "with_due_respect", "definition": "formal phrase for polite disagreement", "register_tags": ["formal", "professional"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "respectfully_disagree", "definition": "polite phrase for declining to agree", "register_tags": ["formal", "professional"], "coverage_categories": ["formal_informal_speech", "idioms_phrases"]}
+{"word": "i_d_push_back", "definition": "professional phrase for offering a counterpoint", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "i_hear_you_but", "definition": "phrase acknowledging then disagreeing politely", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "fair_point", "definition": "polite acknowledgement of a sound argument", "register_tags": ["standard", "voice_safe"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "well_taken", "definition": "professional phrase recognizing a valid point", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "im_not_sure", "definition": "honest expression of uncertainty", "register_tags": ["standard", "voice_safe"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "i_d_have_to_check", "definition": "honest professional deferral", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "let_me_look_into_that", "definition": "professional phrase for committing to investigate", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "ill_get_back_to_you", "definition": "phrase committing to follow up", "register_tags": ["professional"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "as_you_wish", "definition": "polite, slightly formal acceptance", "register_tags": ["formal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "your_call", "definition": "informal phrase deferring the decision", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "thanks_a_million", "definition": "informal warm thank-you", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "thanks_a_ton", "definition": "informal warm thank-you", "register_tags": ["informal"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "thanks_again", "definition": "polite repeated thanks", "register_tags": ["standard"], "coverage_categories": ["formal_informal_speech"]}
+{"word": "any_time", "definition": "informal response to thanks", "register_tags": ["informal", "voice_safe"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "no_problem", "definition": "casual phrase of acceptance or reassurance", "register_tags": ["standard", "voice_safe"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}
+{"word": "happy_to_help", "definition": "warm professional response to thanks", "register_tags": ["professional", "voice_safe"], "coverage_categories": ["formal_informal_speech", "voice_personality"]}

@@ -1,0 +1,10 @@
+{"word": "diagnosis", "definition": "identification of an illness from its signs and symptoms", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "prognosis", "definition": "the likely course or outcome of a disease", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health"]}
+{"word": "symptom", "definition": "a physical or mental feature indicating a condition", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "antibiotic", "definition": "a medicine that inhibits the growth of bacteria", "register_tags": ["medical"], "coverage_categories": ["medicine_health"]}
+{"word": "vaccine", "definition": "a preparation that stimulates immune response to a specific disease", "register_tags": ["medical", "standard"], "coverage_categories": ["medicine_health"]}
+{"word": "anesthesia", "definition": "insensitivity to pain induced for medical procedures", "register_tags": ["medical", "technical"], "coverage_categories": ["medicine_health"]}
+{"word": "triage", "definition": "the prioritization of patients based on severity", "register_tags": ["medical", "professional"], "coverage_categories": ["medicine_health"]}
+{"word": "epidemiology", "definition": "the study of how diseases spread through populations", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health", "science_math"]}
+{"word": "pharmacology", "definition": "the study of drugs and their effects on living organisms", "register_tags": ["medical", "academic"], "coverage_categories": ["medicine_health", "science_math"]}
+{"word": "morphine", "definition": "an opioid analgesic used in medical pain management", "register_tags": ["medical", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["medicine_health", "recognition_only_sensitive"]}

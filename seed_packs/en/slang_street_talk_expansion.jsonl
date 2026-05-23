@@ -1,0 +1,108 @@
+{"word": "dope", "definition": "excellent, impressive (informal positive)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "fire", "definition": "very good or stylish (informal slang adjective)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "wack", "definition": "bad, lame (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "rad", "definition": "excellent (informal, originated from 'radical')", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "gnarly", "definition": "intense or excellent (surf/skate informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "stoked", "definition": "very excited about something", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "bummed", "definition": "disappointed or upset (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "bail", "definition": "to leave or cancel (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "ditch", "definition": "to abandon or skip", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "split", "definition": "to leave a place (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "bounce", "definition": "to leave a place quickly (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "vibe_out", "definition": "to relax and enjoy a mood", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "hang_out", "definition": "to spend casual time with people", "register_tags": ["informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "kick_it", "definition": "to relax with friends (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "crash", "definition": "to sleep, especially unexpectedly or at someone's place", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "binge", "definition": "to consume a lot at once (informal, often TV or food)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "buzzed", "definition": "mildly intoxicated (informal)", "register_tags": ["slang", "informal", "do_not_use_unprompted"], "safety_tags": ["do_not_use_unprompted"], "coverage_categories": ["slang_street_talk"]}
+{"word": "wasted", "definition": "very intoxicated (informal)", "register_tags": ["slang", "informal", "do_not_use_unprompted"], "safety_tags": ["do_not_use_unprompted"], "coverage_categories": ["slang_street_talk"]}
+{"word": "lit_up", "definition": "intoxicated or very excited (context-dependent slang)", "register_tags": ["slang", "informal", "do_not_use_unprompted"], "safety_tags": ["do_not_use_unprompted"], "coverage_categories": ["slang_street_talk"]}
+{"word": "tipsy", "definition": "slightly intoxicated (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "hangover", "definition": "the unpleasant after-effects of drinking too much", "register_tags": ["standard", "informal"], "coverage_categories": ["slang_street_talk", "medicine_health"]}
+{"word": "broke", "definition": "having no money (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk", "business_finance"]}
+{"word": "loaded", "definition": "wealthy (informal); also intoxicated, context-dependent", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "cash_strapped", "definition": "short on money (informal)", "register_tags": ["informal"], "coverage_categories": ["slang_street_talk", "business_finance"]}
+{"word": "ride", "definition": "a car (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk", "mechanics_transportation"]}
+{"word": "whip", "definition": "a car (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk", "mechanics_transportation"]}
+{"word": "kicks", "definition": "shoes (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "fit", "definition": "outfit (slang shortening)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "drip", "definition": "stylish clothing or look (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "swag", "definition": "confident stylish presence (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "no_cap", "definition": "no lie; truthfully (internet slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "cap", "definition": "a lie (internet slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "bet", "definition": "okay, agreed (slang affirmation)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "facts", "definition": "exclamation of agreement (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "lowkey_slang", "definition": "subtly, kind of (slang adverb)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "highkey", "definition": "openly, very (slang adverb)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "mood", "definition": "a relatable feeling or state (internet slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "vibes", "definition": "the feeling or atmosphere of something", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "tea", "definition": "gossip (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "spill_tea", "definition": "to share gossip (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk", "idioms_phrases"]}
+{"word": "shade", "definition": "subtle criticism or disrespect (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "throwing_shade", "definition": "to subtly criticize someone (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk", "idioms_phrases"]}
+{"word": "salty_slang", "definition": "bitter or annoyed (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "savage_slang", "definition": "boldly cutting or impressive (slang positive)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "extra", "definition": "over the top, excessive (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "basic", "definition": "unoriginal or mainstream (slang, mildly dismissive)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "cringe", "definition": "to feel secondhand embarrassment; embarrassing (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "sus", "definition": "suspicious (slang shortening)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "lit_slang", "definition": "exciting or great (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "slay", "definition": "to do something exceptionally well (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "ate", "definition": "delivered an excellent performance (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "ate_that_up", "definition": "really delivered or nailed something (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk", "idioms_phrases"]}
+{"word": "rizz", "definition": "charisma, especially in flirting (recent slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "ghosting", "definition": "the act of suddenly cutting off communication", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "thirsty", "definition": "overly eager for attention or approval (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "clout", "definition": "social influence, especially online (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "clout_chaser", "definition": "someone who chases attention for influence (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "main_character", "definition": "person seen as the protagonist of a scene (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "npc", "definition": "non-player character; metaphor for someone seen as unoriginal (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "side_eye", "definition": "a sidelong glance of skepticism or disapproval", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "spill", "definition": "to reveal information (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "snitch", "definition": "to inform on someone (slang, often disapproving)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "salty_remark", "definition": "a bitter or resentful comment (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "fam", "definition": "close friends or family (informal address)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "squad", "definition": "a close group of friends (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "bff", "definition": "best friend forever (informal abbreviation)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "homie", "definition": "a close friend (informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "bro", "definition": "informal friendly address for a male (sometimes any friend)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "dude", "definition": "casual general address (American informal)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "buddy", "definition": "friendly form of address (informal)", "register_tags": ["informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "g", "definition": "a casual address among close peers (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "boss_slang", "definition": "great or impressive (slang adjective)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "killer", "definition": "excellent (slang adjective)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "wicked_slang", "definition": "very (intensifier, regional informal)", "register_tags": ["slang", "informal", "regional"], "coverage_categories": ["slang_street_talk", "regional_dialect"]}
+{"word": "sick_slang", "definition": "excellent (slang adjective)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "tight_slang", "definition": "cool or impressive (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "smashed", "definition": "intoxicated; or to do extremely well (context-dependent slang)", "register_tags": ["slang", "informal", "do_not_use_unprompted"], "safety_tags": ["do_not_use_unprompted"], "coverage_categories": ["slang_street_talk"]}
+{"word": "trashed", "definition": "intoxicated or destroyed (slang)", "register_tags": ["slang", "informal", "do_not_use_unprompted"], "safety_tags": ["do_not_use_unprompted"], "coverage_categories": ["slang_street_talk"]}
+{"word": "lit_party", "definition": "exciting party (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "rager", "definition": "a wild party (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "throwdown", "definition": "a big event or a confrontation (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "beef", "definition": "an ongoing dispute (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "throw_hands", "definition": "to start a physical fight (slang)", "register_tags": ["slang", "informal", "do_not_use_unprompted"], "safety_tags": ["do_not_use_unprompted"], "coverage_categories": ["slang_street_talk", "idioms_phrases"]}
+{"word": "scrap", "definition": "a fight (slang)", "register_tags": ["slang", "informal", "do_not_use_unprompted"], "safety_tags": ["do_not_use_unprompted"], "coverage_categories": ["slang_street_talk"]}
+{"word": "damn", "definition": "mild exclamation of frustration or emphasis", "register_tags": ["informal", "vulgar"], "safety_tags": ["vulgar"], "coverage_categories": ["slang_street_talk"]}
+{"word": "hell", "definition": "intensifier or exclamation (mildly vulgar in some contexts)", "register_tags": ["informal", "vulgar"], "safety_tags": ["vulgar"], "coverage_categories": ["slang_street_talk"]}
+{"word": "crap", "definition": "mild expletive for displeasure or low quality", "register_tags": ["informal", "vulgar"], "safety_tags": ["vulgar"], "coverage_categories": ["slang_street_talk"]}
+{"word": "freaking", "definition": "softened intensifier substituted for stronger words", "register_tags": ["informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "screwed_up", "definition": "messed up; mildly informal for spoiled or broken", "register_tags": ["informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "trash_talk", "definition": "verbal disparagement, often between competitors", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "diss", "definition": "to insult or disparage (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "roast", "definition": "to mock with humor (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "burn", "definition": "a clever insult (slang noun)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "clap_back", "definition": "to respond sharply to criticism (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "ratio", "definition": "internet slang where a reply outperforms the original post", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "doomscroll", "definition": "to compulsively scroll through bad news (internet slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "yeetus", "definition": "playful intensifier of 'yeet' (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "dunked_on", "definition": "to have been thoroughly defeated or shown up (slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "feels", "definition": "strong emotions (slang noun)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "all_the_feels", "definition": "experiencing strong emotion at once (slang phrase)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk", "idioms_phrases"]}
+{"word": "iykyk", "definition": "if you know, you know — internet shorthand for in-group reference", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "ngl", "definition": "not gonna lie — internet shorthand for honesty preface", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "tbh", "definition": "to be honest — internet shorthand", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "fr", "definition": "for real — slang affirmation", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "imo", "definition": "in my opinion (internet shorthand)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "smh", "definition": "shaking my head — expression of disapproval (internet slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "rofl", "definition": "rolling on the floor laughing (internet slang)", "register_tags": ["slang", "informal"], "coverage_categories": ["slang_street_talk"]}
+{"word": "edge_term_demo", "definition": "synthetic recognition-only entry demonstrating gating", "register_tags": ["slang", "recognition_only"], "safety_tags": ["recognition_only"], "coverage_categories": ["slang_street_talk", "recognition_only_sensitive"]}
