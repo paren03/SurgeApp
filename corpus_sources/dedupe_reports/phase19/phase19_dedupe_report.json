@@ -1,0 +1,192 @@
+{
+  "generated_at": 1779459541.936359,
+  "limit": 100,
+  "en": {
+    "exact_duplicates_count": 0,
+    "pack_collisions_count": 0,
+    "cross_category_reuse_count": 0,
+    "missing_pack_ids_count": 100,
+    "missing_safety_tags_count": 100,
+    "missing_register_tags_count": 100,
+    "samples": {
+      "exact_duplicates": [],
+      "pack_collisions": [],
+      "cross_category_reuse": [],
+      "missing_pack_ids": [
+        {
+          "word": "hello"
+        },
+        {
+          "word": "goodbye"
+        },
+        {
+          "word": "yes"
+        },
+        {
+          "word": "no"
+        },
+        {
+          "word": "water"
+        },
+        {
+          "word": "food"
+        },
+        {
+          "word": "home"
+        },
+        {
+          "word": "work"
+        },
+        {
+          "word": "time"
+        },
+        {
+          "word": "today"
+        }
+      ],
+      "missing_safety_tags": [
+        {
+          "word": "hello"
+        },
+        {
+          "word": "goodbye"
+        },
+        {
+          "word": "yes"
+        },
+        {
+          "word": "no"
+        },
+        {
+          "word": "please"
+        },
+        {
+          "word": "thanks"
+        },
+        {
+          "word": "water"
+        },
+        {
+          "word": "food"
+        },
+        {
+          "word": "home"
+        },
+        {
+          "word": "work"
+        }
+      ],
+      "missing_register_tags": [
+        {
+          "word": "hello"
+        },
+        {
+          "word": "goodbye"
+        },
+        {
+          "word": "yes"
+        },
+        {
+          "word": "no"
+        },
+        {
+          "word": "water"
+        },
+        {
+          "word": "food"
+        },
+        {
+          "word": "home"
+        },
+        {
+          "word": "work"
+        },
+        {
+          "word": "time"
+        },
+        {
+          "word": "today"
+        }
+      ]
+    }
+  },
+  "ru": {
+    "exact_duplicates_count": 0,
+    "pack_collisions_count": 0,
+    "cross_category_reuse_count": 0,
+    "missing_pack_ids_count": 100,
+    "missing_safety_tags_count": 100,
+    "missing_register_tags_count": 0,
+    "samples": {
+      "exact_duplicates": [],
+      "pack_collisions": [],
+      "cross_category_reuse": [],
+      "missing_pack_ids": [
+        {
+          "word": "функция"
+        },
+        {
+          "word": "переменная"
+        },
+        {
+          "word": "цикл"
+        },
+        {
+          "word": "рекурсия"
+        },
+        {
+          "word": "класс"
+        },
+        {
+          "word": "объект"
+        },
+        {
+          "word": "репозиторий"
+        },
+        {
+          "word": "ветка"
+        },
+        {
+          "word": "коммит"
+        },
+        {
+          "word": "деплой"
+        }
+      ],
+      "missing_safety_tags": [
+        {
+          "word": "функция"
+        },
+        {
+          "word": "переменная"
+        },
+        {
+          "word": "цикл"
+        },
+        {
+          "word": "рекурсия"
+        },
+        {
+          "word": "класс"
+        },
+        {
+          "word": "объект"
+        },
+        {
+          "word": "репозиторий"
+        },
+        {
+          "word": "ветка"
+        },
+        {
+          "word": "коммит"
+        },
+        {
+          "word": "деплой"
+        }
+      ],
+      "missing_register_tags": []
+    }
+  },
+  "written_at": 1779459542.0055296
+}

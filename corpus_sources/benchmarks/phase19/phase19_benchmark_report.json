@@ -1,0 +1,254 @@
+{
+  "per_fixture": {
+    "en": {
+      "streaming_read": {
+        "ok": true,
+        "path": "corpus_sources\\quality_samples\\phase19_synthetic\\english_scale_fixture.jsonl",
+        "rows_read": 100000,
+        "elapsed_seconds": 0.0564,
+        "rows_per_second": 1772751.0
+      },
+      "dry_run_import": {
+        "ok": true,
+        "language": "en",
+        "accepted": 10000,
+        "rejected": 0,
+        "duplicates": 0,
+        "batches": 11,
+        "elapsed_seconds": 6.897,
+        "rows_per_second": 1449.9,
+        "underlying_result": {
+          "ok": true,
+          "path": "corpus_sources\\quality_samples\\phase19_synthetic\\english_scale_fixture.jsonl",
+          "language": "en",
+          "source_type": "word_list",
+          "expected_format": "jsonl",
+          "corpus_id": "ad_hoc",
+          "checkpoint_id": "ckpt_1779379966_d3f0197b76",
+          "dry_run": true,
+          "allow_full_source": false,
+          "max_entries_applied": 10000,
+          "batch_size_applied": 1000,
+          "accepted": 10000,
+          "rejected": 0,
+          "duplicates": 0,
+          "batches": 11,
+          "rejection_samples": [],
+          "quality_report": null,
+          "pack_id": "corpus_en_word_list_1779379967",
+          "report_path": "corpus_sources\\reports\\phase19\\english_scale_fixture.corpus_import_report.json"
+        }
+      }
+    },
+    "ru": {
+      "streaming_read": {
+        "ok": true,
+        "path": "corpus_sources\\quality_samples\\phase19_synthetic\\russian_scale_fixture.jsonl",
+        "rows_read": 100000,
+        "elapsed_seconds": 0.0695,
+        "rows_per_second": 1439043.6
+      },
+      "dry_run_import": {
+        "ok": true,
+        "language": "ru",
+        "accepted": 10000,
+        "rejected": 0,
+        "duplicates": 0,
+        "batches": 11,
+        "elapsed_seconds": 5.4568,
+        "rows_per_second": 1832.6,
+        "underlying_result": {
+          "ok": true,
+          "path": "corpus_sources\\quality_samples\\phase19_synthetic\\russian_scale_fixture.jsonl",
+          "language": "ru",
+          "source_type": "word_list",
+          "expected_format": "jsonl",
+          "corpus_id": "ad_hoc",
+          "checkpoint_id": "ckpt_1779379973_a664a68e80",
+          "dry_run": true,
+          "allow_full_source": false,
+          "max_entries_applied": 10000,
+          "batch_size_applied": 1000,
+          "accepted": 10000,
+          "rejected": 0,
+          "duplicates": 0,
+          "batches": 11,
+          "rejection_samples": [],
+          "quality_report": null,
+          "pack_id": "corpus_ru_word_list_1779379973",
+          "report_path": "corpus_sources\\reports\\phase19\\russian_scale_fixture.corpus_import_report.json"
+        }
+      }
+    }
+  },
+  "index_build": {
+    "en": {
+      "ok": true,
+      "language": "en",
+      "normal_indexes": {
+        "ok": true,
+        "created_or_existing": [
+          "ix_words_pack_id",
+          "ix_words_pack_source",
+          "ix_words_word_lc",
+          "ix_words_language"
+        ],
+        "all_indexes": [
+          "sqlite_autoindex_words_1",
+          "idx_words_word_prefix",
+          "idx_words_level",
+          "idx_words_frequency",
+          "ix_words_pack_id",
+          "ix_words_pack_source",
+          "ix_words_word_lc",
+          "ix_words_language"
+        ]
+      },
+      "fts_result": {
+        "ok": true,
+        "fts5_used": true,
+        "table": "words_fts_en",
+        "indexed_rows": 2814
+      },
+      "elapsed_seconds": 0.7458
+    },
+    "ru": {
+      "ok": true,
+      "language": "ru",
+      "normal_indexes": {
+        "ok": true,
+        "created_or_existing": [
+          "ix_words_pack_id",
+          "ix_words_pack_source",
+          "ix_words_word_lc",
+          "ix_words_lemma",
+          "ix_phrases_pack_id",
+          "ix_phrases_phrase_lc"
+        ],
+        "all_indexes": [
+          "sqlite_autoindex_words_1",
+          "idx_ru_lemma",
+          "idx_ru_pos",
+          "idx_ru_freq",
+          "sqlite_autoindex_phrases_1",
+          "idx_phrase_idiomatic",
+          "ix_words_pack_id",
+          "ix_words_pack_source",
+          "ix_words_word_lc",
+          "ix_words_lemma",
+          "ix_phrases_pack_id",
+          "ix_phrases_phrase_lc"
+        ]
+      },
+      "fts_result": {
+        "ok": true,
+        "fts5_used": true,
+        "table": "words_fts_ru",
+        "indexed_rows": 2518
+      },
+      "elapsed_seconds": 0.4868
+    }
+  },
+  "index_query": {
+    "en": {
+      "ok": true,
+      "language": "en",
+      "n_queries": 5,
+      "per_query": [
+        {
+          "query": "engineer",
+          "returned": 24,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.0585
+        },
+        {
+          "query": "ledger",
+          "returned": 3,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.0106
+        },
+        {
+          "query": "verse",
+          "returned": 11,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.0645
+        },
+        {
+          "query": "vector",
+          "returned": 3,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.0044
+        },
+        {
+          "query": "function",
+          "returned": 18,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.0048
+        }
+      ],
+      "total_elapsed_seconds": 0.1429,
+      "queries_per_second": 35.0
+    },
+    "ru": {
+      "ok": true,
+      "language": "ru",
+      "n_queries": 5,
+      "per_query": [
+        {
+          "query": "инженер",
+          "returned": 13,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.0082
+        },
+        {
+          "query": "бюджет",
+          "returned": 2,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.0178
+        },
+        {
+          "query": "стих",
+          "returned": 6,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.0378
+        },
+        {
+          "query": "число",
+          "returned": 1,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.1655
+        },
+        {
+          "query": "функция",
+          "returned": 4,
+          "limit": 25,
+          "bounds_ok": true,
+          "elapsed_seconds": 0.0945
+        }
+      ],
+      "total_elapsed_seconds": 0.3239,
+      "queries_per_second": 15.4
+    }
+  },
+  "retrieval_eval": {
+    "ok": true,
+    "limit": 15,
+    "en_average_score": 0.815,
+    "ru_average_score": 0.777,
+    "en_bounds_ok": true,
+    "ru_bounds_ok": true,
+    "en_safety_ok": true,
+    "ru_safety_ok": true,
+    "elapsed_seconds": 0.1476
+  },
+  "written_at": 1779379980.9644477
+}

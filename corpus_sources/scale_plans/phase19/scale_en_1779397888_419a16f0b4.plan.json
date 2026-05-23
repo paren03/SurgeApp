@@ -1,0 +1,26 @@
+{
+  "scale_plan_id": "scale_en_1779397888_419a16f0b4",
+  "created_at": 1779397888.6286907,
+  "language": "en",
+  "target_total": 1000,
+  "per_source_cap": 25000,
+  "batch_size": 5000,
+  "source_records": [
+    {
+      "path": "corpus_sources\\quality_samples\\phase19_synthetic\\english_scale_fixture.jsonl",
+      "language": "en",
+      "source_type": "word_list",
+      "expected_format": "jsonl",
+      "adapter_type": "luna_jsonl",
+      "row_estimate": 1000,
+      "capacity_within_phase19_cap": 1000
+    }
+  ],
+  "quality_gate_required": true,
+  "dry_run_required": true,
+  "checkpoint_required": true,
+  "manifest_required": true,
+  "rollback_required": true,
+  "allow_full_source": false,
+  "notes": "phase19_synthetic"
+}

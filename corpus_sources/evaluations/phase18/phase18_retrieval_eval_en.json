@@ -1,0 +1,567 @@
+{
+  "ok": true,
+  "language": "en",
+  "limit": 15,
+  "n_queries": 12,
+  "average_score": 0.815,
+  "bounds_ok": true,
+  "safety_ok": true,
+  "per_query": [
+    {
+      "query": {
+        "id": "en_professions_jobs",
+        "category": "professions_jobs",
+        "needle": "engineer",
+        "expected": [
+          "professions_jobs"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 15
+      },
+      "query_id": "en_professions_jobs",
+      "needle": "engineer",
+      "n_results": 15,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "professions_jobs"
+        ],
+        "hit_rows": 14,
+        "total_rows": 15,
+        "coverage_ratio": 0.933
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 15,
+      "score": 0.96
+    },
+    {
+      "query": {
+        "id": "en_trades_construction",
+        "category": "trades_construction",
+        "needle": "concrete",
+        "expected": [
+          "trades_construction"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 15
+      },
+      "query_id": "en_trades_construction",
+      "needle": "concrete",
+      "n_results": 15,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "trades_construction"
+        ],
+        "hit_rows": 12,
+        "total_rows": 15,
+        "coverage_ratio": 0.8
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 15,
+      "score": 0.88
+    },
+    {
+      "query": {
+        "id": "en_poetry_literary",
+        "category": "poetry_literary",
+        "needle": "verse",
+        "expected": [
+          "poetry_literary"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 15
+      },
+      "query_id": "en_poetry_literary",
+      "needle": "verse",
+      "n_results": 15,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "poetry_literary"
+        ],
+        "hit_rows": 9,
+        "total_rows": 15,
+        "coverage_ratio": 0.6
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 15,
+      "score": 0.76
+    },
+    {
+      "query": {
+        "id": "en_philosophy_abstract",
+        "category": "philosophy_abstract",
+        "needle": "essence",
+        "expected": [
+          "philosophy_abstract"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 1
+      },
+      "query_id": "en_philosophy_abstract",
+      "needle": "essence",
+      "n_results": 1,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "philosophy_abstract"
+        ],
+        "hit_rows": 1,
+        "total_rows": 1,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 1,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "en_business_finance",
+        "category": "business_finance",
+        "needle": "ledger",
+        "expected": [
+          "business_finance"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 3
+      },
+      "query_id": "en_business_finance",
+      "needle": "ledger",
+      "n_results": 3,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "business_finance"
+        ],
+        "hit_rows": 3,
+        "total_rows": 3,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 3,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "en_law_government",
+        "category": "law_government",
+        "needle": "statute",
+        "expected": [
+          "law_government"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 3
+      },
+      "query_id": "en_law_government",
+      "needle": "statute",
+      "n_results": 3,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "law_government"
+        ],
+        "hit_rows": 3,
+        "total_rows": 3,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 3,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "en_science_math",
+        "category": "science_math",
+        "needle": "vector",
+        "expected": [
+          "science_math"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 4
+      },
+      "query_id": "en_science_math",
+      "needle": "vector",
+      "n_results": 4,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "science_math"
+        ],
+        "hit_rows": 2,
+        "total_rows": 4,
+        "coverage_ratio": 0.5
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 4,
+      "score": 0.7
+    },
+    {
+      "query": {
+        "id": "en_coding_technology",
+        "category": "coding_technology",
+        "needle": "function",
+        "expected": [
+          "coding_technology"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 15
+      },
+      "query_id": "en_coding_technology",
+      "needle": "function",
+      "n_results": 15,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "coding_technology"
+        ],
+        "hit_rows": 4,
+        "total_rows": 15,
+        "coverage_ratio": 0.267
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 15,
+      "score": 0.56
+    },
+    {
+      "query": {
+        "id": "en_slang_gated",
+        "category": "slang_street_talk",
+        "needle": "homie",
+        "expected": [
+          "slang_street_talk"
+        ],
+        "is_gated": true,
+        "is_user_prompted": false
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 1
+      },
+      "query_id": "en_slang_gated",
+      "needle": "homie",
+      "n_results": 1,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "slang_street_talk"
+        ],
+        "hit_rows": 1,
+        "total_rows": 1,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 1,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "en_voice_personality",
+        "category": "voice_personality",
+        "needle": "gentle",
+        "expected": [
+          "voice_personality"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 1
+      },
+      "query_id": "en_voice_personality",
+      "needle": "gentle",
+      "n_results": 1,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "voice_personality"
+        ],
+        "hit_rows": 1,
+        "total_rows": 1,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 1,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "en_idioms_phrases",
+        "category": "idioms_phrases",
+        "needle": "break",
+        "expected": [
+          "idioms_phrases"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 5
+      },
+      "query_id": "en_idioms_phrases",
+      "needle": "break",
+      "n_results": 5,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "idioms_phrases"
+        ],
+        "hit_rows": 1,
+        "total_rows": 5,
+        "coverage_ratio": 0.2
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 5,
+      "score": 0.52
+    },
+    {
+      "query": {
+        "id": "en_core_vocabulary",
+        "category": "core_vocabulary",
+        "needle": "water",
+        "expected": [
+          "core_vocabulary"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 15
+      },
+      "query_id": "en_core_vocabulary",
+      "needle": "water",
+      "n_results": 15,
+      "coverage": {
+        "ok": false,
+        "expected": [
+          "core_vocabulary"
+        ],
+        "hit_rows": 0,
+        "total_rows": 15,
+        "coverage_ratio": 0.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 15,
+      "score": 0.4
+    }
+  ],
+  "generated_at": 1779378019.0410655,
+  "written_at": 1779378019.1354716
+}

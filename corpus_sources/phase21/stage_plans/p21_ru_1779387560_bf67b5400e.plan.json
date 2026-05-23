@@ -1,0 +1,68 @@
+{
+  "plan_id": "p21_ru_1779387560_bf67b5400e",
+  "language": "ru",
+  "max_total_per_language": 50,
+  "max_per_source": 50,
+  "batch_size": 10,
+  "per_source_breakdown": [
+    {
+      "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_raycp9dr\\ru.jsonl",
+      "language": "ru",
+      "file_name": "ru.jsonl",
+      "size_bytes": 19180,
+      "suffix": ".jsonl",
+      "adapter_type": "luna_jsonl",
+      "expected_format": "jsonl",
+      "source_type": "word_list",
+      "corpus_id": "ru::ru.jsonl::3b7be5b1676a",
+      "source_sha256": "16b7af909fc83c9f9e71d5d3329d33672f4b5887e87180fd2234aa1974531ab4",
+      "row_estimate": 80,
+      "quality_report": {
+        "ok": true,
+        "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_raycp9dr\\ru.jsonl",
+        "language": "ru",
+        "expected_format": "jsonl",
+        "sample_summary": {
+          "requested": 100,
+          "returned": 80,
+          "total_scanned": 80,
+          "strategy": "head_middle_tail"
+        },
+        "completeness_avg": 1.0,
+        "duplicates": {
+          "unique_keys": 80,
+          "duplicate_keys": 0,
+          "duplicate_samples": []
+        },
+        "acceptance": {
+          "acceptance_rate": 1.0,
+          "n": 80,
+          "n_accept": 80,
+          "n_reject": 0,
+          "accept_threshold": 0.4
+        },
+        "language_mismatch_count": 0,
+        "operational_unsafe_count": 0,
+        "needs_recognition_only_count": 0,
+        "quality_score": 1.0,
+        "rows_scored": 80
+      },
+      "quality_ok": true,
+      "quality_gate_decision": {
+        "ok": true,
+        "quality_score": 1.0,
+        "min_quality_score": 0.75
+      },
+      "stage_take": 50
+    }
+  ],
+  "stage_total": 50,
+  "allow_full_source": false,
+  "quality_gate_required": true,
+  "dry_run_required": true,
+  "backup_required": true,
+  "checkpoint_required": true,
+  "manifest_required": true,
+  "rollback_required": true,
+  "created_at": 1779387560.818256
+}

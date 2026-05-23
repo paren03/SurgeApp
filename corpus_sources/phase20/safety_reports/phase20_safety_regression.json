@@ -1,0 +1,675 @@
+{
+  "generated_at": 1779459532.9399617,
+  "english_policy": {
+    "language": "en",
+    "classes": {
+      "recognition_only": {
+        "decision": {
+          "ok": true,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [
+            "probe_reco_1"
+          ],
+          "suggestion_only_recognized_count": 1,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "expectation": {
+          "class": "recognition_only",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": true,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": true,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "pass": true
+        }
+      },
+      "do_not_use_unprompted": {
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [
+            "probe_dnu_1"
+          ],
+          "do_not_use_violation_count": 1,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "expectation": {
+          "class": "do_not_use_unprompted",
+          "expected": {
+            "in_do_not_use_violations": true,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "observed": {
+            "in_do_not_use_violations": true,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "pass": true
+        }
+      },
+      "vulgar": {
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [
+            "probe_vulgar_1"
+          ],
+          "vulgar_in_teacher_mode_count": 1
+        },
+        "expectation": {
+          "class": "vulgar",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": true
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": true
+          },
+          "pass": true
+        }
+      },
+      "offensive": {
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [
+            "probe_offensive_1"
+          ],
+          "vulgar_in_teacher_mode_count": 1
+        },
+        "expectation": {
+          "class": "offensive",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": true
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": true
+          },
+          "pass": true
+        }
+      },
+      "slang_normal": {
+        "decision": {
+          "ok": true,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "expectation": {
+          "class": "slang_normal",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "pass": true
+        }
+      },
+      "benign": {
+        "decision": {
+          "ok": true,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "expectation": {
+          "class": "benign",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "pass": true
+        }
+      }
+    },
+    "all_pass": true
+  },
+  "russian_policy": {
+    "language": "ru",
+    "classes": {
+      "recognition_only": {
+        "decision": {
+          "ok": true,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [
+            "ру_probe_reco_1"
+          ],
+          "suggestion_only_recognized_count": 1,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "expectation": {
+          "class": "recognition_only",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": true,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": true,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "pass": true
+        }
+      },
+      "do_not_use_unprompted": {
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [
+            "ру_probe_dnu_1"
+          ],
+          "do_not_use_violation_count": 1,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "expectation": {
+          "class": "do_not_use_unprompted",
+          "expected": {
+            "in_do_not_use_violations": true,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "observed": {
+            "in_do_not_use_violations": true,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "pass": true
+        }
+      },
+      "vulgar": {
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [
+            "ру_probe_vulgar_1"
+          ],
+          "vulgar_in_teacher_mode_count": 1
+        },
+        "expectation": {
+          "class": "vulgar",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": true
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": true
+          },
+          "pass": true
+        }
+      },
+      "offensive": {
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [
+            "ру_probe_offensive_1"
+          ],
+          "vulgar_in_teacher_mode_count": 1
+        },
+        "expectation": {
+          "class": "offensive",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": true
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": true
+          },
+          "pass": true
+        }
+      },
+      "slang_normal": {
+        "decision": {
+          "ok": true,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "expectation": {
+          "class": "slang_normal",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "pass": true
+        }
+      },
+      "benign": {
+        "decision": {
+          "ok": true,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "expectation": {
+          "class": "benign",
+          "expected": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "observed": {
+            "in_do_not_use_violations": false,
+            "in_suggestion_only_recognized": false,
+            "in_vulgar_in_teacher_mode": false
+          },
+          "pass": true
+        }
+      }
+    },
+    "all_pass": true
+  },
+  "indexed_safety_en": {
+    "ok": true,
+    "language": "en",
+    "per_tag": {
+      "recognition_only": {
+        "rows_returned": 13,
+        "decision": {
+          "ok": true,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [
+            "morphine",
+            "edge_term_demo",
+            "based_recognition_only_term",
+            "edgy_recognition_only_term",
+            "harmful_phrase_placeholder",
+            "phishing_term",
+            "malware_term",
+            "ransomware_term",
+            "regicide",
+            "coup_d_etat",
+            "controlled_substance",
+            "opioid_term",
+            "narcotic_term"
+          ],
+          "suggestion_only_recognized_count": 13,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "filter_flagged": 13
+      },
+      "do_not_use_unprompted": {
+        "rows_returned": 13,
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [
+            "buzzed",
+            "wasted",
+            "lit_up",
+            "smashed",
+            "trashed",
+            "throw_hands",
+            "scrap",
+            "thirst_trap",
+            "simp",
+            "boomer",
+            "karen",
+            "tripping",
+            "edgelord"
+          ],
+          "do_not_use_violation_count": 13,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [
+            "karen"
+          ],
+          "vulgar_in_teacher_mode_count": 1
+        },
+        "filter_flagged": 14
+      },
+      "vulgar": {
+        "rows_returned": 4,
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [
+            "damn",
+            "hell",
+            "crap",
+            "shitpost"
+          ],
+          "vulgar_in_teacher_mode_count": 4
+        },
+        "filter_flagged": 4
+      },
+      "offensive": {
+        "rows_returned": 1,
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [
+            "karen"
+          ],
+          "do_not_use_violation_count": 1,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [
+            "karen"
+          ],
+          "vulgar_in_teacher_mode_count": 1
+        },
+        "filter_flagged": 2
+      }
+    }
+  },
+  "indexed_safety_ru": {
+    "ok": true,
+    "language": "ru",
+    "per_tag": {
+      "recognition_only": {
+        "rows_returned": 18,
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [
+            "морфин",
+            "грубое_слово_заглушка",
+            "мат_общий",
+            "ругательство_категория",
+            "оскорбление_категория",
+            "оскорбления_категория_рус",
+            "уличный_жаргон_категория",
+            "потенциально_оскорбительное_слово",
+            "фишинг_термин",
+            "вредоносное_по",
+            "программа_вымогатель",
+            "переворот_термин",
+            "административный_арест",
+            "уголовная_ответственность",
+            "уголовное_дело",
+            "контролируемые_вещества",
+            "опиоиды_термин",
+            "наркотические_вещества_термин"
+          ],
+          "suggestion_only_recognized_count": 18,
+          "vulgar_in_teacher_mode": [
+            "потенциально_оскорбительное_слово"
+          ],
+          "vulgar_in_teacher_mode_count": 1
+        },
+        "filter_flagged": 19
+      },
+      "do_not_use_unprompted": {
+        "rows_returned": 20,
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [
+            "тёлка",
+            "збс",
+            "бухнуть",
+            "бухой",
+            "бухло",
+            "колбасит",
+            "босяк",
+            "впадлу",
+            "пёс",
+            "троллить",
+            "хейтить",
+            "хейтер",
+            "образина",
+            "тёрки_разборки",
+            "стрелка_встреча",
+            "забивать_стрелку",
+            "психанул",
+            "троллинг",
+            "хейт",
+            "увольнение_по_статье"
+          ],
+          "do_not_use_violation_count": 20,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [],
+          "vulgar_in_teacher_mode_count": 0
+        },
+        "filter_flagged": 20
+      },
+      "vulgar": {
+        "rows_returned": 3,
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [],
+          "suggestion_only_recognized_count": 0,
+          "vulgar_in_teacher_mode": [
+            "лажа",
+            "падла",
+            "блин"
+          ],
+          "vulgar_in_teacher_mode_count": 3
+        },
+        "filter_flagged": 3
+      },
+      "offensive": {
+        "rows_returned": 1,
+        "decision": {
+          "ok": false,
+          "mode": "teacher",
+          "is_user_prompted": false,
+          "do_not_use_violations": [],
+          "do_not_use_violation_count": 0,
+          "suggestion_only_recognized": [
+            "потенциально_оскорбительное_слово"
+          ],
+          "suggestion_only_recognized_count": 1,
+          "vulgar_in_teacher_mode": [
+            "потенциально_оскорбительное_слово"
+          ],
+          "vulgar_in_teacher_mode_count": 1
+        },
+        "filter_flagged": 2
+      }
+    }
+  },
+  "runtime_context_en": {
+    "ok": true,
+    "language": "en",
+    "bounds_ok": true,
+    "safety_ok": true,
+    "average_score": 0.815
+  },
+  "runtime_context_ru": {
+    "ok": true,
+    "language": "ru",
+    "bounds_ok": true,
+    "safety_ok": true,
+    "average_score": 0.777
+  },
+  "prompted_vs_unprompted_en": {
+    "language": "en",
+    "rules": [
+      {
+        "class": "recognition_only",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "do_not_use_unprompted",
+        "unprompted_do_not_use_count": 1,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "vulgar",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "offensive",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "slang_normal",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "benign",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      }
+    ],
+    "all_softening_consistent": true
+  },
+  "prompted_vs_unprompted_ru": {
+    "language": "ru",
+    "rules": [
+      {
+        "class": "recognition_only",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "do_not_use_unprompted",
+        "unprompted_do_not_use_count": 1,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "vulgar",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "offensive",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "slang_normal",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      },
+      {
+        "class": "benign",
+        "unprompted_do_not_use_count": 0,
+        "prompted_do_not_use_count": 0,
+        "softens_when_prompted": true
+      }
+    ],
+    "all_softening_consistent": true
+  },
+  "written_at": 1779459533.1331246
+}

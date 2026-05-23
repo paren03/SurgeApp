@@ -1,0 +1,68 @@
+{
+  "plan_id": "p21_en_1779400033_c180c2571b",
+  "language": "en",
+  "max_total_per_language": 50,
+  "max_per_source": 50,
+  "batch_size": 10,
+  "per_source_breakdown": [
+    {
+      "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_r8b2zlh7\\en.jsonl",
+      "language": "en",
+      "file_name": "en.jsonl",
+      "size_bytes": 14470,
+      "suffix": ".jsonl",
+      "adapter_type": "luna_jsonl",
+      "expected_format": "jsonl",
+      "source_type": "word_list",
+      "corpus_id": "en::en.jsonl::f01dcc0bf0f5",
+      "source_sha256": "655132a3c60ad1de92f1a761f76605448d9220286b4a75e8f8ef2d2d8fcf9280",
+      "row_estimate": 80,
+      "quality_report": {
+        "ok": true,
+        "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_r8b2zlh7\\en.jsonl",
+        "language": "en",
+        "expected_format": "jsonl",
+        "sample_summary": {
+          "requested": 100,
+          "returned": 80,
+          "total_scanned": 80,
+          "strategy": "head_middle_tail"
+        },
+        "completeness_avg": 1.0,
+        "duplicates": {
+          "unique_keys": 80,
+          "duplicate_keys": 0,
+          "duplicate_samples": []
+        },
+        "acceptance": {
+          "acceptance_rate": 1.0,
+          "n": 80,
+          "n_accept": 80,
+          "n_reject": 0,
+          "accept_threshold": 0.4
+        },
+        "language_mismatch_count": 0,
+        "operational_unsafe_count": 0,
+        "needs_recognition_only_count": 0,
+        "quality_score": 1.0,
+        "rows_scored": 80
+      },
+      "quality_ok": true,
+      "quality_gate_decision": {
+        "ok": true,
+        "quality_score": 1.0,
+        "min_quality_score": 0.75
+      },
+      "stage_take": 50
+    }
+  ],
+  "stage_total": 50,
+  "allow_full_source": false,
+  "quality_gate_required": true,
+  "dry_run_required": true,
+  "backup_required": true,
+  "checkpoint_required": true,
+  "manifest_required": true,
+  "rollback_required": true,
+  "created_at": 1779400033.6984618
+}

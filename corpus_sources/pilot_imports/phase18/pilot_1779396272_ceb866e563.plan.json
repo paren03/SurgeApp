@@ -1,0 +1,55 @@
+{
+  "plan_id": "pilot_1779396272_ceb866e563",
+  "source_path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase18_gn6syyvp\\inc.jsonl",
+  "language": "en",
+  "source_type": "word_list",
+  "adapter_type": "luna_jsonl",
+  "expected_format": "jsonl",
+  "estimated_rows": 50,
+  "file_size_bytes": 7990,
+  "quality_score": 1.0,
+  "quality_report": {
+    "ok": true,
+    "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase18_gn6syyvp\\inc.jsonl",
+    "language": "en",
+    "expected_format": "jsonl",
+    "sample_summary": {
+      "requested": 50,
+      "returned": 49,
+      "total_scanned": 50,
+      "strategy": "head_middle_tail"
+    },
+    "completeness_avg": 1.0,
+    "duplicates": {
+      "unique_keys": 49,
+      "duplicate_keys": 0,
+      "duplicate_samples": []
+    },
+    "acceptance": {
+      "acceptance_rate": 1.0,
+      "n": 49,
+      "n_accept": 49,
+      "n_reject": 0,
+      "accept_threshold": 0.4
+    },
+    "language_mismatch_count": 0,
+    "operational_unsafe_count": 0,
+    "needs_recognition_only_count": 0,
+    "quality_score": 1.0,
+    "rows_scored": 49
+  },
+  "target_entries": 40,
+  "safe_max_entries": 40,
+  "batch_size": 12,
+  "dry_run_default": true,
+  "required_quality_gate": true,
+  "expected_manifest_path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase18_gn6syyvp\\inc.jsonl.pilot_manifest.json",
+  "rollback_key": {
+    "pack_id_prefix": "pilot_en_word_list_1779396272",
+    "language": "en",
+    "source_type": "word_list",
+    "source_path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase18_gn6syyvp\\inc.jsonl"
+  },
+  "created_at": 1779396272.4999835,
+  "notes": "adapter=luna_jsonl qgate_threshold=0.75"
+}

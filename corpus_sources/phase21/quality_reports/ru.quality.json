@@ -1,0 +1,50 @@
+{
+  "source": {
+    "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_85yh1y8o\\ru.jsonl",
+    "language": "ru",
+    "file_name": "ru.jsonl",
+    "size_bytes": 19180,
+    "suffix": ".jsonl",
+    "adapter_type": "luna_jsonl",
+    "expected_format": "jsonl",
+    "source_type": "word_list",
+    "corpus_id": "ru::ru.jsonl::322449259b0f",
+    "source_sha256": "16b7af909fc83c9f9e71d5d3329d33672f4b5887e87180fd2234aa1974531ab4",
+    "row_estimate": 80
+  },
+  "report": {
+    "ok": true,
+    "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_85yh1y8o\\ru.jsonl",
+    "language": "ru",
+    "expected_format": "jsonl",
+    "sample_summary": {
+      "requested": 100,
+      "returned": 80,
+      "total_scanned": 80,
+      "strategy": "head_middle_tail"
+    },
+    "completeness_avg": 1.0,
+    "duplicates": {
+      "unique_keys": 80,
+      "duplicate_keys": 0,
+      "duplicate_samples": []
+    },
+    "acceptance": {
+      "acceptance_rate": 1.0,
+      "n": 80,
+      "n_accept": 80,
+      "n_reject": 0,
+      "accept_threshold": 0.4
+    },
+    "language_mismatch_count": 0,
+    "operational_unsafe_count": 0,
+    "needs_recognition_only_count": 0,
+    "quality_score": 1.0,
+    "rows_scored": 80
+  },
+  "gate": {
+    "ok": true,
+    "quality_score": 1.0,
+    "min_quality_score": 0.75
+  }
+}

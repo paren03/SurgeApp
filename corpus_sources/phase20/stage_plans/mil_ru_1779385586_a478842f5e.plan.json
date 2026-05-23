@@ -1,0 +1,20 @@
+{
+  "million_plan_id": "mil_ru_1779385586_a478842f5e",
+  "language": "ru",
+  "target_total": 1000000,
+  "stage_size": 100000,
+  "per_source_cap": 50000,
+  "stages": [],
+  "quality_gate_required": true,
+  "dry_run_required": true,
+  "backup_required": true,
+  "checkpoint_required": true,
+  "manifest_required": true,
+  "safety_audit_required": true,
+  "retrieval_sla_required": true,
+  "rollback_required": true,
+  "allow_full_source": false,
+  "created_at": 1779385586.2352133,
+  "notes": "phase20",
+  "total_estimated_capacity": 0
+}

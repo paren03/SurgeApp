@@ -1,0 +1,68 @@
+{
+  "plan_id": "p21_ru_1779408784_28c16999fa",
+  "language": "ru",
+  "max_total_per_language": 10000,
+  "max_per_source": 10000,
+  "batch_size": 2500,
+  "per_source_breakdown": [
+    {
+      "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_wn7hjxn3\\ru.jsonl",
+      "language": "ru",
+      "file_name": "ru.jsonl",
+      "size_bytes": 14380,
+      "suffix": ".jsonl",
+      "adapter_type": "luna_jsonl",
+      "expected_format": "jsonl",
+      "source_type": "word_list",
+      "corpus_id": "ru::ru.jsonl::52c79b30c83f",
+      "source_sha256": "6bbc9e201dee679bbdc344e83d7f4efa704f6e3dbbc857bebe9c4857ffeffeab",
+      "row_estimate": 60,
+      "quality_report": {
+        "ok": true,
+        "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_wn7hjxn3\\ru.jsonl",
+        "language": "ru",
+        "expected_format": "jsonl",
+        "sample_summary": {
+          "requested": 100,
+          "returned": 60,
+          "total_scanned": 60,
+          "strategy": "head_middle_tail"
+        },
+        "completeness_avg": 1.0,
+        "duplicates": {
+          "unique_keys": 60,
+          "duplicate_keys": 0,
+          "duplicate_samples": []
+        },
+        "acceptance": {
+          "acceptance_rate": 1.0,
+          "n": 60,
+          "n_accept": 60,
+          "n_reject": 0,
+          "accept_threshold": 0.4
+        },
+        "language_mismatch_count": 0,
+        "operational_unsafe_count": 0,
+        "needs_recognition_only_count": 0,
+        "quality_score": 1.0,
+        "rows_scored": 60
+      },
+      "quality_ok": true,
+      "quality_gate_decision": {
+        "ok": true,
+        "quality_score": 1.0,
+        "min_quality_score": 0.75
+      },
+      "stage_take": 60
+    }
+  ],
+  "stage_total": 60,
+  "allow_full_source": false,
+  "quality_gate_required": true,
+  "dry_run_required": true,
+  "backup_required": true,
+  "checkpoint_required": true,
+  "manifest_required": true,
+  "rollback_required": true,
+  "created_at": 1779408784.5448525
+}

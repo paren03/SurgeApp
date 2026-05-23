@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase18_0kln_ini\\big.jsonl",
+  "language": "en",
+  "source_type": "word_list",
+  "expected_format": "jsonl",
+  "corpus_id": "en::big.jsonl::ff4b1868e5d6",
+  "checkpoint_id": "ckpt_1779398023_b35ea5508b",
+  "dry_run": false,
+  "allow_full_source": false,
+  "max_entries_applied": 5000,
+  "batch_size_applied": 200,
+  "accepted": 5000,
+  "rejected": 0,
+  "duplicates": 0,
+  "batches": 26,
+  "rejection_samples": [],
+  "quality_report": null,
+  "pack_id": "corpus_en_word_list_1779398023",
+  "report_path": "corpus_sources\\english\\reports\\big.corpus_import_report.json",
+  "plan_id": "pilot_1779397896_76066c732a",
+  "rollback_key": {
+    "pack_id_prefix": "pilot_en_word_list_1779397896",
+    "language": "en",
+    "source_type": "word_list",
+    "source_path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase18_0kln_ini\\big.jsonl"
+  },
+  "result_generated_at": 1779398063.3739777
+}

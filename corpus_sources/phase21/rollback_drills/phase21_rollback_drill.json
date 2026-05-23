@@ -1,0 +1,17 @@
+{
+  "dry_run": true,
+  "rollback_keys": [
+    "rk_p21_test"
+  ],
+  "batch_actions_intended": [
+    {
+      "action": "delete_rows_by_pack_id",
+      "pack_id": "pack_p21_test",
+      "language": "en",
+      "rollback_key": "rk_p21_test",
+      "accepted_count": 10
+    }
+  ],
+  "restore_intent_dry": null,
+  "generated_at": 1779459521.2487307
+}

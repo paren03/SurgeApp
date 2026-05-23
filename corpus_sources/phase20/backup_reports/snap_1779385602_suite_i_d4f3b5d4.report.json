@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "snapshot_id": "snap_1779385602_suite_i_d4f3b5d4",
+  "snapshot_dir": "corpus_sources\\backups\\snap_1779385602_suite_i_d4f3b5d4",
+  "meta": {
+    "snapshot_id": "snap_1779385602_suite_i_d4f3b5d4",
+    "label": "suite_i",
+    "created_at": 1779385602.6638482,
+    "completed_at": 1779385604.0814128,
+    "english": {
+      "ok": true,
+      "snapshot_id": "snap_1779385602_suite_i_d4f3b5d4",
+      "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\lexicon\\luna_vocabulary.sqlite",
+      "backup_path": "corpus_sources\\backups\\snap_1779385602_suite_i_d4f3b5d4\\english\\luna_vocabulary.sqlite",
+      "size_bytes": 1613824,
+      "sha256": "cdbb96624a80442b6ed9f39047a4bff437bd3174f881fefb8a5d48f4c4056823",
+      "word_count": 2814
+    },
+    "russian": {
+      "ok": true,
+      "snapshot_id": "snap_1779385602_suite_i_d4f3b5d4",
+      "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\russian_stack\\russian_lexicon.sqlite",
+      "backup_path": "corpus_sources\\backups\\snap_1779385602_suite_i_d4f3b5d4\\russian\\russian_lexicon.sqlite",
+      "size_bytes": 1908736,
+      "sha256": "72c115dacc54cc791d192054e3d284039a450c8b1ad386dfa0dec6eff9212101",
+      "word_count": 2518,
+      "phrase_count": 35
+    },
+    "manifests": {
+      "ok": true,
+      "snapshot_id": "snap_1779385602_suite_i_d4f3b5d4",
+      "manifests_copied": 90,
+      "manifest_dir": "corpus_sources\\backups\\snap_1779385602_suite_i_d4f3b5d4\\manifests"
+    }
+  },
+  "written_at": 1779385604.082413
+}

@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "path": "corpus_sources\\quality_samples\\phase19_synthetic\\russian_scale_fixture.jsonl",
+  "language": "ru",
+  "source_type": "word_list",
+  "expected_format": "jsonl",
+  "corpus_id": "ad_hoc",
+  "checkpoint_id": "ckpt_1779459540_809a92c33a",
+  "dry_run": true,
+  "allow_full_source": false,
+  "max_entries_applied": 500,
+  "batch_size_applied": 5000,
+  "accepted": 500,
+  "rejected": 0,
+  "duplicates": 0,
+  "batches": 1,
+  "rejection_samples": [],
+  "quality_report": null,
+  "pack_id": "corpus_ru_word_list_1779459540",
+  "report_generated_at": 1779459540.9736266
+}

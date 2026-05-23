@@ -1,0 +1,569 @@
+{
+  "ok": true,
+  "language": "ru",
+  "limit": 15,
+  "n_queries": 12,
+  "average_score": 0.777,
+  "bounds_ok": true,
+  "safety_ok": true,
+  "per_query": [
+    {
+      "query": {
+        "id": "ru_professions_jobs",
+        "category": "professions_jobs",
+        "needle": "инженер",
+        "expected": [
+          "professions_jobs"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 15
+      },
+      "query_id": "ru_professions_jobs",
+      "needle": "инженер",
+      "n_results": 15,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "professions_jobs"
+        ],
+        "hit_rows": 14,
+        "total_rows": 15,
+        "coverage_ratio": 0.933
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [
+          "фишинг_термин"
+        ],
+        "suggestion_only_recognized_count": 1,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 0.96
+    },
+    {
+      "query": {
+        "id": "ru_trades_construction",
+        "category": "trades_construction",
+        "needle": "бетон",
+        "expected": [
+          "trades_construction"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 15
+      },
+      "query_id": "ru_trades_construction",
+      "needle": "бетон",
+      "n_results": 15,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "trades_construction"
+        ],
+        "hit_rows": 15,
+        "total_rows": 15,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "ru_poetry_literary",
+        "category": "poetry_literary",
+        "needle": "стих",
+        "expected": [
+          "poetry_literary"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 15
+      },
+      "query_id": "ru_poetry_literary",
+      "needle": "стих",
+      "n_results": 15,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "poetry_literary"
+        ],
+        "hit_rows": 15,
+        "total_rows": 15,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "ru_philosophy_abstract",
+        "category": "philosophy_abstract",
+        "needle": "сущность",
+        "expected": [
+          "philosophy_abstract"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 1
+      },
+      "query_id": "ru_philosophy_abstract",
+      "needle": "сущность",
+      "n_results": 1,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "philosophy_abstract"
+        ],
+        "hit_rows": 1,
+        "total_rows": 1,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "ru_business_finance",
+        "category": "business_finance",
+        "needle": "бюджет",
+        "expected": [
+          "business_finance"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 2
+      },
+      "query_id": "ru_business_finance",
+      "needle": "бюджет",
+      "n_results": 2,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "business_finance"
+        ],
+        "hit_rows": 2,
+        "total_rows": 2,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "ru_law_government",
+        "category": "law_government",
+        "needle": "закон",
+        "expected": [
+          "law_government"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 14
+      },
+      "query_id": "ru_law_government",
+      "needle": "закон",
+      "n_results": 14,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "law_government"
+        ],
+        "hit_rows": 8,
+        "total_rows": 14,
+        "coverage_ratio": 0.571
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 0.743
+    },
+    {
+      "query": {
+        "id": "ru_science_math",
+        "category": "science_math",
+        "needle": "число",
+        "expected": [
+          "science_math"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 7
+      },
+      "query_id": "ru_science_math",
+      "needle": "число",
+      "n_results": 7,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "science_math"
+        ],
+        "hit_rows": 2,
+        "total_rows": 7,
+        "coverage_ratio": 0.286
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 0.572
+    },
+    {
+      "query": {
+        "id": "ru_coding_technology",
+        "category": "coding_technology",
+        "needle": "функция",
+        "expected": [
+          "coding_technology"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 4
+      },
+      "query_id": "ru_coding_technology",
+      "needle": "функция",
+      "n_results": 4,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "coding_technology"
+        ],
+        "hit_rows": 2,
+        "total_rows": 4,
+        "coverage_ratio": 0.5
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 0.7
+    },
+    {
+      "query": {
+        "id": "ru_slang_gated",
+        "category": "slang_street_talk",
+        "needle": "чувак",
+        "expected": [
+          "slang_street_talk"
+        ],
+        "is_gated": true,
+        "is_user_prompted": false
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 2
+      },
+      "query_id": "ru_slang_gated",
+      "needle": "чувак",
+      "n_results": 2,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "slang_street_talk"
+        ],
+        "hit_rows": 2,
+        "total_rows": 2,
+        "coverage_ratio": 1.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 1.0
+    },
+    {
+      "query": {
+        "id": "ru_voice_personality",
+        "category": "voice_personality",
+        "needle": "тёплый",
+        "expected": [
+          "voice_personality"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 4
+      },
+      "query_id": "ru_voice_personality",
+      "needle": "тёплый",
+      "n_results": 4,
+      "coverage": {
+        "ok": true,
+        "expected": [
+          "voice_personality"
+        ],
+        "hit_rows": 1,
+        "total_rows": 4,
+        "coverage_ratio": 0.25
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 0.55
+    },
+    {
+      "query": {
+        "id": "ru_idioms_phrases",
+        "category": "idioms_phrases",
+        "needle": "душа",
+        "expected": [
+          "idioms_phrases"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 1
+      },
+      "query_id": "ru_idioms_phrases",
+      "needle": "душа",
+      "n_results": 1,
+      "coverage": {
+        "ok": false,
+        "expected": [
+          "idioms_phrases"
+        ],
+        "hit_rows": 0,
+        "total_rows": 1,
+        "coverage_ratio": 0.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 0.4
+    },
+    {
+      "query": {
+        "id": "ru_core_vocabulary",
+        "category": "core_vocabulary",
+        "needle": "вода",
+        "expected": [
+          "core_vocabulary"
+        ]
+      },
+      "bounds": {
+        "ok": true,
+        "limit": 15,
+        "returned": 9
+      },
+      "query_id": "ru_core_vocabulary",
+      "needle": "вода",
+      "n_results": 9,
+      "coverage": {
+        "ok": false,
+        "expected": [
+          "core_vocabulary"
+        ],
+        "hit_rows": 0,
+        "total_rows": 9,
+        "coverage_ratio": 0.0
+      },
+      "safety": {
+        "ok": true,
+        "mode": "teacher",
+        "is_user_prompted": false,
+        "do_not_use_violations": [],
+        "do_not_use_violation_count": 0,
+        "suggestion_only_recognized": [],
+        "suggestion_only_recognized_count": 0,
+        "vulgar_in_teacher_mode": [],
+        "vulgar_in_teacher_mode_count": 0
+      },
+      "register_fit": {
+        "ok": true,
+        "mode": "teacher",
+        "mismatches": [],
+        "mismatch_count": 0
+      },
+      "language_hits": 0,
+      "score": 0.4
+    }
+  ],
+  "generated_at": 1779378019.1354716,
+  "written_at": 1779378019.1374679
+}

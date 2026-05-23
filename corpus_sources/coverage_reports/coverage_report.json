@@ -1,0 +1,615 @@
+{
+  "generated_at": 1779376461.6988015,
+  "totals": {
+    "en_words": 2814,
+    "ru_words": 2518,
+    "ru_phrases": 35
+  },
+  "manifest_count": 90,
+  "coverage": {
+    "en": {
+      "core_vocabulary": 93,
+      "slang_street_talk": 222,
+      "idioms_phrases": 59,
+      "professions_jobs": 272,
+      "trades_construction": 253,
+      "science_math": 154,
+      "medicine_health": 132,
+      "law_government": 215,
+      "business_finance": 180,
+      "coding_technology": 120,
+      "poetry_literary": 245,
+      "philosophy_abstract": 281,
+      "art_music_culture": 160,
+      "history_geography": 163,
+      "psychology_education": 157,
+      "mechanics_transportation": 163,
+      "food_home_daily_life": 169,
+      "regional_dialect": 112,
+      "formal_informal_speech": 112,
+      "voice_personality": 52,
+      "recognition_only_sensitive": 13
+    },
+    "ru": {
+      "core_vocabulary": 92,
+      "slang_street_talk": 218,
+      "idioms_phrases": 419,
+      "professions_jobs": 254,
+      "trades_construction": 256,
+      "science_math": 140,
+      "medicine_health": 128,
+      "law_government": 230,
+      "business_finance": 183,
+      "coding_technology": 124,
+      "poetry_literary": 242,
+      "philosophy_abstract": 270,
+      "art_music_culture": 155,
+      "history_geography": 155,
+      "psychology_education": 147,
+      "mechanics_transportation": 141,
+      "food_home_daily_life": 172,
+      "regional_dialect": 109,
+      "formal_informal_speech": 112,
+      "voice_personality": 16,
+      "recognition_only_sensitive": 18
+    }
+  },
+  "register": {
+    "en": {
+      "standard": 641,
+      "formal": 36,
+      "informal": 358,
+      "slang": 205,
+      "street": 0,
+      "vulgar": 4,
+      "offensive": 1,
+      "regional": 111,
+      "technical": 339,
+      "academic": 903,
+      "poetic": 137,
+      "philosophical": 257,
+      "professional": 511,
+      "construction": 247,
+      "coding": 116,
+      "medical": 128,
+      "legal": 182,
+      "business": 176,
+      "teacher": 34,
+      "voice_safe": 31,
+      "recognition_only": 13,
+      "do_not_use_unprompted": 13
+    },
+    "ru": {
+      "standard": 688,
+      "formal": 56,
+      "informal": 315,
+      "slang": 184,
+      "street": 0,
+      "vulgar": 3,
+      "offensive": 0,
+      "regional": 70,
+      "technical": 301,
+      "academic": 836,
+      "poetic": 135,
+      "philosophical": 251,
+      "professional": 436,
+      "construction": 249,
+      "coding": 117,
+      "medical": 124,
+      "legal": 197,
+      "business": 165,
+      "teacher": 33,
+      "voice_safe": 8,
+      "recognition_only": 18,
+      "do_not_use_unprompted": 20
+    }
+  },
+  "safety": {
+    "en": {
+      "vulgar": 4,
+      "offensive": 1,
+      "recognition_only": 13,
+      "do_not_use_unprompted": 13
+    },
+    "ru": {
+      "vulgar": 3,
+      "offensive": 1,
+      "recognition_only": 18,
+      "do_not_use_unprompted": 20
+    }
+  },
+  "low_coverage_categories": {
+    "en": [
+      {
+        "category": "core_vocabulary",
+        "count": 93,
+        "min_entries": 100
+      },
+      {
+        "category": "idioms_phrases",
+        "count": 59,
+        "min_entries": 100
+      },
+      {
+        "category": "recognition_only_sensitive",
+        "count": 13,
+        "min_entries": 100
+      },
+      {
+        "category": "voice_personality",
+        "count": 52,
+        "min_entries": 100
+      }
+    ],
+    "ru": [
+      {
+        "category": "core_vocabulary",
+        "count": 92,
+        "min_entries": 100
+      },
+      {
+        "category": "recognition_only_sensitive",
+        "count": 18,
+        "min_entries": 100
+      },
+      {
+        "category": "voice_personality",
+        "count": 16,
+        "min_entries": 100
+      }
+    ]
+  },
+  "metadata_gaps": {
+    "en": {
+      "language": "en",
+      "rows_with_no_coverage": 180,
+      "rows_with_no_register": 180,
+      "samples": [
+        "hello",
+        "goodbye",
+        "yes",
+        "no",
+        "water",
+        "food",
+        "home",
+        "work",
+        "time",
+        "today",
+        "tomorrow",
+        "family",
+        "love",
+        "like",
+        "want",
+        "need",
+        "talk",
+        "walk",
+        "run",
+        "sit",
+        "stand",
+        "eat",
+        "drink",
+        "sleep",
+        "wake",
+        "read",
+        "write",
+        "play",
+        "watch",
+        "hear",
+        "see",
+        "look",
+        "find",
+        "give",
+        "take",
+        "make",
+        "build",
+        "hold",
+        "open",
+        "close",
+        "define",
+        "illustrate",
+        "paraphrase",
+        "analyze",
+        "interpret",
+        "classify",
+        "categorize",
+        "organize",
+        "sequence",
+        "predict",
+        "infer",
+        "conclude",
+        "hypothesize",
+        "validate",
+        "justify",
+        "evidence",
+        "example",
+        "concept",
+        "principle",
+        "method",
+        "process",
+        "system",
+        "structure",
+        "purpose",
+        "context",
+        "viewpoint",
+        "assumption",
+        "criteria",
+        "framework",
+        "model",
+        "pattern",
+        "relationship",
+        "cause",
+        "effect",
+        "lesson",
+        "constant",
+        "parameter",
+        "argument",
+        "return",
+        "class",
+        "object",
+        "attribute",
+        "property",
+        "interface",
+        "module",
+        "package",
+        "library",
+        "dependency",
+        "branch",
+        "commit",
+        "pull",
+        "push",
+        "fork",
+        "clone",
+        "debug",
+        "compile",
+        "runtime",
+        "syntax",
+        "semantic",
+        "iteration"
+      ]
+    },
+    "ru": {
+      "language": "ru",
+      "rows_with_no_coverage": 0,
+      "rows_with_no_register": 0,
+      "samples": []
+    }
+  },
+  "english_russian_balance": {
+    "per_category": [
+      {
+        "category": "core_vocabulary",
+        "en": 93,
+        "ru": 92,
+        "diff_en_minus_ru": 1
+      },
+      {
+        "category": "slang_street_talk",
+        "en": 222,
+        "ru": 218,
+        "diff_en_minus_ru": 4
+      },
+      {
+        "category": "idioms_phrases",
+        "en": 59,
+        "ru": 419,
+        "diff_en_minus_ru": -360
+      },
+      {
+        "category": "professions_jobs",
+        "en": 272,
+        "ru": 254,
+        "diff_en_minus_ru": 18
+      },
+      {
+        "category": "trades_construction",
+        "en": 253,
+        "ru": 256,
+        "diff_en_minus_ru": -3
+      },
+      {
+        "category": "science_math",
+        "en": 154,
+        "ru": 140,
+        "diff_en_minus_ru": 14
+      },
+      {
+        "category": "medicine_health",
+        "en": 132,
+        "ru": 128,
+        "diff_en_minus_ru": 4
+      },
+      {
+        "category": "law_government",
+        "en": 215,
+        "ru": 230,
+        "diff_en_minus_ru": -15
+      },
+      {
+        "category": "business_finance",
+        "en": 180,
+        "ru": 183,
+        "diff_en_minus_ru": -3
+      },
+      {
+        "category": "coding_technology",
+        "en": 120,
+        "ru": 124,
+        "diff_en_minus_ru": -4
+      },
+      {
+        "category": "poetry_literary",
+        "en": 245,
+        "ru": 242,
+        "diff_en_minus_ru": 3
+      },
+      {
+        "category": "philosophy_abstract",
+        "en": 281,
+        "ru": 270,
+        "diff_en_minus_ru": 11
+      },
+      {
+        "category": "art_music_culture",
+        "en": 160,
+        "ru": 155,
+        "diff_en_minus_ru": 5
+      },
+      {
+        "category": "history_geography",
+        "en": 163,
+        "ru": 155,
+        "diff_en_minus_ru": 8
+      },
+      {
+        "category": "psychology_education",
+        "en": 157,
+        "ru": 147,
+        "diff_en_minus_ru": 10
+      },
+      {
+        "category": "mechanics_transportation",
+        "en": 163,
+        "ru": 141,
+        "diff_en_minus_ru": 22
+      },
+      {
+        "category": "food_home_daily_life",
+        "en": 169,
+        "ru": 172,
+        "diff_en_minus_ru": -3
+      },
+      {
+        "category": "regional_dialect",
+        "en": 112,
+        "ru": 109,
+        "diff_en_minus_ru": 3
+      },
+      {
+        "category": "formal_informal_speech",
+        "en": 112,
+        "ru": 112,
+        "diff_en_minus_ru": 0
+      },
+      {
+        "category": "voice_personality",
+        "en": 52,
+        "ru": 16,
+        "diff_en_minus_ru": 36
+      },
+      {
+        "category": "recognition_only_sensitive",
+        "en": 13,
+        "ru": 18,
+        "diff_en_minus_ru": -5
+      }
+    ],
+    "en_total": 3327,
+    "ru_total": 3581
+  },
+  "pack_id_top": {
+    "en": [
+      {
+        "pack_id": "",
+        "count": 180
+      },
+      {
+        "pack_id": "word_1779345369",
+        "count": 111
+      },
+      {
+        "pack_id": "word_1779346370",
+        "count": 108
+      },
+      {
+        "pack_id": "word_1779346178",
+        "count": 107
+      },
+      {
+        "pack_id": "word_1779346107",
+        "count": 105
+      },
+      {
+        "pack_id": "word_1779345263",
+        "count": 105
+      },
+      {
+        "pack_id": "word_1779346260",
+        "count": 104
+      },
+      {
+        "pack_id": "word_1779345478",
+        "count": 104
+      },
+      {
+        "pack_id": "word_1779345317",
+        "count": 104
+      },
+      {
+        "pack_id": "word_1779346430",
+        "count": 103
+      },
+      {
+        "pack_id": "word_1779345423",
+        "count": 102
+      },
+      {
+        "pack_id": "word_1779345710",
+        "count": 83
+      },
+      {
+        "pack_id": "word_1779346051",
+        "count": 82
+      },
+      {
+        "pack_id": "word_1779345928",
+        "count": 82
+      },
+      {
+        "pack_id": "word_1779345883",
+        "count": 82
+      },
+      {
+        "pack_id": "word_1779345838",
+        "count": 81
+      },
+      {
+        "pack_id": "word_1779345757",
+        "count": 81
+      },
+      {
+        "pack_id": "word_1779345668",
+        "count": 81
+      },
+      {
+        "pack_id": "word_1779345621",
+        "count": 81
+      },
+      {
+        "pack_id": "word_1779346009",
+        "count": 80
+      },
+      {
+        "pack_id": "word_1779345799",
+        "count": 80
+      },
+      {
+        "pack_id": "word_1779345533",
+        "count": 80
+      },
+      {
+        "pack_id": "word_1779345969",
+        "count": 79
+      },
+      {
+        "pack_id": "word_1779345577",
+        "count": 79
+      },
+      {
+        "pack_id": "word_1779346235",
+        "count": 49
+      },
+      {
+        "pack_id": "word_1779345163",
+        "count": 38
+      },
+      {
+        "pack_id": "word_1779346345",
+        "count": 35
+      },
+      {
+        "pack_id": "word_1779345236",
+        "count": 35
+      },
+      {
+        "pack_id": "word_1779345135",
+        "count": 35
+      },
+      {
+        "pack_id": "word_1779345222",
+        "count": 34
+      },
+      {
+        "pack_id": "word_1779346313",
+        "count": 32
+      },
+      {
+        "pack_id": "word_1779346161",
+        "count": 32
+      },
+      {
+        "pack_id": "word_1779345128",
+        "count": 32
+      },
+      {
+        "pack_id": "word_1779345202",
+        "count": 31
+      },
+      {
+        "pack_id": "word_1779346328",
+        "count": 30
+      },
+      {
+        "pack_id": "word_1779346091",
+        "count": 29
+      },
+      {
+        "pack_id": "word_1779345183",
+        "count": 29
+      },
+      {
+        "pack_id": "phrase_1779346492",
+        "count": 24
+      },
+      {
+        "pack_id": "word_1779346425",
+        "count": 12
+      },
+      {
+        "pack_id": "word_1779345157",
+        "count": 12
+      },
+      {
+        "pack_id": "word_1779345151",
+        "count": 11
+      },
+      {
+        "pack_id": "word_1779346365",
+        "count": 10
+      },
+      {
+        "pack_id": "word_1779345258",
+        "count": 10
+      },
+      {
+        "pack_id": "phrase_1779345217",
+        "count": 10
+      }
+    ],
+    "ru": [
+      {
+        "pack_id": "",
+        "count": 2518
+      }
+    ]
+  },
+  "recommended_next_imports": [
+    {
+      "language": "ru",
+      "category": "voice_personality",
+      "current": 16,
+      "reason": "below_50"
+    },
+    {
+      "language": "en",
+      "category": "recognition_only_sensitive",
+      "current": 13,
+      "reason": "below_50"
+    },
+    {
+      "language": "ru",
+      "category": "recognition_only_sensitive",
+      "current": 18,
+      "reason": "below_50"
+    }
+  ]
+}

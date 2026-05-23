@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_85yh1y8o\\ru.jsonl",
+  "language": "ru",
+  "source_type": "word_list",
+  "expected_format": "jsonl",
+  "corpus_id": "ad_hoc",
+  "checkpoint_id": "ckpt_1779459519_bd5cfe334b",
+  "dry_run": true,
+  "allow_full_source": false,
+  "max_entries_applied": 50,
+  "batch_size_applied": 10,
+  "accepted": 50,
+  "rejected": 0,
+  "duplicates": 0,
+  "batches": 6,
+  "rejection_samples": [],
+  "quality_report": null,
+  "pack_id": "corpus_ru_word_list_1779459519",
+  "report_generated_at": 1779459520.0577116
+}

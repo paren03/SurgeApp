@@ -1,0 +1,54 @@
+{
+  "metadata_completeness": {
+    "ok": true,
+    "n": 500,
+    "completeness_ratio": 0.75,
+    "missing_word": 0,
+    "missing_definition": 500,
+    "missing_coverage": 0,
+    "missing_register": 0
+  },
+  "language_consistency": {
+    "ok": true,
+    "n": 500,
+    "expected": "ru",
+    "mismatch_count": 0,
+    "mismatch_ratio": 0.0
+  },
+  "safety_consistency": {
+    "ok": true,
+    "n": 500,
+    "invalid_rows": 0,
+    "invalid_ratio": 0.0
+  },
+  "register_consistency": {
+    "ok": true,
+    "n": 500,
+    "invalid_rows": 0,
+    "invalid_ratio": 0.0
+  },
+  "coverage_consistency": {
+    "ok": true,
+    "n": 500,
+    "invalid_rows": 0,
+    "invalid_ratio": 0.0
+  },
+  "duplicate_rate": {
+    "ok": true,
+    "n_words": 2518,
+    "distinct_words": 2518,
+    "duplicates_estimated": 0,
+    "duplicate_ratio": 0.0
+  },
+  "rejected_rows": {
+    "ok": true,
+    "n": 0,
+    "samples": []
+  },
+  "quality_score": {
+    "ok": true,
+    "quality_score": 0.863,
+    "verdict": "pass"
+  },
+  "written_at": 1779459521.3773873
+}

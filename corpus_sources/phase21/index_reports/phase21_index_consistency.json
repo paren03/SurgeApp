@@ -1,0 +1,129 @@
+{
+  "generated_at": 1779459521.5909896,
+  "en_index": {
+    "ok": true,
+    "language": "en",
+    "indexes_present": [
+      "sqlite_autoindex_words_1",
+      "idx_words_word_prefix",
+      "idx_words_level",
+      "idx_words_frequency",
+      "ix_words_pack_id",
+      "ix_words_pack_source",
+      "ix_words_word_lc",
+      "ix_words_language"
+    ],
+    "n_words_total": 2814,
+    "n_words_fts": 100,
+    "n_words_fallback": null,
+    "fts5_or_fallback_ok": true,
+    "ix_words_word_lc_present": true,
+    "ix_words_pack_id_present": true,
+    "fts5_available": true,
+    "limit_used": 1000
+  },
+  "ru_index": {
+    "ok": true,
+    "language": "ru",
+    "indexes_present": [
+      "sqlite_autoindex_words_1",
+      "idx_ru_lemma",
+      "idx_ru_pos",
+      "idx_ru_freq",
+      "sqlite_autoindex_phrases_1",
+      "idx_phrase_idiomatic",
+      "ix_words_pack_id",
+      "ix_words_pack_source",
+      "ix_words_word_lc",
+      "ix_words_lemma",
+      "ix_phrases_pack_id",
+      "ix_phrases_phrase_lc"
+    ],
+    "n_words_total": 2518,
+    "n_phrases_total": 35,
+    "n_words_fts": 100,
+    "n_words_fallback": null,
+    "fts5_or_fallback_ok": true,
+    "ix_words_word_lc_present": true,
+    "ix_words_lemma_present": true,
+    "ix_words_pack_id_present": true,
+    "fts5_available": true,
+    "limit_used": 1000
+  },
+  "fts_counts": {
+    "ok": true,
+    "en": {
+      "words": 2814,
+      "fts": 100,
+      "fallback": null,
+      "coverage_ratio": 0.036
+    },
+    "ru": {
+      "words": 2518,
+      "fts": 100,
+      "fallback": null,
+      "coverage_ratio": 0.04
+    }
+  },
+  "safety_filter_en": {
+    "ok": true,
+    "language": "en",
+    "tag_results": {
+      "vulgar": {
+        "returned": 4,
+        "leaks_not_carrying_tag": 0
+      },
+      "offensive": {
+        "returned": 1,
+        "leaks_not_carrying_tag": 0
+      },
+      "recognition_only": {
+        "returned": 13,
+        "leaks_not_carrying_tag": 0
+      },
+      "do_not_use_unprompted": {
+        "returned": 13,
+        "leaks_not_carrying_tag": 0
+      }
+    },
+    "total_leaks": 0
+  },
+  "safety_filter_ru": {
+    "ok": true,
+    "language": "ru",
+    "tag_results": {
+      "vulgar": {
+        "returned": 3,
+        "leaks_not_carrying_tag": 0
+      },
+      "offensive": {
+        "returned": 1,
+        "leaks_not_carrying_tag": 0
+      },
+      "recognition_only": {
+        "returned": 18,
+        "leaks_not_carrying_tag": 0
+      },
+      "do_not_use_unprompted": {
+        "returned": 20,
+        "leaks_not_carrying_tag": 0
+      }
+    },
+    "total_leaks": 0
+  },
+  "bounds_en": {
+    "ok": true,
+    "language": "en",
+    "returned": 50,
+    "asked": 9999,
+    "hard_clamp_expected": 200
+  },
+  "bounds_ru": {
+    "ok": true,
+    "language": "ru",
+    "returned": 6,
+    "asked": 9999,
+    "hard_clamp_expected": 200
+  },
+  "written_at": 1779459521.681505
+}

@@ -1,0 +1,50 @@
+{
+  "source": {
+    "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_3hstkexp\\mix.jsonl",
+    "language": "en",
+    "file_name": "mix.jsonl",
+    "size_bytes": 14380,
+    "suffix": ".jsonl",
+    "adapter_type": "luna_jsonl",
+    "expected_format": "jsonl",
+    "source_type": "word_list",
+    "corpus_id": "en::mix.jsonl::35572a290acd",
+    "source_sha256": "6bbc9e201dee679bbdc344e83d7f4efa704f6e3dbbc857bebe9c4857ffeffeab",
+    "row_estimate": 60
+  },
+  "report": {
+    "ok": true,
+    "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_3hstkexp\\mix.jsonl",
+    "language": "en",
+    "expected_format": "jsonl",
+    "sample_summary": {
+      "requested": 100,
+      "returned": 60,
+      "total_scanned": 60,
+      "strategy": "head_middle_tail"
+    },
+    "completeness_avg": 1.0,
+    "duplicates": {
+      "unique_keys": 60,
+      "duplicate_keys": 0,
+      "duplicate_samples": []
+    },
+    "acceptance": {
+      "acceptance_rate": 1.0,
+      "n": 60,
+      "n_accept": 60,
+      "n_reject": 0,
+      "accept_threshold": 0.4
+    },
+    "language_mismatch_count": 60,
+    "operational_unsafe_count": 0,
+    "needs_recognition_only_count": 0,
+    "quality_score": 1.0,
+    "rows_scored": 60
+  },
+  "gate": {
+    "ok": true,
+    "quality_score": 1.0,
+    "min_quality_score": 0.75
+  }
+}

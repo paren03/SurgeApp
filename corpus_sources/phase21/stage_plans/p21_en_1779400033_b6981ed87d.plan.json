@@ -1,0 +1,68 @@
+{
+  "plan_id": "p21_en_1779400033_b6981ed87d",
+  "language": "en",
+  "max_total_per_language": 80,
+  "max_per_source": 80,
+  "batch_size": 20,
+  "per_source_breakdown": [
+    {
+      "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_gnbnyiw6\\en.jsonl",
+      "language": "en",
+      "file_name": "en.jsonl",
+      "size_bytes": 21730,
+      "suffix": ".jsonl",
+      "adapter_type": "luna_jsonl",
+      "expected_format": "jsonl",
+      "source_type": "word_list",
+      "corpus_id": "en::en.jsonl::3a794a7bd4e3",
+      "source_sha256": "fb54736f5af631d8a5e515536c052ed5f9c6af839d0b4e5d1693df4b028e3b34",
+      "row_estimate": 120,
+      "quality_report": {
+        "ok": true,
+        "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_gnbnyiw6\\en.jsonl",
+        "language": "en",
+        "expected_format": "jsonl",
+        "sample_summary": {
+          "requested": 100,
+          "returned": 100,
+          "total_scanned": 120,
+          "strategy": "head_middle_tail"
+        },
+        "completeness_avg": 1.0,
+        "duplicates": {
+          "unique_keys": 100,
+          "duplicate_keys": 0,
+          "duplicate_samples": []
+        },
+        "acceptance": {
+          "acceptance_rate": 1.0,
+          "n": 100,
+          "n_accept": 100,
+          "n_reject": 0,
+          "accept_threshold": 0.4
+        },
+        "language_mismatch_count": 0,
+        "operational_unsafe_count": 0,
+        "needs_recognition_only_count": 0,
+        "quality_score": 1.0,
+        "rows_scored": 100
+      },
+      "quality_ok": true,
+      "quality_gate_decision": {
+        "ok": true,
+        "quality_score": 1.0,
+        "min_quality_score": 0.75
+      },
+      "stage_take": 80
+    }
+  ],
+  "stage_total": 80,
+  "allow_full_source": false,
+  "quality_gate_required": true,
+  "dry_run_required": true,
+  "backup_required": true,
+  "checkpoint_required": true,
+  "manifest_required": true,
+  "rollback_required": true,
+  "created_at": 1779400033.2746367
+}

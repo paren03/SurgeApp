@@ -1,0 +1,51 @@
+{
+  "source": {
+    "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_3hstkexp\\bad.jsonl",
+    "language": "en",
+    "file_name": "bad.jsonl",
+    "size_bytes": 640,
+    "suffix": ".jsonl",
+    "adapter_type": "luna_jsonl",
+    "expected_format": "jsonl",
+    "source_type": "word_list",
+    "corpus_id": "en::bad.jsonl::8265b7dada2f",
+    "source_sha256": "d38f9b3984a37f179563ca4558f69f3ad116fa851ea46473d3f4de198f0c729c",
+    "row_estimate": 20
+  },
+  "report": {
+    "ok": true,
+    "path": "C:\\Users\\paren\\AppData\\Local\\Temp\\phase21_3hstkexp\\bad.jsonl",
+    "language": "en",
+    "expected_format": "jsonl",
+    "sample_summary": {
+      "requested": 100,
+      "returned": 20,
+      "total_scanned": 20,
+      "strategy": "head_middle_tail"
+    },
+    "completeness_avg": 0.2,
+    "duplicates": {
+      "unique_keys": 0,
+      "duplicate_keys": 0,
+      "duplicate_samples": []
+    },
+    "acceptance": {
+      "acceptance_rate": 0.0,
+      "n": 20,
+      "n_accept": 0,
+      "n_reject": 20,
+      "accept_threshold": 0.4
+    },
+    "language_mismatch_count": 0,
+    "operational_unsafe_count": 0,
+    "needs_recognition_only_count": 0,
+    "quality_score": 0.3,
+    "rows_scored": 20
+  },
+  "gate": {
+    "ok": false,
+    "reason": "quality_score_below_threshold",
+    "quality_score": 0.3,
+    "min_quality_score": 0.75
+  }
+}
