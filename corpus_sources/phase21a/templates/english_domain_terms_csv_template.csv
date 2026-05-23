@@ -1,0 +1,4 @@
+word,definition,pos,coverage,register,safety,domain
+vector,a quantity with magnitude and direction,noun,science_math,standard;technical;academic,,mathematics
+hash,a function mapping data to a fixed-size value,noun,coding_technology,standard;technical;coding,,software
+ligament,a band of tissue connecting bones,noun,medicine_health,standard;medical,,anatomy

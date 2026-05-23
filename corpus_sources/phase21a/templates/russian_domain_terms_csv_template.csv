@@ -1,0 +1,4 @@
+word,definition,pos,coverage,register,safety,domain
+вектор,величина с длиной и направлением,noun,science_math,standard;technical;academic,,математика
+хэш,функция отображения данных в значение фиксированного размера,noun,coding_technology,standard;technical;coding,,программирование
+связка,ткань  соединяющая кости,noun,medicine_health,standard;medical,,анатомия

@@ -1,0 +1,6 @@
+word,definition,pos,coverage,register,safety,domain
+engineer,a person who designs and builds machines or systems,noun,professions_jobs;core_vocabulary,standard;professional,,engineering
+nurse,a person trained to care for the sick and injured,noun,professions_jobs;medicine_health;core_vocabulary,standard;professional,,healthcare
+carpenter,a person who makes things from wood,noun,professions_jobs;trades_construction,standard;professional,,trades
+accountant,a person who keeps financial records for a business,noun,professions_jobs;business_finance,standard;professional,,finance
+teacher,a person whose job is to teach,noun,professions_jobs;psychology_education,standard;professional;teacher,,education
