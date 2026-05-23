@@ -1,0 +1,11 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15a_trades_construction.jsonl",
+  "kind": "word",
+  "source": "seed_ru_phase15a_trades_construction",
+  "added": 112,
+  "rejected": 0,
+  "rejection_samples": [],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460240.5458262
+}

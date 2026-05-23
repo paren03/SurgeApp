@@ -1,0 +1,31 @@
+{
+  "pack_id": "phrase_1779460233",
+  "source_name": "seed_en_voice_personality",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\voice_personality.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "voice_personality"
+  ],
+  "register_tags": [
+    "informal",
+    "standard",
+    "voice_safe"
+  ],
+  "safety_tags": [],
+  "domain_tags": [
+    "phrase"
+  ],
+  "row_count": 24,
+  "accepted_count": 24,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "eea6b293e9bd66b0beef6d922264a4e0990886588b78bf54c77678a72d6e5d7e",
+  "created_at": 1779460233.4580226,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\voice_personality.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=phrase",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

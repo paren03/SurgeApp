@@ -1,0 +1,32 @@
+{
+  "pack_id": "2e3989e2455244a4b343dc1e7461f3ea",
+  "source_name": "seed_ru_phase15b_voice_personality",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_voice_personality.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "idioms_phrases",
+    "psychology_education",
+    "voice_personality"
+  ],
+  "register_tags": [
+    "informal",
+    "professional",
+    "standard",
+    "voice_safe"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 81,
+  "accepted_count": 0,
+  "rejected_count": 81,
+  "duplicate_count": 0,
+  "sha256": "c8bf8eaee75a6f56ee1c9d38397c3b5711867c597e7187777a7df9db27a7f3dd",
+  "created_at": 1779460249.3828943,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_voice_personality.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_voice_personality",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

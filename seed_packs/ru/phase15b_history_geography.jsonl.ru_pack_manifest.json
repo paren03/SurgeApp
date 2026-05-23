@@ -1,0 +1,41 @@
+{
+  "pack_id": "dc6f8fbb62f046e8843f575fb19d8952",
+  "source_name": "seed_ru_phase15b_history_geography",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_history_geography.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "business_finance",
+    "history_geography",
+    "idioms_phrases",
+    "law_government",
+    "mechanics_transportation",
+    "psychology_education",
+    "recognition_only_sensitive",
+    "regional_dialect",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "business",
+    "recognition_only",
+    "regional",
+    "standard"
+  ],
+  "safety_tags": [
+    "recognition_only"
+  ],
+  "domain_tags": [],
+  "row_count": 80,
+  "accepted_count": 80,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "752f41f001a5697653b796278e452ed3be12dd9d415993708b036aacb8e91893",
+  "created_at": 1779460245.3225708,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_history_geography.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_history_geography",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

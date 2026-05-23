@@ -1,0 +1,37 @@
+{
+  "pack_id": "6689f21c2eeb43b69b9c5bbd5f6960af",
+  "source_name": "seed_ru_phase15b_medicine_health",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_medicine_health.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "idioms_phrases",
+    "law_government",
+    "medicine_health",
+    "recognition_only_sensitive"
+  ],
+  "register_tags": [
+    "academic",
+    "legal",
+    "medical",
+    "professional",
+    "recognition_only",
+    "standard"
+  ],
+  "safety_tags": [
+    "recognition_only"
+  ],
+  "domain_tags": [],
+  "row_count": 79,
+  "accepted_count": 79,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "dcabaffc37ee24b5e4af14616d66190f26e1b4938b643f6d9222741ede6d0e65",
+  "created_at": 1779460247.3650568,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_medicine_health.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_medicine_health",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

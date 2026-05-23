@@ -1,0 +1,36 @@
+{
+  "pack_id": "95e1fe25795c482b83827d2e6b5cb73c",
+  "source_name": "seed_ru_poetry_literary_expansion",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\poetry_literary_expansion.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "art_music_culture",
+    "history_geography",
+    "idioms_phrases",
+    "philosophy_abstract",
+    "poetry_literary",
+    "voice_personality"
+  ],
+  "register_tags": [
+    "academic",
+    "informal",
+    "philosophical",
+    "poetic",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 101,
+  "accepted_count": 101,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "4ba303162b9370ce5b880af9a1b27090e257cf4d04a7f18e0e73d23158f9470d",
+  "created_at": 1779460251.6893167,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\poetry_literary_expansion.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_poetry_literary_expansion",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

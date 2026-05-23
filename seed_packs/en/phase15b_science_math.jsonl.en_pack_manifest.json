@@ -1,0 +1,32 @@
+{
+  "pack_id": "word_1779460226",
+  "source_name": "seed_en_phase15b_science_math",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_science_math.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "coding_technology",
+    "mechanics_transportation",
+    "medicine_health",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 82,
+  "accepted_count": 82,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "ac203049874affec8891cdce8627da380d2dbb6bd016c606cd2329dd6668f208",
+  "created_at": 1779460227.1194901,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_science_math.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

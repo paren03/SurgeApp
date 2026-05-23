@@ -1,0 +1,35 @@
+{
+  "pack_id": "word_1779460213",
+  "source_name": "seed_en_mechanics_transportation",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\mechanics_transportation.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "business_finance",
+    "history_geography",
+    "mechanics_transportation",
+    "professions_jobs",
+    "science_math"
+  ],
+  "register_tags": [
+    "business",
+    "construction",
+    "professional",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 35,
+  "accepted_count": 35,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "de798bfb2956c48d4d42906febc43a9ff82caac919b32adc963dbf7b3e629386",
+  "created_at": 1779460213.659475,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\mechanics_transportation.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

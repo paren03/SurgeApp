@@ -1,0 +1,11 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\slang_street_talk_expansion.jsonl",
+  "kind": "word",
+  "source": "seed_ru_slang_street_talk_expansion",
+  "added": 102,
+  "rejected": 0,
+  "rejection_samples": [],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460254.7067225
+}

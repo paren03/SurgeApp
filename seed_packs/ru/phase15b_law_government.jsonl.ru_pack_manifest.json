@@ -1,0 +1,43 @@
+{
+  "pack_id": "bc5937b7dffa420a8cb7a3f54f39f8f6",
+  "source_name": "seed_ru_phase15b_law_government",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_law_government.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "business_finance",
+    "coding_technology",
+    "food_home_daily_life",
+    "idioms_phrases",
+    "law_government",
+    "medicine_health",
+    "recognition_only_sensitive"
+  ],
+  "register_tags": [
+    "academic",
+    "business",
+    "do_not_use_unprompted",
+    "informal",
+    "legal",
+    "professional",
+    "recognition_only",
+    "standard"
+  ],
+  "safety_tags": [
+    "do_not_use_unprompted",
+    "recognition_only"
+  ],
+  "domain_tags": [],
+  "row_count": 79,
+  "accepted_count": 79,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "0eb75968f3e53fd62b3ff1062276b6da148d03dd2c4be1b61fec956e376e62fe",
+  "created_at": 1779460246.025505,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_law_government.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_law_government",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

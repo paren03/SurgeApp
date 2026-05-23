@@ -1,0 +1,30 @@
+{
+  "pack_id": "cdef852aa45140f2b8a870151a610271",
+  "source_name": "seed_ru_phase15b_food_home_daily_life",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_food_home_daily_life.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "food_home_daily_life",
+    "idioms_phrases",
+    "medicine_health"
+  ],
+  "register_tags": [
+    "informal",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 76,
+  "accepted_count": 76,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "07de69df6495cf7120195bda188b6c0e4eaddaca6e4701569dc4fa13f81a9301",
+  "created_at": 1779460243.9293628,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_food_home_daily_life.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_food_home_daily_life",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

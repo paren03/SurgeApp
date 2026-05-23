@@ -1,0 +1,31 @@
+{
+  "pack_id": "047f09e13dc34db6a4d5831ea9f68677",
+  "source_name": "seed_ru_trades",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\trades.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "law_government",
+    "trades_construction"
+  ],
+  "register_tags": [
+    "construction",
+    "legal",
+    "professional",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 10,
+  "accepted_count": 10,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "5911ebdf98bb33fe1fd67a3d39ec415182b3cfc4b4995e6fc80338d0ddb9139a",
+  "created_at": 1779460254.8018253,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\trades.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_trades",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

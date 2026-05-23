@@ -1,0 +1,31 @@
+{
+  "pack_id": "word_1779460213",
+  "source_name": "seed_en_law_government",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\law_government.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "history_geography",
+    "law_government"
+  ],
+  "register_tags": [
+    "academic",
+    "legal",
+    "professional",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 35,
+  "accepted_count": 35,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "2a8a75993d842e4bd6eb65961298716343618221412fc60e14eaa5993e565c74",
+  "created_at": 1779460213.3710911,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\law_government.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

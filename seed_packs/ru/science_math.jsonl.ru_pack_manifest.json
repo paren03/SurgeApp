@@ -1,0 +1,31 @@
+{
+  "pack_id": "77a0875a00e54155a8655e9409a7c2fe",
+  "source_name": "seed_ru_science_math",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\science_math.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "philosophy_abstract",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "philosophical",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 33,
+  "accepted_count": 33,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "ce04fbce1025f46518745a9c3fdbc56df979f8d0997e5885003c96a2ca80f818",
+  "created_at": 1779460253.7173686,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\science_math.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_science_math",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

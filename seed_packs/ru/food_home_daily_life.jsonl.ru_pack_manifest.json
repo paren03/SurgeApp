@@ -1,0 +1,33 @@
+{
+  "pack_id": "23ef4dd20c264e77bb838523ac92b5e4",
+  "source_name": "seed_ru_food_home_daily_life",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\food_home_daily_life.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "business_finance",
+    "food_home_daily_life",
+    "law_government"
+  ],
+  "register_tags": [
+    "business",
+    "informal",
+    "legal",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 35,
+  "accepted_count": 35,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "adfc072198d65366b33aae041d5eb397f2db51b89496a7b4ca189504871ac16f",
+  "created_at": 1779460234.5542698,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\food_home_daily_life.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_food_home_daily_life",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

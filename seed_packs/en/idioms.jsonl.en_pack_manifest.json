@@ -1,0 +1,30 @@
+{
+  "pack_id": "phrase_1779460212",
+  "source_name": "seed_en_idioms",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\idioms.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "idioms_phrases"
+  ],
+  "register_tags": [
+    "informal",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [
+    "phrase"
+  ],
+  "row_count": 10,
+  "accepted_count": 10,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "df3608253f14afee80b67306a422feb3aa0eaf80bec7e47229fe71a175a06a6d",
+  "created_at": 1779460213.0782177,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\idioms.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=phrase",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

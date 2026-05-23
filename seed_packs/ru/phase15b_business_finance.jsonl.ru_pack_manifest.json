@@ -1,0 +1,32 @@
+{
+  "pack_id": "e27f48de87174979b28f8c3a72f4f244",
+  "source_name": "seed_ru_phase15b_business_finance",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_business_finance.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "business_finance",
+    "law_government"
+  ],
+  "register_tags": [
+    "academic",
+    "business",
+    "legal",
+    "professional",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 79,
+  "accepted_count": 79,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "64a2847f6a24e075fc4dd81af1d6ed6ded0555aa3ab1cae87a5739fe74870e17",
+  "created_at": 1779460241.911747,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_business_finance.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_business_finance",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "pack_id": "word_1779460232",
+  "source_name": "seed_en_trades",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\trades.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "law_government",
+    "trades_construction"
+  ],
+  "register_tags": [
+    "construction",
+    "legal",
+    "professional",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [
+    "framing",
+    "joinery",
+    "roofing",
+    "safety"
+  ],
+  "row_count": 12,
+  "accepted_count": 12,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "5acb56c296d12f35ae7b3352b990b5de5323812696e4d30d7ce03ee4c99d0bfc",
+  "created_at": 1779460232.4239004,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\trades.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

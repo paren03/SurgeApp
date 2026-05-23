@@ -1,0 +1,23 @@
+{
+  "pack_id": "word_1779460227",
+  "source_name": "seed_en_phase15b_voice_personality",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_voice_personality.jsonl",
+  "language": "en",
+  "coverage_categories": [],
+  "register_tags": [],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 78,
+  "accepted_count": 0,
+  "rejected_count": 78,
+  "duplicate_count": 0,
+  "sha256": "9efe9238bf8a01a2f2d2b84cca6685ec06dbb30df030852d622bd848ef6166f5",
+  "created_at": 1779460227.1254892,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_voice_personality.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

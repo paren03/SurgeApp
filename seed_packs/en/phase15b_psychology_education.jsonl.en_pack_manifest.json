@@ -1,0 +1,36 @@
+{
+  "pack_id": "word_1779460225",
+  "source_name": "seed_en_phase15b_psychology_education",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_psychology_education.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "law_government",
+    "medicine_health",
+    "philosophy_abstract",
+    "psychology_education",
+    "voice_personality"
+  ],
+  "register_tags": [
+    "academic",
+    "legal",
+    "medical",
+    "professional",
+    "standard",
+    "teacher"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 79,
+  "accepted_count": 79,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "3f2ed9118dd47a4e19c3179c8cca9bd45ddb40304a85276f2257653fb642d426",
+  "created_at": 1779460225.823978,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_psychology_education.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

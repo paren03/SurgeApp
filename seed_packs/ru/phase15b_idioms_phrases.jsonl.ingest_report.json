@@ -1,0 +1,92 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_idioms_phrases.jsonl",
+  "kind": "word",
+  "source": "seed_ru_phase15b_idioms_phrases",
+  "added": 0,
+  "rejected": 80,
+  "rejection_samples": [
+    {
+      "row": 0,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 1,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 2,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 3,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 4,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 5,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 6,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 7,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 8,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 9,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 10,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 11,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 12,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 13,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 14,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 15,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 16,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 17,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 18,
+      "reason": "missing_word_and_lemma"
+    },
+    {
+      "row": 19,
+      "reason": "missing_word_and_lemma"
+    }
+  ],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460245.3275764
+}

@@ -1,0 +1,34 @@
+{
+  "pack_id": "29768a5b621840f8972c15c7ea1f5d4d",
+  "source_name": "seed_ru_mechanics_transportation",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\mechanics_transportation.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "business_finance",
+    "history_geography",
+    "mechanics_transportation",
+    "science_math"
+  ],
+  "register_tags": [
+    "business",
+    "construction",
+    "professional",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 31,
+  "accepted_count": 31,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "f0b4c511d46421fb9072cd44357b4e188b4e62dfe45b92447bdec7c216864745",
+  "created_at": 1779460235.753316,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\mechanics_transportation.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_mechanics_transportation",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

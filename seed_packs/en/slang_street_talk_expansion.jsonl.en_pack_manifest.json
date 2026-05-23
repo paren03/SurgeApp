@@ -1,0 +1,43 @@
+{
+  "pack_id": "word_1779460231",
+  "source_name": "seed_en_slang_street_talk_expansion",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\slang_street_talk_expansion.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "business_finance",
+    "idioms_phrases",
+    "mechanics_transportation",
+    "medicine_health",
+    "recognition_only_sensitive",
+    "regional_dialect",
+    "slang_street_talk"
+  ],
+  "register_tags": [
+    "do_not_use_unprompted",
+    "informal",
+    "recognition_only",
+    "regional",
+    "slang",
+    "standard",
+    "vulgar"
+  ],
+  "safety_tags": [
+    "do_not_use_unprompted",
+    "recognition_only",
+    "vulgar"
+  ],
+  "domain_tags": [],
+  "row_count": 108,
+  "accepted_count": 108,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "dac8c7d75d12629d6a3df37d10d80c498a49236bac71f5c159fae42ee1f481b7",
+  "created_at": 1779460232.3116822,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\slang_street_talk_expansion.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

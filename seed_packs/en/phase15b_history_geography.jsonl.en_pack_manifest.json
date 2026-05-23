@@ -1,0 +1,38 @@
+{
+  "pack_id": "word_1779460222",
+  "source_name": "seed_en_phase15b_history_geography",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_history_geography.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "business_finance",
+    "history_geography",
+    "law_government",
+    "mechanics_transportation",
+    "philosophy_abstract",
+    "psychology_education",
+    "recognition_only_sensitive",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "recognition_only",
+    "standard"
+  ],
+  "safety_tags": [
+    "recognition_only"
+  ],
+  "domain_tags": [],
+  "row_count": 80,
+  "accepted_count": 80,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "e43849eb9fa9e9981175bf49ed52efcda253d76c8a800c696245b40c36d45cdc",
+  "created_at": 1779460223.155901,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_history_geography.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

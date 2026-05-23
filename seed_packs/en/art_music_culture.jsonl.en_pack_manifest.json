@@ -1,0 +1,31 @@
+{
+  "pack_id": "word_1779460211",
+  "source_name": "seed_en_art_music_culture",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\art_music_culture.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "art_music_culture",
+    "history_geography",
+    "regional_dialect"
+  ],
+  "register_tags": [
+    "academic",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 34,
+  "accepted_count": 34,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "d93b85126e027cd9ed117ef824033db9c2d91b250e0c7064366a85899ea20bcc",
+  "created_at": 1779460211.6373177,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\art_music_culture.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "pack_id": "b103968bdb7040ef87f1f923832b3ac1",
+  "source_name": "seed_ru_core",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\core.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "core_vocabulary"
+  ],
+  "register_tags": [
+    "informal",
+    "standard",
+    "teacher"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 15,
+  "accepted_count": 15,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "866f4bfdaa8395b4cae01e8339a447302f6eb91e8783bbf06ec89cc72e1bc967",
+  "created_at": 1779460234.2436,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\core.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_core",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "pack_id": "word_1779460220",
+  "source_name": "seed_en_phase15b_core_vocabulary",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_core_vocabulary.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "core_vocabulary"
+  ],
+  "register_tags": [
+    "formal",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 81,
+  "accepted_count": 81,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "e449e3f12e18906111f91e171dd73ace05042fbb697b0b9ba9ecc579d3e2b59f",
+  "created_at": 1779460221.1332679,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_core_vocabulary.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "pack_id": "752df5a80cfc494499767410edcfbb38",
+  "source_name": "seed_ru_regional_dialect",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\regional_dialect.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "food_home_daily_life",
+    "regional_dialect"
+  ],
+  "register_tags": [
+    "informal",
+    "regional",
+    "slang",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 25,
+  "accepted_count": 25,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "8d71bfc5da70e3f8f3652855e7402123ad3a220f3859a161371526d1d08544fd",
+  "created_at": 1779460253.4279034,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\regional_dialect.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_regional_dialect",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

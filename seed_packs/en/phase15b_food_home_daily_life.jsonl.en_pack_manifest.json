@@ -1,0 +1,29 @@
+{
+  "pack_id": "word_1779460221",
+  "source_name": "seed_en_phase15b_food_home_daily_life",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_food_home_daily_life.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "food_home_daily_life",
+    "medicine_health"
+  ],
+  "register_tags": [
+    "informal",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 84,
+  "accepted_count": 84,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "9b4264aa773c127775e9f33aab19ffdd8dbb46d9a3b73e57a7ade912ee2f7fdf",
+  "created_at": 1779460221.8243952,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_food_home_daily_life.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

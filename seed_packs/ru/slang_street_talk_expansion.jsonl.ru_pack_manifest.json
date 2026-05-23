@@ -1,0 +1,43 @@
+{
+  "pack_id": "90646cddad6a4898a50e3287d9614633",
+  "source_name": "seed_ru_slang_street_talk_expansion",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\slang_street_talk_expansion.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "business_finance",
+    "coding_technology",
+    "food_home_daily_life",
+    "idioms_phrases",
+    "mechanics_transportation",
+    "professions_jobs",
+    "recognition_only_sensitive",
+    "slang_street_talk"
+  ],
+  "register_tags": [
+    "coding",
+    "do_not_use_unprompted",
+    "informal",
+    "recognition_only",
+    "slang",
+    "vulgar"
+  ],
+  "safety_tags": [
+    "do_not_use_unprompted",
+    "recognition_only",
+    "vulgar"
+  ],
+  "domain_tags": [],
+  "row_count": 102,
+  "accepted_count": 102,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "9bea2d0353cc244846df9a3ba30d07cf7bd55181239cae8ecd01c9ed6d1f8622",
+  "created_at": 1779460254.7092319,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\slang_street_talk_expansion.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_slang_street_talk_expansion",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

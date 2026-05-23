@@ -1,0 +1,38 @@
+{
+  "pack_id": "word_1779460232",
+  "source_name": "seed_en_trades_construction_expansion",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\trades_construction_expansion.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "business_finance",
+    "law_government",
+    "mechanics_transportation",
+    "professions_jobs",
+    "trades_construction"
+  ],
+  "register_tags": [
+    "business",
+    "construction",
+    "informal",
+    "legal",
+    "professional",
+    "slang",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 103,
+  "accepted_count": 103,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "2353b5435acd831314ce296137188b2b519d93f02daacdd622757ed826278f66",
+  "created_at": 1779460233.2787302,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\trades_construction_expansion.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

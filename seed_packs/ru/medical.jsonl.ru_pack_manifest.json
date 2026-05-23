@@ -1,0 +1,36 @@
+{
+  "pack_id": "03578d1eb65246518437f2383ad0fa2e",
+  "source_name": "seed_ru_medical",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\medical.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "medicine_health",
+    "recognition_only_sensitive",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "medical",
+    "professional",
+    "recognition_only",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [
+    "recognition_only"
+  ],
+  "domain_tags": [],
+  "row_count": 10,
+  "accepted_count": 10,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "7232abc57e7b693781acdd82776e323cd32dd84027e3509a7c1a98e54668195e",
+  "created_at": 1779460235.8453956,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\medical.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_medical",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

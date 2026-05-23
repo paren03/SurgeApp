@@ -1,0 +1,36 @@
+{
+  "pack_id": "word_1779460219",
+  "source_name": "seed_en_phase15b_business_finance",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_business_finance.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "business_finance",
+    "idioms_phrases",
+    "law_government",
+    "medicine_health",
+    "science_math",
+    "voice_personality"
+  ],
+  "register_tags": [
+    "business",
+    "legal",
+    "professional",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 80,
+  "accepted_count": 80,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "73dcf1bedb6f1e7b3e3a44ac64b2701c77089f098f8fec86aaf3c673b9388a86",
+  "created_at": 1779460219.8022602,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_business_finance.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

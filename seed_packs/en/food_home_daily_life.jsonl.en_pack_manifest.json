@@ -1,0 +1,33 @@
+{
+  "pack_id": "word_1779460212",
+  "source_name": "seed_en_food_home_daily_life",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\food_home_daily_life.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "business_finance",
+    "food_home_daily_life",
+    "law_government"
+  ],
+  "register_tags": [
+    "business",
+    "informal",
+    "legal",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 38,
+  "accepted_count": 38,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "b02960635b079f430641d2f49c089b616bb1d72fad177bfd568471434e2c1a56",
+  "created_at": 1779460212.478929,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\food_home_daily_life.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

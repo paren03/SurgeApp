@@ -1,0 +1,13 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_formal_informal_speech.jsonl",
+  "kind": "word",
+  "source": "seed_en_phase15b_formal_informal_speech",
+  "pack_id": "word_1779460221",
+  "added": 81,
+  "rejected": 0,
+  "duplicates": 0,
+  "rejection_samples": [],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460222.4912896
+}

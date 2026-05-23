@@ -1,0 +1,35 @@
+{
+  "pack_id": "5552a18ca7ca4ec8ab8cbc956bcae5cb",
+  "source_name": "seed_ru_phase15b_psychology_education",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_psychology_education.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "idioms_phrases",
+    "medicine_health",
+    "philosophy_abstract",
+    "psychology_education",
+    "voice_personality"
+  ],
+  "register_tags": [
+    "academic",
+    "medical",
+    "professional",
+    "standard",
+    "teacher"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 75,
+  "accepted_count": 75,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "63bae54ad185bda7d7a7d750fafa980ae0293dfcfb97861984abad497c0c267a",
+  "created_at": 1779460248.015337,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_psychology_education.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_psychology_education",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

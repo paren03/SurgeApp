@@ -1,0 +1,48 @@
+{
+  "pack_id": "word_1779460229",
+  "source_name": "seed_en_professions_jobs",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\professions_jobs.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "art_music_culture",
+    "business_finance",
+    "coding_technology",
+    "food_home_daily_life",
+    "law_government",
+    "mechanics_transportation",
+    "medicine_health",
+    "poetry_literary",
+    "professions_jobs",
+    "psychology_education",
+    "science_math",
+    "trades_construction"
+  ],
+  "register_tags": [
+    "academic",
+    "business",
+    "coding",
+    "construction",
+    "informal",
+    "legal",
+    "medical",
+    "professional",
+    "standard",
+    "teacher",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 50,
+  "accepted_count": 50,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "2b59c91665d8b42eebe91e652be8a30cb336f86b4987eed655c23a7ee8cae66e",
+  "created_at": 1779460229.706884,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\professions_jobs.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

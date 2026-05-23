@@ -1,0 +1,51 @@
+{
+  "pack_id": "b258e4ccc3134a81af4b0b7dac53a016",
+  "source_name": "seed_ru_professions_jobs_expansion",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\professions_jobs_expansion.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "art_music_culture",
+    "business_finance",
+    "coding_technology",
+    "food_home_daily_life",
+    "history_geography",
+    "law_government",
+    "mechanics_transportation",
+    "medicine_health",
+    "poetry_literary",
+    "professions_jobs",
+    "psychology_education",
+    "regional_dialect",
+    "science_math",
+    "trades_construction"
+  ],
+  "register_tags": [
+    "academic",
+    "business",
+    "coding",
+    "construction",
+    "informal",
+    "legal",
+    "medical",
+    "professional",
+    "regional",
+    "standard",
+    "teacher",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 103,
+  "accepted_count": 103,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "39ba96c486928f7c83f0b11bbab3fd4714147a8a9126341cba67c10ff1019af3",
+  "created_at": 1779460252.9435225,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\professions_jobs_expansion.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_professions_jobs_expansion",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

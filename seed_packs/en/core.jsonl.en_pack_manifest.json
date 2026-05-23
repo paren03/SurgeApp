@@ -1,0 +1,28 @@
+{
+  "pack_id": "word_1779460212",
+  "source_name": "seed_en_core",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\core.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "core_vocabulary"
+  ],
+  "register_tags": [
+    "standard",
+    "teacher"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 15,
+  "accepted_count": 15,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "c6f77e7c089e8fabce4a0db9f41fbe2721851342bd479c40f194f5b73ea2111d",
+  "created_at": 1779460212.1703825,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\core.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

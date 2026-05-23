@@ -1,0 +1,35 @@
+{
+  "pack_id": "word_1779460218",
+  "source_name": "seed_en_phase15b_art_music_culture",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_art_music_culture.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "art_music_culture",
+    "history_geography",
+    "philosophy_abstract",
+    "professions_jobs",
+    "psychology_education"
+  ],
+  "register_tags": [
+    "academic",
+    "philosophical",
+    "professional",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 80,
+  "accepted_count": 80,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "002b51afe4bf1a6a85fb821aab138cf680740ff28edd9c925426365dca07fc57",
+  "created_at": 1779460219.1569157,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_art_music_culture.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

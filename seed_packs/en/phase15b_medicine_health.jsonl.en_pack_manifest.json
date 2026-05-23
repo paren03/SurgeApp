@@ -1,0 +1,36 @@
+{
+  "pack_id": "word_1779460224",
+  "source_name": "seed_en_phase15b_medicine_health",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_medicine_health.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "law_government",
+    "medicine_health",
+    "recognition_only_sensitive"
+  ],
+  "register_tags": [
+    "academic",
+    "legal",
+    "medical",
+    "professional",
+    "recognition_only",
+    "standard"
+  ],
+  "safety_tags": [
+    "recognition_only"
+  ],
+  "domain_tags": [],
+  "row_count": 82,
+  "accepted_count": 82,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "a46f56a75f55f3cacf5e67c8ce1596e7bef77475bf006a78aad06d999fd8dd17",
+  "created_at": 1779460225.161434,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_medicine_health.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

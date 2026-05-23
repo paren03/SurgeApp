@@ -1,0 +1,37 @@
+{
+  "pack_id": "word_1779460214",
+  "source_name": "seed_en_phase15a_poetry_literary",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15a_poetry_literary.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "art_music_culture",
+    "formal_informal_speech",
+    "history_geography",
+    "philosophy_abstract",
+    "poetry_literary",
+    "psychology_education",
+    "voice_personality"
+  ],
+  "register_tags": [
+    "academic",
+    "informal",
+    "philosophical",
+    "poetic",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 104,
+  "accepted_count": 104,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "468d8e3e3e52123390c836e2910d38e2ccbc70afa2420f217aedce407e8c8334",
+  "created_at": 1779460215.4985025,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15a_poetry_literary.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "pack_id": "word_1779460227",
+  "source_name": "seed_en_philosophy_abstract",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\philosophy_abstract.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "history_geography",
+    "philosophy_abstract",
+    "psychology_education",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "philosophical",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 30,
+  "accepted_count": 30,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "e6bdfb0c68447a39753bb2beb3becd43b3a6951175cb67ae890072a201b6f59b",
+  "created_at": 1779460227.3697052,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\philosophy_abstract.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\mechanics_transportation.jsonl",
+  "kind": "word",
+  "source": "seed_ru_mechanics_transportation",
+  "added": 31,
+  "rejected": 0,
+  "rejection_samples": [],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460235.7523148
+}

@@ -1,0 +1,30 @@
+{
+  "pack_id": "2cdc25cace7b41d2b87ef00e4f45c53f",
+  "source_name": "seed_ru_phase15b_idioms_phrases",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_idioms_phrases.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "business_finance",
+    "idioms_phrases"
+  ],
+  "register_tags": [
+    "informal",
+    "professional",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 80,
+  "accepted_count": 0,
+  "rejected_count": 80,
+  "duplicate_count": 0,
+  "sha256": "73c0c423f08feab6b343d8d4b3ea66a236cc1289787f61eaee6942c8c6b70515",
+  "created_at": 1779460245.3295767,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_idioms_phrases.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_idioms_phrases",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

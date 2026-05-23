@@ -1,0 +1,28 @@
+{
+  "pack_id": "7e49affc2d6040018c3584c6983213ad",
+  "source_name": "seed_ru_slang",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\slang.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "slang_street_talk"
+  ],
+  "register_tags": [
+    "informal",
+    "slang"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 10,
+  "accepted_count": 10,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "f934e5192942f1b9a5c5254267cd6be60ac59e1eac11b72678349c19ce99a95e",
+  "created_at": 1779460253.8081813,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\slang.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_slang",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

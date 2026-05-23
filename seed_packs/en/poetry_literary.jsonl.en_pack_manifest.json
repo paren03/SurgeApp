@@ -1,0 +1,32 @@
+{
+  "pack_id": "word_1779460228",
+  "source_name": "seed_en_poetry_literary",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\poetry_literary.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "art_music_culture",
+    "philosophy_abstract",
+    "poetry_literary"
+  ],
+  "register_tags": [
+    "academic",
+    "philosophical",
+    "poetic",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 32,
+  "accepted_count": 32,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "54136f6a9ddd6da2860868b2859ad0c6103e6694689a40a939d6cbfa1f7001fa",
+  "created_at": 1779460228.459684,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\poetry_literary.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

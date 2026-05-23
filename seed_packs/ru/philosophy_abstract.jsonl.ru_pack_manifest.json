@@ -1,0 +1,32 @@
+{
+  "pack_id": "57a36757951248999a188fc68758fd36",
+  "source_name": "seed_ru_philosophy_abstract",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\philosophy_abstract.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "history_geography",
+    "philosophy_abstract",
+    "psychology_education",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "philosophical",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 30,
+  "accepted_count": 30,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "5e677cb914eed581054eedd269f1f8592a4073607b20475f97b645b65acc1c7a",
+  "created_at": 1779460249.641169,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\philosophy_abstract.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_philosophy_abstract",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

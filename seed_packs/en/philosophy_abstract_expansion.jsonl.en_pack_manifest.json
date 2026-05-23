@@ -1,0 +1,37 @@
+{
+  "pack_id": "word_1779460227",
+  "source_name": "seed_en_philosophy_abstract_expansion",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\philosophy_abstract_expansion.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "art_music_culture",
+    "history_geography",
+    "law_government",
+    "medicine_health",
+    "philosophy_abstract",
+    "psychology_education",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "legal",
+    "medical",
+    "philosophical",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 105,
+  "accepted_count": 105,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "8f330f22ebddfa6bcb45e182c453bd2c7423f2dbbf8099c82dd1341e56566969",
+  "created_at": 1779460228.2087812,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\philosophy_abstract_expansion.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "pack_id": "8272adc0604e41c3a0f248c13732072c",
+  "source_name": "seed_ru_voice_personality",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\voice_personality.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "voice_personality"
+  ],
+  "register_tags": [
+    "informal",
+    "standard",
+    "voice_safe"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 25,
+  "accepted_count": 25,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "39822834bbeeeac51f08a6b80a5b3c5abe7bc698fb73b1b6976e816925e0c825",
+  "created_at": 1779460255.9000316,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\voice_personality.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_voice_personality",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

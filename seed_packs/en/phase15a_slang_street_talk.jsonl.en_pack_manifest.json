@@ -1,0 +1,44 @@
+{
+  "pack_id": "word_1779460216",
+  "source_name": "seed_en_phase15a_slang_street_talk",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15a_slang_street_talk.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "art_music_culture",
+    "business_finance",
+    "food_home_daily_life",
+    "idioms_phrases",
+    "psychology_education",
+    "recognition_only_sensitive",
+    "slang_street_talk"
+  ],
+  "register_tags": [
+    "business",
+    "do_not_use_unprompted",
+    "informal",
+    "offensive",
+    "recognition_only",
+    "slang",
+    "vulgar"
+  ],
+  "safety_tags": [
+    "do_not_use_unprompted",
+    "offensive",
+    "recognition_only",
+    "vulgar"
+  ],
+  "domain_tags": [],
+  "row_count": 102,
+  "accepted_count": 102,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "66b4672cd3a8e3cdf785ad2801a8d29cff646ad0534554760152b53477c66635",
+  "created_at": 1779460217.2357314,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15a_slang_street_talk.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

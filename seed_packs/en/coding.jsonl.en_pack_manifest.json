@@ -1,0 +1,31 @@
+{
+  "pack_id": "word_1779460211",
+  "source_name": "seed_en_coding",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\coding.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "coding_technology",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "coding",
+    "professional",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 12,
+  "accepted_count": 12,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "4dda3bef9b202a7f421c0a0515635e922c88eb874429a9f3e868186d0dd774d1",
+  "created_at": 1779460212.0437572,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\coding.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

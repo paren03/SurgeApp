@@ -1,0 +1,36 @@
+{
+  "pack_id": "ee5b8d4278e24b20bce164259c3c9611",
+  "source_name": "seed_ru_phase15a_philosophy_abstract",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15a_philosophy_abstract.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "business_finance",
+    "coding_technology",
+    "history_geography",
+    "law_government",
+    "philosophy_abstract",
+    "psychology_education",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "coding",
+    "legal",
+    "philosophical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 101,
+  "accepted_count": 101,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "75f279c0d8f5b9fb88d3d99f1fa23b61d5f78d77a0abda4befc7b85b37c1c124",
+  "created_at": 1779460236.7378457,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15a_philosophy_abstract.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15a_philosophy_abstract",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

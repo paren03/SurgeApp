@@ -1,0 +1,32 @@
+{
+  "pack_id": "327080b218e84096a6ed6b4ffebabafc",
+  "source_name": "seed_ru_history_geography",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\history_geography.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "history_geography",
+    "law_government",
+    "philosophy_abstract",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 31,
+  "accepted_count": 31,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "347e7781658802d0ed8722f6bbc1f1b3e04a32c2ecdd07144528fe5589ac39ec",
+  "created_at": 1779460235.1084876,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\history_geography.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_history_geography",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

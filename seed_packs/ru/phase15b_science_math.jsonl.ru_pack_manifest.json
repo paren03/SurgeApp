@@ -1,0 +1,31 @@
+{
+  "pack_id": "cc3926be17324fd3a2cb67687087b116",
+  "source_name": "seed_ru_phase15b_science_math",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_science_math.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "idioms_phrases",
+    "medicine_health",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 79,
+  "accepted_count": 79,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "e01e8436fb828654eb458114b946fef2f7292fcc591dbf34d3072353ab865eb9",
+  "created_at": 1779460249.3758879,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_science_math.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_science_math",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

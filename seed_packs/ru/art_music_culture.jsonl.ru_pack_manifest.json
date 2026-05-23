@@ -1,0 +1,31 @@
+{
+  "pack_id": "37f18439055f42a3a863d316ed8ef205",
+  "source_name": "seed_ru_art_music_culture",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\art_music_culture.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "art_music_culture",
+    "history_geography",
+    "regional_dialect"
+  ],
+  "register_tags": [
+    "academic",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 31,
+  "accepted_count": 31,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "79b605d6179900bbd0da5dda8a4f444e8fed0c7a8102e0746f3f7f412616d7b3",
+  "created_at": 1779460233.7337751,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\art_music_culture.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_art_music_culture",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

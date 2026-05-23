@@ -1,0 +1,37 @@
+{
+  "pack_id": "word_1779460213",
+  "source_name": "seed_en_phase15a_philosophy_abstract",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15a_philosophy_abstract.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "business_finance",
+    "coding_technology",
+    "law_government",
+    "philosophy_abstract",
+    "psychology_education",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "business",
+    "coding",
+    "legal",
+    "philosophical",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 105,
+  "accepted_count": 105,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "33640f420fed0cf31a32109c83331a764b242f6f6a21013a2799b5eb6d2330ac",
+  "created_at": 1779460214.616412,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15a_philosophy_abstract.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

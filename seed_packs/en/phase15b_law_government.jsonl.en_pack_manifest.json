@@ -1,0 +1,33 @@
+{
+  "pack_id": "word_1779460223",
+  "source_name": "seed_en_phase15b_law_government",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_law_government.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "business_finance",
+    "history_geography",
+    "law_government",
+    "philosophy_abstract"
+  ],
+  "register_tags": [
+    "academic",
+    "legal",
+    "professional",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 81,
+  "accepted_count": 81,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "5bf738a94fb1bb4fc07a5f4aaa0d4b0e7ea54fd73778be51f8b327350c97f01b",
+  "created_at": 1779460223.817941,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_law_government.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

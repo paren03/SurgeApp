@@ -1,0 +1,35 @@
+{
+  "pack_id": "e4f28a75629046febe8c0d7a51bc0898",
+  "source_name": "seed_ru_phase15b_formal_informal_speech",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_formal_informal_speech.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "formal_informal_speech",
+    "idioms_phrases",
+    "voice_personality"
+  ],
+  "register_tags": [
+    "business",
+    "formal",
+    "informal",
+    "legal",
+    "professional",
+    "standard",
+    "voice_safe"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 81,
+  "accepted_count": 81,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "32431a8f98efdca846089769362809bbd0c86403dbff2ac907ee6f6cbd6c305e",
+  "created_at": 1779460244.6298726,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_formal_informal_speech.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_formal_informal_speech",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\voice_personality.jsonl",
+  "kind": "phrase",
+  "source": "seed_en_voice_personality",
+  "pack_id": "phrase_1779460233",
+  "added": 24,
+  "rejected": 0,
+  "duplicates": 0,
+  "rejection_samples": [],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460233.4570222
+}

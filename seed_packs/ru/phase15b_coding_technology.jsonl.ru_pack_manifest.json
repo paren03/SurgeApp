@@ -1,0 +1,38 @@
+{
+  "pack_id": "e1fe7264e2b041318156b19002bb1708",
+  "source_name": "seed_ru_phase15b_coding_technology",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_coding_technology.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "coding_technology",
+    "idioms_phrases",
+    "professions_jobs",
+    "recognition_only_sensitive",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "coding",
+    "informal",
+    "professional",
+    "recognition_only",
+    "technical"
+  ],
+  "safety_tags": [
+    "recognition_only"
+  ],
+  "domain_tags": [],
+  "row_count": 79,
+  "accepted_count": 79,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "43692dcaa9231af93db718ceed320d11df9468c01b8b2aa2e0d47842a228ea74",
+  "created_at": 1779460242.6072884,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_coding_technology.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_coding_technology",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

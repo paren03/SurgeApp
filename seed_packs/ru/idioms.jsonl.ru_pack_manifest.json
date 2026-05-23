@@ -1,0 +1,28 @@
+{
+  "pack_id": "50948583b4ea4caf9860158a25c722c6",
+  "source_name": "seed_ru_idioms",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\idioms.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "idioms_phrases"
+  ],
+  "register_tags": [
+    "informal",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 10,
+  "accepted_count": 10,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "6acfd3a0fa1333290897cadf4f679da99144d56c1e99b19ed568bcc1e4d8b07b",
+  "created_at": 1779460235.1840725,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\idioms.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_idioms",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

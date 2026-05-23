@@ -1,0 +1,31 @@
+{
+  "pack_id": "0a0893e7e70641a79ec89aaeb4c69fc3",
+  "source_name": "seed_ru_law_government",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\law_government.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "history_geography",
+    "law_government"
+  ],
+  "register_tags": [
+    "academic",
+    "legal",
+    "professional",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 31,
+  "accepted_count": 31,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "501a50ed17e0718f21e59c210f4e5e1aa213e71b37f2cf12ee5b39ca337e21db",
+  "created_at": 1779460235.4715595,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\law_government.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_law_government",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

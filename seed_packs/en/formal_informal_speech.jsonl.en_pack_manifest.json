@@ -1,0 +1,31 @@
+{
+  "pack_id": "word_1779460212",
+  "source_name": "seed_en_formal_informal_speech",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\formal_informal_speech.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "formal_informal_speech"
+  ],
+  "register_tags": [
+    "academic",
+    "formal",
+    "informal",
+    "professional",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 31,
+  "accepted_count": 31,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "7159381a42f1d71bfb02b73edd41b70f90f3710dd7982d5ce223bba5542d976d",
+  "created_at": 1779460212.7293363,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\formal_informal_speech.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

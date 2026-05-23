@@ -1,0 +1,37 @@
+{
+  "pack_id": "4009cce91e364af794fbb233cc8d6e07",
+  "source_name": "seed_ru_phase15a_trades_construction",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15a_trades_construction.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "business_finance",
+    "law_government",
+    "mechanics_transportation",
+    "professions_jobs",
+    "trades_construction"
+  ],
+  "register_tags": [
+    "business",
+    "construction",
+    "informal",
+    "legal",
+    "professional",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 112,
+  "accepted_count": 112,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "ae2d1a1c3559fbd6cd1375a4f892a8250fb19245d1adcc25217a3c8129c6064f",
+  "created_at": 1779460240.5483387,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15a_trades_construction.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15a_trades_construction",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

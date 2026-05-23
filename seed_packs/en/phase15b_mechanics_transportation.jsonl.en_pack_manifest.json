@@ -1,0 +1,35 @@
+{
+  "pack_id": "word_1779460223",
+  "source_name": "seed_en_phase15b_mechanics_transportation",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_mechanics_transportation.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "business_finance",
+    "food_home_daily_life",
+    "law_government",
+    "mechanics_transportation"
+  ],
+  "register_tags": [
+    "business",
+    "informal",
+    "legal",
+    "professional",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 82,
+  "accepted_count": 82,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "68f0e1706a1c0a8543ffe032ed79592afc75093be9c4f516411586f3b170375c",
+  "created_at": 1779460224.4735167,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_mechanics_transportation.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

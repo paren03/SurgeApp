@@ -1,0 +1,36 @@
+{
+  "pack_id": "8249240d7e2b4943a1445c46adbe50ba",
+  "source_name": "seed_ru_phase15b_art_music_culture",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_art_music_culture.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "art_music_culture",
+    "history_geography",
+    "idioms_phrases",
+    "philosophy_abstract",
+    "professions_jobs",
+    "psychology_education"
+  ],
+  "register_tags": [
+    "academic",
+    "philosophical",
+    "professional",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 77,
+  "accepted_count": 77,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "56dbdc044334515fbf137beb4ba3cbf07d9ddfc60c6c59648ac6114dca3fcfd4",
+  "created_at": 1779460241.2230175,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_art_music_culture.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_art_music_culture",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

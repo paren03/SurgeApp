@@ -1,0 +1,38 @@
+{
+  "pack_id": "word_1779460221",
+  "source_name": "seed_en_phase15b_formal_informal_speech",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_formal_informal_speech.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "formal_informal_speech",
+    "idioms_phrases",
+    "slang_street_talk",
+    "voice_personality"
+  ],
+  "register_tags": [
+    "business",
+    "coding",
+    "formal",
+    "informal",
+    "legal",
+    "professional",
+    "slang",
+    "standard",
+    "voice_safe"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 81,
+  "accepted_count": 81,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "9b7c434105d26931f90075e0d3f372360f39be455e7c52d578cf455b4009897e",
+  "created_at": 1779460222.4912896,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_formal_informal_speech.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "pack_id": "397f33b56cba4db8990a9246ed637580",
+  "source_name": "seed_ru_phase15b_regional_dialect",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_regional_dialect.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "art_music_culture",
+    "food_home_daily_life",
+    "history_geography",
+    "idioms_phrases",
+    "regional_dialect",
+    "voice_personality"
+  ],
+  "register_tags": [
+    "academic",
+    "informal",
+    "poetic",
+    "regional",
+    "standard",
+    "voice_safe"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 77,
+  "accepted_count": 77,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "dd8db2118ba07c5d9e0a814070abc04908dd7316aa550e39ee1b90a82ebbbcc2",
+  "created_at": 1779460248.6881046,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_regional_dialect.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_regional_dialect",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

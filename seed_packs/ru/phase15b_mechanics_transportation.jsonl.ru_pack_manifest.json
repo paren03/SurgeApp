@@ -1,0 +1,33 @@
+{
+  "pack_id": "5b79bf683c254b32ad47e0c166290109",
+  "source_name": "seed_ru_phase15b_mechanics_transportation",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_mechanics_transportation.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "idioms_phrases",
+    "law_government",
+    "mechanics_transportation"
+  ],
+  "register_tags": [
+    "informal",
+    "legal",
+    "professional",
+    "standard",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 78,
+  "accepted_count": 78,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "42987275026b9725fffb65c34ce88c0ab6906ececd0d859c35da2f5c9bab3a36",
+  "created_at": 1779460246.6985338,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\phase15b_mechanics_transportation.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_phase15b_mechanics_transportation",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

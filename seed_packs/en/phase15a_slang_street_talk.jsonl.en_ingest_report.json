@@ -1,0 +1,13 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15a_slang_street_talk.jsonl",
+  "kind": "word",
+  "source": "seed_en_phase15a_slang_street_talk",
+  "pack_id": "word_1779460216",
+  "added": 102,
+  "rejected": 0,
+  "duplicates": 0,
+  "rejection_samples": [],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460217.234729
+}

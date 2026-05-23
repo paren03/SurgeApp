@@ -1,0 +1,13 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\trades_construction_expansion.jsonl",
+  "kind": "word",
+  "source": "seed_en_trades_construction_expansion",
+  "pack_id": "word_1779460232",
+  "added": 103,
+  "rejected": 0,
+  "duplicates": 0,
+  "rejection_samples": [],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460233.2777288
+}

@@ -1,0 +1,13 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\phase15b_coding_technology.jsonl",
+  "kind": "word",
+  "source": "seed_en_phase15b_coding_technology",
+  "pack_id": "word_1779460219",
+  "added": 83,
+  "rejected": 0,
+  "duplicates": 0,
+  "rejection_samples": [],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460220.4547272
+}

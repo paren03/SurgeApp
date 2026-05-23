@@ -1,0 +1,13 @@
+{
+  "path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\professions_jobs_expansion.jsonl",
+  "kind": "word",
+  "source": "seed_en_professions_jobs_expansion",
+  "pack_id": "word_1779460229",
+  "added": 104,
+  "rejected": 0,
+  "duplicates": 0,
+  "rejection_samples": [],
+  "batch_size": 500,
+  "limit": null,
+  "report_generated_at": 1779460230.5424006
+}

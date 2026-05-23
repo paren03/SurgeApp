@@ -1,0 +1,32 @@
+{
+  "pack_id": "f04dceb57eca4685930f7e12ce8d746e",
+  "source_name": "seed_ru_coding",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\coding.jsonl",
+  "language": "ru",
+  "coverage_categories": [
+    "coding_technology",
+    "science_math"
+  ],
+  "register_tags": [
+    "academic",
+    "coding",
+    "informal",
+    "professional",
+    "technical"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 10,
+  "accepted_count": 10,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "f79ffceceda3018937f252ea2e1e426a5d5a92ac77398794d5d8aad19d86f384",
+  "created_at": 1779460234.105958,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\ru\\coding.jsonl.ingest_report.json",
+  "notes": "russian_seed_pack source=seed_ru_coding",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

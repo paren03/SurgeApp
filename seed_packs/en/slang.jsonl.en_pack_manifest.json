@@ -1,0 +1,28 @@
+{
+  "pack_id": "word_1779460231",
+  "source_name": "seed_en_slang",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\slang.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "slang_street_talk"
+  ],
+  "register_tags": [
+    "informal",
+    "slang"
+  ],
+  "safety_tags": [],
+  "domain_tags": [],
+  "row_count": 10,
+  "accepted_count": 10,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "0d077587383f43de7bd300413baa8ceb0431f97a790e1fdd0d5fec6e312c49e7",
+  "created_at": 1779460231.4057755,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\slang.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "pack_id": "word_1779460230",
+  "source_name": "seed_en_regional_dialect",
+  "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\regional_dialect.jsonl",
+  "language": "en",
+  "coverage_categories": [
+    "food_home_daily_life",
+    "mechanics_transportation",
+    "regional_dialect"
+  ],
+  "register_tags": [
+    "informal",
+    "regional",
+    "standard"
+  ],
+  "safety_tags": [],
+  "domain_tags": [
+    "american",
+    "australian",
+    "british",
+    "canadian",
+    "commonwealth",
+    "irish",
+    "louisiana",
+    "midwest_us",
+    "new_england",
+    "northeast_us",
+    "northern_english",
+    "philadelphia",
+    "pittsburgh",
+    "scottish",
+    "southern_us",
+    "upper_midwest",
+    "wisconsin"
+  ],
+  "row_count": 30,
+  "accepted_count": 30,
+  "rejected_count": 0,
+  "duplicate_count": 0,
+  "sha256": "c9cb93a9de4a57c8674dd3539334ac7b85f6cd4f1f7496a8b7cbadf1cdf1c6a5",
+  "created_at": 1779460231.040656,
+  "import_report_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\seed_packs\\en\\regional_dialect.jsonl.en_ingest_report.json",
+  "notes": "english_ingestion kind=word",
+  "_taxonomy_rejected": {
+    "coverage_categories": [],
+    "register_tags": [],
+    "safety_tags": []
+  }
+}
