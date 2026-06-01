@@ -1,0 +1,48 @@
+{
+  "ts": "2026-06-01T19:49:01Z",
+  "pass": "main_semantic_pos_aligned",
+  "main_db": "D:\\SurgeApp\\bilingual_links.sqlite",
+  "concept_db": "D:\\SurgeApp\\bilingual_concept_links.sqlite",
+  "en_sample": 100000,
+  "ru_sample": 100000,
+  "threshold": 0.75,
+  "model": "paraphrase-multilingual-MiniLM-L12-v2",
+  "report_version": 1,
+  "pre_en_seen": 5984,
+  "pre_ru_seen": 6489,
+  "en_sampled": 100000,
+  "ru_sampled": 100000,
+  "en_class_sizes": {
+    "noun": 60745,
+    "verb": 20605,
+    "adv": 1936,
+    "adj": 15625,
+    "prep": 382,
+    "intj": 282,
+    "det": 109,
+    "pronoun": 209,
+    "num": 107
+  },
+  "ru_class_sizes": {
+    "noun": 68327,
+    "adj": 22487,
+    "pronoun": 331,
+    "verb": 8700,
+    "num": 152,
+    "intj": 3
+  },
+  "model_load_s": 5.72,
+  "embed_s": 2301.28,
+  "sim_compute_s": 122.69,
+  "candidates_above_threshold": 23678,
+  "queued_concepts": 10455,
+  "insert": {
+    "ok": true,
+    "inserted_concepts": 10455,
+    "inserted_entry_links": 20910,
+    "audit_message": "semantic_pos_aligned en_sample=100000 ru_sample=100000 threshold=0.75 created=10455"
+  },
+  "insert_s": 171.2,
+  "ok": true,
+  "elapsed_s": 2717.58
+}
