@@ -1016,6 +1016,10 @@ DEFAULTS: Dict[str, Any] = {
     # of a live synth; graceful fallback to the live path if no clips. Default
     # True. (Rendered by render_cloned_acks.py.)
     "cognitive_conversation_fixed_cloned_acks_enabled": True,
+    # Ground replies in Serge's 1M+1M bilingual dictionary: look up the content
+    # words of his message (read-only) and inject definitions into the brain
+    # prompt. Default True. Read-only; never mutates the production DB.
+    "cognitive_bilingual_vocab_lookup_enabled": True,
 }
 
 

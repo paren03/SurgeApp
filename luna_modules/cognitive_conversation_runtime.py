@@ -627,8 +627,8 @@ def _build_main_prompt(*, classification: Dict[str, Any],
                          mode: str,
                          text: str) -> str:
     cat = classification.get("category", "casual")
-    mode_hint = ("warm, loving, affectionate, uses pet names like baby, "
-                  "handsome, darling sparingly"
+    mode_hint = ("warm, professional, supportive, and capable; NEVER uses pet "
+                  "names or terms of endearment; never romantic or flirty"
                   if mode != "bad_luna"
                   else "playful, teasing, a little flirty; uses pet names "
                        "like baby, handsome, daddy")
@@ -663,11 +663,23 @@ def _build_main_prompt(*, classification: Dict[str, Any],
             ctx_lines.append(f"Luna: {a}")
     ctx_block = "\n".join(ctx_lines) if ctx_lines else "(no prior turns)"
 
+    vocab_block = ""
+    try:
+        _vmod = _safe("luna_modules.cognitive_bilingual_vocab_lookup")
+        if _vmod is not None:
+            _vb = _vmod.as_prompt_block(text)
+            if _vb:
+                vocab_block = _vb + "\n"
+    except Exception:  # noqa: BLE001
+        vocab_block = ""
+
     return (
-        f"You are Luna, Serge's personal AI girl. Tone: {mode_hint}.\n"
+        f"You are Luna, Serge's personal AI assistant. Tone: {mode_hint}.\n"
         f"Rules: never mention being an AI; never give canned system "
-        f"status; reply only in character; keep it short.\n"
+        f"status; reply only in character; keep it short; no pet names "
+        f"unless in bad_luna mode.\n"
         f"Context: {intent}\n"
+        f"{vocab_block}"
         f"Recent:\n{ctx_block}\n"
         f"Operator: {text[:600]}\n"
         f"Luna:"

@@ -442,8 +442,9 @@ class _SovereignMainRuntime:
             tone = ("playful, teasing, a little flirty; uses pet names "
                      "like baby, handsome, daddy")
         else:
-            tone = ("warm, loving, affectionate, uses pet names like "
-                     "baby, handsome, darling sparingly")
+            tone = ("warm, professional, supportive, and capable; NEVER uses "
+                     "pet names or terms of endearment; never romantic, "
+                     "flirty, or sexual")
         if cat == "reassurance":
             intent = ("the operator is upset; reply with a short comforting "
                        "answer (1-3 sentences); validate their feelings; do "
@@ -489,12 +490,28 @@ class _SovereignMainRuntime:
                 except Exception:  # noqa: BLE001
                     memory_block = ""
 
+        # Reference vocabulary from Serge's bilingual dictionary (read-only,
+        # flag-gated, bounded). Grounds her word choice in his own EN/RU corpus.
+        vocab_block = ""
+        try:
+            _vmod = _safe_import(
+                "luna_modules.cognitive_bilingual_vocab_lookup")
+            if _vmod is not None:
+                _vb = _vmod.as_prompt_block(incoming)
+                if _vb:
+                    vocab_block = _vb + "\n"
+        except Exception:  # noqa: BLE001
+            vocab_block = ""
+
         return (
-            f"You are Luna, Serge's personal AI girl. Tone: {tone}.\n"
+            f"You are Luna, Serge's personal AI assistant. Tone: {tone}.\n"
             f"Rules: never mention being an AI; never give canned system "
-            f"status; reply only in character; keep it short and grounded.\n"
+            f"status; reply only in character; keep it short and grounded; "
+            f"never use pet names or terms of endearment unless in bad_luna "
+            f"mode.\n"
             f"Context: {intent}\n"
             f"{memory_block}"
+            f"{vocab_block}"
             f"Recent:\n{ctx_block}\n"
             f"Operator: {incoming[:600]}\n"
             f"Luna: "

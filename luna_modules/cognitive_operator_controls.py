@@ -63,6 +63,9 @@ ALLOWED_FLAGS = {
     "cognitive_conversation_audit_lazy_truncate_enabled",
     # Voice: acks play instant pre-rendered cloned clips (default True).
     "cognitive_conversation_fixed_cloned_acks_enabled",
+    # Vocabulary: ground replies in Serge's 1M+1M bilingual dictionary
+    # (read-only lookup -> prompt). Default True.
+    "cognitive_bilingual_vocab_lookup_enabled",
     "cognitive_brain_embedding_runtime_enabled",
     "cognitive_brain_embedding_runtime_kill_switch",
     "cognitive_deep_adapter_enabled",
