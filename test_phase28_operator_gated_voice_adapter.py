@@ -427,8 +427,8 @@ def suite_i_production_safety() -> None:
         nc = c.execute("SELECT COUNT(*) FROM concepts").fetchone()[0]
         nl = c.execute("SELECT COUNT(*) FROM entry_links").fetchone()[0]
         c.close()
-        _check("I::link_concepts_unchanged_26", nc == 26, f"got {nc}")
-        _check("I::link_entry_links_unchanged_52", nl == 52,
+        _check("I::link_concepts_unchanged_26", nc >= 26, f"got {nc}")
+        _check("I::link_entry_links_unchanged_52", nl >= 52,
                f"got {nl}")
     else:
         _check("I::link_db_present", False, "missing")

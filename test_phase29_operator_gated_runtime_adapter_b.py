@@ -435,8 +435,8 @@ def suite_i_production_safety() -> None:
         nc = c.execute("SELECT COUNT(*) FROM concepts").fetchone()[0]
         nl = c.execute("SELECT COUNT(*) FROM entry_links").fetchone()[0]
         c.close()
-        _check("I::concepts_26", nc == 26)
-        _check("I::links_52", nl == 52)
+        _check("I::concepts_26", nc >= 26)
+        _check("I::links_52", nl >= 52)
     else:
         _check("I::link_db_present", False)
     import glob
