@@ -1,4 +1,4 @@
-"""LaunchLuna.pyw - One-click launcher for Luna Command Center.
+r"""LaunchLuna.pyw - One-click launcher for Luna Command Center.
 
 Shortcut target: pythonw3.11.exe "D:\SurgeApp\LaunchLuna.pyw"
 
@@ -16,8 +16,10 @@ once even if clicked multiple times.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
+import threading
 import time
 import json
 from pathlib import Path
@@ -64,6 +66,13 @@ WORKER_PY = str(ROOT / ".aider_venv" / "Scripts" / "pythonw.exe")
 if not Path(WORKER_PY).exists():
     WORKER_PY = AIDER_PY
 
+# Voice venv executables (separate from .aider_venv — has XTTS, torch,
+# faster-whisper, sounddevice and all voice-pipeline deps).
+VOICE_PY = str(ROOT / ".voice_venv" / "Scripts" / "python.exe")
+VOICE_PYW = str(ROOT / ".voice_venv" / "Scripts" / "pythonw.exe")
+if not Path(VOICE_PYW).exists():
+    VOICE_PYW = VOICE_PY
+
 SERVICE_LOCKS = {
     "luna_apprentice.py": LOGS / "luna_apprentice.pid.json",
     "worker.py": LOGS / "luna_worker.lock.json",
@@ -72,6 +81,13 @@ SERVICE_LOCKS = {
     "luna_guardian.py": MEMORY / "luna_guardian.lock.json",
     "SurgeApp_Claude_Terminal.py": LOGS / "luna_terminal.pid.json",
     "--continues-update-start": MEMORY / "cu_loop.lock.json",
+    # FastTalk voice pipeline (bilingual RU/EN clone voices)
+    "luna_fast_stt_service.py": LOGS / "luna_fast_stt.pid.json",
+    "luna_fast_tts_service.py": LOGS / "luna_fast_tts.pid.json",
+    "luna_fasttalk_controller.py": LOGS / "luna_fasttalk_ctl.pid.json",
+    "luna_fastbrain_router.py": LOGS / "luna_fastbrain.pid.json",
+    "luna_fastbrain_llm_server.py": LOGS / "luna_fastbrain_llm.pid.json",
+    "luna_fastbrain_bridge.py": LOGS / "luna_fastbridge.pid.json",
 }
 
 
@@ -104,28 +120,25 @@ def _read_pid_lock(lock: Path) -> int:
 
 
 def _process_command_line_for_pid(pid: int) -> str:
+    """Return the command line for a specific PID.
+
+    2026-05-16 popup root-cause fix (Codex H6): replaced the
+    subprocess powershell.exe / Get-CimInstance call with a native
+    psutil call. powershell.exe on Windows 11 allocates a conhost.exe
+    even with CREATE_NO_WINDOW, producing the visible terminal flash
+    the operator saw on every click. psutil is in-process, no spawn,
+    no flash. Falls back to empty string on any failure so callers
+    that treat "" as "PID dead" still work.
+    """
     if pid <= 0:
         return ""
     try:
-        result = subprocess.run(
-            [
-                "powershell",
-                "-NoProfile",
-                "-Command",
-                f"(Get-CimInstance Win32_Process -Filter \"ProcessId={pid}\").CommandLine",
-            ],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=5,
-            creationflags=NO_WIN,
-        )
-        if result.returncode == 0:
-            return (result.stdout or "").strip()
-    except Exception:
-        pass
-    return ""
+        import psutil  # local import: keeps this file fast on cold start
+        p = psutil.Process(pid)
+        return " ".join(p.cmdline() or [])
+    except Exception:  # noqa: BLE001
+        # NoSuchProcess, AccessDenied, ImportError -> empty.
+        return ""
 
 
 def _pid_alive(pid: int, marker: str = "") -> bool:
@@ -203,24 +216,58 @@ def clear_stale_lock() -> None:
             pass
 
 
+# 2026-06-01 boot-speed fix: the process-table scan below (psutil cmdline
+# access) costs ~1-3s and is_running() calls it ONCE PER SERVICE at boot
+# (~15x) -> ~30s of boot was just re-scanning. Cache the scan for a short TTL
+# so the boot burst shares one scan. Correctness is preserved because
+# start_if_missing() ALSO guards double-spawn via the per-service PID lock
+# (_lock_alive), so a slightly stale process view cannot double-spawn.
+_pcl_cache: list[str] | None = None
+_pcl_cache_ts: float = 0.0
+_PCL_TTL_S = 10.0
+
+
 def _process_command_lines() -> list[str]:
-    """Return process command lines using PowerShell CIM, falling back safely."""
+    """Return command lines for all python-ish processes that look
+    like Luna components. Cached for _PCL_TTL_S seconds (boot-burst speedup).
+
+    2026-05-16 popup root-cause fix (Codex H6): replaced the
+    subprocess powershell.exe / Get-CimInstance call with native
+    psutil enumeration. The PowerShell version was spawning a
+    conhost.exe popup on every click (Win11 allocates conhost even
+    with CREATE_NO_WINDOW). psutil walks the process table
+    in-process - no spawn, no flash.
+
+    Returns a list of command-line strings, one per matching process.
+    Returns empty list on any failure (psutil unavailable, etc.).
+    Filter mirrors the original PowerShell where clause: python-ish
+    name + cmdline matches one of SurgeApp/Luna/aider/worker/guardian.
+    """
+    global _pcl_cache, _pcl_cache_ts
+    now = time.time()
+    if _pcl_cache is not None and (now - _pcl_cache_ts) < _PCL_TTL_S:
+        return _pcl_cache
     try:
-        result = subprocess.run(
-            [
-                "powershell",
-                "-NoProfile",
-                "-Command",
-                "Get-CimInstance Win32_Process | "
-                "Where-Object { $_.Name -match '^python' -and $_.CommandLine -match 'SurgeApp|Luna|aider|worker|guardian' } | "
-                "ForEach-Object { $_.CommandLine }",
-            ],
-            capture_output=True, text=True, timeout=10,
-            creationflags=NO_WIN,
-        )
-        return [line.strip() for line in (result.stdout or "").splitlines() if line.strip()]
-    except Exception:
+        import psutil
+    except ImportError:
         return []
+    out: list[str] = []
+    needle_re = re.compile(r"surgeapp|luna|aider|worker|guardian",
+                           re.IGNORECASE)
+    name_re = re.compile(r"^python", re.IGNORECASE)
+    for p in psutil.process_iter(["name", "cmdline"]):
+        try:
+            nm = p.info["name"] or ""
+            if not name_re.match(nm):
+                continue
+            cmd = " ".join(p.info["cmdline"] or [])
+            if cmd and needle_re.search(cmd):
+                out.append(cmd)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    _pcl_cache = out
+    _pcl_cache_ts = now
+    return out
 
 
 def is_running(script_name: str, *, exclude: str = "") -> bool:
@@ -267,7 +314,15 @@ def start_if_missing(script_rel: str, exe: str | None = None,
     if lock and _lock_alive(lock):
         return False
     pid = start_hidden(exe or PYEXE, str(script_path), extra_args)
-    if lock and script_rel != "aider_bridge.py":
+    if lock:
+        # 2026-05-16 Codex deep-scan C8 fix: previous code had
+        # 'script_rel != "aider_bridge.py"' here, which permanently
+        # left aider_bridge.pid stale after the initial creation -
+        # any tool that read the lock got an outdated PID. Write
+        # the fresh PID for EVERY service uniformly. If the aider
+        # bridge needs special lock semantics (e.g. shared with the
+        # bridge's own startup self-write), it can read+merge
+        # rather than relying on this layer skipping it entirely.
         _write_pid_lock(lock, pid, script_rel)
     return True
 
@@ -475,10 +530,106 @@ def _worker_import_ready() -> tuple[bool, str]:
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 
+def _acquire_launcher_singleton() -> tuple[bool, str]:
+    """Return (acquired, reason). True = we are the only LaunchLuna.pyw
+    in flight; safe to proceed. False = another chain is already running;
+    we should exit silently to avoid spawning duplicate terminals.
+
+    2026-05-16 multi-click idempotency fix per Serge ("if I click too
+    many times it opens multiple terminals"). Mechanism: a Windows
+    named-mutex (kernel object) created at module entry.
+
+      * On the FIRST click of a quiet system: CreateMutexW returns a
+        handle with GetLastError() == 0. We continue normally.
+      * On the SECOND/THIRD click while the first chain is still in
+        flight: CreateMutexW returns the SAME handle with
+        GetLastError() == ERROR_ALREADY_EXISTS (183). We exit
+        immediately, no spawn.
+
+    The mutex is held for the lifetime of THIS process. When
+    LaunchLuna.pyw exits, Windows auto-releases it. The next click
+    after that gets a clean acquire.
+
+    The chosen name 'Global\\LunaCommandCenterLauncher_v1' is a
+    user-session-scoped semaphore (not Global\\ system-wide) so two
+    different Windows users on the same machine can each have their
+    own launcher chain. Pythonw runs without elevation; non-Global\\
+    names work in the user session.
+
+    Returns (True, reason) on acquire; (False, reason) on busy. On
+    any ctypes failure, returns (True, fallback_reason) so a broken
+    helper never strands the launcher.
+    """
+    if os.name != "nt":
+        return True, "non_windows_skip"
+    try:
+        import ctypes
+        from ctypes import wintypes
+        kernel32 = ctypes.windll.kernel32
+        kernel32.CreateMutexW.argtypes = [
+            wintypes.LPVOID, wintypes.BOOL, wintypes.LPCWSTR,
+        ]
+        kernel32.CreateMutexW.restype = wintypes.HANDLE
+        kernel32.GetLastError.restype = wintypes.DWORD
+        ERROR_ALREADY_EXISTS = 183
+        # Local\\ scope so we don't need Local System privileges.
+        # The 'v1' suffix lets us bump if the protocol ever changes.
+        name = "Local\\LunaCommandCenterLauncher_v1"
+        handle = kernel32.CreateMutexW(None, True, name)
+        err = kernel32.GetLastError()
+        if handle == 0:
+            # Creation failed entirely (rare). Fall through so the
+            # operator's click isn't lost.
+            return True, f"mutex_create_failed_errno_{err}"
+        if err == ERROR_ALREADY_EXISTS:
+            # Another LaunchLuna.pyw is already in flight. Release our
+            # weak claim on this handle and bail. (We don't hold the
+            # handle because we're not the owner; the OS keeps the
+            # mutex alive via the original creator's handle.)
+            kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+            kernel32.CloseHandle(handle)
+            return False, "another_launcher_in_flight"
+        # We acquired the mutex as the creator. PIN the handle to a
+        # module-level global so Python doesn't GC it before our
+        # process exits. On process exit, Windows auto-releases.
+        globals()["_LAUNCHER_MUTEX_HANDLE"] = handle
+        return True, "mutex_acquired"
+    except Exception as exc:  # noqa: BLE001
+        # Defensive: never let a singleton check itself fail the chain.
+        return True, f"mutex_check_errored: {type(exc).__name__}"
+
+
 def main() -> None:
+    # 2026-05-16 entry-point singleton check. Without this, rapid
+    # double/triple-clicks on Luna Command Center.lnk fire multiple
+    # wscript -> cmd -> pythonw LaunchLuna.pyw chains in parallel.
+    # The existing in-chain checks (is_running, _lock_alive, the
+    # SurgeApp_Claude_Terminal early-focus) handle the END of each
+    # chain reasonably, but the chains still race during boot and
+    # can each spawn their own Chrome --app= window. The kernel-
+    # level mutex below is the only reliable way to coalesce
+    # rapid-click chains on Windows.
+    acquired, reason = _acquire_launcher_singleton()
+    if not acquired:
+        # Another LaunchLuna.pyw is already in flight. The operator's
+        # click is "served" by that one; we exit immediately. No
+        # log noise: this is the normal case under rapid clicks.
+        return
+
     events: list[dict[str, Any]] = []
     ensure_dirs()
     clear_stale_lock()
+    # Boot-timing instrumentation: NEVER raises; append-only log line.
+    try:
+        from luna_modules import luna_boot_timing as _bt
+        _bt.mark("LaunchLuna.main.start")
+    except Exception:
+        pass
+    events.append({
+        "service": "launcher_singleton",
+        "action": "acquired",
+        "reason": reason,
+    })
     if KILL_SWITCH.exists():
         # Auto-expire stale kill switches (older than 24 h) so a forgotten
         # manual shutdown can't silently block Luna forever.
@@ -491,28 +642,89 @@ def main() -> None:
             events.append({"service": "autonomy", "action": "kill_switch_auto_expired",
                            "age_hours": round(age_s / 3600, 1)})
         else:
-            events.append({"service": "autonomy", "action": "blocked", "reason": "kill_switch_present"})
-            # Write status first so the terminal can show the blocked state.
+            # 2026-05-17 cascade-mitigation: previously this branch called
+            # open_terminal() before returning so the operator could see
+            # the blocked state. That itself spawned the chain. Per the
+            # 7-fix plan: when LUNA_STOP_NOW.flag is present we MUST exit
+            # immediately with code 0 and spawn NOTHING. The status JSON
+            # is still written so a tray/CLI inspector can see the reason.
+            events.append({"service": "autonomy", "action": "blocked",
+                           "reason": "kill_switch_present",
+                           "exit_path": "immediate_no_spawn"})
             write_startup_status(events)
-            open_terminal()
             return
+    # 2026-05-17 cascade-mitigation (Serge 7-fix plan, Fix 7): safety
+    # valve. If > 20 Luna-flavored processes are already alive, refuse
+    # to spawn the terminal + services. Last line of defense if all the
+    # other layers' protections somehow fail to prevent a cascade --
+    # LaunchLuna.pyw will not amplify what it observes.
+    try:
+        import psutil as _psutil
+        _luna_count = sum(
+            1 for _p in _psutil.process_iter(['cmdline'])
+            if any(
+                'surgeapp' in str(_c).lower() or 'luna' in str(_c).lower()
+                for _c in (_p.info.get('cmdline') or [])
+            )
+        )
+        # 2026-05-31 threshold recalibration (Serge "Luna won't boot"):
+        # the broad cmdline match ('luna'/'surgeapp') counts legitimate
+        # always-on processes — WinSW services (~6), the FastTalk voice
+        # pipeline added since (6: stt/tts/controller/fastbrain/llm/bridge),
+        # core services (~6), dashboard+terminal, plus any active dev/Claude
+        # session running under D:\SurgeApp. A healthy system is now ~26,
+        # which TRIPPED the old threshold of 20 and blocked boot entirely
+        # (observed: luna_count=26 > 20 -> spawned NOTHING). True runaway
+        # cascades historically hit 90-110+ python processes, so 60 cleanly
+        # separates "healthy + dev session" (<=~40) from "runaway" (90+)
+        # while keeping the last-line cascade defense intact.
+        _SAFETY_VALVE_THRESHOLD = 60
+        if _luna_count > _SAFETY_VALVE_THRESHOLD:
+            events.append({"service": "autonomy", "action": "blocked",
+                           "reason": "safety_valve_too_many_luna_processes",
+                           "luna_count": _luna_count,
+                           "threshold": _SAFETY_VALVE_THRESHOLD})
+            write_startup_status(events)
+            return
+    except Exception:  # noqa: BLE001
+        pass
     # Show the monitor first; slower background services can warm up behind it.
+    try:
+        from luna_modules import luna_boot_timing as _bt
+        _bt.mark("LaunchLuna.before_services")
+    except Exception:
+        pass
     open_terminal()
     events.append({"service": "SurgeApp_Claude_Terminal.py", "action": "opened_early_or_already_running"})
     write_startup_status(events)
 
-    ensure_ollama()
-    events.append({"service": "ollama", "action": "ensured"})
+    # 2026-05-31: Ollama removed — all in-house, no external LLM deps.
+    # ensure_ollama()  # DISABLED
+    events.append({"service": "ollama", "action": "skipped_in_house_only"})
 
     # Background services (hidden, start only if not already running). Guardian
     # starts last so it does not race the launcher and duplicate services.
     events.append({"service": "luna_apprentice.py", "action": "started" if start_if_missing("luna_apprentice.py") else "already_running_or_missing"})
     events.append({"service": "worker.py", "action": "started" if start_if_missing("worker.py", exe=WORKER_PY) else "already_running_or_missing"})
 
-    # Aider bridge uses .aider_venv Python (has aider installed)
-    aider_py_path = ROOT / ".aider_venv" / "Scripts" / "python.exe"
-    if aider_py_path.exists():
-        aider_started = start_if_missing("aider_bridge.py", exe=str(aider_py_path))
+    # Aider bridge uses .aider_venv Python (has aider installed).
+    # 2026-05-16 conhost-popup fix per Codex audit #6: prefer pythonw.exe
+    # from the aider venv so the spawned bridge does NOT allocate a
+    # conhost window. python.exe is the console subsystem; pythonw.exe
+    # is /SUBSYSTEM:WINDOWS. Falls back to python.exe only if pythonw
+    # is missing from the venv (Aider can be installed against either,
+    # but pythonw is the default modern install).
+    aider_pyw_path = ROOT / ".aider_venv" / "Scripts" / "pythonw.exe"
+    aider_py_path  = ROOT / ".aider_venv" / "Scripts" / "python.exe"
+    if aider_pyw_path.exists():
+        aider_started = start_if_missing(
+            "aider_bridge.py", exe=str(aider_pyw_path))
+    elif aider_py_path.exists():
+        # Fallback: console-subsystem python with explicit CREATE_NO_WINDOW
+        # is handled inside start_hidden (NO_WIN flag). Still spawns a
+        # hidden conhost but at least nothing flashes.
+        aider_started = start_if_missing(
+            "aider_bridge.py", exe=str(aider_py_path))
     else:
         aider_started = start_if_missing("aider_bridge.py")
     events.append({"service": "aider_bridge.py", "action": "started" if aider_started else "already_running_or_missing"})
@@ -563,6 +775,119 @@ def main() -> None:
         events.append({"service": "continues_update", "action": "already_running_or_missing"})
 
     events.append({"service": "luna_guardian.py", "action": "started" if start_if_missing("luna_guardian.py") else "already_running_or_missing"})
+
+    # ── FastTalk voice pipeline (bilingual RU/EN Luna clone voices) ─────────
+    # These 6 services give Luna her voice. Spawned via .voice_venv so they
+    # get XTTS, torch, faster-whisper, and sounddevice. Stagger by 300 ms
+    # so each service binds its port before the next one starts.
+    # Services: STT(8768) TTS(8769) Controller(8770)
+    #           FastBrain(8771) LLM(8772) Bridge(8773)
+    if Path(VOICE_PYW).exists():
+        _voice_env = {**ENV, "KMP_DUPLICATE_LIB_OK": "TRUE"}
+        _voice_scripts = [
+            "luna_fast_stt_service.py",
+            "luna_fast_tts_service.py",
+            "luna_fasttalk_controller.py",
+            "luna_fastbrain_router.py",
+            # luna_fastbrain_llm_server.py REMOVED — no Ollama/Llama,
+            # all in-house. FastBrain uses vocab DB (2M words) +
+            # conversational templates instead.
+            "luna_fastbrain_bridge.py",
+        ]
+        for _vs in _voice_scripts:
+            _vs_path = ROOT / _vs
+            if not _vs_path.exists():
+                events.append({"service": _vs, "action": "missing"})
+                continue
+            if is_running(_vs):
+                events.append({"service": _vs, "action": "already_running"})
+                continue
+            _vs_lock = SERVICE_LOCKS.get(_vs)
+            if _vs_lock and _lock_alive(_vs_lock):
+                events.append({"service": _vs, "action": "already_running"})
+                continue
+            try:
+                _vs_proc = subprocess.Popen(
+                    [VOICE_PYW, str(_vs_path)],
+                    cwd=str(ROOT),
+                    env=_voice_env,
+                    creationflags=NO_WIN,
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    close_fds=True,
+                )
+                if _vs_lock:
+                    _write_pid_lock(_vs_lock, int(_vs_proc.pid), _vs)
+                events.append({"service": _vs, "action": "started",
+                               "pid": int(_vs_proc.pid)})
+            except Exception as _ve:
+                events.append({"service": _vs, "action": "start_failed",
+                               "error": str(_ve)[:200]})
+            time.sleep(0.3)  # stagger so ports don't collide
+
+        # Background warmup thread: poll health, configure bilingual mode,
+        # then prewarm STT+TTS models so the first voice call is instant.
+        def _voice_warmup() -> None:
+            import urllib.request as _ur
+            _ports = {"stt": 8768, "tts": 8769, "ctl": 8770,
+                      "fb": 8771, "bridge": 8773}
+            # 8772 (LLM server) removed — in-house only, no Llama
+            _deadline = time.time() + 120
+            # Wait for all services to respond on /health
+            while time.time() < _deadline:
+                _all_up = True
+                for _name, _port in _ports.items():
+                    try:
+                        _ur.urlopen(f"http://127.0.0.1:{_port}/health",
+                                    timeout=2)
+                    except Exception:
+                        _all_up = False
+                        break
+                if _all_up:
+                    break
+                time.sleep(2)
+            # Configure: set STT to bilingual, controller to FastBrain route
+            for _cfg_url, _cfg_body in [
+                ("http://127.0.0.1:8768/set_mode",
+                 '{"mode": "fast_multi"}'),
+                ("http://127.0.0.1:8770/set_route_mode",
+                 '{"mode": "fast_luna"}'),
+            ]:
+                try:
+                    _req = _ur.Request(
+                        _cfg_url, data=_cfg_body.encode("utf-8"),
+                        headers={"Content-Type": "application/json"})
+                    _ur.urlopen(_req, timeout=5)
+                except Exception:
+                    pass
+            # Prewarm STT (loads Whisper model) and TTS (loads XTTS clone)
+            for _wu_url in [
+                "http://127.0.0.1:8768/warmup",
+                "http://127.0.0.1:8769/prewarm",
+            ]:
+                try:
+                    _req = _ur.Request(
+                        _wu_url, data=b'{}',
+                        headers={"Content-Type": "application/json"})
+                    _ur.urlopen(_req, timeout=600)
+                except Exception:
+                    pass
+
+        threading.Thread(target=_voice_warmup, name="voice-warmup",
+                         daemon=True).start()
+        events.append({"service": "voice_pipeline",
+                       "action": "warmup_thread_started"})
+    else:
+        events.append({"service": "voice_pipeline",
+                       "action": "skipped_no_voice_venv",
+                       "path": VOICE_PYW})
+
+    try:
+        from luna_modules import luna_boot_timing as _bt
+        _bt.mark("LaunchLuna.after_services")
+    except Exception:
+        pass
 
     write_startup_status(events)
 

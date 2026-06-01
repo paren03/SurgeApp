@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "model_dir": "D:\\SurgeApp\\local_models",
+  "tiers": {
+    "S":  {"model_name": "Llama-3.2-1B-Instruct-Q4_0.gguf", "role": "fast",  "backend": "llama_cpp", "device": "cpu", "ngl": 0,  "n_ctx": 2048, "est_vram_mb": 0},
+    "M":  {"model_name": "hermes3-8b-llama3.1.gguf",          "role": "daily", "backend": "llama_cpp", "device": "gpu", "ngl": 33, "n_ctx": 4096, "est_vram_mb": 5200},
+    "L":  {"model_name": "qwen2.5-coder-7b-instruct.gguf",    "role": "coder", "backend": "llama_cpp", "device": "gpu", "ngl": 28, "n_ctx": 8192, "est_vram_mb": 5600}
+  }
+}
