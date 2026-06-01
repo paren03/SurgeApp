@@ -993,6 +993,11 @@ DEFAULTS: Dict[str, Any] = {
     # reply. Operator-accepted speed/audit tradeoff. Flip False = synchronous
     # full reasoning (per-turn kernel audit fields present).
     "cognitive_conversation_async_postreply_enabled": False,
+    # Coalesce research-fabric usage writes (last_used/usage_count): flush at
+    # most once per interval instead of a whole-store rewrite per matched card
+    # (~16x/turn). Default True (near-pure perf win; telemetry persists a few
+    # seconds later). Flip False = exact prior per-call-write behavior.
+    "cognitive_research_fabric_debounce_usage_writes_enabled": True,
 }
 
 

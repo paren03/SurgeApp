@@ -21,9 +21,11 @@ Operator flag: ``cognitive_research_memory_fabric_enabled``.
 """
 from __future__ import annotations
 
+import atexit
 import importlib
 import json
 import os
+import threading
 import time
 import uuid
 from typing import Any, Dict, List, Optional
@@ -135,6 +137,74 @@ def _save(data: Dict[str, Any]) -> None:
         data["cards"] = cards
     data["captured_at_utc"] = _now_iso()
     _atomic_write(FABRIC_PATH, data)
+
+
+# ---------------------------------------------------------------------------
+# Usage-write coalescing (2026-06-01 perf).
+#
+# mark_card_used() used to _load() + _save() the WHOLE fabric on every call,
+# and it is on the shared hot path of evidence recall / verifier / kernel-drive
+# (~16 whole-store JSON rewrites PER conversation turn — the single dominant
+# warm-turn cost, profiled at ~14s cumtime). last_used_at_utc / usage_count are
+# low-value telemetry that tolerate a brief persistence delay, so we coalesce:
+# accumulate increments in memory and flush to disk at most once per
+# USAGE_FLUSH_INTERVAL_S (one load+save for ALL pending cards). Flag-gated +
+# reversible; flip the flag False for the exact old per-call-write behavior.
+# ---------------------------------------------------------------------------
+USAGE_FLUSH_INTERVAL_S = 30.0
+_USAGE_LOCK = threading.Lock()
+_PENDING_USAGE: Dict[str, Dict[str, Any]] = {}  # card_id -> {ts, inc}
+_LAST_USAGE_FLUSH = [0.0]
+
+
+def _debounce_usage_enabled() -> bool:
+    ff = _safe("luna_modules.cognitive_feature_flags")
+    if ff is None:
+        return True
+    try:
+        return bool(ff.read_flags().get(
+            "cognitive_research_fabric_debounce_usage_writes_enabled", True))
+    except Exception:  # noqa: BLE001
+        return True
+
+
+def _flush_pending_usage_locked() -> int:
+    """Apply ALL pending usage updates in ONE load+save. Caller holds
+    _USAGE_LOCK. On failure, pending is preserved for the next attempt.
+    NEVER raises. Returns the count of card updates applied."""
+    applied = 0
+    try:
+        if _PENDING_USAGE:
+            data = _load()
+            by_id = {c.get("card_id"): c
+                     for c in (data.get("cards") or [])}
+            for cid, upd in list(_PENDING_USAGE.items()):
+                c = by_id.get(cid)
+                if c is not None:
+                    c["last_used_at_utc"] = upd.get("ts") or _now_iso()
+                    c["usage_count"] = (int(c.get("usage_count", 0))
+                                        + int(upd.get("inc", 1)))
+                    applied += 1
+            _save(data)
+            _PENDING_USAGE.clear()
+    except Exception:  # noqa: BLE001
+        return applied  # leave pending in place; do NOT advance flush ts
+    _LAST_USAGE_FLUSH[0] = time.time()
+    return applied
+
+
+def flush_usage() -> Dict[str, Any]:
+    """Public: force-flush any pending coalesced usage updates to disk.
+    NEVER raises."""
+    with _USAGE_LOCK:
+        pending = len(_PENDING_USAGE)
+        applied = _flush_pending_usage_locked()
+    return {"ok": True, "pending_before": pending, "applied": applied}
+
+
+# Durability: flush coalesced usage on clean process exit (atexit is not a
+# thread/daemon — consistent with this module's "no threads/daemons" rule).
+atexit.register(flush_usage)
 
 
 def store_card_from_ingestion(
@@ -314,6 +384,28 @@ def mark_card_used(card_id: str) -> Dict[str, Any]:
     if not _enabled():
         return {"ok": False,
                 "reason": "research_memory_fabric_disabled"}
+    if _debounce_usage_enabled():
+        # Coalesced path (default): accumulate the usage bump in memory and
+        # flush to disk at most once per USAGE_FLUSH_INTERVAL_S. Collapses the
+        # ~16 whole-store rewrites/turn (dominant warm-turn cost) into ~0.
+        try:
+            now = time.time()
+            with _USAGE_LOCK:
+                ent = _PENDING_USAGE.setdefault(
+                    card_id, {"ts": None, "inc": 0})
+                ent["ts"] = _now_iso()
+                ent["inc"] = int(ent.get("inc", 0)) + 1
+                pending_inc = int(ent["inc"])
+                due = ((now - _LAST_USAGE_FLUSH[0])
+                       >= USAGE_FLUSH_INTERVAL_S)
+                if due:
+                    _flush_pending_usage_locked()
+            return {"ok": True, "card_id": card_id,
+                    "deferred": (not due), "pending_inc": pending_inc}
+        except Exception as exc:  # noqa: BLE001
+            return {"ok": False,
+                    "error": f"{type(exc).__name__}: {exc}"}
+    # Legacy immediate-write path (flag OFF) — exact prior behavior.
     try:
         data = _load()
         for c in data.get("cards") or []:

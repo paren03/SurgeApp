@@ -49,6 +49,9 @@ ALLOWED_FLAGS = {
     # reply ships (updates state for the NEXT turn). Operator-accepted
     # speed/audit tradeoff. Flip False = synchronous full reasoning.
     "cognitive_conversation_async_postreply_enabled",
+    # Coalesce research-fabric usage writes (kills ~16 whole-store rewrites/turn
+    # -> ~0; dominant warm-turn cost). Default True. Flip False = per-call write.
+    "cognitive_research_fabric_debounce_usage_writes_enabled",
     "cognitive_brain_embedding_runtime_enabled",
     "cognitive_brain_embedding_runtime_kill_switch",
     "cognitive_deep_adapter_enabled",

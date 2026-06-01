@@ -112,9 +112,57 @@ meaningful fraction of a fast turn.
 - `cognitive_operator_controls.py`: flag added to `ALLOWED_FLAGS`.
 - Proof script: `measure_drive_turn_cost.py`.
 
+## Step 4 — research-fabric usage-write coalescing (2026-06-01) — BIG WIN
+
+Profiled the warm turn (`profile_handle_turn_sections.py`, cProfile of the main
+thread, 3 warm samples, median 8.49 s). The single dominant cost was NOT the
+models and NOT drive_turn — it was:
+
+  evidence_grounded_recall.recall -> research_memory_fabric.mark_card_used
+  -> _save -> _atomic_write -> json.dump(WHOLE store)
+
+`mark_card_used` rewrote the entire fabric to disk on every call, and it is the
+shared hot path of evidence recall, the verifier (`_collect_support_from_recall`)
+AND kernel-drive — **~16 whole-store JSON rewrites per turn** (~14.8 s cumulative
+in the profiled call-tree). The 2026-05-31 compact-JSON change shrank each write
+but not the 16× frequency; this is the real fix.
+
+**Fix:** coalesce. `mark_card_used` now accumulates the usage bump
+(`last_used_at_utc` / `usage_count` — low-value, delay-tolerant telemetry) in
+memory and flushes to disk at most once per `USAGE_FLUSH_INTERVAL_S` (30 s),
+applying ALL pending cards in ONE load+save. Thread-safe (lock), `atexit` flush
+for durability, NEVER raises. Flag `cognitive_research_fabric_debounce_usage_
+writes_enabled` (default **True**). Flip False = exact prior per-call-write.
+
+**Measured proof (both runs voice-muted — Luna silent):**
+| Measure | OFF (old) | ON (new) | Win |
+|---|---|---|---|
+| `recall()` median, isolated (`measure_fabric_recall_cost.py`) | 941.7 ms | 19.7 ms | **47.8×** |
+| warm turn median, end-to-end delta (`measure_turn_silent_delta.py`) | 4.89 s | 2.54 s | **−2.36 s** |
+
+The end-to-end delta isolates the fix (voice muted on BOTH sides). recall runs
+multiple times/turn (evidence + verifier + drive), so the ~922 ms/call saving
+compounds. Projected real (with-voice) turn: ~8.5 s − ~2.36 s ≈ **~6.1 s**
+(projection — not re-measured with voice live, to keep Luna silent).
+
+Why default ON (unlike Step 3): near-pure win. The only cost is usage telemetry
+persisting a few seconds later; no per-turn audit content is lost, and it cannot
+make a turn slower. Reversible via the flag.
+
+## Step 4 — edits
+- `cognitive_research_memory_fabric.py`: coalescing machinery (`_PENDING_USAGE`,
+  `_USAGE_LOCK`, `_flush_pending_usage_locked`, `flush_usage`, `atexit` hook);
+  `mark_card_used` debounced path + preserved legacy immediate-write path.
+- `cognitive_feature_flags.py`: flag default True.
+- `cognitive_operator_controls.py`: flag added to `ALLOWED_FLAGS`.
+- Proof: `profile_handle_turn_sections.py`, `measure_fabric_recall_cost.py`,
+  `measure_turn_silent_delta.py`.
+
 ## Honest caveat on the whole chain
-The remaining warm-turn pipeline overhead (~7–9 s, noisy) is NOT the two models
-(~1.3–2.0 s gen) and NOT drive_turn anymore. It is everything else in
-handle_turn (memory recall/write, classification, state, voice setup, audit).
-That is the next place to look if more speed is wanted — it was not isolated in
-this step.
+After Step 4 the warm turn (voice-muted) is ~2.5 s and the dominant fabric-write
+cost is gone. The remaining time is the two models (~1.3–2.0 s gen) plus smaller
+synchronous passes (classification, dialogue pipeline, verifier compute, audit
+append — note `_append_audit` still re-reads the whole ~1.6 MB ledger per turn,
+a minor ~10 ms cost worth a later trim). With real voice, ~2 s of bounded
+ack+main TTS reaps are added back. No silent truncation or hidden caps were
+introduced.
