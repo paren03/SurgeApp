@@ -1009,6 +1009,9 @@ DEFAULTS: Dict[str, Any] = {
     # Clone path routes predominantly-Russian text to Serge's RU reference +
     # language 'ru', so Russian speaks in his cloned voice. Default True.
     "cognitive_voice_clone_language_routing_enabled": True,
+    # Amortize the per-turn conversation-audit FIFO truncation: re-read the
+    # ~1.6 MB ledger only every N appends instead of every turn. Default True.
+    "cognitive_conversation_audit_lazy_truncate_enabled": True,
 }
 
 

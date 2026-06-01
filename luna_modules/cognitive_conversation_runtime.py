@@ -79,12 +79,28 @@ def _now_iso() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
-def _append_audit(record: Dict[str, Any]) -> None:
+_AUDIT_APPENDS_SINCE_TRUNCATE = [0]
+_AUDIT_TRUNCATE_EVERY = 50
+
+
+def _audit_lazy_truncate_enabled() -> bool:
+    """When True (default), the per-turn audit FIFO truncation re-reads the
+    ledger only once every _AUDIT_TRUNCATE_EVERY appends instead of on EVERY
+    append. The ledger is ~1.6 MB; reading it whole each turn was pure waste.
+    Flip False = check every append (old behavior)."""
+    ff = _safe("luna_modules.cognitive_feature_flags")
+    if ff is None:
+        return True
     try:
-        os.makedirs(os.path.dirname(AUDIT_PATH), exist_ok=True)
-        with open(AUDIT_PATH, "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
-        # FIFO truncation
+        return bool(ff.read_flags().get(
+            "cognitive_conversation_audit_lazy_truncate_enabled", True))
+    except Exception:  # noqa: BLE001
+        return True
+
+
+def _truncate_audit_fifo() -> None:
+    """Read the audit ledger and FIFO-trim to MAX_AUDIT_LINES. NEVER raises."""
+    try:
         with open(AUDIT_PATH, "r", encoding="utf-8") as fh:
             lines = fh.readlines()
         if len(lines) > MAX_AUDIT_LINES:
@@ -93,6 +109,25 @@ def _append_audit(record: Dict[str, Any]) -> None:
             with open(tmp, "w", encoding="utf-8") as fh:
                 fh.writelines(keep)
             os.replace(tmp, AUDIT_PATH)
+    except Exception:  # noqa: BLE001
+        return
+
+
+def _append_audit(record: Dict[str, Any]) -> None:
+    try:
+        os.makedirs(os.path.dirname(AUDIT_PATH), exist_ok=True)
+        with open(AUDIT_PATH, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
+        # FIFO truncation — amortized. Re-reading the whole ~1.6 MB ledger on
+        # EVERY append was the cost; check only every _AUDIT_TRUNCATE_EVERY
+        # appends (file overshoots MAX_AUDIT_LINES by < that count, harmless).
+        if _audit_lazy_truncate_enabled():
+            _AUDIT_APPENDS_SINCE_TRUNCATE[0] += 1
+            if _AUDIT_APPENDS_SINCE_TRUNCATE[0] >= _AUDIT_TRUNCATE_EVERY:
+                _AUDIT_APPENDS_SINCE_TRUNCATE[0] = 0
+                _truncate_audit_fifo()
+        else:
+            _truncate_audit_fifo()
     except Exception:  # noqa: BLE001
         return
 

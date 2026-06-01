@@ -59,6 +59,8 @@ ALLOWED_FLAGS = {
     # RU clone reference + language ru (default True).
     "cognitive_conversation_clone_acks_enabled",
     "cognitive_voice_clone_language_routing_enabled",
+    # Audit: amortize per-turn ledger FIFO truncation (default True).
+    "cognitive_conversation_audit_lazy_truncate_enabled",
     "cognitive_brain_embedding_runtime_enabled",
     "cognitive_brain_embedding_runtime_kill_switch",
     "cognitive_deep_adapter_enabled",
