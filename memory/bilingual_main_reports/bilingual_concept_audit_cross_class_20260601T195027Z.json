@@ -1,0 +1,234 @@
+{
+  "ts": "2026-06-01T19:50:27Z",
+  "concept_db": "D:\\SurgeApp\\bilingual_concept_links.sqlite",
+  "total_concepts": 6922,
+  "no_link_records": 0,
+  "by_pass": {
+    "latin_extract": {
+      "total": 4553,
+      "matched_class": 19,
+      "cross_class": 4534,
+      "unknown_class": 0,
+      "cross_class_pct": 99.6,
+      "buckets": {
+        "cross:noun->other": 3579,
+        "cross:adj->other": 462,
+        "cross:verb->other": 281,
+        "cross:adv->other": 83,
+        "cross:intj->other": 45,
+        "cross:phrase->other": 27,
+        "cross:pronoun->other": 19,
+        "cross:num->other": 15,
+        "matched:other": 14,
+        "cross:prep->other": 14,
+        "cross:det->other": 9,
+        "matched:noun": 5
+      }
+    },
+    "semantic_unfiltered": {
+      "total": 669,
+      "matched_class": 451,
+      "cross_class": 218,
+      "unknown_class": 0,
+      "cross_class_pct": 32.6,
+      "buckets": {
+        "matched:noun": 367,
+        "cross:verb->noun": 56,
+        "cross:adj->noun": 55,
+        "matched:verb": 52,
+        "matched:adj": 31,
+        "cross:noun->adj": 26,
+        "cross:noun->verb": 22,
+        "cross:adj->verb": 13,
+        "cross:verb->adj": 11,
+        "cross:adv->noun": 6,
+        "cross:adv->adj": 5,
+        "cross:intj->noun": 4,
+        "cross:noun->num": 4,
+        "cross:other->noun": 3,
+        "cross:adv->verb": 3,
+        "cross:prep->noun": 3,
+        "cross:noun->pronoun": 2,
+        "cross:intj->pronoun": 1,
+        "matched:pronoun": 1,
+        "cross:intj->verb": 1
+      }
+    },
+    "semantic_pos_aligned": {
+      "total": 1700,
+      "matched_class": 1700,
+      "cross_class": 0,
+      "unknown_class": 0,
+      "cross_class_pct": 0.0,
+      "buckets": {
+        "matched:noun": 1113,
+        "matched:verb": 367,
+        "matched:adj": 210,
+        "matched:pronoun": 5,
+        "matched:num": 5
+      }
+    }
+  },
+  "cross_class_samples": [
+    {
+      "pass": "latin_extract",
+      "en_label": "hack",
+      "ru_label": ".hack (серия игр)",
+      "en_pos": "verb",
+      "ru_pos": "",
+      "en_class": "verb",
+      "ru_class": "other",
+      "notes": "main_latin_extract en_id=10643 ru_id=888964 matched_run='hack'"
+    },
+    {
+      "pass": "latin_extract",
+      "en_label": "py",
+      "ru_label": ".py (домен)",
+      "en_pos": "noun",
+      "ru_pos": "",
+      "en_class": "noun",
+      "ru_class": "other",
+      "notes": "main_latin_extract en_id=510295 ru_id=888965 matched_run='py'"
+    },
+    {
+      "pass": "latin_extract",
+      "en_label": "Moscow",
+      "ru_label": ".МОСКВА и .MOSCOW",
+      "en_pos": "noun",
+      "ru_pos": "",
+      "en_class": "noun",
+      "ru_class": "other",
+      "notes": "main_latin_extract en_id=31651 ru_id=888966 matched_run='MOSCOW'"
+    },
+    {
+      "pass": "latin_extract",
+      "en_label": "random",
+      "ru_label": "/dev/random и /dev/urandom",
+      "en_pos": "noun",
+      "ru_pos": "",
+      "en_class": "noun",
+      "ru_class": "other",
+      "notes": "main_latin_extract en_id=41576 ru_id=888978 matched_run='random'"
+    },
+    {
+      "pass": "latin_extract",
+      "en_label": "Ethernet",
+      "ru_label": "10-гигабитный Ethernet",
+      "en_pos": "noun",
+      "ru_pos": "",
+      "en_class": "noun",
+      "ru_class": "other",
+      "notes": "main_latin_extract en_id=159248 ru_id=889815 matched_run='Ethernet'"
+    },
+    {
+      "pass": "latin_extract",
+      "en_label": "xx",
+      "ru_label": "100 великих деятелей Эстонии XX века",
+      "en_pos": "adjective",
+      "ru_pos": "",
+      "en_class": "adj",
+      "ru_class": "other",
+      "notes": "main_latin_extract en_id=934506 ru_id=890026 matched_run='XX'"
+    },
+    {
+      "pass": "latin_extract",
+      "en_label": "rolling stone",
+      "ru_label": "100 величайших авторов песен всех времён по версии журнала Rolling Stone",
+      "en_pos": "noun",
+      "ru_pos": "",
+      "en_class": "noun",
+      "ru_class": "other",
+      "notes": "main_latin_extract en_id=121883 ru_id=890028 matched_run='Rolling Stone'"
+    },
+    {
+      "pass": "latin_extract",
+      "en_label": "AFI",
+      "ru_label": "100 величайших звёзд кино за 100 лет по версии AFI",
+      "en_pos": "name",
+      "ru_pos": "",
+      "en_class": "noun",
+      "ru_class": "other",
+      "notes": "main_latin_extract en_id=600885 ru_id=890033 matched_run='AFI'"
+    },
+    {
+      "pass": "semantic_unfiltered",
+      "en_label": "small",
+      "ru_label": "маленький",
+      "en_pos": "adverb",
+      "ru_pos": "adjective",
+      "en_class": "adv",
+      "ru_class": "adj",
+      "notes": "main_semantic_sample sim=0.903 en_id=6375 ru_id=2581"
+    },
+    {
+      "pass": "semantic_unfiltered",
+      "en_label": "ache",
+      "ru_label": "боль",
+      "en_pos": "verb",
+      "ru_pos": "noun",
+      "en_class": "verb",
+      "ru_class": "noun",
+      "notes": "main_semantic_sample sim=0.840 en_id=5474 ru_id=1503"
+    },
+    {
+      "pass": "semantic_unfiltered",
+      "en_label": "clock",
+      "ru_label": "часовой",
+      "en_pos": "noun",
+      "ru_pos": "adjective",
+      "en_class": "noun",
+      "ru_class": "adj",
+      "notes": "main_semantic_sample sim=0.838 en_id=2881 ru_id=4303"
+    },
+    {
+      "pass": "semantic_unfiltered",
+      "en_label": "pencil",
+      "ru_label": "карандаш",
+      "en_pos": "verb",
+      "ru_pos": "noun",
+      "en_class": "verb",
+      "ru_class": "noun",
+      "notes": "main_semantic_sample sim=0.836 en_id=3585 ru_id=703"
+    },
+    {
+      "pass": "semantic_unfiltered",
+      "en_label": "leap",
+      "ru_label": "прыгать",
+      "en_pos": "noun",
+      "ru_pos": "verb",
+      "en_class": "noun",
+      "ru_class": "verb",
+      "notes": "main_semantic_sample sim=0.836 en_id=1534 ru_id=220"
+    },
+    {
+      "pass": "semantic_unfiltered",
+      "en_label": "ablaze",
+      "ru_label": "пыл",
+      "en_pos": "adjective",
+      "ru_pos": "noun",
+      "en_class": "adj",
+      "ru_class": "noun",
+      "notes": "main_semantic_sample sim=0.835 en_id=1032 ru_id=4734"
+    },
+    {
+      "pass": "semantic_unfiltered",
+      "en_label": "date",
+      "ru_label": "год",
+      "en_pos": "verb",
+      "ru_pos": "noun",
+      "en_class": "verb",
+      "ru_class": "noun",
+      "notes": "main_semantic_sample sim=0.820 en_id=3330 ru_id=4771"
+    },
+    {
+      "pass": "semantic_unfiltered",
+      "en_label": "and",
+      "ru_label": "там",
+      "en_pos": "conjunction",
+      "ru_pos": "noun",
+      "en_class": "other",
+      "ru_class": "noun",
+      "notes": "main_semantic_sample sim=0.813 en_id=3682 ru_id=3411"
+    }
+  ]
+}
