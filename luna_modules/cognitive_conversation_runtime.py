@@ -179,6 +179,38 @@ def _premium_voice_allowed() -> bool:
         return True
 
 
+def _clone_reply_max_chars() -> int:
+    """Max main-reply length (chars) spoken in Serge's XTTS voice clone.
+    0 = never cap (always clone) — operator wants the cloned voice on
+    EVERYTHING. Flag-tunable; set a positive number to cap and fall back to the
+    fast voice on longer replies."""
+    ff = _safe("luna_modules.cognitive_feature_flags")
+    if ff is None:
+        return 0
+    try:
+        v = ff.read_flags().get(
+            "cognitive_conversation_clone_reply_max_chars", 0)
+        return int(v)
+    except Exception:  # noqa: BLE001
+        return 0
+
+
+def _clone_acks_enabled() -> bool:
+    """When True, the short acks also speak in Serge's voice clone (intent
+    'clone') instead of the generic fast voice — operator wants the clone on
+    everything. Default True; flip False to put acks back on the fast voice
+    (snappier, but generic). The clone path always has a fast SAPI fallback, so
+    acks never hang."""
+    ff = _safe("luna_modules.cognitive_feature_flags")
+    if ff is None:
+        return True
+    try:
+        return bool(ff.read_flags().get(
+            "cognitive_conversation_clone_acks_enabled", True))
+    except Exception:  # noqa: BLE001
+        return True
+
+
 def _is_sovereign_v2_enabled() -> bool:
     """V2 master switch. When True, live chat uses
     cognitive_sovereign_ack_runtime + cognitive_sovereign_main_runtime
@@ -396,7 +428,8 @@ def _speak_ack(text: str) -> Dict[str, Any]:
     if v3 is None:
         return {"ok": False, "reason": "v3_missing", "audible": False}
     try:
-        return v3.speak_v3(text, intent="acknowledge",
+        ack_intent = "clone" if _clone_acks_enabled() else "acknowledge"
+        return v3.speak_v3(text, intent=ack_intent,
                             caller="conversation_runtime.ack",
                             allow_mode_switch_from_text=False)
     except Exception as exc:  # noqa: BLE001
@@ -456,8 +489,12 @@ def _speak_main_reply(text: str, *, want_premium: bool) -> Dict[str, Any]:
             try:
                 adapter = xtts.get_singleton()
                 use_premium = bool(adapter.is_available())
-                # Cap text length for premium to avoid 30 s+ syntheses
-                if use_premium and len(text) > 280:
+                # Cap text length for premium to avoid very long syntheses.
+                # Operator wants the cloned voice on replies, so the cap is
+                # generous (default 600, flag-tunable); beyond it we fall back
+                # to the fast voice rather than make Serge wait many seconds.
+                cap = _clone_reply_max_chars()
+                if use_premium and cap > 0 and len(text) > cap:
                     use_premium = False
             except Exception:  # noqa: BLE001
                 use_premium = False

@@ -998,6 +998,17 @@ DEFAULTS: Dict[str, Any] = {
     # (~16x/turn). Default True (near-pure perf win; telemetry persists a few
     # seconds later). Flip False = exact prior per-call-write behavior.
     "cognitive_research_fabric_debounce_usage_writes_enabled": True,
+    # Max main-reply length (chars) spoken in Serge's XTTS voice clone; longer
+    # replies use the fast voice. 0 = always clone (operator wants the cloned
+    # voice on EVERYTHING).
+    "cognitive_conversation_clone_reply_max_chars": 0,
+    # Acks also speak in the voice clone (intent 'clone') instead of the fast
+    # voice. Default True (clone on everything); fast SAPI fallback always there
+    # so acks never hang.
+    "cognitive_conversation_clone_acks_enabled": True,
+    # Clone path routes predominantly-Russian text to Serge's RU reference +
+    # language 'ru', so Russian speaks in his cloned voice. Default True.
+    "cognitive_voice_clone_language_routing_enabled": True,
 }
 
 

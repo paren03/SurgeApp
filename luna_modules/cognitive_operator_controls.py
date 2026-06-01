@@ -52,6 +52,13 @@ ALLOWED_FLAGS = {
     # Coalesce research-fabric usage writes (kills ~16 whole-store rewrites/turn
     # -> ~0; dominant warm-turn cost). Default True. Flip False = per-call write.
     "cognitive_research_fabric_debounce_usage_writes_enabled",
+    # Voice: max reply length (chars) spoken in Serge's cloned voice (else the
+    # fast voice). 0 = always clone. Default 0 (clone everything).
+    "cognitive_conversation_clone_reply_max_chars",
+    # Voice: acks also use the clone (default True); Russian text routes to the
+    # RU clone reference + language ru (default True).
+    "cognitive_conversation_clone_acks_enabled",
+    "cognitive_voice_clone_language_routing_enabled",
     "cognitive_brain_embedding_runtime_enabled",
     "cognitive_brain_embedding_runtime_kill_switch",
     "cognitive_deep_adapter_enabled",
