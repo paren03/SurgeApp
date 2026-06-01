@@ -694,8 +694,16 @@ def main() -> None:
         _bt.mark("LaunchLuna.before_services")
     except Exception:
         pass
-    open_terminal()
-    events.append({"service": "SurgeApp_Claude_Terminal.py", "action": "opened_early_or_already_running"})
+    # 2026-06-01: Skip the native Python terminal (SurgeApp_Claude_Terminal.py)
+    # — operator wants ONE window, not two. Start LaunchLunaDashboard.pyw
+    # directly here instead; it opens Chrome in --app= mode at 127.0.0.1:8765
+    # (the one Luna terminal the operator wants). SurgeApp_Claude_Terminal.py
+    # was the OLD native Qt window; the web dashboard is the primary interface.
+    # open_terminal()  # DISABLED — opens unwanted second window
+    events.append({"service": "SurgeApp_Claude_Terminal.py", "action": "skipped_operator_wants_one_window"})
+    _dashboard_started = start_if_missing("LaunchLunaDashboard.pyw")
+    events.append({"service": "LaunchLunaDashboard.pyw",
+                   "action": "started" if _dashboard_started else "already_running"})
     write_startup_status(events)
 
     # 2026-05-31: Ollama removed — all in-house, no external LLM deps.
@@ -706,6 +714,18 @@ def main() -> None:
     # starts last so it does not race the launcher and duplicate services.
     events.append({"service": "luna_apprentice.py", "action": "started" if start_if_missing("luna_apprentice.py") else "already_running_or_missing"})
     events.append({"service": "worker.py", "action": "started" if start_if_missing("worker.py", exe=WORKER_PY) else "already_running_or_missing"})
+
+    # 2026-06-01 Luna System Warden daemon — watches worker.py + luna_guardian.py
+    # for heartbeat-stale / CPU-thrash / IO-thrash patterns and auto-restarts
+    # them with safety caps (10 min cooldown, 4/24h cap, soft auto-disable for
+    # 6h). Standalone tiny daemon (independent of worker so a wedged worker
+    # cannot disable the watcher). Has its own cmdline-singleton check so
+    # double-spawn from rapid clicks is safe. Spec at
+    # memory/spec_luna_system_warden_2026_06_01.md.
+    events.append({"service": "luna_system_warden_daemon.py",
+                    "action": "started" if start_if_missing(
+                        r"luna_modules\luna_system_warden_daemon.py")
+                    else "already_running_or_missing"})
 
     # Aider bridge uses .aider_venv Python (has aider installed).
     # 2026-05-16 conhost-popup fix per Codex audit #6: prefer pythonw.exe
