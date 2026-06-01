@@ -44,9 +44,31 @@ from typing import Any, Iterable
 
 # 2026-05-26 time-based payload cache — prevents concurrent slow-builder
 # stampede and makes the dashboard responsive under rapid panel polling.
+# 2026-06-01 LEAK FIX: added _MAX_CACHE_ENTRIES + LRU eviction. Previously
+# the cache was bounded only by distinct cache keys; if a URL handler ever
+# let a user-controlled string become a key (as /api/terminal-truth/<panel>
+# did pre-fix), the cache grew without bound. Now hard-capped: oldest
+# entries evicted when the cache crosses _MAX_CACHE_ENTRIES. The handler-
+# level allowlist fix is the real fix; this is defense in depth against
+# future regressions.
 _CACHE_TTL_S = 300.0
+_MAX_CACHE_ENTRIES = 512
 _payload_cache: dict[str, tuple[Any, float]] = {}
 _payload_cache_lock = threading.Lock()
+
+
+def _evict_payload_cache_if_full() -> None:
+    """Drop the oldest entries (by stored timestamp) when the cache crosses
+    the cap. Called under _payload_cache_lock. Returns how many we dropped."""
+    if len(_payload_cache) <= _MAX_CACHE_ENTRIES:
+        return
+    target = max(1, _MAX_CACHE_ENTRIES // 2)  # halve it
+    keep_n = _MAX_CACHE_ENTRIES - target
+    by_age = sorted(_payload_cache.items(), key=lambda kv: kv[1][1])
+    for key, _ in by_age[:-keep_n]:
+        _payload_cache.pop(key, None)
+        # Drop the matching per-key build lock so it doesn't leak either.
+        _key_build_locks.pop(key, None)
 
 # 2026-05-31 builder-thread leak containment. _safe_build runs each payload
 # builder in a daemon worker thread and orphans it on timeout (kept running,
@@ -214,6 +236,7 @@ def _spawn_cache_refresh(fn, key: str) -> None:
             fresh = fn()
             with _payload_cache_lock:
                 _payload_cache[key] = (fresh, time.time())
+                _evict_payload_cache_if_full()
         except Exception:    # noqa: BLE001
             pass
         finally:
@@ -249,6 +272,7 @@ def _cached_build(fn, key: str) -> Any:
         val = fn()
         with _payload_cache_lock:
             _payload_cache[key] = (val, time.time())
+            _evict_payload_cache_if_full()
         # 2026-05-31 cold builds allocate large intermediate dicts; force GC
         # so RSS doesn't balloon from temporary objects retained in arena
         # pools. Bounded — only runs on actual cold misses (one per key per
@@ -7485,10 +7509,36 @@ class LunaDashboardHandler(BaseHTTPRequestHandler):
                 payload = self._safe_build(build_terminal_truth_payload, path)
             elif path.startswith("/api/terminal-truth/"):
                 # 2026-05-13 per-panel slice for narrow re-renders.
+                # 2026-06-01 LEAK FIX: validate panel against the canonical
+                # PRIMARY_PANELS allowlist BEFORE letting it become a cache
+                # key. Unbounded panel strings from URL polluted
+                # _payload_cache + _key_build_locks with one permanent
+                # entry per unique URL — a slow but real RAM leak that
+                # contributed to the dashboard hitting 1000MB and forcing
+                # warden bounces ~6x/day.
                 panel = path[len("/api/terminal-truth/"):].strip("/").lower()
-                payload = self._safe_build(
-                    build_terminal_truth_panel_payload, path, panel
-                )
+                try:
+                    from luna_modules.luna_terminal_truth import PRIMARY_PANELS
+                    _valid_panels = frozenset(PRIMARY_PANELS)
+                except Exception:  # noqa: BLE001 — defensive
+                    _valid_panels = frozenset()
+                if panel and panel in _valid_panels:
+                    payload = self._safe_build(
+                        build_terminal_truth_panel_payload, path, panel
+                    )
+                else:
+                    # 404 — never goes near the cache.
+                    self.send_response(404)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    body = json.dumps({
+                        "ok": False,
+                        "error": "unknown_panel",
+                        "panel": panel,
+                        "valid_panels": sorted(_valid_panels),
+                    }).encode("utf-8")
+                    self.wfile.write(body)
+                    return
             elif path == "/api/mission-control":
                 payload = self._safe_build(build_mission_control_payload, path)
             elif path == "/api/supervisor/status":
