@@ -45,6 +45,10 @@ ALLOWED_FLAGS = {
     # Ack-brain on llama-cpp CPU (removes gpt4all from the hot path -> kills
     # the ~190s CUDA probe + GPU poisoning). Auto-falls-back to gpt4all.
     "cognitive_ack_llamacpp_enabled",
+    # Async post-reply reasoning: kernel/drive runs fire-and-forget after the
+    # reply ships (updates state for the NEXT turn). Operator-accepted
+    # speed/audit tradeoff. Flip False = synchronous full reasoning.
+    "cognitive_conversation_async_postreply_enabled",
     "cognitive_brain_embedding_runtime_enabled",
     "cognitive_brain_embedding_runtime_kill_switch",
     "cognitive_deep_adapter_enabled",

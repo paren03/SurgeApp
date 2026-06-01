@@ -988,6 +988,11 @@ DEFAULTS: Dict[str, Any] = {
     # AND its GPU poisoning that made the main 8B load thrash ~29 min. Auto
     # falls back to gpt4all. Flip False = back to gpt4all.
     "cognitive_ack_llamacpp_enabled": False,
+    # Fast conversation: when True, post-reply kernel/drive reasoning runs
+    # fire-and-forget (updates state for the NEXT turn) instead of blocking the
+    # reply. Operator-accepted speed/audit tradeoff. Flip False = synchronous
+    # full reasoning (per-turn kernel audit fields present).
+    "cognitive_conversation_async_postreply_enabled": False,
 }
 
 

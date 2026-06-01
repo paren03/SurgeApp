@@ -47,3 +47,74 @@ return to gpt4all/CPU on the next model load. No code change needed.
 ## Proof scripts (one-off, reusable)
 - `measure_gpu_proof.py` (1B, 5.1×), `measure_gpu_8b.py` (8B fit + 3.48×),
   `measure_main_brain_gpu.py` (real generate_main GPU vs CPU + rollback).
+
+---
+
+# Conversation-turn latency chain (2026-05-31 session)
+
+Separate from the GPU flip above: a sequence of fixes to the live conversation
+pipeline (`cognitive_conversation_runtime.handle_turn`). All numbers are
+**warm-turn** (models already loaded) measured by `measure_turn_breakdown.py`.
+Cold-vs-warm are never compared.
+
+| Step | Fix | Warm turn |
+|---|---|---|
+| start | (warm path, post gpt4all-poison fix) | ~108.8 s |
+| 1 | Bound BOTH voice-future reaps to 2.0 s (`_VOICE_REAP_TIMEOUT_S`) — reply returns immediately, audio plays async | 16.8 s |
+| 2 | Compact JSON in `cognitive_research_memory_fabric._atomic_write` (was pretty-printing the whole store 16×/turn) | 10.6 s |
+| 3 | Async post-reply reasoning (this step) | see honest note below |
+
+## Step 3 — async post-reply reasoning (honest result)
+
+**Change:** flag `cognitive_conversation_async_postreply_enabled` (default
+False). When True, `cognitive_kernel_drive_engine.drive_turn(...)` runs
+fire-and-forget on the thread pool AFTER the reply ships, instead of blocking
+it. drive_turn updates KernelState for the NEXT turn and calls **no LLM**.
+
+**What I can prove (clean, isolated — `measure_drive_turn_cost.py`):**
+drive_turn's own cost = **warm median ~1.2 s (range ~1.0–1.6 s)**, cold ~1.55 s.
+That is exactly the synchronous work removed from the reply's critical path.
+The work is not skipped — it is deferred.
+
+**What I could NOT prove (honest):** end-to-end warm-turn timing did not show a
+clean drop. Two async-ON samples were 8.6 s (pipeline 7239 ms) and 10.1 s
+(pipeline 8827 ms) vs the 10.6 s (pipeline 9089 ms) async-OFF baseline. The two
+async-ON samples differ by ~1.6 s in pipeline overhead alone, and the 10.1 s run
+logged an 838 s model load = the box was under heavy contention. **The
+end-to-end measurement noise (~1.6 s) is as large as the effect**, so I do not
+claim a clean "10.6 → 8.6 s". The defensible claim is the isolated one: ~1.2 s
+of real work moved off the critical path.
+
+**Why keep it:** it is mechanically incapable of making a turn slower (deferral
+is fire-and-forget), it is flag-gated + reversible, and it removes ~1.2 s of
+provable work from the path. Net: a real but modest win, honestly bounded.
+
+**Tradeoff (operator-accepted):** when async ON, the per-turn kernel/drive audit
+fields (`kernel_fusion`, `drive_snapshot`) are absent FOR THAT TURN — the
+reasoning lands a turn later in state. Flip the flag False = synchronous full
+reasoning with per-turn audit fields present. Instant kill-switch.
+
+## Step 3 — decision (2026-06-01)
+Built, measured, and **left OFF** (operator deferred the call to me). Rationale:
+the ~1.2 s deferral is marginal on a still-~8 s turn (pipeline-dominated) and
+unproven end-to-end, while the cost — kernel per-turn audit landing one turn
+late — works against this system's synchronous-audit design. The lever stays
+fully built: flip `cognitive_conversation_async_postreply_enabled` True to
+re-enable. Revisit ON once the ~7–9 s pipeline overhead is cut and ~1.2 s is a
+meaningful fraction of a fast turn.
+
+## Step 3 — edits
+- `cognitive_conversation_runtime.py`: `_async_postreply_enabled()` helper;
+  drive block now `if _async_postreply_enabled() and drive_enabled:` →
+  `pool.submit(kde.drive_turn, ...)` fire-and-forget; legacy unified_kernel
+  path guarded with `and not _async_postreply_enabled()`.
+- `cognitive_feature_flags.py`: flag default False.
+- `cognitive_operator_controls.py`: flag added to `ALLOWED_FLAGS`.
+- Proof script: `measure_drive_turn_cost.py`.
+
+## Honest caveat on the whole chain
+The remaining warm-turn pipeline overhead (~7–9 s, noisy) is NOT the two models
+(~1.3–2.0 s gen) and NOT drive_turn anymore. It is everything else in
+handle_turn (memory recall/write, classification, state, voice setup, audit).
+That is the next place to look if more speed is wanted — it was not isolated in
+this step.

@@ -110,6 +110,23 @@ _POOL: Optional[concurrent.futures.ThreadPoolExecutor] = None
 # keeps synthesizing+playing in the pool (a .result() timeout does NOT cancel
 # the future) while the turn returns immediately. Text-first = instant reply.
 _VOICE_REAP_TIMEOUT_S = 2.0
+
+
+def _async_postreply_enabled() -> bool:
+    """When True, the POST-reply kernel/drive reasoning runs fire-and-forget in
+    the pool (it updates KernelState for the NEXT turn) instead of blocking THIS
+    reply. Operator-accepted speed/audit tradeoff (2026-06-01): the turn returns
+    as soon as the reply text is ready; the per-turn kernel audit fields are
+    simply absent for that turn. Flip the flag False to restore synchronous
+    full reasoning. NEVER raises; defaults False."""
+    try:
+        ff = _safe("luna_modules.cognitive_feature_flags")
+        if ff is None:
+            return False
+        return bool(ff.read_flags().get(
+            "cognitive_conversation_async_postreply_enabled", False))
+    except Exception:  # noqa: BLE001
+        return False
 _POOL_MAX_WORKERS = 4
 
 
@@ -1736,7 +1753,30 @@ def handle_turn(text: str, *,
             except Exception:  # noqa: BLE001
                 drive_enabled = True
                 kernel_enabled = True
-        if drive_enabled:
+        if _async_postreply_enabled() and drive_enabled:
+            # Fast conversation: run the post-reply kernel/drive reasoning in
+            # the background (it updates KernelState for the NEXT turn) instead
+            # of blocking THIS reply. Per-turn kernel audit fields are absent
+            # this turn by design; the reasoning still happens, just deferred.
+            kde_mod = _safe(
+                "luna_modules.cognitive_kernel_drive_engine")
+            if kde_mod is not None:
+                try:
+                    pool.submit(
+                        kde_mod.drive_turn,
+                        user_text=text,
+                        classification=classification,
+                        mode=mode,
+                        recent_turns=(recent_turns
+                                      if isinstance(recent_turns, list)
+                                      else []),
+                        main_reply=main_result,
+                        turn_id=turn_id,
+                        caller="conversation_runtime_handle_turn_async",
+                    )
+                except Exception:  # noqa: BLE001
+                    pass
+        elif drive_enabled:
             kde_mod = _safe(
                 "luna_modules.cognitive_kernel_drive_engine")
             if kde_mod is not None:
@@ -1759,7 +1799,8 @@ def handle_turn(text: str, *,
                 if drive_snapshot:
                     kernel_snapshot = drive_snapshot.get(
                         "kernel_fusion")
-        if kernel_snapshot is None and kernel_enabled:
+        if (kernel_snapshot is None and kernel_enabled
+                and not _async_postreply_enabled()):
             # Legacy Y observer path (when drive disabled OR
             # drive_engine missing).
             uk_mod = _safe(
