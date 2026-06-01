@@ -61,6 +61,8 @@ ALLOWED_FLAGS = {
     "cognitive_voice_clone_language_routing_enabled",
     # Audit: amortize per-turn ledger FIFO truncation (default True).
     "cognitive_conversation_audit_lazy_truncate_enabled",
+    # Voice: acks play instant pre-rendered cloned clips (default True).
+    "cognitive_conversation_fixed_cloned_acks_enabled",
     "cognitive_brain_embedding_runtime_enabled",
     "cognitive_brain_embedding_runtime_kill_switch",
     "cognitive_deep_adapter_enabled",

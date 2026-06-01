@@ -454,11 +454,71 @@ def _is_ack_router_allowed() -> bool:
 # Voice routing helpers
 # ---------------------------------------------------------------------------
 
+# Pre-rendered cloned ack clips (Serge's voice, instant playback). Rendered
+# offline by render_cloned_acks.py. Playing a clip is ~250-400 ms vs ~1-4 s for
+# a live XTTS synth, so acks stay her voice AND instant.
+_CLONED_ACK_DIR = os.path.join(PROJECT_ROOT, "memory", "voice_cache",
+                               "cloned_acks")
+_CLONED_ACK_WAVS: List[str] = []
+_CLONED_ACK_LOADED = [False]
+_CLONED_ACK_IDX = [0]
+
+
+def _fixed_cloned_acks_enabled() -> bool:
+    """When True (default), acks play a pre-rendered cloned ack clip (instant +
+    Serge's voice) instead of a live synth. Falls back gracefully to the live
+    ack path if no clips are present. Flip False to disable."""
+    ff = _safe("luna_modules.cognitive_feature_flags")
+    if ff is None:
+        return True
+    try:
+        return bool(ff.read_flags().get(
+            "cognitive_conversation_fixed_cloned_acks_enabled", True))
+    except Exception:  # noqa: BLE001
+        return True
+
+
+def _load_cloned_ack_wavs() -> List[str]:
+    if _CLONED_ACK_LOADED[0]:
+        return _CLONED_ACK_WAVS
+    _CLONED_ACK_LOADED[0] = True
+    try:
+        man = os.path.join(_CLONED_ACK_DIR, "manifest.json")
+        if os.path.isfile(man):
+            with open(man, "r", encoding="utf-8") as fh:
+                data = json.load(fh)
+            for row in (data or []):
+                w = row.get("wav") if isinstance(row, dict) else None
+                if w and os.path.isfile(w):
+                    _CLONED_ACK_WAVS.append(w)
+    except Exception:  # noqa: BLE001
+        pass
+    return _CLONED_ACK_WAVS
+
+
+def _next_cloned_ack_wav() -> Optional[str]:
+    wavs = _load_cloned_ack_wavs()
+    if not wavs:
+        return None
+    w = wavs[_CLONED_ACK_IDX[0] % len(wavs)]
+    _CLONED_ACK_IDX[0] += 1
+    return w
+
+
 def _speak_ack(text: str) -> Dict[str, Any]:
-    """Speak an ack via V3 (cached_phrase first, persistent_sapi fallback).
-    NEVER raises. Returns the voice runtime outcome dict."""
+    """Speak an ack. Prefers an instant pre-rendered cloned ack clip (Serge's
+    voice); falls back to the live V3 path. NEVER raises."""
     if not text:
         return {"ok": False, "reason": "empty_ack_text", "audible": False}
+    # Fast path: instant cloned ack clip (his voice, no synth wait).
+    if _fixed_cloned_acks_enabled():
+        wav = _next_cloned_ack_wav()
+        if wav:
+            out = _play_cached_wav(wav, voice_label="cloned_ack")
+            if out.get("ok") or out.get("audible"):
+                out["ack_source"] = "cloned_clip"
+                return out
+            # else fall through to the live path
     v3 = _safe("luna_modules.cognitive_luna_voice_v3")
     if v3 is None:
         return {"ok": False, "reason": "v3_missing", "audible": False}

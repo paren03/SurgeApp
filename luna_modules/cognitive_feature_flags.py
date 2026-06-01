@@ -1012,6 +1012,10 @@ DEFAULTS: Dict[str, Any] = {
     # Amortize the per-turn conversation-audit FIFO truncation: re-read the
     # ~1.6 MB ledger only every N appends instead of every turn. Default True.
     "cognitive_conversation_audit_lazy_truncate_enabled": True,
+    # Acks play a pre-rendered cloned ack clip (instant + Serge's voice) instead
+    # of a live synth; graceful fallback to the live path if no clips. Default
+    # True. (Rendered by render_cloned_acks.py.)
+    "cognitive_conversation_fixed_cloned_acks_enabled": True,
 }
 
 
