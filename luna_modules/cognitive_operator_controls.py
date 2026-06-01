@@ -66,6 +66,9 @@ ALLOWED_FLAGS = {
     # Vocabulary: ground replies in Serge's 1M+1M bilingual dictionary
     # (read-only lookup -> prompt). Default True.
     "cognitive_bilingual_vocab_lookup_enabled",
+    # Main-brain GPU context window (tokens); default 4096. Auto-CPU-fallback
+    # if it doesn't fit VRAM.
+    "cognitive_main_gpu_n_ctx",
     "cognitive_brain_embedding_runtime_enabled",
     "cognitive_brain_embedding_runtime_kill_switch",
     "cognitive_deep_adapter_enabled",

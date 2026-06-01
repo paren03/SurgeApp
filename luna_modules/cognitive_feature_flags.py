@@ -1020,6 +1020,10 @@ DEFAULTS: Dict[str, Any] = {
     # words of his message (read-only) and inject definitions into the brain
     # prompt. Default True. Read-only; never mutates the production DB.
     "cognitive_bilingual_vocab_lookup_enabled": True,
+    # GPU main-brain live context window (tokens). Bigger = more conversation
+    # held in active attention; more VRAM. Auto-falls-back to CPU if it doesn't
+    # fit GPU. Default 4096 (raised from 2048).
+    "cognitive_main_gpu_n_ctx": 4096,
 }
 
 

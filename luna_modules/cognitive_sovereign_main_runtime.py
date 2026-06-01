@@ -84,7 +84,23 @@ def _resolved_model_name() -> str:
 # with headroom (measured +4.8 GB into ~5.5 GB free). n_ctx kept modest to
 # bound KV-cache VRAM. Operator flips cognitive_main_gpu_llamacpp_enabled.
 _GPU_NGL = -1
-_GPU_N_CTX = 2048
+_GPU_N_CTX = 4096  # raised from 2048 for longer in-conversation memory
+
+
+def _gpu_n_ctx() -> int:
+    """Live context-window size for the GPU main brain. Flag-tunable
+    (cognitive_main_gpu_n_ctx, default 4096). Bigger = more of the conversation
+    held in active attention, but more VRAM (KV cache ~128 KB/token on this 8B).
+    If a larger ctx doesn't fit GPU, the existing load path auto-falls back to
+    CPU (safe, slower). Floor 512."""
+    ff = _safe_import("luna_modules.cognitive_feature_flags")
+    if ff is None:
+        return _GPU_N_CTX
+    try:
+        v = int(ff.read_flags().get("cognitive_main_gpu_n_ctx", _GPU_N_CTX))
+        return v if v >= 512 else _GPU_N_CTX
+    except Exception:  # noqa: BLE001
+        return _GPU_N_CTX
 
 
 def _gpu_llamacpp_enabled() -> bool:
@@ -380,7 +396,7 @@ class _SovereignMainRuntime:
                     self._llm = Llama(
                         model_path=gpath,
                         n_gpu_layers=_GPU_NGL,
-                        n_ctx=_GPU_N_CTX,
+                        n_ctx=_gpu_n_ctx(),
                         n_threads=self._n_threads,
                         verbose=False,
                     )
