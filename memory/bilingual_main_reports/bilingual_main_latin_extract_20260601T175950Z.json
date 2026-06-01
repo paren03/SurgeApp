@@ -1,0 +1,23 @@
+{
+  "ts": "2026-06-01T17:59:37Z",
+  "pass": "main_latin_extract",
+  "main_db": "D:\\SurgeApp\\bilingual_links.sqlite",
+  "concept_db": "D:\\SurgeApp\\bilingual_concept_links.sqlite",
+  "report_version": 1,
+  "en_index_size": 527226,
+  "en_index_load_s": 6.45,
+  "pre_en_seen": 0,
+  "pre_ru_seen": 0,
+  "scanned_ru_with_latin": 20023,
+  "matched_pairs": 4553,
+  "skipped_duplicate": 6516,
+  "no_latin_match": 8954,
+  "insert": {
+    "ok": true,
+    "inserted_concepts": 4553,
+    "inserted_entry_links": 9106,
+    "audit_message": "latin_extract scanned=20023 matched=4553"
+  },
+  "insert_s": 4.62,
+  "elapsed_s": 12.91
+}
