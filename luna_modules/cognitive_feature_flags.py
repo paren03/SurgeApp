@@ -983,6 +983,11 @@ DEFAULTS: Dict[str, Any] = {
     # load/gen failure auto-falls-back to gpt4all/CPU. Flip False = instant
     # kill-switch back to CPU.
     "cognitive_main_gpu_llamacpp_enabled": False,
+    # Ack-brain on llama-cpp (CPU). True = the 1B ack loads via llama-cpp on
+    # CPU instead of gpt4all — eliminates gpt4all's ~190s broken-CUDA probe
+    # AND its GPU poisoning that made the main 8B load thrash ~29 min. Auto
+    # falls back to gpt4all. Flip False = back to gpt4all.
+    "cognitive_ack_llamacpp_enabled": False,
 }
 
 

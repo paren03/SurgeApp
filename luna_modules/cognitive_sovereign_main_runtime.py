@@ -143,11 +143,15 @@ class _SovereignMainRuntime:
     # ---- public surface ---- #
     def is_available(self) -> bool:
         try:
-            g4a = _safe_import("gpt4all")
-            if g4a is None:
-                return False
             path = os.path.join(self._model_dir, self._model_name)
             if not os.path.isfile(path):
+                return False
+            # GPU path: do NOT import gpt4all — its broken CUDA probe costs
+            # ~190s AND poisons the GPU so this 8B then thrashes on load+gen.
+            if _gpu_llamacpp_enabled():
+                return self._consecutive_failures < 3
+            g4a = _safe_import("gpt4all")
+            if g4a is None:
                 return False
             return self._consecutive_failures < 3
         except Exception:  # noqa: BLE001

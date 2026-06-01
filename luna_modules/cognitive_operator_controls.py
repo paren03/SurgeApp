@@ -42,6 +42,9 @@ ALLOWED_FLAGS = {
     # Main-brain GPU (llama-cpp). True = GPU inference (~3.5x), auto-falls-back
     # to gpt4all/CPU on any GPU failure. False = instant kill-switch to CPU.
     "cognitive_main_gpu_llamacpp_enabled",
+    # Ack-brain on llama-cpp CPU (removes gpt4all from the hot path -> kills
+    # the ~190s CUDA probe + GPU poisoning). Auto-falls-back to gpt4all.
+    "cognitive_ack_llamacpp_enabled",
     "cognitive_brain_embedding_runtime_enabled",
     "cognitive_brain_embedding_runtime_kill_switch",
     "cognitive_deep_adapter_enabled",
