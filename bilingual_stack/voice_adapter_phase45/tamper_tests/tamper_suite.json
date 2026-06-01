@@ -1,0 +1,78 @@
+{
+  "suite_id": "p45tamper_1779847536",
+  "created_at": 1779847536.5954583,
+  "phase": "phase45.tamper_suite.v1",
+  "case_count": 13,
+  "detected_count": 13,
+  "undetected_count": 0,
+  "results": [
+    {
+      "case": "missing_phase42_replay_matrix",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "missing_phase43_bundle",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "missing_phase44_roundtrip_receipt",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "modified_phase43_bundle_hash",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "modified_phase44_operator_packet_hash",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "broken_chain_phase_order",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_audio_flag",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_secret_field",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_command_field",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_runtime_db_reference",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "phase21_status_unexpected",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "adapter_reinvocation_claim",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "production_db_read_claim",
+      "applied": true,
+      "detected": true
+    }
+  ],
+  "ok": true,
+  "summary": "phase45 tamper suite: cases=13 detected=13 undetected=0",
+  "written_at": 1779847536.6622512
+}

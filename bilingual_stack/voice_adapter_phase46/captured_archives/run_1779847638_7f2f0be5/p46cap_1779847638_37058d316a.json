@@ -1,0 +1,325 @@
+{
+  "archive_id": "p45arc_1779847638_12f8094a16",
+  "created_at": 1779847638.3004973,
+  "phase": "phase45.archive_builder.v1",
+  "source_phases": [
+    "phase42",
+    "phase43",
+    "phase44"
+  ],
+  "phase_counts": {
+    "phase42": 8,
+    "phase43": 8,
+    "phase44": 9
+  },
+  "contract_id": "",
+  "artifacts": [
+    {
+      "artifact_key": "phase42_audit_contract",
+      "source_phase": "phase42",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/contracts/audit_contract.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\contracts\\audit_contract.json",
+      "artifact_type": "json",
+      "size_bytes": 1751,
+      "sha256": "c405cf5cfd9cd38653abff6854e43c0c67c2d30d39740ee05c4c0dce7b6a2b02",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase42_trace_batch",
+      "source_phase": "phase42",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/trace_runs/trace_batch.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\trace_runs\\trace_batch.json",
+      "artifact_type": "json",
+      "size_bytes": 13711,
+      "sha256": "11d6a71450dc512066528613dd2454a5ab448a78a77dd60da52df3fd51c8568b",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase42_coherence_audit",
+      "source_phase": "phase42",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/coherence_audits/coherence_audit.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\coherence_audits\\coherence_audit.json",
+      "artifact_type": "json",
+      "size_bytes": 1785,
+      "sha256": "c764cb5b0078cd9234537bd2cf1cbf5e681295d619bcc4c1c9ea51d5d62bff25",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase42_replay_matrix",
+      "source_phase": "phase42",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/replay_projections/replay_matrix.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\replay_projections\\replay_matrix.json",
+      "artifact_type": "json",
+      "size_bytes": 6684,
+      "sha256": "fc79449bef96e6055ec99ad8c874b2a428142b442bd2737ffdd782927eed17ee",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase42_drift_stability_matrix",
+      "source_phase": "phase42",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/drift_matrices/drift_stability_matrix.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\drift_matrices\\drift_stability_matrix.json",
+      "artifact_type": "json",
+      "size_bytes": 1475,
+      "sha256": "83234298d1562f6a8a0bd6a2d69907b910f1dcd4587cc4f5bc8934a23fae3485",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase42_operator_packet",
+      "source_phase": "phase42",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/operator_packets/operator_packet.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\operator_packets\\operator_packet.json",
+      "artifact_type": "json",
+      "size_bytes": 3010,
+      "sha256": "5a658489d58d950c7fe955429d1e0fba1096bc1ca762909690f8b36201c93c53",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase42_operator_markdown",
+      "source_phase": "phase42",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/dashboards/OPERATOR_PACKET.md",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\dashboards\\OPERATOR_PACKET.md",
+      "artifact_type": "markdown",
+      "size_bytes": 960,
+      "sha256": "a06561714be82b7a01f5e8acc3e6e02bec7a71c6fddb10899608765bfdf82517",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase43_portable_bundle",
+      "source_phase": "phase43",
+      "relative_path": "bilingual_stack/voice_adapter_phase43/portable_bundles/portable_bundle.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\portable_bundles\\portable_bundle.json",
+      "artifact_type": "json",
+      "size_bytes": 52275,
+      "sha256": "43892af45c5d9f9b9fe517c6c05c3ddffc94ee96a533eb62ee6c16367668ef81",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase43_bundle_manifest",
+      "source_phase": "phase43",
+      "relative_path": "bilingual_stack/voice_adapter_phase43/bundle_manifests/bundle_manifest.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\bundle_manifests\\bundle_manifest.json",
+      "artifact_type": "json",
+      "size_bytes": 2663,
+      "sha256": "048211535a5ff42923b4861bc077038c0758a7912d86afa07e8a530d80fd24be",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase43_fresh_checkout_result",
+      "source_phase": "phase43",
+      "relative_path": "bilingual_stack/voice_adapter_phase43/fresh_checkout_outputs/fresh_checkout_result.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\fresh_checkout_outputs\\fresh_checkout_result.json",
+      "artifact_type": "json",
+      "size_bytes": 946,
+      "sha256": "8a60359a2943ef80ec1166681cd8f6510c4613ec3ff251440d74b9ae3eb70d26",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase43_portability_audit",
+      "source_phase": "phase43",
+      "relative_path": "bilingual_stack/voice_adapter_phase43/portability_audits/portability_audit.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\portability_audits\\portability_audit.json",
+      "artifact_type": "json",
+      "size_bytes": 1506,
+      "sha256": "555861c58399ea13d3e90e6840a8c5f140c19b790e5606f905d482ce83641c5d",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase43_operator_packet",
+      "source_phase": "phase43",
+      "relative_path": "bilingual_stack/voice_adapter_phase43/operator_packets/operator_packet.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\operator_packets\\operator_packet.json",
+      "artifact_type": "json",
+      "size_bytes": 2146,
+      "sha256": "7647188b5a342e37ff4227b20884612a79b1a025c9fc51497c3be0d0c954b3b9",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase43_status_dashboard_json",
+      "source_phase": "phase43",
+      "relative_path": "bilingual_stack/voice_adapter_phase43/dashboards/STATUS_DASHBOARD.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\dashboards\\STATUS_DASHBOARD.json",
+      "artifact_type": "json",
+      "size_bytes": 1843,
+      "sha256": "45f4d7c7e1d147a74b2e65c0c0ff4ff52f77b0bce16dc5d32af7f6a5aaaefa1f",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase43_status_dashboard_md",
+      "source_phase": "phase43",
+      "relative_path": "bilingual_stack/voice_adapter_phase43/dashboards/STATUS_DASHBOARD.md",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\dashboards\\STATUS_DASHBOARD.md",
+      "artifact_type": "markdown",
+      "size_bytes": 1178,
+      "sha256": "770e72453c19ed0af13a534f50dfc934e9e5442c2a58fef1f1c0fe66b0de160e",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase44_imported_bundle",
+      "source_phase": "phase44",
+      "relative_path": "bilingual_stack/voice_adapter_phase44/imported_bundles/imported_bundle.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\imported_bundles\\imported_bundle.json",
+      "artifact_type": "json",
+      "size_bytes": 4412,
+      "sha256": "8db926a41b670323d1d7af029729aa3770b6108f576324158103858cf59280b6",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase44_import_manifest",
+      "source_phase": "phase44",
+      "relative_path": "bilingual_stack/voice_adapter_phase44/roundtrip_manifests/import_manifest.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\roundtrip_manifests\\import_manifest.json",
+      "artifact_type": "json",
+      "size_bytes": 1794,
+      "sha256": "57473098a5c2bc5b874a07e36f43009ccf5ff9aad75a62d0cb4353fa24ed050d",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase44_fresh_import_result",
+      "source_phase": "phase44",
+      "relative_path": "bilingual_stack/voice_adapter_phase44/verification_outputs/fresh_import_result.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\verification_outputs\\fresh_import_result.json",
+      "artifact_type": "json",
+      "size_bytes": 914,
+      "sha256": "966ea7601212ca05292a7cab267f1910f00f0ed190ed70fd92debe84c09ec480",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase44_tamper_suite",
+      "source_phase": "phase44",
+      "relative_path": "bilingual_stack/voice_adapter_phase44/tamper_tests/tamper_suite.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\tamper_tests\\tamper_suite.json",
+      "artifact_type": "json",
+      "size_bytes": 2498,
+      "sha256": "8f868e05aac639458ce5013705c2695abfd802a4fdf7d33792ddcf9d942a8275",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase44_roundtrip_receipt",
+      "source_phase": "phase44",
+      "relative_path": "bilingual_stack/voice_adapter_phase44/reports/roundtrip_receipt.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\reports\\roundtrip_receipt.json",
+      "artifact_type": "json",
+      "size_bytes": 1596,
+      "sha256": "9eef5343e35b8373932cca3ba5f9a1172caa1a121730b098fa1a8f7f44964b59",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase44_operator_packet",
+      "source_phase": "phase44",
+      "relative_path": "bilingual_stack/voice_adapter_phase44/operator_packets/operator_packet.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\operator_packets\\operator_packet.json",
+      "artifact_type": "json",
+      "size_bytes": 1953,
+      "sha256": "ff4b74a2d6d7f1ac06be01f4e63465fe472d11934ec92e13969374310262bf4a",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase44_status_dashboard_json",
+      "source_phase": "phase44",
+      "relative_path": "bilingual_stack/voice_adapter_phase44/dashboards/STATUS_DASHBOARD.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\dashboards\\STATUS_DASHBOARD.json",
+      "artifact_type": "json",
+      "size_bytes": 1903,
+      "sha256": "9ff0b7b232e475864f1b597e7f75550eb7e7d014939523d3392f1145ae921a89",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase44_status_dashboard_md",
+      "source_phase": "phase44",
+      "relative_path": "bilingual_stack/voice_adapter_phase44/dashboards/STATUS_DASHBOARD.md",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\dashboards\\STATUS_DASHBOARD.md",
+      "artifact_type": "markdown",
+      "size_bytes": 1152,
+      "sha256": "9a9890f8cbe1c65ef91fcd641af28917350642aad24d43fc2e3973dc9e72887f",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase42_report",
+      "source_phase": "phase42",
+      "relative_path": "PHASE42_MULTI_TRACE_COHERENCE_AUDIT_REPORT.md",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\PHASE42_MULTI_TRACE_COHERENCE_AUDIT_REPORT.md",
+      "artifact_type": "markdown",
+      "size_bytes": 11182,
+      "sha256": "25f15de54065e63ffbe9aeacac954ee061cf01fcacf972e3bca74438089ec197",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase43_report",
+      "source_phase": "phase43",
+      "relative_path": "PHASE43_CROSS_MACHINE_PORTABILITY_REPORT.md",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\PHASE43_CROSS_MACHINE_PORTABILITY_REPORT.md",
+      "artifact_type": "markdown",
+      "size_bytes": 10467,
+      "sha256": "8203b1ba47523de7027a6e17e3c342cb259701bed81365a235e5a9b71e7c4035",
+      "inline_content_present": true
+    },
+    {
+      "artifact_key": "phase44_report",
+      "source_phase": "phase44",
+      "relative_path": "PHASE44_CROSS_MACHINE_IMPORT_SIMULATION_REPORT.md",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\PHASE44_CROSS_MACHINE_IMPORT_SIMULATION_REPORT.md",
+      "artifact_type": "markdown",
+      "size_bytes": 10097,
+      "sha256": "95805d81fd2809d7e2495709568045799f36c3041a5aa64d36f347155fc0bca1",
+      "inline_content_present": true
+    }
+  ],
+  "artifact_count": 25,
+  "missing_artifacts": [],
+  "excluded_artifact_keys": [],
+  "artifact_hashes": {
+    "phase42_audit_contract": "c405cf5cfd9cd38653abff6854e43c0c67c2d30d39740ee05c4c0dce7b6a2b02",
+    "phase42_trace_batch": "11d6a71450dc512066528613dd2454a5ab448a78a77dd60da52df3fd51c8568b",
+    "phase42_coherence_audit": "c764cb5b0078cd9234537bd2cf1cbf5e681295d619bcc4c1c9ea51d5d62bff25",
+    "phase42_replay_matrix": "fc79449bef96e6055ec99ad8c874b2a428142b442bd2737ffdd782927eed17ee",
+    "phase42_drift_stability_matrix": "83234298d1562f6a8a0bd6a2d69907b910f1dcd4587cc4f5bc8934a23fae3485",
+    "phase42_operator_packet": "5a658489d58d950c7fe955429d1e0fba1096bc1ca762909690f8b36201c93c53",
+    "phase42_operator_markdown": "a06561714be82b7a01f5e8acc3e6e02bec7a71c6fddb10899608765bfdf82517",
+    "phase43_portable_bundle": "43892af45c5d9f9b9fe517c6c05c3ddffc94ee96a533eb62ee6c16367668ef81",
+    "phase43_bundle_manifest": "048211535a5ff42923b4861bc077038c0758a7912d86afa07e8a530d80fd24be",
+    "phase43_fresh_checkout_result": "8a60359a2943ef80ec1166681cd8f6510c4613ec3ff251440d74b9ae3eb70d26",
+    "phase43_portability_audit": "555861c58399ea13d3e90e6840a8c5f140c19b790e5606f905d482ce83641c5d",
+    "phase43_operator_packet": "7647188b5a342e37ff4227b20884612a79b1a025c9fc51497c3be0d0c954b3b9",
+    "phase43_status_dashboard_json": "45f4d7c7e1d147a74b2e65c0c0ff4ff52f77b0bce16dc5d32af7f6a5aaaefa1f",
+    "phase43_status_dashboard_md": "770e72453c19ed0af13a534f50dfc934e9e5442c2a58fef1f1c0fe66b0de160e",
+    "phase44_imported_bundle": "8db926a41b670323d1d7af029729aa3770b6108f576324158103858cf59280b6",
+    "phase44_import_manifest": "57473098a5c2bc5b874a07e36f43009ccf5ff9aad75a62d0cb4353fa24ed050d",
+    "phase44_fresh_import_result": "966ea7601212ca05292a7cab267f1910f00f0ed190ed70fd92debe84c09ec480",
+    "phase44_tamper_suite": "8f868e05aac639458ce5013705c2695abfd802a4fdf7d33792ddcf9d942a8275",
+    "phase44_roundtrip_receipt": "9eef5343e35b8373932cca3ba5f9a1172caa1a121730b098fa1a8f7f44964b59",
+    "phase44_operator_packet": "ff4b74a2d6d7f1ac06be01f4e63465fe472d11934ec92e13969374310262bf4a",
+    "phase44_status_dashboard_json": "9ff0b7b232e475864f1b597e7f75550eb7e7d014939523d3392f1145ae921a89",
+    "phase44_status_dashboard_md": "9a9890f8cbe1c65ef91fcd641af28917350642aad24d43fc2e3973dc9e72887f",
+    "phase42_report": "25f15de54065e63ffbe9aeacac954ee061cf01fcacf972e3bca74438089ec197",
+    "phase43_report": "8203b1ba47523de7027a6e17e3c342cb259701bed81365a235e5a9b71e7c4035",
+    "phase44_report": "95805d81fd2809d7e2495709568045799f36c3041a5aa64d36f347155fc0bca1"
+  },
+  "phase21_status_text": "BLOCKED",
+  "production_baseline_expected": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_in_archive": true,
+    "no_production_db_read_in_archive": true
+  },
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Archive aggregates Phase 42/43/44 portable JSON+Markdown+report artifacts only.",
+    "Inline content capped at 512 KB per file; SHA-256 streamed (cap 16 MB).",
+    "Runtime DBs, secrets, audio, corpus incoming, .claude/, backups, local_secret_handoff: all excluded."
+  ],
+  "captured_id": "p46cap_1779847638_37058d316a",
+  "captured_at": 1779847638.3004973
+}

@@ -1,0 +1,1682 @@
+{
+  "phase41_id": "p41_1779847497_55d0949008",
+  "phase29_packet": {
+    "phase29_id": "p29_1779847497_f0aba73f49",
+    "phase28_result": {
+      "phase28_id": "p28_1779847497_2f31f3ea46",
+      "dry_run_pipeline_result": {
+        "pipeline_id": "vdrp_1779847497_d391384d1c",
+        "dry_run_status": "planned_dry_run",
+        "language_detection": {
+          "detected_mode": "english_only",
+          "chosen_spoken_mode": "english_only"
+        },
+        "voice_memory_summary": {
+          "session_id": "vses_1779847497_721fc18a23",
+          "preferred_language_mode": "auto",
+          "preferred_spoken_mode": "auto",
+          "preferred_formality": "unknown",
+          "preferred_code_switch_density": null,
+          "continuity_decision": {
+            "detected_language_mode": "english_only",
+            "policy_response_mode": "english_only",
+            "language": {
+              "language_mode": "english_only",
+              "reason": "mirror_detected_mode",
+              "wins_over_memory": false
+            },
+            "code_switch": {
+              "density": 0.0,
+              "reason": "memory_ewma_default"
+            },
+            "formality": {
+              "formality": "standard",
+              "reason": "default"
+            },
+            "turn_style": {
+              "turn_style": "balanced",
+              "reason": "default"
+            },
+            "conflict": {
+              "conflict": false,
+              "conflicts": [],
+              "resolution": "no_conflict"
+            },
+            "conversation_mode": "conversation",
+            "notes": [
+              "chose language_mode=english_only (mirror_detected_mode)",
+              "chose code_switch_density=0.0",
+              "formality=standard",
+              "turn_style=balanced"
+            ]
+          }
+        },
+        "spoken_payload": {
+          "language_mode": "english_only",
+          "voice_safe_text": "Sure — [main spoken answer in English] [short close in English if useful]",
+          "normalized_text": "Sure — [main spoken answer in English] [short close in English if useful]",
+          "segments": [
+            {
+              "segment_id": "pseg_0000",
+              "text": "Sure",
+              "language": "en",
+              "segment_type": "phrase",
+              "start_index": 0,
+              "end_index": 4,
+              "emphasis": "normal",
+              "pause_after_ms": 40,
+              "pace": "normal",
+              "tone": "steady",
+              "register": "standard",
+              "safety_flags": [],
+              "pronunciation_hint": "",
+              "notes": "",
+              "code_switch_boundary": false
+            },
+            {
+              "segment_id": "pseg_0001",
+              "text": "—",
+              "language": "und",
+              "segment_type": "phrase",
+              "start_index": 0,
+              "end_index": 1,
+              "emphasis": "normal",
+              "pause_after_ms": 40,
+              "pace": "normal",
+              "tone": "steady",
+              "register": "standard",
+              "safety_flags": [],
+              "pronunciation_hint": "",
+              "notes": "",
+              "code_switch_boundary": false
+            },
+            {
+              "segment_id": "pseg_0002",
+              "text": "[main spoken answer in English] [short close in English if useful]",
+              "language": "en",
+              "segment_type": "phrase",
+              "start_index": 0,
+              "end_index": 66,
+              "emphasis": "normal",
+              "pause_after_ms": 40,
+              "pace": "normal",
+              "tone": "steady",
+              "register": "standard",
+              "safety_flags": [],
+              "pronunciation_hint": "",
+              "notes": "",
+              "code_switch_boundary": false
+            }
+          ],
+          "prosody": {
+            "emotional_tone": "steady"
+          },
+          "pronunciation_notes": [],
+          "code_switch_boundaries": [],
+          "safety_summary": {
+            "replacements_count": 0,
+            "high_risk": false,
+            "risks": [],
+            "unsafe_leakage_detected": false
+          }
+        },
+        "adapter_choice": {
+          "chosen": {
+            "adapter_name": "dry_run_code_switch",
+            "adapter_type": "dry_run_renderer",
+            "dry_run": true,
+            "supports_languages": [
+              "en",
+              "ru",
+              "mixed"
+            ],
+            "supports_code_switching": true,
+            "supports_segments": true,
+            "supports_prosody": true,
+            "supports_pronunciation_hints": true,
+            "supports_emotion": false,
+            "supports_streaming": false,
+            "max_text_chars": 8000,
+            "max_segments": 200,
+            "accepted_payload_version": "phase25.v1",
+            "forbidden_runtime_actions": [
+              "audio_generation",
+              "tts_invocation",
+              "voice_cloning",
+              "subprocess_execution",
+              "powershell_invocation",
+              "sapi_speak",
+              "network_call",
+              "audio_file_write"
+            ],
+            "notes": "phase27 dry-run adapter descriptor"
+          },
+          "score": 0.75,
+          "compatibility_reasons": [],
+          "safety_reasons": [],
+          "policy_version": "phase27.policy.v1",
+          "candidates_considered": 6
+        },
+        "adapter_explanation": {
+          "ok": true,
+          "summary": "chose:dry_run_code_switch type:dry_run_renderer score:0.75",
+          "adapter_name": "dry_run_code_switch",
+          "adapter_type": "dry_run_renderer",
+          "score": 0.75,
+          "compatibility_reasons": [],
+          "safety_reasons": [],
+          "policy_version": "phase27.policy.v1",
+          "dry_run": true
+        },
+        "render_job": {
+          "job_id": "vrjob_1779847497_70a2aacc3a",
+          "created_at": 1779847497.5258038,
+          "adapter_descriptor": {
+            "adapter_name": "dry_run_code_switch",
+            "adapter_type": "dry_run_renderer",
+            "dry_run": true,
+            "supports_languages": [
+              "en",
+              "ru",
+              "mixed"
+            ],
+            "supports_code_switching": true,
+            "supports_segments": true,
+            "supports_prosody": true,
+            "supports_pronunciation_hints": true,
+            "supports_emotion": false,
+            "supports_streaming": false,
+            "max_text_chars": 8000,
+            "max_segments": 200,
+            "accepted_payload_version": "phase25.v1",
+            "forbidden_runtime_actions": [
+              "audio_generation",
+              "tts_invocation",
+              "voice_cloning",
+              "subprocess_execution",
+              "powershell_invocation",
+              "sapi_speak",
+              "network_call",
+              "audio_file_write"
+            ],
+            "notes": "phase27 dry-run adapter descriptor"
+          },
+          "spoken_render_payload": {
+            "language_mode": "english_only",
+            "voice_safe_text": "Sure — [main spoken answer in English] [short close in English if useful]",
+            "normalized_text": "Sure — [main spoken answer in English] [short close in English if useful]",
+            "segments": [
+              {
+                "segment_id": "pseg_0000",
+                "text": "Sure",
+                "language": "en",
+                "segment_type": "phrase",
+                "start_index": 0,
+                "end_index": 4,
+                "emphasis": "normal",
+                "pause_after_ms": 40,
+                "pace": "normal",
+                "tone": "steady",
+                "register": "standard",
+                "safety_flags": [],
+                "pronunciation_hint": "",
+                "notes": "",
+                "code_switch_boundary": false
+              },
+              {
+                "segment_id": "pseg_0001",
+                "text": "—",
+                "language": "und",
+                "segment_type": "phrase",
+                "start_index": 0,
+                "end_index": 1,
+                "emphasis": "normal",
+                "pause_after_ms": 40,
+                "pace": "normal",
+                "tone": "steady",
+                "register": "standard",
+                "safety_flags": [],
+                "pronunciation_hint": "",
+                "notes": "",
+                "code_switch_boundary": false
+              },
+              {
+                "segment_id": "pseg_0002",
+                "text": "[main spoken answer in English] [short close in English if useful]",
+                "language": "en",
+                "segment_type": "phrase",
+                "start_index": 0,
+                "end_index": 66,
+                "emphasis": "normal",
+                "pause_after_ms": 40,
+                "pace": "normal",
+                "tone": "steady",
+                "register": "standard",
+                "safety_flags": [],
+                "pronunciation_hint": "",
+                "notes": "",
+                "code_switch_boundary": false
+              }
+            ],
+            "prosody": {
+              "emotional_tone": "steady"
+            },
+            "pronunciation_notes": [],
+            "code_switch_boundaries": [],
+            "safety_summary": {
+              "replacements_count": 0,
+              "high_risk": false,
+              "risks": [],
+              "unsafe_leakage_detected": false
+            }
+          },
+          "voice_memory_summary": {
+            "session_id": "vses_1779847497_721fc18a23",
+            "preferred_language_mode": "auto",
+            "preferred_spoken_mode": "auto",
+            "preferred_formality": "unknown",
+            "preferred_code_switch_density": null
+          },
+          "render_preferences": {
+            "prefer_dry_run": true,
+            "no_runtime_execution": true,
+            "policy_version": "phase27.policy.v1"
+          },
+          "compatibility_result": {
+            "score": 0.75,
+            "compatibility_reasons": [],
+            "safety_reasons": []
+          },
+          "dry_run": true,
+          "output_policy": {
+            "no_audio": true,
+            "no_subprocess": true,
+            "no_network": true,
+            "no_voice_clone": true,
+            "no_audio_file_write": true,
+            "plan_only": true
+          },
+          "safety_summary": {
+            "replacements_count": 0,
+            "high_risk": false,
+            "risks": [],
+            "unsafe_leakage_detected": false
+          },
+          "status": "planned_dry_run",
+          "notes": "phase27 dry-run render job"
+        },
+        "compatibility": {
+          "job_validation": {
+            "ok": true,
+            "reasons": []
+          },
+          "boundary_validation": {
+            "ok": true,
+            "reasons": [],
+            "audio_check": {
+              "ok": true,
+              "audio_hits": []
+            },
+            "execution_check": {
+              "ok": true,
+              "execution_hits": []
+            },
+            "dry_run_check": {
+              "ok": true,
+              "reasons": []
+            }
+          }
+        },
+        "safety_summary": {
+          "replacements_count": 0,
+          "high_risk": false,
+          "risks": [],
+          "unsafe_leakage_detected": false
+        },
+        "unsupported_features": [],
+        "next_required_integration_steps": [
+          "future_phase: write runtime adapter under explicit operator consent + per-invocation audit log"
+        ],
+        "gap_notes": []
+      },
+      "consent_request": {
+        "consent_request_id": "creq_1779847497_4fe3ea5000",
+        "created_at": 1779847497.5298064,
+        "render_job_id": "vrjob_1779847497_70a2aacc3a",
+        "adapter_name": "dry_run_code_switch",
+        "adapter_type": "dry_run_renderer",
+        "requested_action": "dry_run_prepare",
+        "phase": "phase28.consent.v1",
+        "notes": "phase28 consent request"
+      },
+      "consent_decision": {
+        "consent_decision_id": "cdec_1779847497_c9be906971",
+        "created_at": 1779847497.5298064,
+        "consent_request_id": "creq_1779847497_4fe3ea5000",
+        "approved": true,
+        "operator_id": "operator_local",
+        "reason": "phase28 operator-gated dry-run only",
+        "phase": "phase28.consent.v1",
+        "dry_run_only": true,
+        "requested_action": "dry_run_prepare",
+        "notes": "phase28 consent decision; dry_run_only=True"
+      },
+      "boundary_result": {
+        "ok": true,
+        "execution_blocked": true,
+        "reasons": [],
+        "audio_hits": [],
+        "subprocess_hits": [],
+        "hits": [],
+        "phase": "phase28"
+      },
+      "capability_negotiation": {
+        "ok": true,
+        "rejected": false,
+        "reason": "",
+        "requirements": {
+          "language_mode": "english_only",
+          "requires_russian": false,
+          "requires_english": true,
+          "requires_code_switching": false,
+          "requires_segments": true,
+          "requires_prosody": true,
+          "requires_pronunciation_hints": false,
+          "requires_emotional_tone": false,
+          "requires_safety_redaction": true,
+          "text_chars": 73,
+          "segment_count": 3,
+          "requires_dry_run": true,
+          "safety_summary": {
+            "replacements_count": 0,
+            "high_risk": false,
+            "risks": [],
+            "unsafe_leakage_detected": false
+          }
+        },
+        "capabilities": {
+          "supports_languages": [
+            "en",
+            "ru",
+            "mixed"
+          ],
+          "supports_code_switching": true,
+          "supports_segments": true,
+          "supports_prosody": true,
+          "supports_pronunciation_hints": true,
+          "supports_emotion": false,
+          "supports_streaming": false,
+          "max_text_chars": 8000,
+          "max_segments": 200,
+          "supports_safety_redaction": true,
+          "dry_run": true,
+          "adapter_name": "dry_run_code_switch",
+          "adapter_type": "dry_run_renderer"
+        },
+        "unsupported_features": [],
+        "downgrade_plan": {
+          "strip_safety_metadata": false,
+          "strip_language_labels": false,
+          "annotate_unsupported_features": [],
+          "notes": [],
+          "phase": "phase28"
+        },
+        "phase": "phase28"
+      },
+      "call_envelope": {
+        "envelope_id": "venv_1779847497_fbd4eec41c",
+        "created_at": 1779847497.5498073,
+        "status": "dry_run_ready",
+        "dry_run": true,
+        "render_job": {
+          "job_id": "vrjob_1779847497_70a2aacc3a",
+          "created_at": 1779847497.5258038,
+          "adapter_descriptor": {
+            "adapter_name": "dry_run_code_switch",
+            "adapter_type": "dry_run_renderer",
+            "dry_run": true,
+            "supports_languages": [
+              "en",
+              "ru",
+              "mixed"
+            ],
+            "supports_code_switching": true,
+            "supports_segments": true,
+            "supports_prosody": true,
+            "supports_pronunciation_hints": true,
+            "supports_emotion": false,
+            "supports_streaming": false,
+            "max_text_chars": 8000,
+            "max_segments": 200,
+            "accepted_payload_version": "phase25.v1",
+            "forbidden_runtime_actions": [
+              "audio_generation",
+              "tts_invocation",
+              "voice_cloning",
+              "subprocess_execution",
+              "powershell_invocation",
+              "sapi_speak",
+              "network_call",
+              "audio_file_write"
+            ],
+            "notes": "phase27 dry-run adapter descriptor"
+          },
+          "spoken_render_payload": {
+            "language_mode": "english_only",
+            "voice_safe_text": "Sure — [main spoken answer in English] [short close in English if useful]",
+            "normalized_text": "Sure — [main spoken answer in English] [short close in English if useful]",
+            "segments": [
+              {
+                "segment_id": "pseg_0000",
+                "text": "Sure",
+                "language": "en",
+                "segment_type": "phrase",
+                "start_index": 0,
+                "end_index": 4,
+                "emphasis": "normal",
+                "pause_after_ms": 40,
+                "pace": "normal",
+                "tone": "steady",
+                "register": "standard",
+                "safety_flags": [],
+                "pronunciation_hint": "",
+                "notes": "",
+                "code_switch_boundary": false
+              },
+              {
+                "segment_id": "pseg_0001",
+                "text": "—",
+                "language": "und",
+                "segment_type": "phrase",
+                "start_index": 0,
+                "end_index": 1,
+                "emphasis": "normal",
+                "pause_after_ms": 40,
+                "pace": "normal",
+                "tone": "steady",
+                "register": "standard",
+                "safety_flags": [],
+                "pronunciation_hint": "",
+                "notes": "",
+                "code_switch_boundary": false
+              },
+              {
+                "segment_id": "pseg_0002",
+                "text": "[main spoken answer in English] [short close in English if useful]",
+                "language": "en",
+                "segment_type": "phrase",
+                "start_index": 0,
+                "end_index": 66,
+                "emphasis": "normal",
+                "pause_after_ms": 40,
+                "pace": "normal",
+                "tone": "steady",
+                "register": "standard",
+                "safety_flags": [],
+                "pronunciation_hint": "",
+                "notes": "",
+                "code_switch_boundary": false
+              }
+            ],
+            "prosody": {
+              "emotional_tone": "steady"
+            },
+            "pronunciation_notes": [],
+            "code_switch_boundaries": [],
+            "safety_summary": {
+              "replacements_count": 0,
+              "high_risk": false,
+              "risks": [],
+              "unsafe_leakage_detected": false
+            }
+          },
+          "voice_memory_summary": {
+            "session_id": "vses_1779847497_721fc18a23",
+            "preferred_language_mode": "auto",
+            "preferred_spoken_mode": "auto",
+            "preferred_formality": "unknown",
+            "preferred_code_switch_density": null
+          },
+          "render_preferences": {
+            "prefer_dry_run": true,
+            "no_runtime_execution": true,
+            "policy_version": "phase27.policy.v1"
+          },
+          "compatibility_result": {
+            "score": 0.75,
+            "compatibility_reasons": [],
+            "safety_reasons": []
+          },
+          "dry_run": true,
+          "output_policy": {
+            "no_audio": true,
+            "no_subprocess": true,
+            "no_network": true,
+            "no_voice_clone": true,
+            "no_audio_file_write": true,
+            "plan_only": true
+          },
+          "safety_summary": {
+            "replacements_count": 0,
+            "high_risk": false,
+            "risks": [],
+            "unsafe_leakage_detected": false
+          },
+          "status": "planned_dry_run",
+          "notes": "phase27 dry-run render job"
+        },
+        "consent_decision": {
+          "consent_decision_id": "cdec_1779847497_c9be906971",
+          "created_at": 1779847497.5298064,
+          "consent_request_id": "creq_1779847497_4fe3ea5000",
+          "approved": true,
+          "operator_id": "operator_local",
+          "reason": "phase28 operator-gated dry-run only",
+          "phase": "phase28.consent.v1",
+          "dry_run_only": true,
+          "requested_action": "dry_run_prepare",
+          "notes": "phase28 consent decision; dry_run_only=True"
+        },
+        "adapter_choice": {
+          "chosen": {
+            "adapter_name": "dry_run_code_switch",
+            "adapter_type": "dry_run_renderer",
+            "dry_run": true,
+            "supports_languages": [
+              "en",
+              "ru",
+              "mixed"
+            ],
+            "supports_code_switching": true,
+            "supports_segments": true,
+            "supports_prosody": true,
+            "supports_pronunciation_hints": true,
+            "supports_emotion": false,
+            "supports_streaming": false,
+            "max_text_chars": 8000,
+            "max_segments": 200,
+            "accepted_payload_version": "phase25.v1",
+            "forbidden_runtime_actions": [
+              "audio_generation",
+              "tts_invocation",
+              "voice_cloning",
+              "subprocess_execution",
+              "powershell_invocation",
+              "sapi_speak",
+              "network_call",
+              "audio_file_write"
+            ],
+            "notes": "phase27 dry-run adapter descriptor"
+          },
+          "score": 0.75,
+          "compatibility_reasons": [],
+          "safety_reasons": [],
+          "policy_version": "phase27.policy.v1",
+          "candidates_considered": 6
+        },
+        "boundary_checks": {
+          "execution_boundary": {
+            "ok": true,
+            "execution_blocked": true,
+            "reasons": [],
+            "audio_hits": [],
+            "subprocess_hits": [],
+            "hits": [],
+            "phase": "phase28"
+          },
+          "capability_negotiation": {
+            "ok": true,
+            "rejected": false,
+            "reason": "",
+            "requirements": {
+              "language_mode": "english_only",
+              "requires_russian": false,
+              "requires_english": true,
+              "requires_code_switching": false,
+              "requires_segments": true,
+              "requires_prosody": true,
+              "requires_pronunciation_hints": false,
+              "requires_emotional_tone": false,
+              "requires_safety_redaction": true,
+              "text_chars": 73,
+              "segment_count": 3,
+              "requires_dry_run": true,
+              "safety_summary": {
+                "replacements_count": 0,
+                "high_risk": false,
+                "risks": [],
+                "unsafe_leakage_detected": false
+              }
+            },
+            "capabilities": {
+              "supports_languages": [
+                "en",
+                "ru",
+                "mixed"
+              ],
+              "supports_code_switching": true,
+              "supports_segments": true,
+              "supports_prosody": true,
+              "supports_pronunciation_hints": true,
+              "supports_emotion": false,
+              "supports_streaming": false,
+              "max_text_chars": 8000,
+              "max_segments": 200,
+              "supports_safety_redaction": true,
+              "dry_run": true,
+              "adapter_name": "dry_run_code_switch",
+              "adapter_type": "dry_run_renderer"
+            },
+            "unsupported_features": [],
+            "downgrade_plan": {
+              "strip_safety_metadata": false,
+              "strip_language_labels": false,
+              "annotate_unsupported_features": [],
+              "notes": [],
+              "phase": "phase28"
+            },
+            "phase": "phase28"
+          },
+          "consent_dry_run_only": {
+            "ok": true,
+            "dry_run_only": true,
+            "phase": "phase28.consent.v1",
+            "reasons": []
+          }
+        },
+        "execution_blocked": true,
+        "permitted_actions": [
+          "validate",
+          "plan",
+          "simulate_acceptance",
+          "write_report"
+        ],
+        "forbidden_actions": [
+          "generate_audio",
+          "clone_voice",
+          "network_call",
+          "write_audio_file",
+          "run_subprocess",
+          "call_sapi",
+          "invoke_tts",
+          "call_piper",
+          "call_powershell"
+        ],
+        "audit_summary": {
+          "count": 6,
+          "phase": "phase28"
+        },
+        "output_placeholders": {
+          "audio_bytes_present": false,
+          "audio_file_path": null,
+          "renderer_response_present": false
+        },
+        "notes": "phase28 dry-run envelope; execution blocked",
+        "phase": "phase28.envelope.v1"
+      },
+      "audit_events": [
+        {
+          "event_id": "audit_1779847497_e47673d022",
+          "event_type": "preflight",
+          "status": "ok",
+          "message": "phase28 prepare_operator_gated_voice_call begin",
+          "metadata": {
+            "approve": true,
+            "phase": "phase28.runtime.v1"
+          },
+          "created_at": 1779847497.4581256,
+          "phase": "phase28"
+        },
+        {
+          "event_id": "audit_1779847497_e9953c6705",
+          "event_type": "payload_validation",
+          "status": "ok",
+          "message": "phase27 pipeline status=planned_dry_run",
+          "metadata": {},
+          "created_at": 1779847497.5298064,
+          "phase": "phase28"
+        },
+        {
+          "event_id": "audit_1779847497_1a541dcef1",
+          "event_type": "consent_request",
+          "status": "ok",
+          "message": "[]",
+          "metadata": {
+            "consent_request_id": "creq_1779847497_4fe3ea5000"
+          },
+          "created_at": 1779847497.5298064,
+          "phase": "phase28"
+        },
+        {
+          "event_id": "audit_1779847497_8f01132687",
+          "event_type": "consent_decision",
+          "status": "ok",
+          "message": "[]",
+          "metadata": {
+            "approved": true,
+            "operator_id": "operator_local",
+            "dry_run_only": true
+          },
+          "created_at": 1779847497.5298064,
+          "phase": "phase28"
+        },
+        {
+          "event_id": "audit_1779847497_de2cc31f95",
+          "event_type": "boundary_guard",
+          "status": "ok",
+          "message": "[]",
+          "metadata": {},
+          "created_at": 1779847497.5488067,
+          "phase": "phase28"
+        },
+        {
+          "event_id": "audit_1779847497_d1181ae315",
+          "event_type": "compatibility_check",
+          "status": "ok",
+          "message": "[]",
+          "metadata": {},
+          "created_at": 1779847497.5488067,
+          "phase": "phase28"
+        },
+        {
+          "event_id": "audit_1779847497_4395fbcb87",
+          "event_type": "render_envelope_created",
+          "status": "ok",
+          "message": "envelope marked dry_run_ready",
+          "metadata": {},
+          "created_at": 1779847497.5498073,
+          "phase": "phase28"
+        },
+        {
+          "event_id": "audit_1779847497_190ee037f2",
+          "event_type": "dry_run_complete",
+          "status": "ok",
+          "message": "phase28 envelope status=dry_run_ready",
+          "metadata": {},
+          "created_at": 1779847497.5498073,
+          "phase": "phase28"
+        }
+      ],
+      "errors": [],
+      "status": "dry_run_ready",
+      "next_allowed_actions": [
+        "validate",
+        "plan",
+        "simulate_acceptance",
+        "write_report"
+      ],
+      "forbidden_actions": [
+        "generate_audio",
+        "invoke_tts",
+        "run_subprocess",
+        "call_powershell",
+        "call_sapi",
+        "call_piper",
+        "write_audio_file",
+        "clone_voice",
+        "network_call"
+      ],
+      "gap_notes": [],
+      "phase": "phase28.runtime.v1"
+    },
+    "invocation_consent_token": {
+      "token_id": "itok_1779847497_14ad948c6e",
+      "created_at": 1779847497.5498073,
+      "envelope_id": "venv_1779847497_fbd4eec41c",
+      "job_id": "vrjob_1779847497_70a2aacc3a",
+      "binding_hash": "868e41d9702a760d925c0d1a32cace28f7bcdfc6ba0a903d8824d603a2ecfddf",
+      "operator_id": "operator_local",
+      "approved": true,
+      "scope": "dry_run_prepare",
+      "expires_at": 1779847797.5498073,
+      "revoked": false,
+      "revoked_reason": "",
+      "phase": "phase29.invocation_consent.v1",
+      "dry_run_only": true,
+      "notes": "phase29 invocation consent token; dry_run_only=True"
+    },
+    "calltime_boundary_result": {
+      "ok": true,
+      "reasons": [],
+      "execution_blocked": true,
+      "envelope_validation": {
+        "ok": true,
+        "reasons": []
+      },
+      "token_check": {
+        "ok": true,
+        "reasons": [],
+        "execution_blocked": true,
+        "dry_run_only": true,
+        "phase": "phase29.invocation_consent.v1"
+      },
+      "audio_check": {
+        "ok": true,
+        "audio_hits": [],
+        "phase": "phase29.calltime_boundary.v1"
+      },
+      "execution_check": {
+        "ok": true,
+        "execution_hits": [],
+        "phase": "phase29.calltime_boundary.v1"
+      },
+      "dry_run_check": {
+        "ok": true,
+        "reasons": [],
+        "phase": "phase29.calltime_boundary.v1"
+      },
+      "safety_check": {
+        "ok": true,
+        "reasons": [],
+        "safety_summary": {
+          "replacements_count": 0,
+          "high_risk": false,
+          "risks": [],
+          "unsafe_leakage_detected": false
+        },
+        "phase": "phase29.calltime_boundary.v1"
+      },
+      "phase": "phase29.calltime_boundary.v1"
+    },
+    "review_packet": {
+      "packet_id": "rev_1779847497_1832568e43",
+      "created_at": 1779847497.5863552,
+      "envelope_id": "venv_1779847497_fbd4eec41c",
+      "job_id": "vrjob_1779847497_70a2aacc3a",
+      "adapter_name": "dry_run_code_switch",
+      "language_mode": "english_only",
+      "dry_run": true,
+      "execution_blocked": true,
+      "consent_summary": {
+        "approved": true,
+        "operator_id": "operator_local",
+        "scope": "dry_run_prepare",
+        "dry_run_only": true,
+        "invocation_token_id": "itok_1779847497_14ad948c6e",
+        "expires_at": 1779847797.5498073,
+        "revoked": false
+      },
+      "boundary_summary": {
+        "execution_blocked": true,
+        "ok": true,
+        "reasons": []
+      },
+      "safety_summary": {
+        "replacements_count": 0,
+        "high_risk": false,
+        "risks": [],
+        "unsafe_leakage_detected": false
+      },
+      "capability_summary": {
+        "ok": true,
+        "rejected": false,
+        "unsupported_features": [],
+        "downgrade_plan_notes": []
+      },
+      "audit_chain_summary": {
+        "length": 5,
+        "first_event_type": "preflight",
+        "last_event_type": "calltime_boundary"
+      },
+      "operator_next_actions": [
+        "review",
+        "approve_dry_run_only",
+        "refuse"
+      ],
+      "forbidden_actions": [
+        "generate_audio",
+        "invoke_tts",
+        "run_subprocess",
+        "call_powershell",
+        "call_sapi",
+        "call_piper",
+        "write_audio_file",
+        "clone_voice",
+        "network_call"
+      ],
+      "notes": "phase29 operator review packet; execution blocked; no audio; no subprocess",
+      "phase": "phase29.review_packet.v1"
+    },
+    "audit_chain": [
+      {
+        "event_id": "chain_1779847497_589bbb560e",
+        "created_at": 1779847497.4581256,
+        "event_type": "preflight",
+        "status": "ok",
+        "message": "phase29 prepare_phase29_invocation begin",
+        "metadata": {
+          "approve": true,
+          "phase": "phase29.runtime.v1"
+        },
+        "previous_hash": "",
+        "phase": "phase29.audit_chain.v1",
+        "event_hash": "d2cda586a704d5217da3212b9cc399c4772aa2ede469d76000f46e1bc4abc903"
+      },
+      {
+        "event_id": "chain_1779847497_744fb6488f",
+        "created_at": 1779847497.5498073,
+        "event_type": "consent_request",
+        "status": "ok",
+        "message": "phase28 envelope received",
+        "metadata": {
+          "p28_status": "dry_run_ready",
+          "envelope_id": "venv_1779847497_fbd4eec41c"
+        },
+        "previous_hash": "d2cda586a704d5217da3212b9cc399c4772aa2ede469d76000f46e1bc4abc903",
+        "phase": "phase29.audit_chain.v1",
+        "event_hash": "a80311f73c2d0c14a537a34c31d123fe731155eec4ed48a4a90963edbb8733d3"
+      },
+      {
+        "event_id": "chain_1779847497_d7fe7e22da",
+        "created_at": 1779847497.5498073,
+        "event_type": "invocation_token_created",
+        "status": "ok",
+        "message": "phase29 invocation token created",
+        "metadata": {
+          "token_id": "itok_1779847497_14ad948c6e",
+          "approved": true
+        },
+        "previous_hash": "a80311f73c2d0c14a537a34c31d123fe731155eec4ed48a4a90963edbb8733d3",
+        "phase": "phase29.audit_chain.v1",
+        "event_hash": "236b7a7f93e14ce8d818599580b0dceb9f4fe5677e1a95e7a7f1c2c25c48d0f2"
+      },
+      {
+        "event_id": "chain_1779847497_3ec98d921f",
+        "created_at": 1779847497.5498073,
+        "event_type": "invocation_token_validated",
+        "status": "ok",
+        "message": "[]",
+        "metadata": {},
+        "previous_hash": "236b7a7f93e14ce8d818599580b0dceb9f4fe5677e1a95e7a7f1c2c25c48d0f2",
+        "phase": "phase29.audit_chain.v1",
+        "event_hash": "abe6174fecbf0fb0af5726cca56dac647776099312446005a38b482739e0e21a"
+      },
+      {
+        "event_id": "chain_1779847497_30687bb400",
+        "created_at": 1779847497.5863552,
+        "event_type": "calltime_boundary",
+        "status": "ok",
+        "message": "[]",
+        "metadata": {},
+        "previous_hash": "abe6174fecbf0fb0af5726cca56dac647776099312446005a38b482739e0e21a",
+        "phase": "phase29.audit_chain.v1",
+        "event_hash": "70c3fa2c6d7c0ffe44ce256c5a4a3bb682d4dfa5efa9b7c41768644ca070347c"
+      },
+      {
+        "event_id": "chain_1779847497_94467b2e1b",
+        "created_at": 1779847497.5873559,
+        "event_type": "review_packet_created",
+        "status": "ok",
+        "message": "[]",
+        "metadata": {
+          "packet_id": "rev_1779847497_1832568e43"
+        },
+        "previous_hash": "70c3fa2c6d7c0ffe44ce256c5a4a3bb682d4dfa5efa9b7c41768644ca070347c",
+        "phase": "phase29.audit_chain.v1",
+        "event_hash": "d91dbc71fa8cfd704970c082c2439408b6a510d0f943483dac2cbae2759e98ff"
+      },
+      {
+        "event_id": "chain_1779847497_21ecd044a2",
+        "created_at": 1779847497.5873559,
+        "event_type": "queue_enqueued",
+        "status": "ok",
+        "message": "phase29 dry-run packet enqueued",
+        "metadata": {
+          "queue_id": "q_1779847497_dc4bedb317",
+          "length": 1
+        },
+        "previous_hash": "d91dbc71fa8cfd704970c082c2439408b6a510d0f943483dac2cbae2759e98ff",
+        "phase": "phase29.audit_chain.v1",
+        "event_hash": "e543419a05dd55a6f813200b511b158bbe44f9b6f74a7abfae41225fec989ab8"
+      },
+      {
+        "event_id": "chain_1779847497_b0cde55b7d",
+        "created_at": 1779847497.5873559,
+        "event_type": "dry_run_complete",
+        "status": "ok",
+        "message": "phase29 dry-run packet ready",
+        "metadata": {},
+        "previous_hash": "e543419a05dd55a6f813200b511b158bbe44f9b6f74a7abfae41225fec989ab8",
+        "phase": "phase29.audit_chain.v1",
+        "event_hash": "1d8c478065bbd64acc95cb9c10b6012483aa22bf39b8cc53cdec31a0f1fa3cf4"
+      }
+    ],
+    "queue_status": {
+      "queue_id": "q_1779847497_dc4bedb317",
+      "length": 1,
+      "by_status": {
+        "queued_dry_run": 1
+      },
+      "cap": 100,
+      "phase": "phase29.dry_run_queue.v1"
+    },
+    "refusal_analytics": {
+      "analytics": {
+        "total": 1,
+        "top_categories": [
+          {
+            "category": "unknown",
+            "count": 1
+          }
+        ],
+        "phase": "phase29.refusal_analytics.v1"
+      },
+      "recommendations": {
+        "total": 1,
+        "steps": [
+          "No actionable refusals."
+        ],
+        "phase": "phase29.refusal_analytics.v1",
+        "safety_advisory": "All Phase 29 recommendations preserve the dry-run boundary; safety controls remain in effect."
+      }
+    },
+    "status": "dry_run_ready",
+    "next_allowed_actions": [
+      "review",
+      "approve_dry_run_only",
+      "refuse"
+    ],
+    "forbidden_actions": [
+      "generate_audio",
+      "invoke_tts",
+      "run_subprocess",
+      "call_powershell",
+      "call_sapi",
+      "call_piper",
+      "write_audio_file",
+      "clone_voice",
+      "network_call"
+    ],
+    "errors": [],
+    "gap_notes": [],
+    "phase": "phase29.runtime.v1"
+  },
+  "phase41_adapter_request": {
+    "request_id": "p41req_1779847497_a3bba87dc2",
+    "created_at": 1779847497.5913558,
+    "phase29_packet_id": "rev_1779847497_1832568e43",
+    "envelope_id": "venv_1779847497_fbd4eec41c",
+    "job_id": "vrjob_1779847497_70a2aacc3a",
+    "adapter_descriptor": {
+      "adapter_name": "bilingual_segment_metadata_adapter",
+      "adapter_type": "bilingual_segment_metadata_adapter",
+      "test_only": true,
+      "produces_audio": false,
+      "invokes_tts": false,
+      "uses_subprocess": false,
+      "uses_network": false,
+      "writes_files": false,
+      "supports_languages": [
+        "en",
+        "ru",
+        "mixed"
+      ],
+      "supports_code_switching": true,
+      "phase": "phase31.bilingual_segment_adapter.v1",
+      "notes": "phase31 bilingual segment metadata adapter; no engine bound; metadata-only"
+    },
+    "invocation_token_id": "itok_1779847497_14ad948c6e",
+    "operator_id_hash": "829be59401fff987f04078ad66bae07c6418559621a402fc5354d716b98c7d30",
+    "approved": true,
+    "dry_run": true,
+    "test_only": true,
+    "language_mode": "english_only",
+    "segment_count": 3,
+    "safety_summary": {
+      "replacements_count": 0,
+      "high_risk": false,
+      "risks": [],
+      "unsafe_leakage_detected": false
+    },
+    "spoken_render_payload": {
+      "language_mode": "english_only",
+      "voice_safe_text": "Sure — [main spoken answer in English] [short close in English if useful]",
+      "normalized_text": "Sure — [main spoken answer in English] [short close in English if useful]",
+      "segments": [
+        {
+          "segment_id": "pseg_0000",
+          "text": "Sure",
+          "language": "en",
+          "segment_type": "phrase",
+          "start_index": 0,
+          "end_index": 4,
+          "emphasis": "normal",
+          "pause_after_ms": 40,
+          "pace": "normal",
+          "tone": "steady",
+          "register": "standard",
+          "safety_flags": [],
+          "pronunciation_hint": "",
+          "notes": "",
+          "code_switch_boundary": false
+        },
+        {
+          "segment_id": "pseg_0001",
+          "text": "—",
+          "language": "und",
+          "segment_type": "phrase",
+          "start_index": 0,
+          "end_index": 1,
+          "emphasis": "normal",
+          "pause_after_ms": 40,
+          "pace": "normal",
+          "tone": "steady",
+          "register": "standard",
+          "safety_flags": [],
+          "pronunciation_hint": "",
+          "notes": "",
+          "code_switch_boundary": false
+        },
+        {
+          "segment_id": "pseg_0002",
+          "text": "[main spoken answer in English] [short close in English if useful]",
+          "language": "en",
+          "segment_type": "phrase",
+          "start_index": 0,
+          "end_index": 66,
+          "emphasis": "normal",
+          "pause_after_ms": 40,
+          "pace": "normal",
+          "tone": "steady",
+          "register": "standard",
+          "safety_flags": [],
+          "pronunciation_hint": "",
+          "notes": "",
+          "code_switch_boundary": false
+        }
+      ],
+      "prosody": {
+        "emotional_tone": "steady"
+      },
+      "pronunciation_notes": [],
+      "code_switch_boundaries": [],
+      "safety_summary": {
+        "replacements_count": 0,
+        "high_risk": false,
+        "risks": [],
+        "unsafe_leakage_detected": false
+      }
+    },
+    "voice_memory_state": {},
+    "phase": "phase41.callable_interface.v1",
+    "notes": "phase41 five-adapter request",
+    "invocation_token": {
+      "token_id": "itok_1779847497_14ad948c6e",
+      "created_at": 1779847497.5498073,
+      "envelope_id": "venv_1779847497_fbd4eec41c",
+      "job_id": "vrjob_1779847497_70a2aacc3a",
+      "binding_hash": "868e41d9702a760d925c0d1a32cace28f7bcdfc6ba0a903d8824d603a2ecfddf",
+      "operator_id": "operator_local",
+      "approved": true,
+      "scope": "dry_run_prepare",
+      "expires_at": 1779847797.5498073,
+      "revoked": false,
+      "revoked_reason": "",
+      "phase": "phase29.invocation_consent.v1",
+      "dry_run_only": true,
+      "notes": "phase29 invocation consent token; dry_run_only=True"
+    }
+  },
+  "selection_choice": {
+    "ok": true,
+    "chosen": {
+      "adapter_name": "bilingual_segment_metadata_adapter",
+      "adapter_type": "bilingual_segment_metadata_adapter",
+      "test_only": true,
+      "produces_audio": false,
+      "invokes_tts": false,
+      "uses_subprocess": false,
+      "uses_network": false,
+      "writes_files": false,
+      "supports_languages": [
+        "en",
+        "ru",
+        "mixed"
+      ],
+      "supports_code_switching": true,
+      "phase": "phase31.bilingual_segment_adapter.v1",
+      "notes": "phase31 bilingual segment metadata adapter; no engine bound; metadata-only"
+    },
+    "reason": "highest_score:multi_segment_payload",
+    "rejected": [],
+    "candidate_adapters": [
+      "bilingual_segment_metadata_adapter",
+      "dummy_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter",
+      "memory_continuity_audit_metadata_adapter"
+    ],
+    "score_summary": {
+      "bilingual_segment_metadata_adapter": 0.55,
+      "dummy_metadata_adapter": 0.5,
+      "prosody_density_metadata_adapter": 0.5,
+      "safety_redaction_trace_metadata_adapter": 0.5,
+      "memory_continuity_audit_metadata_adapter": 0.5
+    },
+    "phase": "phase41.selection_policy.v1"
+  },
+  "selected_adapter_result": {
+    "result_id": "bsres_1779847497_06b32684e2",
+    "created_at": 1779847497.6123548,
+    "adapter_name": "bilingual_segment_metadata_adapter",
+    "adapter_type": "bilingual_segment_metadata_adapter",
+    "status": "metadata_only_ok",
+    "dry_run": true,
+    "test_only": true,
+    "produced_audio": false,
+    "invoked_tts": false,
+    "used_subprocess": false,
+    "used_network": false,
+    "wrote_files": false,
+    "received_language_mode": "english_only",
+    "received_segment_count": 3,
+    "language_segment_counts": {
+      "en": 2,
+      "und": 1
+    },
+    "code_switch_boundary_count": 2,
+    "prosody_marker_count": 1,
+    "pronunciation_hint_count": 0,
+    "safety_flag_count": 0,
+    "metadata_summary": {
+      "request_id": "p41req_1779847497_a3bba87dc2",
+      "envelope_id": "venv_1779847497_fbd4eec41c",
+      "job_id": "vrjob_1779847497_70a2aacc3a",
+      "segment_distribution": {
+        "total": 3,
+        "language_counts": {
+          "en": 2,
+          "und": 1
+        },
+        "phase": "phase31.bilingual_segment_adapter.v1"
+      },
+      "code_switch_summary": {
+        "boundary_count": 2,
+        "phase": "phase31.bilingual_segment_adapter.v1"
+      },
+      "phase": "phase31.bilingual_segment_adapter.v1"
+    },
+    "notes": "phase31 bilingual segment metadata result; no audio; no engine call; no side effects",
+    "phase": "phase31.bilingual_segment_adapter.v1"
+  },
+  "selection_receipt": {
+    "receipt_id": "selrec_1779847497_1a81c3df1d",
+    "created_at": 1779847497.6123548,
+    "selected_adapter_name": "bilingual_segment_metadata_adapter",
+    "selected_adapter_type": "bilingual_segment_metadata_adapter",
+    "candidate_adapters": [
+      "bilingual_segment_metadata_adapter",
+      "dummy_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter",
+      "memory_continuity_audit_metadata_adapter"
+    ],
+    "selection_reason": "highest_score:multi_segment_payload",
+    "score_summary": {
+      "bilingual_segment_metadata_adapter": 0.55,
+      "dummy_metadata_adapter": 0.5,
+      "prosody_density_metadata_adapter": 0.5,
+      "safety_redaction_trace_metadata_adapter": 0.5,
+      "memory_continuity_audit_metadata_adapter": 0.5
+    },
+    "request_id": "p41req_1779847497_a3bba87dc2",
+    "result_id": "bsres_1779847497_06b32684e2",
+    "dry_run": true,
+    "test_only": true,
+    "execution_boundary_preserved": true,
+    "audio_generated": false,
+    "tts_invoked": false,
+    "subprocess_used": false,
+    "network_used": false,
+    "files_written": false,
+    "audit_chain_hash": "023eea57050fc3a32d87488943609158f32eef9f02b4347fb11edb5d61a45d1b",
+    "comparison_summary": {},
+    "notes": "phase31 selection receipt; execution boundary preserved; no audio",
+    "phase": "phase31.selection_receipt.v1"
+  },
+  "invocation_receipt": {
+    "receipt_id": "recv_1779847497_c40ea5d1a0",
+    "created_at": 1779847497.6123548,
+    "adapter_name": "bilingual_segment_metadata_adapter",
+    "adapter_type": "bilingual_segment_metadata_adapter",
+    "request_id": "p41req_1779847497_a3bba87dc2",
+    "result_id": "bsres_1779847497_06b32684e2",
+    "operator_id_hash": "829be59401fff987f04078ad66bae07c6418559621a402fc5354d716b98c7d30",
+    "dry_run": true,
+    "test_only": true,
+    "execution_boundary_preserved": true,
+    "audio_generated": false,
+    "tts_invoked": false,
+    "subprocess_used": false,
+    "network_used": false,
+    "files_written": false,
+    "pre_call_status": "ok",
+    "post_call_status": "ok",
+    "audit_chain_hash": "023eea57050fc3a32d87488943609158f32eef9f02b4347fb11edb5d61a45d1b",
+    "notes": "phase30 invocation receipt; execution boundary preserved; no audio; no engine call",
+    "phase": "phase30.receipt.v1"
+  },
+  "signed_witness_pipeline": {
+    "pipeline_id": "p37pipe_1779847497_3be13682c1",
+    "phase": "phase37.signed_witness_pipeline.v1",
+    "created_at": 1779847497.8325396,
+    "signed_evidence_summary": {
+      "evidence_id": "sigev_1779847497_b76ced49cc",
+      "chain_length": 5,
+      "algorithm": "HMAC-SHA256",
+      "test_only": true,
+      "evidence_validates": true
+    },
+    "witness_export_summary": {
+      "status": "ok",
+      "phase33_status": "ok",
+      "witness_package_id": "phase37_witness_1779847497_ced4b7",
+      "public_key_descriptor_present": true,
+      "witness_receipt_status": "pass",
+      "operator_guide_present": false,
+      "integrity_manifest_entry_count": 0
+    },
+    "exchange_summary": {
+      "status": "witness_failed",
+      "exchange_id": "xch_1779847497_e9d072ce6c",
+      "exporter_packet_id": "expk_1779847497_bbbeee4d03",
+      "witness_output_status": "fail",
+      "handshake_id": "hsh_1779847497_4ac6b7711c"
+    },
+    "handoff_summary": {},
+    "boundary_summary": {
+      "execution_blocked": true,
+      "dry_run": true,
+      "test_only": true,
+      "phase30_strict": true,
+      "phase31_two_adapter_boundary": true,
+      "phase33_three_adapter_boundary": true,
+      "phase37_four_adapter_boundary": true,
+      "signed_evidence_required": true,
+      "witness_export_required": true,
+      "exchange_required": true
+    },
+    "no_secret_summary": {
+      "secret_fields_present_in_pipeline": false,
+      "secret_fields_present_in_witness_export": false,
+      "secret_fields_present_in_exchange": false
+    },
+    "no_audio_summary": {
+      "audio_generated": false,
+      "audio_files_written": false,
+      "audio_fields_in_pipeline": false
+    },
+    "no_network_summary": {
+      "internet_used": false,
+      "sockets_used": false,
+      "subprocess_used": false,
+      "multiprocessing_used": false
+    },
+    "status": "ok"
+  },
+  "governance_recheck": {
+    "phase30_strict": {
+      "ok": true,
+      "allowed_adapter_types": [
+        "dummy_metadata_adapter"
+      ],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "phase31_boundary": {
+      "ok": true,
+      "allowed_adapter_types": [
+        "dummy_metadata_adapter",
+        "bilingual_segment_metadata_adapter"
+      ],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "phase33_boundary": {
+      "ok": true,
+      "allowed_adapter_types": [
+        "dummy_metadata_adapter",
+        "bilingual_segment_metadata_adapter",
+        "prosody_density_metadata_adapter"
+      ],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "phase37_boundary": {
+      "ok": true,
+      "allowed_adapter_types": [
+        "dummy_metadata_adapter",
+        "bilingual_segment_metadata_adapter",
+        "prosody_density_metadata_adapter",
+        "safety_redaction_trace_metadata_adapter"
+      ],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "phase41_boundary": {
+      "ok": true,
+      "allowed_adapter_types": [
+        "dummy_metadata_adapter",
+        "bilingual_segment_metadata_adapter",
+        "prosody_density_metadata_adapter",
+        "safety_redaction_trace_metadata_adapter",
+        "memory_continuity_audit_metadata_adapter"
+      ],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "allowed_adapters_only": {
+      "ok": true,
+      "bad": [],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "metadata_only": {
+      "ok": true,
+      "bad": [],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "memory_privacy_boundary": {
+      "ok": true,
+      "bad": [],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "signed_evidence_required": {
+      "ok": true,
+      "reasons": [],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "witness_export_required": {
+      "ok": true,
+      "reasons": [],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "exchange_required": {
+      "ok": true,
+      "reasons": [],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "no_secret_leakage": {
+      "ok": true,
+      "leaks": [],
+      "phase": "phase41.governance_recheck.v1"
+    },
+    "ok": true
+  },
+  "result_verification": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase41.result_verifier.v1"
+  },
+  "replay_projection": {
+    "projection_id": "p41proj_1779847497",
+    "created_at": 1779847497.8325396,
+    "phase": "phase41.replay_bridge.v1",
+    "source_phase": "phase41",
+    "selected_adapter_name": "bilingual_segment_metadata_adapter",
+    "trace_hash_summary": {
+      "trace_hash": "7566ce23d60d4933294a3ba1c8cc088d2c42a29770fea482deeb1e380719cab7",
+      "basis": {
+        "phase41_id": "p41_1779847497_a32c58e5e0",
+        "selected_adapter_name": "bilingual_segment_metadata_adapter",
+        "signed_evidence_root": "",
+        "invocation_receipt_id": "recv_1779847497_c40ea5d1a0"
+      }
+    },
+    "adapter_selection_summary": {
+      "candidate_adapters": [
+        "bilingual_segment_metadata_adapter",
+        "dummy_metadata_adapter",
+        "prosody_density_metadata_adapter",
+        "safety_redaction_trace_metadata_adapter",
+        "memory_continuity_audit_metadata_adapter"
+      ],
+      "score_summary": {
+        "bilingual_segment_metadata_adapter": 0.55,
+        "dummy_metadata_adapter": 0.5,
+        "prosody_density_metadata_adapter": 0.5,
+        "safety_redaction_trace_metadata_adapter": 0.5,
+        "memory_continuity_audit_metadata_adapter": 0.5
+      },
+      "reason": "highest_score:multi_segment_payload"
+    },
+    "governance_result": {
+      "result_verification_ok": false,
+      "governance_recheck_ok": true,
+      "signed_evidence_validates": true,
+      "witness_export_status": "ok",
+      "exchange_status": "witness_failed"
+    },
+    "baseline_summary": {
+      "expected": {
+        "english_words": 2814,
+        "russian_words": 2518,
+        "russian_phrases": 35,
+        "bilingual_concepts": 26,
+        "bilingual_entry_links": 52,
+        "live_pack_manifests": 90
+      },
+      "note": "Phase 41 does NOT read production DBs during projection."
+    },
+    "phase21_status": {
+      "status_text": "BLOCKED",
+      "note": "Projection makes no Phase 21 claim beyond restating it remains BLOCKED unless operator stages and runs Phase 21 explicitly."
+    },
+    "rehearsal_dry_run_only": true,
+    "notes": [
+      "Projection is read-only.",
+      "No adapter re-invocation.",
+      "No audio / TTS / subprocess / network / multiprocessing."
+    ]
+  },
+  "audit_chain": [
+    {
+      "event_id": "chain_1779847497_99106b66a6",
+      "created_at": 1779847497.4581256,
+      "event_type": "preflight",
+      "status": "ok",
+      "message": "phase41 prepare_phase41_five_adapter_invocation",
+      "metadata": {
+        "approve": true,
+        "kill_switch_enabled": false,
+        "preferred_adapter": null,
+        "sign_evidence": true,
+        "include_witness_export": true,
+        "include_exchange": true,
+        "include_replay_projection": true
+      },
+      "previous_hash": "",
+      "phase": "phase29.audit_chain.v1",
+      "event_hash": "2f22758ad3dbfbdbd70cc464ebadb4cdee718265e569e7379a553d8913680e80"
+    },
+    {
+      "event_id": "chain_1779847497_51d44bf96e",
+      "created_at": 1779847497.5913558,
+      "event_type": "calltime_boundary",
+      "status": "ok",
+      "message": "",
+      "metadata": {},
+      "previous_hash": "2f22758ad3dbfbdbd70cc464ebadb4cdee718265e569e7379a553d8913680e80",
+      "phase": "phase29.audit_chain.v1",
+      "event_hash": "4b31dc31f5d01e4eda8ca8831e6f825d5562bcd4b8b79058c599525abec1e653"
+    },
+    {
+      "event_id": "chain_1779847497_bbf92a061d",
+      "created_at": 1779847497.6113527,
+      "event_type": "calltime_boundary",
+      "status": "ok",
+      "message": "[]",
+      "metadata": {},
+      "previous_hash": "4b31dc31f5d01e4eda8ca8831e6f825d5562bcd4b8b79058c599525abec1e653",
+      "phase": "phase29.audit_chain.v1",
+      "event_hash": "4618c51d5d184e9bbbbcc80d1f364c76aaf6b022b4384b3e36363d3b008326be"
+    },
+    {
+      "event_id": "chain_1779847497_053175be1d",
+      "created_at": 1779847497.6123548,
+      "event_type": "review_packet_created",
+      "status": "ok",
+      "message": "phase41 dispatch complete",
+      "metadata": {
+        "result_id": "bsres_1779847497_06b32684e2",
+        "adapter_type": "bilingual_segment_metadata_adapter"
+      },
+      "previous_hash": "4618c51d5d184e9bbbbcc80d1f364c76aaf6b022b4384b3e36363d3b008326be",
+      "phase": "phase29.audit_chain.v1",
+      "event_hash": "b9bff816dec3c27c940b89975f823dfbc307098e214a6e120f79f42bdbef2a6e"
+    },
+    {
+      "event_id": "chain_1779847497_5ecc9260dc",
+      "created_at": 1779847497.6123548,
+      "event_type": "calltime_boundary",
+      "status": "ok",
+      "message": "[]",
+      "metadata": {},
+      "previous_hash": "b9bff816dec3c27c940b89975f823dfbc307098e214a6e120f79f42bdbef2a6e",
+      "phase": "phase29.audit_chain.v1",
+      "event_hash": "62f22ee3f98730a66365c1ec8e579963c4df426c722a5647af1900acebc1e437"
+    },
+    {
+      "event_id": "chain_1779847497_a1afd9b5af",
+      "created_at": 1779847497.8325396,
+      "event_type": "dry_run_complete",
+      "status": "ok",
+      "message": "phase41 signed witness pipeline built",
+      "metadata": {},
+      "previous_hash": "62f22ee3f98730a66365c1ec8e579963c4df426c722a5647af1900acebc1e437",
+      "phase": "phase29.audit_chain.v1",
+      "event_hash": "0e7041c3bdfdc9f66351d7362b4c0030551276508df3d0eae9cef158cce23ded"
+    },
+    {
+      "event_id": "chain_1779847497_d8ac30b3de",
+      "created_at": 1779847497.8325396,
+      "event_type": "review_packet_created",
+      "status": "ok",
+      "message": "phase41 replay projection built",
+      "metadata": {},
+      "previous_hash": "0e7041c3bdfdc9f66351d7362b4c0030551276508df3d0eae9cef158cce23ded",
+      "phase": "phase29.audit_chain.v1",
+      "event_hash": "9bdff5154a0392b6a829dba6a2b86be819ea846035566cd0dfbe87230c2a013c"
+    }
+  ],
+  "status": "ok",
+  "next_allowed_actions": [
+    "review",
+    "refuse",
+    "compare_adapters",
+    "verify_signed_evidence",
+    "export_witness",
+    "verify_exchange",
+    "audit_replay",
+    "memory_continuity_summary"
+  ],
+  "forbidden_actions": [
+    "generate_audio",
+    "invoke_tts",
+    "run_subprocess",
+    "call_powershell",
+    "call_sapi",
+    "call_piper",
+    "write_audio_file",
+    "clone_voice",
+    "network_call"
+  ],
+  "errors": [],
+  "gap_notes": [],
+  "phase": "phase41.runtime.v1",
+  "written_at": 1779847506.8990183
+}

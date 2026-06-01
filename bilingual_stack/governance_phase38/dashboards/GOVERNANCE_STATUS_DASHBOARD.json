@@ -1,0 +1,58 @@
+{
+  "dashboard_id": "opdash_1779847466",
+  "created_at": 1779847466.0973277,
+  "phase": "phase38.status_dashboard.v1",
+  "latest_phase": 37,
+  "full_regression_total_expected": 6185,
+  "harness_count_expected": 30,
+  "production_counts": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "adapter_count": 4,
+  "allowed_callable_adapters": [
+    "dummy_metadata_adapter",
+    "bilingual_segment_metadata_adapter",
+    "prosody_density_metadata_adapter",
+    "safety_redaction_trace_metadata_adapter"
+  ],
+  "blocked_boundaries": [
+    "audio_generation",
+    "tts_invocation",
+    "voice_cloning",
+    "subprocess_execution",
+    "powershell_invocation",
+    "sapi_invocation",
+    "piper_invocation",
+    "audio_file_write",
+    "network_call",
+    "socket_open",
+    "multiprocessing",
+    "main_runtime_integration",
+    "program_s_modification",
+    "tier_probe_attestation_modification",
+    "worker_or_luna_modules_modification",
+    "production_signing_secret_storage",
+    "git_commit_of_signing_secret"
+  ],
+  "evidence_status": "HMAC-SHA256 test-only signing; Phase 33 signed evidence required by default for Phase 33/37 ok",
+  "witness_status": "Phase 34 witness package required by default for Phase 37 ok; ships only public key descriptor + fingerprint",
+  "exchange_status": "Phase 35 local file-based exchange required by default for Phase 37 ok; no network, no subprocess, no multiprocessing",
+  "handoff_status": "Phase 36 optional sealed envelope; requires consent marker; lives only in gitignored local_secret_handoff/",
+  "corpus_import_status": "Phase 21 real corpus import remains BLOCKED. corpus_sources/english/incoming and corpus_sources/russian/incoming are empty. Verifying Phase 27-37 does NOT unblock Phase 21.",
+  "next_recommended_phases": [
+    "Phase 39: operator dry-run rehearsal harness that exercises every Phase 27-37 path with a single consent + verification trace",
+    "Phase G fifth metadata-only callable (e.g. memory-continuity audit adapter)",
+    "Phase 21 real import unblock (separate workflow)"
+  ],
+  "notes": [
+    "All Phase 27-37 modules are standalone; not wired into Luna main runtime.",
+    "No audio engine has ever been invoked.",
+    "No production secret has ever been stored or committed."
+  ],
+  "written_at": 1779847466.0973277
+}

@@ -1,0 +1,47 @@
+{
+  "verification_id": "p46ver_1779847555",
+  "created_at": 1779847555.4227164,
+  "phase": "phase46.long_horizon_verifier.v1",
+  "monotonic_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase46.long_horizon_verifier.v1"
+  },
+  "unique_ids_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase46.long_horizon_verifier.v1"
+  },
+  "chain_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase46.long_horizon_verifier.v1"
+  },
+  "boundary_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase46.long_horizon_verifier.v1"
+  },
+  "phase21_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase46.long_horizon_verifier.v1"
+  },
+  "no_runtime_state_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase46.long_horizon_verifier.v1"
+  },
+  "root_hash_check": {
+    "ok": true,
+    "phase": "phase46.long_horizon_verifier.v1"
+  },
+  "manifest_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase46.timeline_manifest.v1"
+  },
+  "ok": true,
+  "summary": "phase46 verify: mono=True uniq=True chain=True boundary=True phase21=True no_runtime_state=True root=True",
+  "written_at": 1779847555.5303683
+}

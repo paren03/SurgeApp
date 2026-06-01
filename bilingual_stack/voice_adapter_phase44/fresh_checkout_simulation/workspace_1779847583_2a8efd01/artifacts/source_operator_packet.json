@@ -1,0 +1,64 @@
+{
+  "packet_id": "p43pkt_1779847583",
+  "created_at": 1779847583.5232887,
+  "phase": "phase43.operator_packet.v1",
+  "portability_status": "ok",
+  "source_phase": "phase42",
+  "bundle_id": "p43bndl_1779847583_46ce323c68",
+  "manifest_id": "p43man_1779847583_5525bfbce2",
+  "contract_id": "p43contract_1779847583",
+  "artifact_count": 8,
+  "hash_verification_status": "ok",
+  "fresh_checkout_verification_status": "ok",
+  "presence_check_ok": true,
+  "phase42_claims_check_ok": true,
+  "boundary_claims_check_ok": true,
+  "phase21_claim_check_ok": true,
+  "excluded_artifacts_summary": {
+    "ok": true,
+    "hits": []
+  },
+  "no_secret_status": {
+    "ok": true,
+    "hits": []
+  },
+  "no_audio_status": {
+    "ok": true,
+    "hits": []
+  },
+  "no_runtime_db_status": {
+    "ok": true,
+    "hits": []
+  },
+  "phase21_import_status": {
+    "status_text": "BLOCKED",
+    "drifted": false,
+    "note": "Phase 43 NEVER imports corpus files; status is reported only."
+  },
+  "production_baseline_expected": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_reinvocation_in_bundle": true,
+    "no_production_db_in_bundle": true
+  },
+  "rollback_readiness": "Delete the 9 Phase 43 files (8 modules + harness + report) and the 12 sub-folders under bilingual_stack/voice_adapter_phase43/. Phase 27-42 remain green.",
+  "next_recommended_phase": "Phase 44 cross-machine bundle import + fresh-checkout regression OR Phase 41a continuity-ledger.",
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Packet carries no operator_id, no signing material, no raw transcript, no audio, no command fields.",
+    "Phase 21 import remains BLOCKED unless operator explicitly stages corpus files AND runs Phase 21 separately."
+  ],
+  "written_at": 1779847583.529294
+}

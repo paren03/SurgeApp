@@ -1,0 +1,82 @@
+{
+  "packet_id": "oppkt_1779847495",
+  "created_at": 1779847495.3649411,
+  "phase": "phase40.operator_packet.v1",
+  "replay_status": "ok",
+  "source_phase39_summary": {
+    "loaded_artifact_count": 5,
+    "sizes_bytes": {
+      "rehearsal_contract": 6164,
+      "umbrella_consent": 860,
+      "rehearsal_trace": 15720,
+      "rehearsal_recheck": 1065,
+      "rehearsal_report": 26306
+    }
+  },
+  "trace_replay_summary": {
+    "ok": true,
+    "rederived_root_hash": "b22bd86e340a3cdb1685897c5a9181bce2b50e4bc8b0d6c5777b8fdf1ef37eeb",
+    "stored_root_hash": "b22bd86e340a3cdb1685897c5a9181bce2b50e4bc8b0d6c5777b8fdf1ef37eeb",
+    "rederived_receipt_count": 10,
+    "stored_receipt_count": 10,
+    "chain_matches_loaded_receipts": true,
+    "chain_matches_inline_receipts": true
+  },
+  "drift_summary": {
+    "ok": true,
+    "fail_count": 0,
+    "warn_count": 0,
+    "pass_count": 8,
+    "categories": [
+      "missing_artifact",
+      "consent_binding_drift",
+      "adapter_allowlist_drift",
+      "governance_doc_drift",
+      "baseline_drift",
+      "phase21_status_drift",
+      "forbidden_boundary_drift",
+      "secret_audio_command_drift"
+    ]
+  },
+  "baseline_summary": {
+    "observed": {
+      "english_words": 2814,
+      "russian_words": 2518,
+      "russian_phrases": 35,
+      "bilingual_concepts": 26,
+      "bilingual_entry_links": 52,
+      "live_pack_manifests": 90
+    },
+    "drifts": [],
+    "expected": {
+      "english_words": 2814,
+      "russian_words": 2518,
+      "russian_phrases": 35,
+      "bilingual_concepts": 26,
+      "bilingual_entry_links": 52,
+      "live_pack_manifests": 90
+    }
+  },
+  "phase21_status": {
+    "status_text": "BLOCKED",
+    "drifted": false,
+    "note": "Phase 21 incoming files are NEVER imported by Phase 40."
+  },
+  "boundary_preservation_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_production_db_modification": true
+  },
+  "rollback_readiness": "Delete the 7 Phase 40 modules + harness + report + the 9 sub-folders under bilingual_stack/governance_phase40/. Phase 27-39 remain green.",
+  "next_recommended_phase": "Phase G fifth metadata-only adapter (e.g. memory-continuity audit adapter) OR Phase 41 cross-machine witness portability harness.",
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Packet carries no operator_id, no signing material, no audio, no command fields.",
+    "Phase 21 real import remains BLOCKED unless operator explicitly stages corpus files AND runs Phase 21 separately."
+  ],
+  "written_at": 1779847495.3649411
+}

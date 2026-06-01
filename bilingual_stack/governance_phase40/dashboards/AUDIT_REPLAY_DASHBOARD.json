@@ -1,0 +1,58 @@
+{
+  "dashboard_id": "p40dash_1779847495",
+  "created_at": 1779847495.9354997,
+  "phase": "phase40.status_dashboard.v1",
+  "replay_status": "ok",
+  "source_phase": "phase39",
+  "trace_hash_status": "match",
+  "drift_count": {
+    "fail": 0,
+    "warn": 0,
+    "pass": 8
+  },
+  "baseline_status": "ok",
+  "baseline_observed": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "phase21_import_status": "BLOCKED",
+  "adapter_allowlist_status": {
+    "expected_count": 4,
+    "allowed": [
+      "dummy_metadata_adapter",
+      "bilingual_segment_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter"
+    ]
+  },
+  "forbidden_boundaries_preserved": [
+    "audio_generation",
+    "tts_invocation",
+    "subprocess_execution",
+    "powershell_invocation",
+    "sapi_invocation",
+    "piper_invocation",
+    "audio_file_write",
+    "network_call",
+    "socket_open",
+    "multiprocessing",
+    "main_runtime_integration",
+    "program_s_modification",
+    "tier_probe_attestation_modification",
+    "worker_or_luna_modules_modification",
+    "production_signing_secret_storage",
+    "git_commit_of_signing_secret",
+    "new_adapter_invocation"
+  ],
+  "next_recommended_phase": "Phase G fifth metadata-only adapter OR Phase 41 cross-machine witness portability harness",
+  "notes": [
+    "Dashboard is a static snapshot of one replay run.",
+    "Phase 21 real import remains BLOCKED unless operator runs Phase 21 explicitly.",
+    "No audio, no TTS, no subprocess, no network, no multiprocessing."
+  ],
+  "written_at": 1779847495.9365
+}

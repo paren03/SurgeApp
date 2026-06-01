@@ -1,0 +1,367 @@
+{
+  "ts": "2026-06-01T02:26:10Z",
+  "version": 1,
+  "linked_concepts": {
+    "ok": true,
+    "concepts": 425,
+    "english_entry_links": 425,
+    "russian_entry_links": 425,
+    "glossary_links": 5
+  },
+  "links_by_category": {
+    "core_vocabulary": 21,
+    "slang_street_talk": 22,
+    "idioms_phrases": 21,
+    "professions_jobs": 23,
+    "trades_construction": 21,
+    "science_math": 22,
+    "medicine_health": 22,
+    "law_government": 22,
+    "business_finance": 23,
+    "coding_technology": 21,
+    "poetry_literary": 22,
+    "philosophy_abstract": 24,
+    "art_music_culture": 22,
+    "history_geography": 21,
+    "psychology_education": 21,
+    "mechanics_transportation": 21,
+    "food_home_daily_life": 24,
+    "regional_dialect": 24,
+    "formal_informal_speech": 23,
+    "voice_personality": 11,
+    "recognition_only_sensitive": 10
+  },
+  "unlinked_english_by_category": {
+    "core_vocabulary": {
+      "total": 93,
+      "linked": 21,
+      "gap": 72
+    },
+    "slang_street_talk": {
+      "total": 222,
+      "linked": 22,
+      "gap": 200
+    },
+    "idioms_phrases": {
+      "total": 59,
+      "linked": 21,
+      "gap": 38
+    },
+    "professions_jobs": {
+      "total": 272,
+      "linked": 23,
+      "gap": 249
+    },
+    "trades_construction": {
+      "total": 253,
+      "linked": 21,
+      "gap": 232
+    },
+    "science_math": {
+      "total": 154,
+      "linked": 22,
+      "gap": 132
+    },
+    "medicine_health": {
+      "total": 132,
+      "linked": 22,
+      "gap": 110
+    },
+    "law_government": {
+      "total": 215,
+      "linked": 22,
+      "gap": 193
+    },
+    "business_finance": {
+      "total": 180,
+      "linked": 23,
+      "gap": 157
+    },
+    "coding_technology": {
+      "total": 120,
+      "linked": 21,
+      "gap": 99
+    },
+    "poetry_literary": {
+      "total": 245,
+      "linked": 22,
+      "gap": 223
+    },
+    "philosophy_abstract": {
+      "total": 281,
+      "linked": 24,
+      "gap": 257
+    },
+    "art_music_culture": {
+      "total": 160,
+      "linked": 22,
+      "gap": 138
+    },
+    "history_geography": {
+      "total": 163,
+      "linked": 21,
+      "gap": 142
+    },
+    "psychology_education": {
+      "total": 157,
+      "linked": 21,
+      "gap": 136
+    },
+    "mechanics_transportation": {
+      "total": 163,
+      "linked": 21,
+      "gap": 142
+    },
+    "food_home_daily_life": {
+      "total": 169,
+      "linked": 24,
+      "gap": 145
+    },
+    "regional_dialect": {
+      "total": 112,
+      "linked": 24,
+      "gap": 88
+    },
+    "formal_informal_speech": {
+      "total": 112,
+      "linked": 23,
+      "gap": 89
+    },
+    "voice_personality": {
+      "total": 52,
+      "linked": 11,
+      "gap": 41
+    },
+    "recognition_only_sensitive": {
+      "total": 13,
+      "linked": 10,
+      "gap": 3
+    }
+  },
+  "unlinked_russian_by_category": {
+    "core_vocabulary": {
+      "total": 92,
+      "linked": 21,
+      "gap": 71
+    },
+    "slang_street_talk": {
+      "total": 218,
+      "linked": 22,
+      "gap": 196
+    },
+    "idioms_phrases": {
+      "total": 419,
+      "linked": 21,
+      "gap": 398
+    },
+    "professions_jobs": {
+      "total": 254,
+      "linked": 23,
+      "gap": 231
+    },
+    "trades_construction": {
+      "total": 256,
+      "linked": 21,
+      "gap": 235
+    },
+    "science_math": {
+      "total": 140,
+      "linked": 22,
+      "gap": 118
+    },
+    "medicine_health": {
+      "total": 128,
+      "linked": 22,
+      "gap": 106
+    },
+    "law_government": {
+      "total": 230,
+      "linked": 22,
+      "gap": 208
+    },
+    "business_finance": {
+      "total": 183,
+      "linked": 23,
+      "gap": 160
+    },
+    "coding_technology": {
+      "total": 124,
+      "linked": 21,
+      "gap": 103
+    },
+    "poetry_literary": {
+      "total": 242,
+      "linked": 22,
+      "gap": 220
+    },
+    "philosophy_abstract": {
+      "total": 270,
+      "linked": 24,
+      "gap": 246
+    },
+    "art_music_culture": {
+      "total": 155,
+      "linked": 22,
+      "gap": 133
+    },
+    "history_geography": {
+      "total": 155,
+      "linked": 21,
+      "gap": 134
+    },
+    "psychology_education": {
+      "total": 147,
+      "linked": 21,
+      "gap": 126
+    },
+    "mechanics_transportation": {
+      "total": 141,
+      "linked": 21,
+      "gap": 120
+    },
+    "food_home_daily_life": {
+      "total": 172,
+      "linked": 24,
+      "gap": 148
+    },
+    "regional_dialect": {
+      "total": 109,
+      "linked": 24,
+      "gap": 85
+    },
+    "formal_informal_speech": {
+      "total": 112,
+      "linked": 23,
+      "gap": 89
+    },
+    "voice_personality": {
+      "total": 16,
+      "linked": 11,
+      "gap": 5
+    },
+    "recognition_only_sensitive": {
+      "total": 18,
+      "linked": 10,
+      "gap": 8
+    }
+  },
+  "category_imbalances": [
+    {
+      "category": "idioms_phrases",
+      "en_total": 59,
+      "en_linked": 21,
+      "en_gap": 38,
+      "ru_total": 419,
+      "ru_linked": 21,
+      "ru_gap": 398,
+      "imbalance": 360
+    },
+    {
+      "category": "voice_personality",
+      "en_total": 52,
+      "en_linked": 11,
+      "en_gap": 41,
+      "ru_total": 16,
+      "ru_linked": 11,
+      "ru_gap": 5,
+      "imbalance": 36
+    },
+    {
+      "category": "mechanics_transportation",
+      "en_total": 163,
+      "en_linked": 21,
+      "en_gap": 142,
+      "ru_total": 141,
+      "ru_linked": 21,
+      "ru_gap": 120,
+      "imbalance": 22
+    },
+    {
+      "category": "professions_jobs",
+      "en_total": 272,
+      "en_linked": 23,
+      "en_gap": 249,
+      "ru_total": 254,
+      "ru_linked": 23,
+      "ru_gap": 231,
+      "imbalance": 18
+    },
+    {
+      "category": "law_government",
+      "en_total": 215,
+      "en_linked": 22,
+      "en_gap": 193,
+      "ru_total": 230,
+      "ru_linked": 22,
+      "ru_gap": 208,
+      "imbalance": 15
+    },
+    {
+      "category": "science_math",
+      "en_total": 154,
+      "en_linked": 22,
+      "en_gap": 132,
+      "ru_total": 140,
+      "ru_linked": 22,
+      "ru_gap": 118,
+      "imbalance": 14
+    },
+    {
+      "category": "philosophy_abstract",
+      "en_total": 281,
+      "en_linked": 24,
+      "en_gap": 257,
+      "ru_total": 270,
+      "ru_linked": 24,
+      "ru_gap": 246,
+      "imbalance": 11
+    },
+    {
+      "category": "psychology_education",
+      "en_total": 157,
+      "en_linked": 21,
+      "en_gap": 136,
+      "ru_total": 147,
+      "ru_linked": 21,
+      "ru_gap": 126,
+      "imbalance": 10
+    }
+  ],
+  "missing_profession_links": {
+    "category": "professions_jobs",
+    "en_total": 272,
+    "ru_total": 254,
+    "limit_used": 50
+  },
+  "missing_trade_links": {
+    "category": "trades_construction",
+    "en_total": 253,
+    "ru_total": 256,
+    "limit_used": 50
+  },
+  "missing_poetry_philosophy_links": {
+    "poetry": {
+      "category": "poetry_literary",
+      "en_total": 245,
+      "ru_total": 242,
+      "limit_used": 50
+    },
+    "philosophy": {
+      "category": "philosophy_abstract",
+      "en_total": 281,
+      "ru_total": 270,
+      "limit_used": 50
+    }
+  },
+  "slang_link_cautions": {
+    "category": "slang_street_talk",
+    "en_total": 222,
+    "ru_total": 218,
+    "limit_used": 50,
+    "cautions": [
+      "Slang pairings often have no clean translation; mark register_tags=['slang']/['street'] before pairing.",
+      "Never auto-elevate vulgar/offensive slang to general suggestion.",
+      "Apply recognition_only safety tag for sensitive slang."
+    ]
+  }
+}

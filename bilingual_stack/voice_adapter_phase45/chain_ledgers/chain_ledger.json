@@ -1,0 +1,139 @@
+{
+  "ledger_id": "p45chain_1779847536_d379d61069",
+  "created_at": 1779847536.5059466,
+  "phase": "phase45.chain_ledger.v1",
+  "archive_id": "p45arc_1779847536_bdcb709ea1",
+  "ordered_phases": [
+    "phase42",
+    "phase43",
+    "phase44"
+  ],
+  "chain_links": {
+    "phase42_to_phase43_bundle": {
+      "from": "phase42_operator_packet",
+      "to": "phase43_portable_bundle",
+      "from_sha": "5a658489d58d950c7fe955429d1e0fba1096bc1ca762909690f8b36201c93c53",
+      "to_sha": "e65793fc2176bbd2884bcd14ae896eed4264bec32e1c3180bee35c2e048c2e56",
+      "phase43_source_phase_claim": "phase42",
+      "ok": true
+    },
+    "phase43_to_phase44_import": {
+      "from": "phase43_portable_bundle",
+      "to": "phase44_import_manifest",
+      "from_sha": "e65793fc2176bbd2884bcd14ae896eed4264bec32e1c3180bee35c2e048c2e56",
+      "to_sha": "4d5e8de160b594995cddfb1e89624cfb6520ae49cc9216598aff020df55b59e1",
+      "phase43_bundle_id": "p43bndl_1779847533_941e131bb3",
+      "phase44_source_bundle_id": "p43bndl_1779847533_941e131bb3",
+      "ok": true
+    },
+    "phase44_import_to_roundtrip_receipt": {
+      "from": "phase44_import_manifest",
+      "to": "phase44_roundtrip_receipt",
+      "from_sha": "4d5e8de160b594995cddfb1e89624cfb6520ae49cc9216598aff020df55b59e1",
+      "to_sha": "c63d29d8f9d2357e58a32d53f220bb5d00f9a5f9abba86a0c36fcf51e350825a",
+      "import_manifest_source_bundle_id": "p43bndl_1779847533_941e131bb3",
+      "receipt_source_bundle_id": "p43bndl_1779847533_941e131bb3",
+      "ok": true
+    },
+    "phase44_tamper_suite_to_operator_packet": {
+      "from": "phase44_tamper_suite",
+      "to": "phase44_operator_packet",
+      "from_sha": "d840ea2f92ecfd57073c99046747fb42c62fa6a0cfc3fd1e42e136b2fc3365ff",
+      "to_sha": "679876c0e19b5e122d099c4bff76a7ca7a342d72028325b9488835dd548b4921",
+      "tamper_suite_detected": 8,
+      "operator_packet_tamper_detected": 8,
+      "ok": true
+    },
+    "phase44_operator_packet_to_dashboard": {
+      "from": "phase44_operator_packet",
+      "to": "phase44_status_dashboard_json",
+      "from_sha": "679876c0e19b5e122d099c4bff76a7ca7a342d72028325b9488835dd548b4921",
+      "to_sha": "76e1cf22bef1e682b857a096ab495549f58b2771924d48b1fefdb4aa447013ee",
+      "operator_packet_status": "ok",
+      "dashboard_status": "ok",
+      "ok": true
+    }
+  },
+  "phase42_summary": {
+    "operator_packet_audit_status": "ok",
+    "coherence_audit_ok": true,
+    "replay_matrix_compatibility": "ok",
+    "operator_packet_sha": "5a658489d58d950c7fe955429d1e0fba1096bc1ca762909690f8b36201c93c53",
+    "coherence_audit_sha": "c764cb5b0078cd9234537bd2cf1cbf5e681295d619bcc4c1c9ea51d5d62bff25",
+    "replay_matrix_sha": "fc79449bef96e6055ec99ad8c874b2a428142b442bd2737ffdd782927eed17ee"
+  },
+  "phase43_summary": {
+    "bundle_source_phase": "phase42",
+    "manifest_source_phase": "phase42",
+    "fresh_checkout_ok": true,
+    "operator_packet_portability_status": "ok",
+    "portable_bundle_sha": "e65793fc2176bbd2884bcd14ae896eed4264bec32e1c3180bee35c2e048c2e56",
+    "bundle_manifest_sha": "d8235a57a9c312b8c8bc3175e087adb8ec9c015aa713baf7caaaf41a355db44d",
+    "operator_packet_sha": "75cf2dffb3e15bfecdfbd7d19de3ca9d01e91bf110ffe789e201557ea613c54e"
+  },
+  "phase44_summary": {
+    "imported_count": 5,
+    "import_manifest_source_bundle_id": "p43bndl_1779847533_941e131bb3",
+    "fresh_import_ok": true,
+    "tamper_suite_ok": true,
+    "tamper_detected_count": 8,
+    "roundtrip_status": "ok",
+    "operator_packet_status": "ok",
+    "imported_bundle_sha": "dd0e3eb6255c4d463a7f16a5707709435be26111a05319d6c6485c7b01e828cc",
+    "import_manifest_sha": "4d5e8de160b594995cddfb1e89624cfb6520ae49cc9216598aff020df55b59e1",
+    "tamper_suite_sha": "d840ea2f92ecfd57073c99046747fb42c62fa6a0cfc3fd1e42e136b2fc3365ff",
+    "roundtrip_receipt_sha": "c63d29d8f9d2357e58a32d53f220bb5d00f9a5f9abba86a0c36fcf51e350825a",
+    "operator_packet_sha": "679876c0e19b5e122d099c4bff76a7ca7a342d72028325b9488835dd548b4921"
+  },
+  "baseline_invariant_summary": {
+    "expected": {
+      "english_words": 2814,
+      "russian_words": 2518,
+      "russian_phrases": 35,
+      "bilingual_concepts": 26,
+      "bilingual_entry_links": 52,
+      "live_pack_manifests": 90
+    },
+    "phase42_invariants": {
+      "expected": {
+        "english_words": 2814,
+        "russian_words": 2518,
+        "russian_phrases": 35,
+        "bilingual_concepts": 26,
+        "bilingual_entry_links": 52,
+        "live_pack_manifests": 90
+      },
+      "observed": {
+        "english_words": 2814,
+        "russian_words": 2518,
+        "russian_phrases": 35,
+        "bilingual_concepts": 26,
+        "bilingual_entry_links": 52,
+        "live_pack_manifests": 90
+      },
+      "drifts": []
+    }
+  },
+  "phase21_status_summary": {
+    "archive": "BLOCKED",
+    "phase43_bundle_phase21": "BLOCKED",
+    "phase44_imported_phase21": "BLOCKED"
+  },
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_in_archive": true,
+    "no_production_db_read_in_archive": true
+  },
+  "chain_root_hash": "fee0974b59b287d41f3a747c7b250592bc177b424c5bdb82685a68d3782541ec",
+  "notes": [
+    "Ledger order is fixed: phase42 -> phase43 -> phase44.",
+    "Each link cross-checks SHA + semantic id (bundle_id, source_bundle_id, etc.).",
+    "Phase 21 status carried; never unblocked."
+  ],
+  "written_at": 1779847536.66125
+}

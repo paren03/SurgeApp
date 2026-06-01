@@ -1,0 +1,1008 @@
+{
+  "bundle_id": "p43bndl_1779846350_8a70480fc1",
+  "created_at": 1779846350.5954468,
+  "phase": "phase43.bundle_builder.v1",
+  "source_phase": "phase42",
+  "contract_id": "p43contract_1779846350",
+  "artifacts": [
+    {
+      "artifact_key": "phase42_audit_contract",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/contracts/audit_contract.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\contracts\\audit_contract.json",
+      "artifact_type": "json",
+      "size_bytes": 1751,
+      "sha256": "94e195b14efb2a6877ed2a6149b4c8c475945ab3442d305d5b605bc2e368473c",
+      "inline_content_present": true,
+      "inline_content": {
+        "contract_id": "p42contract_1779838673",
+        "created_at": 1779838673.8782532,
+        "phase": "phase42.audit_contract.v1",
+        "audit_id": "p42_1779838673_7de332ebc1",
+        "scenario_count": 8,
+        "metadata": {},
+        "required_scenarios": [
+          "simple_english",
+          "russian_first",
+          "mixed_code_switch",
+          "high_prosody",
+          "safety_redaction",
+          "memory_continuity",
+          "approve_false_refusal",
+          "kill_switch_refusal"
+        ],
+        "required_adapter_coverage": [
+          "dummy_metadata_adapter",
+          "bilingual_segment_metadata_adapter",
+          "prosody_density_metadata_adapter",
+          "safety_redaction_trace_metadata_adapter",
+          "memory_continuity_audit_metadata_adapter"
+        ],
+        "forbidden_actions": [
+          "new_adapter_invocation",
+          "generate_audio",
+          "invoke_tts",
+          "run_subprocess",
+          "call_powershell",
+          "call_sapi",
+          "call_piper",
+          "write_audio_file",
+          "clone_voice",
+          "network_call",
+          "open_socket",
+          "multiprocessing",
+          "main_runtime_integration",
+          "production_db_modification",
+          "corpus_import",
+          "production_signing_secret_storage",
+          "git_commit_of_signing_secret",
+          "program_s_modification",
+          "tier_probe_attestation_modification",
+          "worker_or_luna_modules_modification",
+          "raw_transcript_exposure",
+          "sensitive_fact_exposure"
+        ],
+        "rehearsal_dry_run_only": true,
+        "new_adapter_invocation_forbidden": true,
+        "production_db_must_remain_unchanged": true,
+        "phase21_must_remain_blocked_unless_staged": true,
+        "notes": [
+          "Bounded multi-trace coherence audit.",
+          "Read-only over production DBs.",
+          "No new adapters; the five Phase 41 adapters are the only callable surface."
+        ],
+        "written_at": 1779838698.7373793
+      }
+    },
+    {
+      "artifact_key": "phase42_trace_batch",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/trace_runs/trace_batch.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\trace_runs\\trace_batch.json",
+      "artifact_type": "json",
+      "size_bytes": 13710,
+      "sha256": "f28dd28b8fa65f21000443a72c9a7f8526c16c660dbf4b59eb1f88eccd6fd9fd",
+      "inline_content_present": true,
+      "inline_content": {
+        "phase": "phase42.trace_runner.v1",
+        "written_at": 1779838698.7383785,
+        "trace_count": 8,
+        "traces": [
+          {
+            "trace_id": "p42tr_1779838674_4b724779f2",
+            "created_at": 1779838674.8930516,
+            "phase": "phase42.trace_runner.v1",
+            "scenario_id": "P42-S01",
+            "scenario_type": "simple_english",
+            "status": "ok",
+            "expected_status_family": "ok",
+            "status_matches_expected": true,
+            "selected_adapter_name": "dummy_metadata_adapter",
+            "expected_adapter_family": "dummy_metadata_adapter",
+            "adapter_matches_expected": true,
+            "signed_pipeline_status": "ok",
+            "kill_switch_blocked": false,
+            "approve_requested": true,
+            "kill_switch_requested": false,
+            "replay_projection_present": true,
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed",
+            "selected_result_metadata": {
+              "adapter_type": "dummy_metadata_adapter",
+              "produced_audio": false,
+              "invoked_tts": false,
+              "used_subprocess": false,
+              "used_network": false,
+              "wrote_files": false,
+              "raw_transcript_absent": null,
+              "sensitive_fact_absent": null
+            },
+            "replay_projection_summary": {
+              "projection_id": "p41proj_1779838674",
+              "selected_adapter_name": "dummy_metadata_adapter",
+              "trace_hash": "89dec329837c27da11d6f415e556cd3d338abc24347af5e1f9f98b1b43129d5e",
+              "phase21_status_text": "BLOCKED"
+            },
+            "notes": [
+              "Result carries no raw operator_id.",
+              "Result carries no signing material.",
+              "Result carries no raw transcript or sensitive facts."
+            ]
+          },
+          {
+            "trace_id": "p42tr_1779838675_c20a728bb8",
+            "created_at": 1779838675.452762,
+            "phase": "phase42.trace_runner.v1",
+            "scenario_id": "P42-S02",
+            "scenario_type": "russian_first",
+            "status": "ok",
+            "expected_status_family": "ok",
+            "status_matches_expected": true,
+            "selected_adapter_name": "bilingual_segment_metadata_adapter",
+            "expected_adapter_family": "bilingual_segment_metadata_adapter",
+            "adapter_matches_expected": true,
+            "signed_pipeline_status": "ok",
+            "kill_switch_blocked": false,
+            "approve_requested": true,
+            "kill_switch_requested": false,
+            "replay_projection_present": true,
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed",
+            "selected_result_metadata": {
+              "adapter_type": "bilingual_segment_metadata_adapter",
+              "produced_audio": false,
+              "invoked_tts": false,
+              "used_subprocess": false,
+              "used_network": false,
+              "wrote_files": false,
+              "raw_transcript_absent": null,
+              "sensitive_fact_absent": null
+            },
+            "replay_projection_summary": {
+              "projection_id": "p41proj_1779838675",
+              "selected_adapter_name": "bilingual_segment_metadata_adapter",
+              "trace_hash": "e1491c58d987e279f6cfbebaad2d74e1332d88e755f0048ffbcf1af7d2ecdd07",
+              "phase21_status_text": "BLOCKED"
+            },
+            "notes": [
+              "Result carries no raw operator_id.",
+              "Result carries no signing material.",
+              "Result carries no raw transcript or sensitive facts."
+            ]
+          },
+          {
+            "trace_id": "p42tr_1779838696_8d80762910",
+            "created_at": 1779838696.871454,
+            "phase": "phase42.trace_runner.v1",
+            "scenario_id": "P42-S03",
+            "scenario_type": "mixed_code_switch",
+            "status": "ok",
+            "expected_status_family": "ok",
+            "status_matches_expected": true,
+            "selected_adapter_name": "bilingual_segment_metadata_adapter",
+            "expected_adapter_family": "bilingual_segment_metadata_adapter",
+            "adapter_matches_expected": true,
+            "signed_pipeline_status": "ok",
+            "kill_switch_blocked": false,
+            "approve_requested": true,
+            "kill_switch_requested": false,
+            "replay_projection_present": true,
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed",
+            "selected_result_metadata": {
+              "adapter_type": "bilingual_segment_metadata_adapter",
+              "produced_audio": false,
+              "invoked_tts": false,
+              "used_subprocess": false,
+              "used_network": false,
+              "wrote_files": false,
+              "raw_transcript_absent": null,
+              "sensitive_fact_absent": null
+            },
+            "replay_projection_summary": {
+              "projection_id": "p41proj_1779838696",
+              "selected_adapter_name": "bilingual_segment_metadata_adapter",
+              "trace_hash": "ca6a1601b9d1f7de2769892ffe8ca11448ee42da68189e4fbd4c9da3a636b7ae",
+              "phase21_status_text": "BLOCKED"
+            },
+            "notes": [
+              "Result carries no raw operator_id.",
+              "Result carries no signing material.",
+              "Result carries no raw transcript or sensitive facts."
+            ]
+          },
+          {
+            "trace_id": "p42tr_1779838697_8efbfe7a61",
+            "created_at": 1779838697.3141718,
+            "phase": "phase42.trace_runner.v1",
+            "scenario_id": "P42-S04",
+            "scenario_type": "high_prosody",
+            "status": "ok",
+            "expected_status_family": "ok",
+            "status_matches_expected": true,
+            "selected_adapter_name": "prosody_density_metadata_adapter",
+            "expected_adapter_family": "prosody_density_metadata_adapter",
+            "adapter_matches_expected": true,
+            "signed_pipeline_status": "ok",
+            "kill_switch_blocked": false,
+            "approve_requested": true,
+            "kill_switch_requested": false,
+            "replay_projection_present": true,
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed",
+            "selected_result_metadata": {
+              "adapter_type": "prosody_density_metadata_adapter",
+              "produced_audio": false,
+              "invoked_tts": false,
+              "used_subprocess": false,
+              "used_network": false,
+              "wrote_files": false,
+              "raw_transcript_absent": null,
+              "sensitive_fact_absent": null
+            },
+            "replay_projection_summary": {
+              "projection_id": "p41proj_1779838697",
+              "selected_adapter_name": "prosody_density_metadata_adapter",
+              "trace_hash": "092a4ae1964015eaea0abd5f95ead178f3a6d8a373b04857ec6190d30a53fddb",
+              "phase21_status_text": "BLOCKED"
+            },
+            "notes": [
+              "Result carries no raw operator_id.",
+              "Result carries no signing material.",
+              "Result carries no raw transcript or sensitive facts."
+            ]
+          },
+          {
+            "trace_id": "p42tr_1779838697_ff61e2c699",
+            "created_at": 1779838697.666411,
+            "phase": "phase42.trace_runner.v1",
+            "scenario_id": "P42-S05",
+            "scenario_type": "safety_redaction",
+            "status": "ok",
+            "expected_status_family": "ok",
+            "status_matches_expected": true,
+            "selected_adapter_name": "safety_redaction_trace_metadata_adapter",
+            "expected_adapter_family": "safety_redaction_trace_metadata_adapter",
+            "adapter_matches_expected": true,
+            "signed_pipeline_status": "ok",
+            "kill_switch_blocked": false,
+            "approve_requested": true,
+            "kill_switch_requested": false,
+            "replay_projection_present": true,
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed",
+            "selected_result_metadata": {
+              "adapter_type": "safety_redaction_trace_metadata_adapter",
+              "produced_audio": false,
+              "invoked_tts": false,
+              "used_subprocess": false,
+              "used_network": false,
+              "wrote_files": false,
+              "raw_transcript_absent": null,
+              "sensitive_fact_absent": null
+            },
+            "replay_projection_summary": {
+              "projection_id": "p41proj_1779838697",
+              "selected_adapter_name": "safety_redaction_trace_metadata_adapter",
+              "trace_hash": "4b5870e5dd1cb4d7e8af2df0b91623a614576009262e4cbe8010e741168d0562",
+              "phase21_status_text": "BLOCKED"
+            },
+            "notes": [
+              "Result carries no raw operator_id.",
+              "Result carries no signing material.",
+              "Result carries no raw transcript or sensitive facts."
+            ]
+          },
+          {
+            "trace_id": "p42tr_1779838698_e7f01f0857",
+            "created_at": 1779838698.0201328,
+            "phase": "phase42.trace_runner.v1",
+            "scenario_id": "P42-S06",
+            "scenario_type": "memory_continuity",
+            "status": "ok",
+            "expected_status_family": "ok",
+            "status_matches_expected": true,
+            "selected_adapter_name": "memory_continuity_audit_metadata_adapter",
+            "expected_adapter_family": "memory_continuity_audit_metadata_adapter",
+            "adapter_matches_expected": true,
+            "signed_pipeline_status": "ok",
+            "kill_switch_blocked": false,
+            "approve_requested": true,
+            "kill_switch_requested": false,
+            "replay_projection_present": true,
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed",
+            "selected_result_metadata": {
+              "adapter_type": "memory_continuity_audit_metadata_adapter",
+              "produced_audio": false,
+              "invoked_tts": false,
+              "used_subprocess": false,
+              "used_network": false,
+              "wrote_files": false,
+              "raw_transcript_absent": true,
+              "sensitive_fact_absent": true
+            },
+            "replay_projection_summary": {
+              "projection_id": "p41proj_1779838698",
+              "selected_adapter_name": "memory_continuity_audit_metadata_adapter",
+              "trace_hash": "d3157be9a5108102676e69178fa3c5f30ed8167b2ea4661190e9addcfcb9aa9a",
+              "phase21_status_text": "BLOCKED"
+            },
+            "notes": [
+              "Result carries no raw operator_id.",
+              "Result carries no signing material.",
+              "Result carries no raw transcript or sensitive facts."
+            ]
+          },
+          {
+            "trace_id": "p42tr_1779838698_3457d479de",
+            "created_at": 1779838698.1568825,
+            "phase": "phase42.trace_runner.v1",
+            "scenario_id": "P42-S07",
+            "scenario_type": "approve_false_refusal",
+            "status": "pre_call_refused",
+            "expected_status_family": "refused",
+            "status_matches_expected": true,
+            "selected_adapter_name": "bilingual_segment_metadata_adapter",
+            "expected_adapter_family": null,
+            "adapter_matches_expected": true,
+            "signed_pipeline_status": null,
+            "kill_switch_blocked": false,
+            "approve_requested": false,
+            "kill_switch_requested": false,
+            "replay_projection_present": false,
+            "result_verification_ok": false,
+            "governance_recheck_ok": false,
+            "signed_evidence_validates": false,
+            "witness_export_status": null,
+            "exchange_status": null,
+            "selected_result_metadata": {
+              "adapter_type": null,
+              "produced_audio": null,
+              "invoked_tts": null,
+              "used_subprocess": null,
+              "used_network": null,
+              "wrote_files": null,
+              "raw_transcript_absent": null,
+              "sensitive_fact_absent": null
+            },
+            "replay_projection_summary": {
+              "projection_id": null,
+              "selected_adapter_name": null,
+              "trace_hash": null,
+              "phase21_status_text": null
+            },
+            "notes": [
+              "Result carries no raw operator_id.",
+              "Result carries no signing material.",
+              "Result carries no raw transcript or sensitive facts."
+            ]
+          },
+          {
+            "trace_id": "p42tr_1779838698_706b0dc789",
+            "created_at": 1779838698.2684007,
+            "phase": "phase42.trace_runner.v1",
+            "scenario_id": "P42-S08",
+            "scenario_type": "kill_switch_refusal",
+            "status": "kill_switch_blocked",
+            "expected_status_family": "kill_switch_blocked",
+            "status_matches_expected": true,
+            "selected_adapter_name": "bilingual_segment_metadata_adapter",
+            "expected_adapter_family": null,
+            "adapter_matches_expected": true,
+            "signed_pipeline_status": null,
+            "kill_switch_blocked": true,
+            "approve_requested": true,
+            "kill_switch_requested": true,
+            "replay_projection_present": false,
+            "result_verification_ok": false,
+            "governance_recheck_ok": false,
+            "signed_evidence_validates": false,
+            "witness_export_status": null,
+            "exchange_status": null,
+            "selected_result_metadata": {
+              "adapter_type": null,
+              "produced_audio": null,
+              "invoked_tts": null,
+              "used_subprocess": null,
+              "used_network": null,
+              "wrote_files": null,
+              "raw_transcript_absent": null,
+              "sensitive_fact_absent": null
+            },
+            "replay_projection_summary": {
+              "projection_id": null,
+              "selected_adapter_name": null,
+              "trace_hash": null,
+              "phase21_status_text": null
+            },
+            "notes": [
+              "Result carries no raw operator_id.",
+              "Result carries no signing material.",
+              "Result carries no raw transcript or sensitive facts."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "artifact_key": "phase42_coherence_audit",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/coherence_audits/coherence_audit.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\coherence_audits\\coherence_audit.json",
+      "artifact_type": "json",
+      "size_bytes": 1785,
+      "sha256": "a3a31cdf3a785af7777dca2b65af5b15dc1e6897ee30721874e9e5bb8b7a4206",
+      "inline_content_present": true,
+      "inline_content": {
+        "audit_id": "p42coh_1779838698",
+        "created_at": 1779838698.2684007,
+        "phase": "phase42.coherence_auditor.v1",
+        "trace_count": 8,
+        "adapter_coverage": {
+          "category": "adapter_coverage",
+          "ok": true,
+          "success_adapter_count": 5,
+          "covered_in_success": [
+            "bilingual_segment_metadata_adapter",
+            "dummy_metadata_adapter",
+            "memory_continuity_audit_metadata_adapter",
+            "prosody_density_metadata_adapter",
+            "safety_redaction_trace_metadata_adapter"
+          ],
+          "missing_in_success": [],
+          "unexpected_in_success": [],
+          "all_observed_adapters": [
+            "bilingual_segment_metadata_adapter",
+            "dummy_metadata_adapter",
+            "memory_continuity_audit_metadata_adapter",
+            "prosody_density_metadata_adapter",
+            "safety_redaction_trace_metadata_adapter"
+          ]
+        },
+        "status_coherence": {
+          "category": "status_coherence",
+          "ok": true,
+          "mismatches": [],
+          "refusal_or_block_with_signed_pipeline": []
+        },
+        "evidence_coherence": {
+          "category": "evidence_coherence",
+          "ok": true,
+          "missing_signed_evidence": [],
+          "missing_witness_export": [],
+          "missing_exchange": []
+        },
+        "replay_projection_coherence": {
+          "category": "replay_projection_coherence",
+          "ok": true,
+          "missing_projection": [],
+          "bad_trace_hash": []
+        },
+        "memory_privacy": {
+          "category": "memory_privacy",
+          "ok": true,
+          "failures": []
+        },
+        "boundary_preservation": {
+          "category": "boundary_preservation",
+          "ok": true,
+          "failures": []
+        },
+        "ok": true,
+        "summary": "phase42 coherence audit: traces=8 adapter_coverage_ok=True status_ok=True evidence_ok=True projection_ok=True memory_privacy_ok=True boundary_ok=True",
+        "written_at": 1779838698.786739
+      }
+    },
+    {
+      "artifact_key": "phase42_replay_matrix",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/replay_projections/replay_matrix.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\replay_projections\\replay_matrix.json",
+      "artifact_type": "json",
+      "size_bytes": 6684,
+      "sha256": "50f7791bb6dad15f73ca20120783122cd6ac1f8b0091be7c17dc22f05c765e01",
+      "inline_content_present": true,
+      "inline_content": {
+        "matrix_id": "p42mat_1779838698",
+        "created_at": 1779838698.2684007,
+        "phase": "phase42.replay_matrix.v1",
+        "scenario_count": 8,
+        "projection_count": 6,
+        "per_scenario_projection_status": [
+          {
+            "scenario_id": "P42-S01",
+            "status": "ok",
+            "projection_present": true
+          },
+          {
+            "scenario_id": "P42-S02",
+            "status": "ok",
+            "projection_present": true
+          },
+          {
+            "scenario_id": "P42-S03",
+            "status": "ok",
+            "projection_present": true
+          },
+          {
+            "scenario_id": "P42-S04",
+            "status": "ok",
+            "projection_present": true
+          },
+          {
+            "scenario_id": "P42-S05",
+            "status": "ok",
+            "projection_present": true
+          },
+          {
+            "scenario_id": "P42-S06",
+            "status": "ok",
+            "projection_present": true
+          },
+          {
+            "scenario_id": "P42-S07",
+            "status": "pre_call_refused",
+            "projection_present": false
+          },
+          {
+            "scenario_id": "P42-S08",
+            "status": "kill_switch_blocked",
+            "projection_present": false
+          }
+        ],
+        "trace_hash_summaries": [
+          {
+            "scenario_id": "P42-S01",
+            "trace_hash": "89dec329837c27da11d6f415e556cd3d338abc24347af5e1f9f98b1b43129d5e"
+          },
+          {
+            "scenario_id": "P42-S02",
+            "trace_hash": "e1491c58d987e279f6cfbebaad2d74e1332d88e755f0048ffbcf1af7d2ecdd07"
+          },
+          {
+            "scenario_id": "P42-S03",
+            "trace_hash": "ca6a1601b9d1f7de2769892ffe8ca11448ee42da68189e4fbd4c9da3a636b7ae"
+          },
+          {
+            "scenario_id": "P42-S04",
+            "trace_hash": "092a4ae1964015eaea0abd5f95ead178f3a6d8a373b04857ec6190d30a53fddb"
+          },
+          {
+            "scenario_id": "P42-S05",
+            "trace_hash": "4b5870e5dd1cb4d7e8af2df0b91623a614576009262e4cbe8010e741168d0562"
+          },
+          {
+            "scenario_id": "P42-S06",
+            "trace_hash": "d3157be9a5108102676e69178fa3c5f30ed8167b2ea4661190e9addcfcb9aa9a"
+          }
+        ],
+        "adapter_selection_summaries": [
+          {
+            "scenario_id": "P42-S01",
+            "selected_adapter_name": "dummy_metadata_adapter"
+          },
+          {
+            "scenario_id": "P42-S02",
+            "selected_adapter_name": "bilingual_segment_metadata_adapter"
+          },
+          {
+            "scenario_id": "P42-S03",
+            "selected_adapter_name": "bilingual_segment_metadata_adapter"
+          },
+          {
+            "scenario_id": "P42-S04",
+            "selected_adapter_name": "prosody_density_metadata_adapter"
+          },
+          {
+            "scenario_id": "P42-S05",
+            "selected_adapter_name": "safety_redaction_trace_metadata_adapter"
+          },
+          {
+            "scenario_id": "P42-S06",
+            "selected_adapter_name": "memory_continuity_audit_metadata_adapter"
+          }
+        ],
+        "governance_result_summaries": [
+          {
+            "scenario_id": "P42-S01",
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed"
+          },
+          {
+            "scenario_id": "P42-S02",
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed"
+          },
+          {
+            "scenario_id": "P42-S03",
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed"
+          },
+          {
+            "scenario_id": "P42-S04",
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed"
+          },
+          {
+            "scenario_id": "P42-S05",
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed"
+          },
+          {
+            "scenario_id": "P42-S06",
+            "result_verification_ok": true,
+            "governance_recheck_ok": true,
+            "signed_evidence_validates": true,
+            "witness_export_status": "ok",
+            "exchange_status": "witness_failed"
+          }
+        ],
+        "baseline_summaries": [
+          {
+            "scenario_id": "P42-S01",
+            "baseline_expected": {
+              "english_words": 2814,
+              "russian_words": 2518,
+              "russian_phrases": 35,
+              "bilingual_concepts": 26,
+              "bilingual_entry_links": 52,
+              "live_pack_manifests": 90
+            }
+          },
+          {
+            "scenario_id": "P42-S02",
+            "baseline_expected": {
+              "english_words": 2814,
+              "russian_words": 2518,
+              "russian_phrases": 35,
+              "bilingual_concepts": 26,
+              "bilingual_entry_links": 52,
+              "live_pack_manifests": 90
+            }
+          },
+          {
+            "scenario_id": "P42-S03",
+            "baseline_expected": {
+              "english_words": 2814,
+              "russian_words": 2518,
+              "russian_phrases": 35,
+              "bilingual_concepts": 26,
+              "bilingual_entry_links": 52,
+              "live_pack_manifests": 90
+            }
+          },
+          {
+            "scenario_id": "P42-S04",
+            "baseline_expected": {
+              "english_words": 2814,
+              "russian_words": 2518,
+              "russian_phrases": 35,
+              "bilingual_concepts": 26,
+              "bilingual_entry_links": 52,
+              "live_pack_manifests": 90
+            }
+          },
+          {
+            "scenario_id": "P42-S05",
+            "baseline_expected": {
+              "english_words": 2814,
+              "russian_words": 2518,
+              "russian_phrases": 35,
+              "bilingual_concepts": 26,
+              "bilingual_entry_links": 52,
+              "live_pack_manifests": 90
+            }
+          },
+          {
+            "scenario_id": "P42-S06",
+            "baseline_expected": {
+              "english_words": 2814,
+              "russian_words": 2518,
+              "russian_phrases": 35,
+              "bilingual_concepts": 26,
+              "bilingual_entry_links": 52,
+              "live_pack_manifests": 90
+            }
+          }
+        ],
+        "phase21_status_summaries": [
+          {
+            "scenario_id": "P42-S01",
+            "status_text": "BLOCKED"
+          },
+          {
+            "scenario_id": "P42-S02",
+            "status_text": "BLOCKED"
+          },
+          {
+            "scenario_id": "P42-S03",
+            "status_text": "BLOCKED"
+          },
+          {
+            "scenario_id": "P42-S04",
+            "status_text": "BLOCKED"
+          },
+          {
+            "scenario_id": "P42-S05",
+            "status_text": "BLOCKED"
+          },
+          {
+            "scenario_id": "P42-S06",
+            "status_text": "BLOCKED"
+          }
+        ],
+        "compatibility_status": "ok",
+        "notes": [
+          "Matrix is read-only.",
+          "No adapter re-invocation.",
+          "No Phase 40 modification."
+        ],
+        "written_at": 1779838698.787738
+      }
+    },
+    {
+      "artifact_key": "phase42_drift_stability_matrix",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/drift_matrices/drift_stability_matrix.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\drift_matrices\\drift_stability_matrix.json",
+      "artifact_type": "json",
+      "size_bytes": 1475,
+      "sha256": "6ea558f21713e7a39573d38f4a7d22c391b6fead6b65103dcae91d8da6329404",
+      "inline_content_present": true,
+      "inline_content": {
+        "matrix_id": "p42drift_1779838698",
+        "created_at": 1779838698.7373793,
+        "phase": "phase42.drift_stability_matrix.v1",
+        "trace_count": 8,
+        "coherence_audit_ok": true,
+        "replay_matrix_compatibility": "ok",
+        "adapter_selection_drift": {
+          "category": "adapter_selection_drift",
+          "drifted": false,
+          "severity": "pass",
+          "failures": []
+        },
+        "baseline_drift": {
+          "category": "baseline_drift",
+          "drifted": false,
+          "severity": "pass",
+          "observed": {
+            "english_words": 2814,
+            "russian_words": 2518,
+            "russian_phrases": 35,
+            "bilingual_concepts": 26,
+            "bilingual_entry_links": 52,
+            "live_pack_manifests": 90
+          },
+          "expected": {
+            "english_words": 2814,
+            "russian_words": 2518,
+            "russian_phrases": 35,
+            "bilingual_concepts": 26,
+            "bilingual_entry_links": 52,
+            "live_pack_manifests": 90
+          },
+          "drifts": []
+        },
+        "boundary_drift": {
+          "category": "boundary_drift",
+          "drifted": false,
+          "severity": "pass",
+          "failures": []
+        },
+        "phase21_status_drift": {
+          "category": "phase21_status_drift",
+          "drifted": false,
+          "severity": "pass",
+          "phase21_status_text": "BLOCKED",
+          "english_incoming_filenames": [],
+          "russian_incoming_filenames": []
+        },
+        "fail_count": 0,
+        "warn_count": 0,
+        "pass_count": 4,
+        "ok": true,
+        "summary": "phase42 drift: fail=0 warn=0 pass=4",
+        "written_at": 1779838698.7882442
+      }
+    },
+    {
+      "artifact_key": "phase42_operator_packet",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/operator_packets/operator_packet.json",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\operator_packets\\operator_packet.json",
+      "artifact_type": "json",
+      "size_bytes": 3010,
+      "sha256": "1108baf159825d28551935d22503c8f887421da67b149b437dd456810913ecb5",
+      "inline_content_present": true,
+      "inline_content": {
+        "packet_id": "p42pkt_1779838698",
+        "created_at": 1779838698.7373793,
+        "phase": "phase42.operator_packet.v1",
+        "audit_status": "ok",
+        "scenario_coverage": {
+          "scenario_count": 8,
+          "scenario_ids": [
+            "P42-S01",
+            "P42-S02",
+            "P42-S03",
+            "P42-S04",
+            "P42-S05",
+            "P42-S06",
+            "P42-S07",
+            "P42-S08"
+          ],
+          "required_count_observed": 8
+        },
+        "adapter_coverage": {
+          "required_count": 5,
+          "covered_in_success": [
+            "bilingual_segment_metadata_adapter",
+            "dummy_metadata_adapter",
+            "memory_continuity_audit_metadata_adapter",
+            "prosody_density_metadata_adapter",
+            "safety_redaction_trace_metadata_adapter"
+          ],
+          "missing_in_success": [],
+          "adapter_distribution": {
+            "dummy_metadata_adapter": 1,
+            "bilingual_segment_metadata_adapter": 4,
+            "prosody_density_metadata_adapter": 1,
+            "safety_redaction_trace_metadata_adapter": 1,
+            "memory_continuity_audit_metadata_adapter": 1
+          }
+        },
+        "status_summary": {
+          "trace_count": 8,
+          "ok_count": 6,
+          "refused_count": 1,
+          "kill_switch_blocked_count": 1
+        },
+        "evidence_summary": {
+          "signed_evidence_missing": [],
+          "witness_export_missing": [],
+          "exchange_missing": []
+        },
+        "replay_matrix_summary": {
+          "projection_count": 6,
+          "compatibility_status": "ok",
+          "matrix_id": "p42mat_1779838698"
+        },
+        "drift_stability_summary": {
+          "fail_count": 0,
+          "warn_count": 0,
+          "pass_count": 4,
+          "matrix_id": "p42drift_1779838698"
+        },
+        "memory_privacy_summary": {
+          "ok": true,
+          "failures": []
+        },
+        "production_baseline_summary": {
+          "expected": {
+            "english_words": 2814,
+            "russian_words": 2518,
+            "russian_phrases": 35,
+            "bilingual_concepts": 26,
+            "bilingual_entry_links": 52,
+            "live_pack_manifests": 90
+          },
+          "observed": {
+            "english_words": 2814,
+            "russian_words": 2518,
+            "russian_phrases": 35,
+            "bilingual_concepts": 26,
+            "bilingual_entry_links": 52,
+            "live_pack_manifests": 90
+          },
+          "drifts": []
+        },
+        "phase21_import_status": {
+          "status_text": "BLOCKED",
+          "drifted": false,
+          "note": "Phase 42 NEVER imports corpus files; status is reported only."
+        },
+        "boundary_preservation_summary": {
+          "ok": true,
+          "failures": []
+        },
+        "rollback_readiness": "Delete the 9 Phase 42 files (8 modules + harness + report) and the 12 sub-folders under bilingual_stack/voice_adapter_phase42/. Phase 27-41 remain green.",
+        "next_recommended_phase": "Phase 43 multi-machine continuity portability harness OR Phase 41a continuity-ledger.",
+        "rehearsal_dry_run_only": true,
+        "notes": [
+          "Packet carries no operator_id, no signing material, no raw transcript, no audio, no command fields.",
+          "Phase 21 import remains BLOCKED unless operator explicitly stages corpus files AND runs Phase 21 separately."
+        ],
+        "written_at": 1779838698.7892506
+      }
+    },
+    {
+      "artifact_key": "phase42_operator_markdown",
+      "relative_path": "bilingual_stack/voice_adapter_phase42/dashboards/OPERATOR_PACKET.md",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase42\\dashboards\\OPERATOR_PACKET.md",
+      "artifact_type": "markdown",
+      "size_bytes": 960,
+      "sha256": "a5ed03e52124940b30e6f976294dadacaab680458ee089ac6bc90adb8cef45c7",
+      "inline_content_present": true,
+      "inline_content": "# Phase 42 - Multi-Trace Coherence Audit - Operator Packet\n_Generated at 1779838698._\n- **Audit status:** ok\n- **Trace count:** 8\n- **ok / refused / kill-switch:** 6 / 1 / 1\n- **Adapters covered in success:** ['bilingual_segment_metadata_adapter', 'dummy_metadata_adapter', 'memory_continuity_audit_metadata_adapter', 'prosody_density_metadata_adapter', 'safety_redaction_trace_metadata_adapter']\n- **Replay matrix compatibility:** ok\n- **Drift count:** fail=0 warn=0 pass=4\n- **Production baselines:** {'english_words': 2814, 'russian_words': 2518, 'russian_phrases': 35, 'bilingual_concepts': 26, 'bilingual_entry_links': 52, 'live_pack_manifests': 90}\n- **Phase 21 import status:** BLOCKED\n- **Next recommended phase:** Phase 43 multi-machine continuity portability harness OR Phase 41a continuity-ledger.\n**Phase 42 generates no audio, no TTS, no subprocess, no network, no multiprocessing. Phase 21 remains BLOCKED unless explicitly staged.**\n"
+    },
+    {
+      "artifact_key": "phase42_report",
+      "relative_path": "PHASE42_MULTI_TRACE_COHERENCE_AUDIT_REPORT.md",
+      "absolute_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\PHASE42_MULTI_TRACE_COHERENCE_AUDIT_REPORT.md",
+      "artifact_type": "markdown",
+      "size_bytes": 11182,
+      "sha256": "25f15de54065e63ffbe9aeacac954ee061cf01fcacf972e3bca74438089ec197",
+      "inline_content_present": true,
+      "inline_content": "# Phase 42 - Multi-Trace Cross-Rehearsal Coherence Audit, Five-Adapter Participation, Replay Reverification, and Drift-Stability Matrix\n\n## Status: COMPLETE\n\nPhase 42 ships an 8-module multi-trace cross-rehearsal coherence audit layer. Phase 42 harness: **560 / 560 PASS, 0 FAIL**. Full 35-harness regression: **8814 / 8814 PASS, 0 FAIL**. All five Phase 41 metadata-only adapters covered in success scenarios on a single audit pass. Refusal + kill-switch paths verified safe. Zero new adapters. Zero audio / TTS / subprocess / network / multiprocessing / Luna main-runtime integration. Zero production DB writes. Phase 21 remains BLOCKED.\n\n## What Phase 42 is, in one paragraph\n\nPhase 42 runs 8 bounded scenarios through the Phase 41 five-adapter runtime — simple English, Russian-first, mixed EN/RU code-switch, high-prosody, safety-redaction, memory-continuity, approve-false refusal, kill-switch refusal — and produces a single bundled audit. The coherence auditor verifies all five adapters were selected at least once in successful traces, every successful trace carries signed evidence + witness export + exchange + Phase 40-compatible replay projection, the memory-continuity adapter never exposes raw transcript or sensitive facts, and every selected_result_metadata flag (`produced_audio`, `invoked_tts`, `used_subprocess`, `used_network`, `wrote_files`) is False. The replay matrix collects every per-trace projection into a Phase 40-compatible matrix without modifying Phase 40 or re-invoking any adapter. The drift-stability matrix checks adapter-selection drift, production-baseline drift (read-only DB COUNT), boundary drift, and Phase 21 staging-folder state (warn-only, never imported). The operator packet bundles everything into a single readable JSON + Markdown.\n\n## Files created\n\n### Phase 42 source modules (8)\n\n1. `bilingual_voice_phase42_audit_contract.py`\n2. `bilingual_voice_phase42_scenario_builder.py`\n3. `bilingual_voice_phase42_trace_runner.py`\n4. `bilingual_voice_phase42_coherence_auditor.py`\n5. `bilingual_voice_phase42_replay_matrix.py`\n6. `bilingual_voice_phase42_drift_stability_matrix.py`\n7. `bilingual_voice_phase42_operator_packet.py`\n8. `bilingual_voice_phase42_runtime.py`\n\n### Harness + report\n\n9. `test_phase42_multi_trace_coherence_audit.py` (suites A-K, **560 checks**)\n10. `PHASE42_MULTI_TRACE_COHERENCE_AUDIT_REPORT.md` (this file)\n\n### Generated artifacts under `bilingual_stack/voice_adapter_phase42/`\n\n- `contracts/audit_contract.json`\n- `trace_runs/trace_batch.json`\n- `coherence_audits/coherence_audit.json`\n- `replay_projections/replay_matrix.json`\n- `drift_matrices/drift_stability_matrix.json`\n- `operator_packets/operator_packet.json`\n- `dashboards/OPERATOR_PACKET.md`\n- Other folders (`governance_rechecks/`, `reports/`, `fixtures/`, `demos/`) created and reserved.\n\n## Public API surface (one line each)\n\n- **`bilingual_voice_phase42_audit_contract`** — schema + create/validate contract; required scenarios (8); required adapter coverage (5); 20 forbidden actions; scenario count clamped 1..12.\n- **`bilingual_voice_phase42_scenario_builder`** — builds 8 canonical scenarios; rejects 14 banned scenario fields; voice_memory_state sanitized.\n- **`bilingual_voice_phase42_trace_runner`** — runs each scenario via Phase 41 runtime; emits bounded result with `selected_result_metadata` + `replay_projection_summary`; raw operator_id never appears.\n- **`bilingual_voice_phase42_coherence_auditor`** — 6 sub-audits: adapter coverage, status coherence, evidence coherence, replay-projection coherence, memory privacy, boundary preservation.\n- **`bilingual_voice_phase42_replay_matrix`** — Phase 40-compatible matrix; per-scenario trace_hash + selection + governance + baseline + Phase 21; no Phase 40 modification, no adapter re-invocation.\n- **`bilingual_voice_phase42_drift_stability_matrix`** — 4 drift checks: adapter-selection drift (fail), baseline drift via read-only DB COUNT (fail), boundary drift (fail), Phase 21 staging-folder state (warn-only).\n- **`bilingual_voice_phase42_operator_packet`** — final bundled JSON + Markdown; 14 banned fields rejected.\n- **`bilingual_voice_phase42_runtime`** — single entry point `run_phase42_multi_trace_audit(operator_id, output_dir=None, limit=12)`.\n\n## 8 canonical scenarios\n\n| ID | Type | Expected adapter | Expected status |\n|---|---|---|---|\n| P42-S01 | simple_english | dummy_metadata_adapter | ok |\n| P42-S02 | russian_first | bilingual_segment_metadata_adapter | ok |\n| P42-S03 | mixed_code_switch | bilingual_segment_metadata_adapter | ok |\n| P42-S04 | high_prosody | prosody_density_metadata_adapter | ok |\n| P42-S05 | safety_redaction | safety_redaction_trace_metadata_adapter | ok |\n| P42-S06 | memory_continuity | memory_continuity_audit_metadata_adapter | ok |\n| P42-S07 | approve_false_refusal | (none) | refused |\n| P42-S08 | kill_switch_refusal | (none) | kill_switch_blocked |\n\nObserved clean run: 6 ok + 1 refused + 1 kill-switch-blocked. Adapter distribution covers all 5 Phase 41 adapters (dummy=1, bilingual_segment=4 [S02, S03, plus segment-routed S07/S08 selection before refusal/block], prosody_density=1, safety_redaction_trace=1, memory_continuity_audit=1). Coherence audit: `adapter_coverage_ok=True`, `status_coherence_ok=True`, `evidence_coherence_ok=True`, `replay_projection_coherence_ok=True`, `memory_privacy_ok=True`, `boundary_preservation_ok=True`.\n\n## Harness results\n\n**Phase 42: 560 / 560 PASS, 0 FAIL** across 11 suites (A pre-flight, B audit contract, C scenario builder, D trace runner, E coherence auditor, F replay matrix, G drift-stability matrix, H operator packet, I Phase 42 runtime end-to-end, J production safety + isolation, K regression smoke).\n\n## Full 35-harness regression\n\n| Harness | Result |\n|---|---|\n| `test_phase42_multi_trace_coherence_audit.py` | 560 / 560 |\n| `test_phase41_memory_continuity_adapter_governance.py` | 488 / 488 |\n| `test_phase40_operator_audit_replay.py` | 484 / 484 |\n| `test_phase39_operator_dry_run_rehearsal.py` | 456 / 456 |\n| `test_phase38_operator_governance_docs.py` | 641 / 641 |\n| `test_phase37_safety_trace_adapter_governance.py` | 418 / 418 |\n| `test_phase36_key_handoff_envelope.py` | 398 / 398 |\n| `test_phase35_witness_exchange_protocol.py` | 375 / 375 |\n| `test_phase34_external_witness_verification.py` | 378 / 378 |\n| `test_phase33_three_adapter_signed_governance.py` | 384 / 384 |\n| `test_phase32_audit_signing_and_verification.py` | 362 / 362 |\n| `test_phase31_multi_adapter_boundary.py` | 379 / 379 |\n| `test_phase30_callable_adapter_boundary.py` | 374 / 374 |\n| `test_phase29_operator_gated_runtime_adapter_b.py` | 386 / 386 |\n| `test_phase28_operator_gated_voice_adapter.py` | 383 / 383 |\n| `test_phase27_voice_render_adapter_skeleton.py` | 399 / 399 |\n| `test_phase26_voice_memory_continuity.py` | 140 / 140 |\n| `test_phase25_spoken_render_contract.py` | 130 / 130 |\n| `test_phase24_bilingual_voice_personality.py` | 124 / 124 |\n| `test_phase23_human_code_switching.py` | 119 / 119 |\n| `test_phase22_bilingual_linker_and_retrieval_bridge.py` | 93 / 93 |\n| `test_phase21a_operator_corpus_staging.py` | 100 / 100 |\n| `test_phase21_operator_staged_first_import.py` | 103 / 103 |\n| `test_phase20_million_readiness_gate.py` | 144 / 144 |\n| `test_phase19_100k_scale_index_and_dedupe.py` | 116 / 116 |\n| `test_phase18_pilot_import_and_retrieval_hardening.py` | 83 / 83 |\n| `test_phase17_source_adapters_and_retrieval_eval.py` | 108 / 108 |\n| `test_phase16_million_scale_readiness.py` | 80 / 80 |\n| `test_phase15b_remaining_domain_expansion.py` | 117 / 117 |\n| `test_phase15a_controlled_scale_expansion.py` | 63 / 63 |\n| `test_phase14_domain_pack_expansion.py` | 87 / 87 |\n| `test_dual_pack_importer.py` | 116 / 116 |\n| `test_dual_sovereign_pack_safety.py` | 79 / 79 |\n| `test_vocabulary_runtime.py` | 74 / 74 |\n| `test_russian_sovereign_stack.py` | 73 / 73 |\n| **Total** | **8814 / 8814** |\n\nZero failures across 35 harnesses.\n\n## Production-invariant verification\n\n| Invariant | Expected | Observed |\n|---|---|---|\n| English words | 2814 | 2814 |\n| Russian words | 2518 | 2518 |\n| Russian phrases | 35 | 35 |\n| Bilingual concepts | 26 | 26 |\n| Bilingual entry links | 52 | 52 |\n| Live pack manifests | 90 | 90 |\n| Audio files under `voice_adapter_phase42/` | 0 | 0 |\n| `corpus_sources/english/incoming/` files | 0 | 0 |\n| `corpus_sources/russian/incoming/` files | 0 | 0 |\n\n## Phase 21 import status\n\n**Unchanged: BLOCKED.** Both incoming folders empty. Phase 42 lists staging folders read-only; if files ever appear, drift matrix reports `STAGED_AWAITING_OPERATOR` as `warn` (never `fail`) and refuses to import. Operator must still run Phase 21 explicitly.\n\n## Boundaries enforced\n\n- **No new adapter** — the five Phase 41 adapters are the only callable surface.\n- **No audio**: zero audio files under `voice_adapter_phase42/`; coherence audit confirms every successful result has `produced_audio=False`.\n- **No TTS / audio library imports**: runtime-assembled forbidden-token scan over all 8 Phase 42 modules and the harness — zero matches.\n- **No subprocess / PowerShell / SAPI / Piper**: zero matches.\n- **No network / sockets**: zero matches.\n- **No multiprocessing / threading / daemon / scheduler**: zero matches.\n- **No Luna main-runtime integration**: zero `luna_modules` / `worker.py` / `tier_*` / `probe_*` / `attestation*` imports; runtime-assembled in `isolation_summary` key names.\n- **No raw transcript / sensitive facts**: scenario builder, trace runner, coherence auditor, replay matrix, drift matrix, and operator packet each reject 14+ banned field names if non-empty/non-False.\n- **No raw operator_id, no signing material**: trace results carry only `selected_result_metadata` flags + `replay_projection_summary` (trace_hash + status text); operator_id is hashed by Phase 29 internally and never re-exposed.\n- **No production DB writes**: baseline drift check uses `sqlite3.connect` + `SELECT COUNT(*)` + `close()` only.\n- **No corpus import**: Phase 21 remains BLOCKED.\n- **35-harness regression confirms** no upstream module was broken by Phase 42.\n\n## Files modified\nNone outside Phase 42. No Phase 27–41 file edited. No Program S / `worker.py` / `luna_modules` / `tier_*` / `probe_*` / `attestation*` touched.\n\n## Rollback\n\nTo roll back Phase 42: delete the 10 Phase 42 files (8 modules + harness + report) and the 12 sub-folders under `bilingual_stack/voice_adapter_phase42/`. Phases 27–41 remain green — no prior file modified, no upstream module imports any Phase 42 module. No destructive command auto-executed.\n\n## Next recommended phase\n\n1. **Phase 43 — cross-machine continuity portability harness** that bundles a Phase 42 audit as a portable witness package and re-verifies on a fresh checkout.\n2. **Phase 41a — continuity-ledger** that records per-session memory-continuity audit summaries (metadata-only, bounded) under `voice_adapter_phase41/continuity_audits/`.\n3. **Phase 21 real corpus import unblock** — separate workflow; operator drops files into `corpus_sources/{english,russian}/incoming/` and runs Phase 21 explicitly.\n\n---\n\n_Generated by Phase 42 multi-trace cross-rehearsal coherence audit pass._\n"
+    }
+  ],
+  "artifact_count": 8,
+  "missing_artifacts": [],
+  "excluded_artifact_keys": [],
+  "artifact_hashes": {
+    "phase42_audit_contract": "94e195b14efb2a6877ed2a6149b4c8c475945ab3442d305d5b605bc2e368473c",
+    "phase42_trace_batch": "f28dd28b8fa65f21000443a72c9a7f8526c16c660dbf4b59eb1f88eccd6fd9fd",
+    "phase42_coherence_audit": "a3a31cdf3a785af7777dca2b65af5b15dc1e6897ee30721874e9e5bb8b7a4206",
+    "phase42_replay_matrix": "50f7791bb6dad15f73ca20120783122cd6ac1f8b0091be7c17dc22f05c765e01",
+    "phase42_drift_stability_matrix": "6ea558f21713e7a39573d38f4a7d22c391b6fead6b65103dcae91d8da6329404",
+    "phase42_operator_packet": "1108baf159825d28551935d22503c8f887421da67b149b437dd456810913ecb5",
+    "phase42_operator_markdown": "a5ed03e52124940b30e6f976294dadacaab680458ee089ac6bc90adb8cef45c7",
+    "phase42_report": "25f15de54065e63ffbe9aeacac954ee061cf01fcacf972e3bca74438089ec197"
+  },
+  "phase21_status_text": "BLOCKED",
+  "production_baseline_expected": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_reinvocation_in_bundle": true,
+    "no_production_db_in_bundle": true
+  },
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Bundle is portable JSON/Markdown only.",
+    "Inline content capped at 512 KB per file.",
+    "SHA-256 hashes computed via streaming read, capped at 16 MB.",
+    "Runtime DBs, secrets, audio, corpus incoming, .claude/, backups, and local_secret_handoff are excluded."
+  ],
+  "written_at": 1779846350.5984464
+}

@@ -1,0 +1,16 @@
+{
+  "ts": "2026-06-01T02:54:25Z",
+  "ok": true,
+  "use_first_token": true,
+  "created_concepts": 704,
+  "created_entry_links": 1408,
+  "exact_pairs": 503,
+  "first_token_pairs": 201,
+  "skipped_register": 0,
+  "skipped_duplicate": 250,
+  "skipped_no_match": 1564,
+  "elapsed_s": 5.031,
+  "ru_rows_scanned": 2518,
+  "en_index_size": 2814,
+  "report_version": 1
+}

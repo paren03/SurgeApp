@@ -1,0 +1,35 @@
+# Phase 44 - Cross-Machine Import Simulation Dashboard
+_Generated at 1779847664._
+- **Phase 44 import status:** ok
+- **Source phase:** phase43
+- **Imported artifact count:** 5
+- **Fresh import verification:** ok
+- **Tamper suite:** ok=True detected=8/8
+- **No-runtime-state status:** ok
+- **Phase 21 import status:** BLOCKED
+- **Adapter allowlist:** 5 of 5
+- **Forbidden boundaries preserved:**
+  - audio_generation
+  - tts_invocation
+  - subprocess_execution
+  - powershell_invocation
+  - sapi_invocation
+  - piper_invocation
+  - audio_file_write
+  - network_call
+  - socket_open
+  - multiprocessing
+  - main_runtime_integration
+  - program_s_modification
+  - tier_probe_attestation_modification
+  - worker_or_luna_modules_modification
+  - production_signing_secret_storage
+  - git_commit_of_signing_secret
+  - new_adapter_invocation
+  - adapter_invocation_on_import
+  - production_db_read_in_fresh_checkout
+  - corpus_import
+  - path_traversal
+  - url_scheme_path
+  - shell_metacharacter_path
+- **Next recommended phase:** Phase 45 multi-bundle archive + chain-of-trust verification OR Phase 41a continuity-ledger.

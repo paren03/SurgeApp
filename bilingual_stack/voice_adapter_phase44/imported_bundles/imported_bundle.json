@@ -1,0 +1,75 @@
+{
+  "ok": true,
+  "phase": "phase44.bundle_importer.v1",
+  "import_id": "p44import_1779847664_c368f0a932",
+  "created_at": 1779847664.2189386,
+  "workspace_artifacts_dir": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\fresh_checkout_simulation\\workspace_1779847664_d0b3e523\\artifacts",
+  "entries": [
+    {
+      "artifact_key": "portable_bundle",
+      "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\portable_bundles\\portable_bundle.json",
+      "imported_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\fresh_checkout_simulation\\workspace_1779847664_d0b3e523\\artifacts\\portable_bundle.json",
+      "source_sha256": "425c0d01c4d48ecf5975cc7894aa880fa1d6826819ec8fb87a404afbd6effecb",
+      "imported_sha256": "425c0d01c4d48ecf5975cc7894aa880fa1d6826819ec8fb87a404afbd6effecb",
+      "size_bytes": 52276,
+      "sha_matches": true
+    },
+    {
+      "artifact_key": "bundle_manifest",
+      "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\bundle_manifests\\bundle_manifest.json",
+      "imported_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\fresh_checkout_simulation\\workspace_1779847664_d0b3e523\\artifacts\\bundle_manifest.json",
+      "source_sha256": "ad1a7c8647b2a5d48107b002c9cc9a0cd37221005e46675b192d97d3d0967302",
+      "imported_sha256": "ad1a7c8647b2a5d48107b002c9cc9a0cd37221005e46675b192d97d3d0967302",
+      "size_bytes": 2662,
+      "sha_matches": true
+    },
+    {
+      "artifact_key": "source_operator_packet",
+      "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\operator_packets\\operator_packet.json",
+      "imported_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\fresh_checkout_simulation\\workspace_1779847664_d0b3e523\\artifacts\\source_operator_packet.json",
+      "source_sha256": "e58ced06031a6808a2f59d28c00d5298659fb1228c4bc1a736c32758adc1f9c0",
+      "imported_sha256": "e58ced06031a6808a2f59d28c00d5298659fb1228c4bc1a736c32758adc1f9c0",
+      "size_bytes": 2146,
+      "sha_matches": true
+    },
+    {
+      "artifact_key": "source_status_dashboard",
+      "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase43\\dashboards\\STATUS_DASHBOARD.json",
+      "imported_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\fresh_checkout_simulation\\workspace_1779847664_d0b3e523\\artifacts\\source_status_dashboard.json",
+      "source_sha256": "71bb117bffa9d1077bb6355810231663e9201c50c2630c492d58aec434c6685b",
+      "imported_sha256": "71bb117bffa9d1077bb6355810231663e9201c50c2630c492d58aec434c6685b",
+      "size_bytes": 1842,
+      "sha_matches": true
+    },
+    {
+      "artifact_key": "source_phase43_report",
+      "source_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\PHASE43_CROSS_MACHINE_PORTABILITY_REPORT.md",
+      "imported_path": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\fresh_checkout_simulation\\workspace_1779847664_d0b3e523\\artifacts\\source_phase43_report.md",
+      "source_sha256": "8203b1ba47523de7027a6e17e3c342cb259701bed81365a235e5a9b71e7c4035",
+      "imported_sha256": "8203b1ba47523de7027a6e17e3c342cb259701bed81365a235e5a9b71e7c4035",
+      "size_bytes": 10467,
+      "sha_matches": true
+    }
+  ],
+  "missing": [],
+  "rejected": [],
+  "imported_count": 5,
+  "phase21_status_text": "BLOCKED",
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_on_import": true,
+    "no_production_db_read_on_import": true
+  },
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Bundle imported via Python file read/write only.",
+    "No subprocess, no network, no multiprocessing.",
+    "Each imported file's SHA-256 re-derived and compared against source."
+  ],
+  "written_at": 1779847664.27594
+}

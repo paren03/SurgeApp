@@ -1,0 +1,64 @@
+{
+  "dashboard_id": "p45dash_1779847536",
+  "created_at": 1779847536.5954583,
+  "phase": "phase45.status_dashboard.v1",
+  "phase45_status": "ok",
+  "source_phases": [
+    "phase42",
+    "phase43",
+    "phase44"
+  ],
+  "artifact_count": 25,
+  "chain_of_trust_status": "ok",
+  "manifest_verification_status": "ok",
+  "archive_verification_status": "ok",
+  "tamper_suite_status": {
+    "ok": true,
+    "detected_count": 13,
+    "case_count": 13
+  },
+  "no_runtime_state_status": "ok",
+  "phase21_import_status": "BLOCKED",
+  "forbidden_boundaries_preserved": [
+    "audio_generation",
+    "tts_invocation",
+    "subprocess_execution",
+    "powershell_invocation",
+    "sapi_invocation",
+    "piper_invocation",
+    "audio_file_write",
+    "network_call",
+    "socket_open",
+    "multiprocessing",
+    "main_runtime_integration",
+    "program_s_modification",
+    "tier_probe_attestation_modification",
+    "worker_or_luna_modules_modification",
+    "production_signing_secret_storage",
+    "git_commit_of_signing_secret",
+    "new_adapter_invocation",
+    "adapter_invocation_in_archive",
+    "adapter_reinvocation_in_verifier",
+    "production_db_read_in_verifier",
+    "corpus_import",
+    "broken_chain_order",
+    "tampered_artifact_hash"
+  ],
+  "adapter_allowlist_status": {
+    "expected_count": 5,
+    "allowed": [
+      "dummy_metadata_adapter",
+      "bilingual_segment_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter",
+      "memory_continuity_audit_metadata_adapter"
+    ]
+  },
+  "next_recommended_phase": "Phase 46 cross-archive long-horizon timeline OR Phase 41a continuity-ledger.",
+  "notes": [
+    "Dashboard is a static snapshot of one multi-bundle chain-of-trust audit.",
+    "Phase 21 import remains BLOCKED unless operator runs Phase 21 explicitly.",
+    "Verifier reads only the archive; never production DBs; never invokes adapters."
+  ],
+  "written_at": 1779847536.665253
+}

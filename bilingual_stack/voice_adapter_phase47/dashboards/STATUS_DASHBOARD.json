@@ -1,0 +1,71 @@
+{
+  "dashboard_id": "p47dash_1779847664",
+  "created_at": 1779847664.3104508,
+  "phase": "phase47.status_dashboard.v1",
+  "phase47_status": "ok",
+  "source_phase": "phase46",
+  "checkout_count": 2,
+  "federation_root_status": "match",
+  "federation_root_hash_summary": "f34726872fbbfa49810a373284fdfea0",
+  "imported_timeline_verification_status": "ok",
+  "graph_verification_status": "ok",
+  "manifest_verification_status": "ok",
+  "drift_status": {
+    "ok": true,
+    "fail_count": 0,
+    "warn_count": 0,
+    "pass_count": 7
+  },
+  "tamper_suite_status": {
+    "ok": true,
+    "detected_count": 13,
+    "case_count": 13
+  },
+  "no_runtime_state_status": "ok",
+  "phase21_import_status": "BLOCKED",
+  "forbidden_boundaries_preserved": [
+    "audio_generation",
+    "tts_invocation",
+    "subprocess_execution",
+    "powershell_invocation",
+    "sapi_invocation",
+    "piper_invocation",
+    "audio_file_write",
+    "network_call",
+    "socket_open",
+    "multiprocessing",
+    "main_runtime_integration",
+    "program_s_modification",
+    "tier_probe_attestation_modification",
+    "worker_or_luna_modules_modification",
+    "production_signing_secret_storage",
+    "git_commit_of_signing_secret",
+    "new_adapter_invocation",
+    "adapter_invocation_in_federation",
+    "adapter_reinvocation_in_verifier",
+    "production_db_read_in_verifier",
+    "corpus_import",
+    "duplicate_checkout_id",
+    "tampered_timeline_root_hash",
+    "tampered_federation_root_hash",
+    "path_traversal",
+    "url_scheme_path"
+  ],
+  "adapter_allowlist_status": {
+    "expected_count": 5,
+    "allowed": [
+      "dummy_metadata_adapter",
+      "bilingual_segment_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter",
+      "memory_continuity_audit_metadata_adapter"
+    ]
+  },
+  "next_recommended_phase": "Phase 48 federation portability snapshot OR Phase 41a continuity-ledger.",
+  "notes": [
+    "Dashboard is a static snapshot of one cross-checkout federation audit.",
+    "Phase 21 import remains BLOCKED unless operator runs Phase 21 explicitly.",
+    "Verifier reads only imported timeline JSON; never production DBs; never invokes adapters."
+  ],
+  "written_at": 1779847664.316452
+}

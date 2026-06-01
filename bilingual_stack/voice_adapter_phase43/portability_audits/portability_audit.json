@@ -1,0 +1,64 @@
+{
+  "audit_id": "p43audit_1779847664",
+  "created_at": 1779847664.1999094,
+  "phase": "phase43.portability_auditor.v1",
+  "checks": [
+    {
+      "category": "no_runtime_db_artifacts",
+      "ok": true,
+      "severity": "pass",
+      "hits": []
+    },
+    {
+      "category": "no_audio_artifacts",
+      "ok": true,
+      "severity": "pass",
+      "hits": []
+    },
+    {
+      "category": "excluded_artifacts",
+      "ok": true,
+      "severity": "pass",
+      "hits": []
+    },
+    {
+      "category": "no_secret_leakage",
+      "ok": true,
+      "severity": "pass",
+      "hits": []
+    },
+    {
+      "category": "no_adapter_invocation_claims",
+      "ok": true,
+      "severity": "pass",
+      "boundary_summary": {
+        "no_audio": true,
+        "no_tts": true,
+        "no_subprocess": true,
+        "no_network": true,
+        "no_multiprocessing": true,
+        "no_main_runtime_integration": true,
+        "no_adapter_reinvocation_in_bundle": true,
+        "no_production_db_in_bundle": true
+      }
+    },
+    {
+      "category": "no_command_fields",
+      "ok": true,
+      "severity": "pass",
+      "hits": []
+    },
+    {
+      "category": "phase21_metadata",
+      "ok": true,
+      "severity": "pass",
+      "phase21_status_text": "BLOCKED"
+    }
+  ],
+  "fail_count": 0,
+  "warn_count": 0,
+  "pass_count": 7,
+  "ok": true,
+  "summary": "phase43 portability audit: fail=0 warn=0 pass=7",
+  "written_at": 1779847664.2049384
+}

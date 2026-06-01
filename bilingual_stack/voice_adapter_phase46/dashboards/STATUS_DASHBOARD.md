@@ -1,0 +1,39 @@
+# Phase 46 - Cross-Archive Long-Horizon Timeline Dashboard
+_Generated at 1779847555._
+- **Phase 46 status:** ok
+- **Source phase:** phase45
+- **Archive count:** 3
+- **Monotonic ordering:** ok
+- **Chain integrity:** ok
+- **Manifest verification:** ok
+- **Long-horizon verification:** ok
+- **Tamper suite:** ok=True detected=12/12
+- **No-runtime-state status:** ok
+- **Phase 21 import status:** BLOCKED
+- **Adapter allowlist:** 5 of 5
+- **Forbidden boundaries preserved:**
+  - audio_generation
+  - tts_invocation
+  - subprocess_execution
+  - powershell_invocation
+  - sapi_invocation
+  - piper_invocation
+  - audio_file_write
+  - network_call
+  - socket_open
+  - multiprocessing
+  - main_runtime_integration
+  - program_s_modification
+  - tier_probe_attestation_modification
+  - worker_or_luna_modules_modification
+  - production_signing_secret_storage
+  - git_commit_of_signing_secret
+  - new_adapter_invocation
+  - adapter_invocation_in_timeline
+  - adapter_reinvocation_in_verifier
+  - production_db_read_in_verifier
+  - corpus_import
+  - broken_monotonic_order
+  - tampered_archive_hash
+  - duplicate_archive_id
+- **Next recommended phase:** Phase 47 cross-checkout federated timeline OR Phase 41a continuity-ledger.

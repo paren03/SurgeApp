@@ -1,0 +1,252 @@
+{
+  "matrix_id": "p42mat_1779847525",
+  "created_at": 1779847525.663849,
+  "phase": "phase42.replay_matrix.v1",
+  "scenario_count": 8,
+  "projection_count": 6,
+  "per_scenario_projection_status": [
+    {
+      "scenario_id": "P42-S01",
+      "status": "ok",
+      "projection_present": true
+    },
+    {
+      "scenario_id": "P42-S02",
+      "status": "ok",
+      "projection_present": true
+    },
+    {
+      "scenario_id": "P42-S03",
+      "status": "ok",
+      "projection_present": true
+    },
+    {
+      "scenario_id": "P42-S04",
+      "status": "ok",
+      "projection_present": true
+    },
+    {
+      "scenario_id": "P42-S05",
+      "status": "ok",
+      "projection_present": true
+    },
+    {
+      "scenario_id": "P42-S06",
+      "status": "ok",
+      "projection_present": true
+    },
+    {
+      "scenario_id": "P42-S07",
+      "status": "pre_call_refused",
+      "projection_present": false
+    },
+    {
+      "scenario_id": "P42-S08",
+      "status": "kill_switch_blocked",
+      "projection_present": false
+    }
+  ],
+  "trace_hash_summaries": [
+    {
+      "scenario_id": "P42-S01",
+      "trace_hash": "da8dc8367e3e44f5af5d23d641c634db24ca4c65266566a41b341e30df59e5fc"
+    },
+    {
+      "scenario_id": "P42-S02",
+      "trace_hash": "fd4f9ea2b6bb43514a3a41db48a7c85cbac58e0c32559bc2e9e7da56a4f8a11f"
+    },
+    {
+      "scenario_id": "P42-S03",
+      "trace_hash": "c086cbaf109d0de4d642e9f1cd5757b5358a98c34496c5997cd5199dd28d379c"
+    },
+    {
+      "scenario_id": "P42-S04",
+      "trace_hash": "416d6c51cb9d97a98025243f3b8702f6f5e9141bd847a499404866018177d9cc"
+    },
+    {
+      "scenario_id": "P42-S05",
+      "trace_hash": "98387530ee3bc6dc3bd8de1a12a638b4d5134b9a40ec3397bf1360ff0d16ed70"
+    },
+    {
+      "scenario_id": "P42-S06",
+      "trace_hash": "1b1af0a9cb77b74b4e5155e012f3dd7a15ab3d3e808696dc6de72240bd6c4412"
+    }
+  ],
+  "adapter_selection_summaries": [
+    {
+      "scenario_id": "P42-S01",
+      "selected_adapter_name": "dummy_metadata_adapter"
+    },
+    {
+      "scenario_id": "P42-S02",
+      "selected_adapter_name": "bilingual_segment_metadata_adapter"
+    },
+    {
+      "scenario_id": "P42-S03",
+      "selected_adapter_name": "bilingual_segment_metadata_adapter"
+    },
+    {
+      "scenario_id": "P42-S04",
+      "selected_adapter_name": "prosody_density_metadata_adapter"
+    },
+    {
+      "scenario_id": "P42-S05",
+      "selected_adapter_name": "safety_redaction_trace_metadata_adapter"
+    },
+    {
+      "scenario_id": "P42-S06",
+      "selected_adapter_name": "memory_continuity_audit_metadata_adapter"
+    }
+  ],
+  "governance_result_summaries": [
+    {
+      "scenario_id": "P42-S01",
+      "result_verification_ok": true,
+      "governance_recheck_ok": true,
+      "signed_evidence_validates": true,
+      "witness_export_status": "ok",
+      "exchange_status": "witness_failed"
+    },
+    {
+      "scenario_id": "P42-S02",
+      "result_verification_ok": true,
+      "governance_recheck_ok": true,
+      "signed_evidence_validates": true,
+      "witness_export_status": "ok",
+      "exchange_status": "witness_failed"
+    },
+    {
+      "scenario_id": "P42-S03",
+      "result_verification_ok": true,
+      "governance_recheck_ok": true,
+      "signed_evidence_validates": true,
+      "witness_export_status": "ok",
+      "exchange_status": "witness_failed"
+    },
+    {
+      "scenario_id": "P42-S04",
+      "result_verification_ok": true,
+      "governance_recheck_ok": true,
+      "signed_evidence_validates": true,
+      "witness_export_status": "ok",
+      "exchange_status": "witness_failed"
+    },
+    {
+      "scenario_id": "P42-S05",
+      "result_verification_ok": true,
+      "governance_recheck_ok": true,
+      "signed_evidence_validates": true,
+      "witness_export_status": "ok",
+      "exchange_status": "witness_failed"
+    },
+    {
+      "scenario_id": "P42-S06",
+      "result_verification_ok": true,
+      "governance_recheck_ok": true,
+      "signed_evidence_validates": true,
+      "witness_export_status": "ok",
+      "exchange_status": "witness_failed"
+    }
+  ],
+  "baseline_summaries": [
+    {
+      "scenario_id": "P42-S01",
+      "baseline_expected": {
+        "english_words": 2814,
+        "russian_words": 2518,
+        "russian_phrases": 35,
+        "bilingual_concepts": 26,
+        "bilingual_entry_links": 52,
+        "live_pack_manifests": 90
+      }
+    },
+    {
+      "scenario_id": "P42-S02",
+      "baseline_expected": {
+        "english_words": 2814,
+        "russian_words": 2518,
+        "russian_phrases": 35,
+        "bilingual_concepts": 26,
+        "bilingual_entry_links": 52,
+        "live_pack_manifests": 90
+      }
+    },
+    {
+      "scenario_id": "P42-S03",
+      "baseline_expected": {
+        "english_words": 2814,
+        "russian_words": 2518,
+        "russian_phrases": 35,
+        "bilingual_concepts": 26,
+        "bilingual_entry_links": 52,
+        "live_pack_manifests": 90
+      }
+    },
+    {
+      "scenario_id": "P42-S04",
+      "baseline_expected": {
+        "english_words": 2814,
+        "russian_words": 2518,
+        "russian_phrases": 35,
+        "bilingual_concepts": 26,
+        "bilingual_entry_links": 52,
+        "live_pack_manifests": 90
+      }
+    },
+    {
+      "scenario_id": "P42-S05",
+      "baseline_expected": {
+        "english_words": 2814,
+        "russian_words": 2518,
+        "russian_phrases": 35,
+        "bilingual_concepts": 26,
+        "bilingual_entry_links": 52,
+        "live_pack_manifests": 90
+      }
+    },
+    {
+      "scenario_id": "P42-S06",
+      "baseline_expected": {
+        "english_words": 2814,
+        "russian_words": 2518,
+        "russian_phrases": 35,
+        "bilingual_concepts": 26,
+        "bilingual_entry_links": 52,
+        "live_pack_manifests": 90
+      }
+    }
+  ],
+  "phase21_status_summaries": [
+    {
+      "scenario_id": "P42-S01",
+      "status_text": "BLOCKED"
+    },
+    {
+      "scenario_id": "P42-S02",
+      "status_text": "BLOCKED"
+    },
+    {
+      "scenario_id": "P42-S03",
+      "status_text": "BLOCKED"
+    },
+    {
+      "scenario_id": "P42-S04",
+      "status_text": "BLOCKED"
+    },
+    {
+      "scenario_id": "P42-S05",
+      "status_text": "BLOCKED"
+    },
+    {
+      "scenario_id": "P42-S06",
+      "status_text": "BLOCKED"
+    }
+  ],
+  "compatibility_status": "ok",
+  "notes": [
+    "Matrix is read-only.",
+    "No adapter re-invocation.",
+    "No Phase 40 modification."
+  ],
+  "written_at": 1779847526.2753196
+}

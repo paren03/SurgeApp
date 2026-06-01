@@ -1,0 +1,54 @@
+{
+  "dashboard_id": "p43dash_1779846620",
+  "created_at": 1779846620.414911,
+  "phase": "phase43.status_dashboard.v1",
+  "portability_status": "ok",
+  "source_phase": "phase42",
+  "artifact_count": 8,
+  "hash_verification_status": "ok",
+  "fresh_checkout_verification_status": "ok",
+  "excluded_artifact_status": "ok",
+  "no_runtime_db_status": "ok",
+  "no_audio_status": "ok",
+  "no_secret_status": "ok",
+  "phase21_import_status": "BLOCKED",
+  "forbidden_boundaries_preserved": [
+    "audio_generation",
+    "tts_invocation",
+    "subprocess_execution",
+    "powershell_invocation",
+    "sapi_invocation",
+    "piper_invocation",
+    "audio_file_write",
+    "network_call",
+    "socket_open",
+    "multiprocessing",
+    "main_runtime_integration",
+    "program_s_modification",
+    "tier_probe_attestation_modification",
+    "worker_or_luna_modules_modification",
+    "production_signing_secret_storage",
+    "git_commit_of_signing_secret",
+    "new_adapter_invocation",
+    "adapter_reinvocation_on_fresh_checkout",
+    "production_db_read_in_fresh_checkout",
+    "corpus_import"
+  ],
+  "adapter_allowlist_status": {
+    "expected_count": 5,
+    "allowed": [
+      "dummy_metadata_adapter",
+      "bilingual_segment_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter",
+      "memory_continuity_audit_metadata_adapter"
+    ]
+  },
+  "next_recommended_phase": "Phase 44 cross-machine bundle import + fresh-checkout regression OR Phase 41a continuity-ledger.",
+  "notes": [
+    "Dashboard is a static snapshot of one portability run.",
+    "Phase 21 import remains BLOCKED unless operator runs Phase 21 explicitly.",
+    "Fresh-checkout verifier reads only the bundle; never production DBs."
+  ],
+  "written_at": 1779846620.4373493
+}

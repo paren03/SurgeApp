@@ -1,0 +1,690 @@
+{
+  "report_id": "rreport_1779847487",
+  "created_at": 1779847487.6136978,
+  "phase": "phase39.rehearsal_report.v1",
+  "contract": {
+    "contract_id": "rcontract_1779847484",
+    "created_at": 1779847484.1751783,
+    "phase": "phase39.rehearsal_contract.v1",
+    "title": "Phase 39 Operator Dry-Run Rehearsal Contract",
+    "operator_id_present": true,
+    "scenarios": [
+      {
+        "scenario_id": "S01",
+        "label": "english_simple_dummy",
+        "user_text": "Hello Luna",
+        "draft_response_text": "Hi.",
+        "conversation_mode": "conversation",
+        "user_preference": "english",
+        "preferred_adapter": "dummy_metadata_adapter",
+        "approve": true,
+        "kill_switch_enabled": false,
+        "include_handoff": false,
+        "expected_adapter_family": "dummy_metadata_adapter"
+      },
+      {
+        "scenario_id": "S02",
+        "label": "russian_simple_segment",
+        "user_text": "Привет Луна",
+        "draft_response_text": "Привет!",
+        "conversation_mode": "conversation",
+        "user_preference": "russian",
+        "preferred_adapter": "bilingual_segment_metadata_adapter",
+        "approve": true,
+        "kill_switch_enabled": false,
+        "include_handoff": false,
+        "expected_adapter_family": "bilingual_segment_metadata_adapter"
+      },
+      {
+        "scenario_id": "S03",
+        "label": "mixed_code_switch_segment",
+        "user_text": "Mix russian and english",
+        "draft_response_text": "ok, давай.",
+        "conversation_mode": "conversation",
+        "user_preference": null,
+        "preferred_adapter": null,
+        "approve": true,
+        "kill_switch_enabled": false,
+        "include_handoff": false,
+        "expected_adapter_family": "bilingual_segment_metadata_adapter"
+      },
+      {
+        "scenario_id": "S04",
+        "label": "teacher_russian_segment",
+        "user_text": "Teach me a Russian word",
+        "draft_response_text": "",
+        "conversation_mode": "teacher",
+        "user_preference": "russian",
+        "preferred_adapter": "bilingual_segment_metadata_adapter",
+        "approve": true,
+        "kill_switch_enabled": false,
+        "include_handoff": false,
+        "expected_adapter_family": "bilingual_segment_metadata_adapter"
+      },
+      {
+        "scenario_id": "S05",
+        "label": "approve_false_refusal",
+        "user_text": "approve=False refusal test",
+        "draft_response_text": "",
+        "conversation_mode": "conversation",
+        "user_preference": null,
+        "preferred_adapter": null,
+        "approve": false,
+        "kill_switch_enabled": false,
+        "include_handoff": false,
+        "expected_adapter_family": null
+      },
+      {
+        "scenario_id": "S06",
+        "label": "kill_switch_block",
+        "user_text": "kill switch test",
+        "draft_response_text": "",
+        "conversation_mode": "conversation",
+        "user_preference": null,
+        "preferred_adapter": null,
+        "approve": true,
+        "kill_switch_enabled": true,
+        "include_handoff": false,
+        "expected_adapter_family": null
+      },
+      {
+        "scenario_id": "S07",
+        "label": "prosody_density",
+        "user_text": "Slow with pauses and emphasis",
+        "draft_response_text": "",
+        "conversation_mode": "conversation",
+        "user_preference": null,
+        "preferred_adapter": "prosody_density_metadata_adapter",
+        "approve": true,
+        "kill_switch_enabled": false,
+        "include_handoff": false,
+        "expected_adapter_family": "prosody_density_metadata_adapter"
+      },
+      {
+        "scenario_id": "S08",
+        "label": "safety_redaction_trace",
+        "user_text": "Safety redaction check",
+        "draft_response_text": "",
+        "conversation_mode": "conversation",
+        "user_preference": null,
+        "preferred_adapter": "safety_redaction_trace_metadata_adapter",
+        "approve": true,
+        "kill_switch_enabled": false,
+        "include_handoff": false,
+        "expected_adapter_family": "safety_redaction_trace_metadata_adapter"
+      },
+      {
+        "scenario_id": "S09",
+        "label": "phase36_optional_handoff",
+        "user_text": "Optional handoff envelope drill",
+        "draft_response_text": "",
+        "conversation_mode": "conversation",
+        "user_preference": null,
+        "preferred_adapter": "dummy_metadata_adapter",
+        "approve": true,
+        "kill_switch_enabled": false,
+        "include_handoff": true,
+        "expected_adapter_family": "dummy_metadata_adapter"
+      },
+      {
+        "scenario_id": "S10",
+        "label": "english_dummy_baseline",
+        "user_text": "Simple English",
+        "draft_response_text": "",
+        "conversation_mode": "conversation",
+        "user_preference": "english",
+        "preferred_adapter": "dummy_metadata_adapter",
+        "approve": true,
+        "kill_switch_enabled": false,
+        "include_handoff": false,
+        "expected_adapter_family": "dummy_metadata_adapter"
+      }
+    ],
+    "scenario_count": 10,
+    "expected_phase_stages": [
+      "phase28_dry_run_envelope",
+      "phase29_per_invocation_consent",
+      "phase30_callable_boundary",
+      "phase31_two_adapter_selection",
+      "phase32_audit_chain_signing",
+      "phase33_three_adapter_signed_evidence",
+      "phase34_witness_export",
+      "phase35_local_exchange",
+      "phase36_optional_handoff",
+      "phase37_signed_witness_pipeline"
+    ],
+    "forbidden_runtime_actions": [
+      "generate_audio",
+      "invoke_tts",
+      "run_subprocess",
+      "call_powershell",
+      "call_sapi",
+      "call_piper",
+      "write_audio_file",
+      "clone_voice",
+      "network_call",
+      "open_socket",
+      "multiprocessing",
+      "production_signing_secret_storage",
+      "git_commit_of_signing_secret",
+      "main_runtime_integration",
+      "program_s_modification",
+      "tier_probe_attestation_modification",
+      "worker_or_luna_modules_modification",
+      "corpus_import"
+    ],
+    "rehearsal_dry_run_only": true,
+    "notes": [
+      "Every scenario runs Phase 37's prepare_phase37_four_adapter_invocation which internally chains Phase 28 -> 29 -> 30/31/33/37 selection -> 32 signing -> 34 witness export -> 35 exchange -> optional 36 handoff.",
+      "No audio engine is bound. All adapters return metadata only.",
+      "Rehearsal does NOT integrate into Luna main runtime."
+    ]
+  },
+  "consent": {
+    "consent_id": "rconsent_1779847484",
+    "created_at": 1779847484.1751783,
+    "phase": "phase39.consent_orchestrator.v1",
+    "status": "ok",
+    "operator_id_hash": "829be59401fff987f04078ad66bae07c6418559621a402fc5354d716b98c7d30",
+    "scenario_count": 10,
+    "nonce": "df3c6f92460b7a77e3b02fe4e5b0e788",
+    "bound_at": 1779847484,
+    "expiry_at": 1779848084,
+    "binding_hash": "c6e7d03f9c4d5bc54c096977c1a536ddb49c18ced217320ba9d276cd08649793",
+    "rehearsal_dry_run_only": true,
+    "notes": [
+      "Umbrella consent records operator's one-shot authorization for the whole rehearsal pass.",
+      "Per-scenario Phase 29 consent tokens are issued internally by the Phase 37 pipeline.",
+      "No raw operator_id is carried; only its SHA-256 hash.",
+      "No production secret is stored; nonce is fresh per call."
+    ]
+  },
+  "trace": {
+    "trace_id": "rtrace_1779847487",
+    "created_at": 1779847487.6136978,
+    "phase": "phase39.trace_assembler.v1",
+    "contract_id": "rcontract_1779847484",
+    "consent_id": "rconsent_1779847484",
+    "receipt_count": 10,
+    "receipts": [
+      {
+        "receipt_id": "recpt_S01_1779847484",
+        "created_at": 1779847484.6204536,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S01",
+        "scenario_label": "english_simple_dummy",
+        "status": "ok",
+        "selected_adapter_name": "dummy_metadata_adapter",
+        "signed_pipeline_status": "ok",
+        "kill_switch_blocked": false,
+        "approve_requested": true,
+        "include_handoff_requested": false,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": true,
+          "phase33_three_adapter_signed_evidence": true,
+          "phase34_witness_export": true,
+          "phase35_local_exchange": true,
+          "phase36_optional_handoff": true,
+          "phase37_signed_witness_pipeline": true,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 6,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": "dummy_metadata_adapter",
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      },
+      {
+        "receipt_id": "recpt_S02_1779847484",
+        "created_at": 1779847484.9900365,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S02",
+        "scenario_label": "russian_simple_segment",
+        "status": "ok",
+        "selected_adapter_name": "bilingual_segment_metadata_adapter",
+        "signed_pipeline_status": "ok",
+        "kill_switch_blocked": false,
+        "approve_requested": true,
+        "include_handoff_requested": false,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": true,
+          "phase33_three_adapter_signed_evidence": true,
+          "phase34_witness_export": true,
+          "phase35_local_exchange": true,
+          "phase36_optional_handoff": true,
+          "phase37_signed_witness_pipeline": true,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 6,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": "bilingual_segment_metadata_adapter",
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      },
+      {
+        "receipt_id": "recpt_S03_1779847485",
+        "created_at": 1779847485.3451712,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S03",
+        "scenario_label": "mixed_code_switch_segment",
+        "status": "ok",
+        "selected_adapter_name": "bilingual_segment_metadata_adapter",
+        "signed_pipeline_status": "ok",
+        "kill_switch_blocked": false,
+        "approve_requested": true,
+        "include_handoff_requested": false,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": true,
+          "phase33_three_adapter_signed_evidence": true,
+          "phase34_witness_export": true,
+          "phase35_local_exchange": true,
+          "phase36_optional_handoff": true,
+          "phase37_signed_witness_pipeline": true,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 6,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": "bilingual_segment_metadata_adapter",
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      },
+      {
+        "receipt_id": "recpt_S04_1779847485",
+        "created_at": 1779847485.7043803,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S04",
+        "scenario_label": "teacher_russian_segment",
+        "status": "ok",
+        "selected_adapter_name": "bilingual_segment_metadata_adapter",
+        "signed_pipeline_status": "ok",
+        "kill_switch_blocked": false,
+        "approve_requested": true,
+        "include_handoff_requested": false,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": true,
+          "phase33_three_adapter_signed_evidence": true,
+          "phase34_witness_export": true,
+          "phase35_local_exchange": true,
+          "phase36_optional_handoff": true,
+          "phase37_signed_witness_pipeline": true,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 6,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": "bilingual_segment_metadata_adapter",
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      },
+      {
+        "receipt_id": "recpt_S05_1779847485",
+        "created_at": 1779847485.8440423,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S05",
+        "scenario_label": "approve_false_refusal",
+        "status": "pre_call_refused",
+        "selected_adapter_name": "bilingual_segment_metadata_adapter",
+        "signed_pipeline_status": null,
+        "kill_switch_blocked": false,
+        "approve_requested": false,
+        "include_handoff_requested": false,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": false,
+          "phase33_three_adapter_signed_evidence": false,
+          "phase34_witness_export": false,
+          "phase35_local_exchange": false,
+          "phase36_optional_handoff": true,
+          "phase37_signed_witness_pipeline": false,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 3,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": null,
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      },
+      {
+        "receipt_id": "recpt_S06_1779847485",
+        "created_at": 1779847485.9656334,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S06",
+        "scenario_label": "kill_switch_block",
+        "status": "kill_switch_blocked",
+        "selected_adapter_name": "bilingual_segment_metadata_adapter",
+        "signed_pipeline_status": null,
+        "kill_switch_blocked": true,
+        "approve_requested": true,
+        "include_handoff_requested": false,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": false,
+          "phase33_three_adapter_signed_evidence": false,
+          "phase34_witness_export": false,
+          "phase35_local_exchange": false,
+          "phase36_optional_handoff": true,
+          "phase37_signed_witness_pipeline": false,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 2,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": null,
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      },
+      {
+        "receipt_id": "recpt_S07_1779847486",
+        "created_at": 1779847486.3281407,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S07",
+        "scenario_label": "prosody_density",
+        "status": "ok",
+        "selected_adapter_name": "prosody_density_metadata_adapter",
+        "signed_pipeline_status": "ok",
+        "kill_switch_blocked": false,
+        "approve_requested": true,
+        "include_handoff_requested": false,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": true,
+          "phase33_three_adapter_signed_evidence": true,
+          "phase34_witness_export": true,
+          "phase35_local_exchange": true,
+          "phase36_optional_handoff": true,
+          "phase37_signed_witness_pipeline": true,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 6,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": "prosody_density_metadata_adapter",
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      },
+      {
+        "receipt_id": "recpt_S08_1779847486",
+        "created_at": 1779847486.6767473,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S08",
+        "scenario_label": "safety_redaction_trace",
+        "status": "ok",
+        "selected_adapter_name": "safety_redaction_trace_metadata_adapter",
+        "signed_pipeline_status": "ok",
+        "kill_switch_blocked": false,
+        "approve_requested": true,
+        "include_handoff_requested": false,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": true,
+          "phase33_three_adapter_signed_evidence": true,
+          "phase34_witness_export": true,
+          "phase35_local_exchange": true,
+          "phase36_optional_handoff": true,
+          "phase37_signed_witness_pipeline": true,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 6,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": "safety_redaction_trace_metadata_adapter",
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      },
+      {
+        "receipt_id": "recpt_S09_1779847487",
+        "created_at": 1779847487.2698529,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S09",
+        "scenario_label": "phase36_optional_handoff",
+        "status": "ok",
+        "selected_adapter_name": "dummy_metadata_adapter",
+        "signed_pipeline_status": "ok",
+        "kill_switch_blocked": false,
+        "approve_requested": true,
+        "include_handoff_requested": true,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": true,
+          "phase33_three_adapter_signed_evidence": true,
+          "phase34_witness_export": true,
+          "phase35_local_exchange": true,
+          "phase36_optional_handoff": false,
+          "phase37_signed_witness_pipeline": true,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 6,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": "dummy_metadata_adapter",
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      },
+      {
+        "receipt_id": "recpt_S10_1779847487",
+        "created_at": 1779847487.612698,
+        "phase": "phase39.stage_executor.v1",
+        "scenario_id": "S10",
+        "scenario_label": "english_dummy_baseline",
+        "status": "ok",
+        "selected_adapter_name": "dummy_metadata_adapter",
+        "signed_pipeline_status": "ok",
+        "kill_switch_blocked": false,
+        "approve_requested": true,
+        "include_handoff_requested": false,
+        "stages_present": {
+          "phase29_per_invocation_consent": true,
+          "phase30_callable_boundary": true,
+          "phase31_two_adapter_selection": true,
+          "phase32_audit_chain_signing": true,
+          "phase33_three_adapter_signed_evidence": true,
+          "phase34_witness_export": true,
+          "phase35_local_exchange": true,
+          "phase36_optional_handoff": true,
+          "phase37_signed_witness_pipeline": true,
+          "audit_chain_present": true
+        },
+        "audit_chain_length": 6,
+        "no_runtime_leak": true,
+        "runtime_leak_details": [],
+        "expected_adapter_family": "dummy_metadata_adapter",
+        "notes": [
+          "Receipt does NOT carry signing key material.",
+          "Receipt does NOT carry raw operator_id.",
+          "Receipt does NOT carry the spoken render payload."
+        ]
+      }
+    ],
+    "ok_receipt_count": 8,
+    "refused_receipt_count": 1,
+    "kill_switch_blocked_count": 1,
+    "adapter_distribution": {
+      "dummy_metadata_adapter": 3,
+      "bilingual_segment_metadata_adapter": 5,
+      "prosody_density_metadata_adapter": 1,
+      "safety_redaction_trace_metadata_adapter": 1
+    },
+    "per_stage_coverage": {
+      "phase29_per_invocation_consent": {
+        "present": 10,
+        "absent": 0
+      },
+      "phase30_callable_boundary": {
+        "present": 10,
+        "absent": 0
+      },
+      "phase31_two_adapter_selection": {
+        "present": 10,
+        "absent": 0
+      },
+      "phase32_audit_chain_signing": {
+        "present": 8,
+        "absent": 2
+      },
+      "phase33_three_adapter_signed_evidence": {
+        "present": 8,
+        "absent": 2
+      },
+      "phase34_witness_export": {
+        "present": 8,
+        "absent": 2
+      },
+      "phase35_local_exchange": {
+        "present": 8,
+        "absent": 2
+      },
+      "phase36_optional_handoff": {
+        "present": 9,
+        "absent": 1
+      },
+      "phase37_signed_witness_pipeline": {
+        "present": 8,
+        "absent": 2
+      }
+    },
+    "receipt_hash_chain": [
+      "471ef49b8ad47ee59c6538cb5c470e7546e83f7306c33c248cea75e5d31ac49a",
+      "387979c895f23307e8c81e26802b40d40b5eec58e457f70ab0623f476c955db5",
+      "1159ac9ff2332ec33554706a6e55e8806c073a0a5e566da15908ff08d337de36",
+      "249799170c61127f74b4a1b00915045664421ae8662413bb170c02bff10606e8",
+      "69dc316446bfe7d83a6201da2bb57267d523d79381c0150d916ea146cc86caca",
+      "56e69d8cbaa41f0caf9aa2f7e419d8ab3fef99d652755a8ef6aacff44e9e51bb",
+      "98df73cf9c6c5b18f656704c6e9b3e5f0667380d12ef0682945230c70791c655",
+      "36829553ad740a5d38c087a4ef56218b49668585b227ec5622a2a9ba55788912",
+      "1df3ff2fff21d7bba074cd1b460c93b955ed5b73589b6f21c7b6f0f3c5d4ba1b",
+      "cc492a427cf47940e5e3cdff7e438df706fe0c6b409b1c4e1cf50b0f3d789437"
+    ],
+    "trace_root_hash": "b22bd86e340a3cdb1685897c5a9181bce2b50e4bc8b0d6c5777b8fdf1ef37eeb",
+    "rehearsal_dry_run_only": true,
+    "notes": [
+      "Trace carries scenario receipts only -- no raw spoken payload, no signing material, no raw operator_id.",
+      "receipt_hash_chain is content-addressed for tamper-evidence at trace level."
+    ]
+  },
+  "recheck": {
+    "recheck_id": "rrchk_1779847487",
+    "created_at": 1779847487.6136978,
+    "phase": "phase39.governance_recheck.v1",
+    "trace_id": "rtrace_1779847487",
+    "adapter_allowlist": [
+      "dummy_metadata_adapter",
+      "bilingual_segment_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter"
+    ],
+    "all_receipts_within_allowlist": true,
+    "all_receipts_metadata_only": true,
+    "secret_leakage_ok": true,
+    "bad_adapter_entries": [],
+    "bad_runtime_entries": [],
+    "phase37_metadata_only_detail": {
+      "ok": true,
+      "bad": [],
+      "phase": "phase37.governance_recheck.v1"
+    },
+    "phase37_secret_leakage_detail": {
+      "ok": true,
+      "leaks": [],
+      "phase": "phase37.governance_recheck.v1"
+    },
+    "phase37_allowed_adapters_detail": {
+      "ok": true,
+      "bad": [],
+      "phase": "phase37.governance_recheck.v1"
+    },
+    "summary": "phase39 recheck: receipts=10 allowlist_ok=True metadata_only_ok=True secret_ok=True",
+    "ok": true,
+    "reasons": []
+  },
+  "ok": true,
+  "summary": "phase39 rehearsal: receipts=10 ok=8 refused=1 kill_switch_blocked=1 recheck_ok=True",
+  "production_invariants_expected": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "forbidden_runtime_actions": [
+    "generate_audio",
+    "invoke_tts",
+    "run_subprocess",
+    "call_powershell",
+    "call_sapi",
+    "call_piper",
+    "write_audio_file",
+    "clone_voice",
+    "network_call",
+    "open_socket",
+    "multiprocessing",
+    "production_signing_secret_storage",
+    "git_commit_of_signing_secret",
+    "main_runtime_integration",
+    "program_s_modification",
+    "tier_probe_attestation_modification",
+    "worker_or_luna_modules_modification",
+    "corpus_import"
+  ],
+  "notes": [
+    "Report carries no signing material.",
+    "Report carries no raw operator_id.",
+    "Report carries no spoken render payload.",
+    "Rehearsal does NOT integrate into Luna main runtime.",
+    "Phase 21 real corpus import remains BLOCKED."
+  ],
+  "written_at": 1779847487.617695
+}

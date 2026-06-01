@@ -1,0 +1,35 @@
+{
+  "receipt_id": "recpt_S01_1779847484",
+  "created_at": 1779847484.6204536,
+  "phase": "phase39.stage_executor.v1",
+  "scenario_id": "S01",
+  "scenario_label": "english_simple_dummy",
+  "status": "ok",
+  "selected_adapter_name": "dummy_metadata_adapter",
+  "signed_pipeline_status": "ok",
+  "kill_switch_blocked": false,
+  "approve_requested": true,
+  "include_handoff_requested": false,
+  "stages_present": {
+    "phase29_per_invocation_consent": true,
+    "phase30_callable_boundary": true,
+    "phase31_two_adapter_selection": true,
+    "phase32_audit_chain_signing": true,
+    "phase33_three_adapter_signed_evidence": true,
+    "phase34_witness_export": true,
+    "phase35_local_exchange": true,
+    "phase36_optional_handoff": true,
+    "phase37_signed_witness_pipeline": true,
+    "audit_chain_present": true
+  },
+  "audit_chain_length": 6,
+  "no_runtime_leak": true,
+  "runtime_leak_details": [],
+  "expected_adapter_family": "dummy_metadata_adapter",
+  "notes": [
+    "Receipt does NOT carry signing key material.",
+    "Receipt does NOT carry raw operator_id.",
+    "Receipt does NOT carry the spoken render payload."
+  ],
+  "written_at": 1779847484.6204536
+}

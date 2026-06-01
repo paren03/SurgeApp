@@ -1,0 +1,34 @@
+{
+  "verification_id": "p43fc_1779847664",
+  "created_at": 1779847664.1989079,
+  "phase": "phase43.fresh_checkout_verifier.v1",
+  "presence_check": {
+    "ok": true,
+    "missing": [],
+    "present_count": 8,
+    "phase": "phase43.fresh_checkout_verifier.v1"
+  },
+  "hash_check": {
+    "ok": true,
+    "mismatches": [],
+    "phase": "phase43.fresh_checkout_verifier.v1"
+  },
+  "phase42_claims_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase43.fresh_checkout_verifier.v1"
+  },
+  "boundary_claims_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase43.fresh_checkout_verifier.v1"
+  },
+  "phase21_claim_check": {
+    "ok": true,
+    "phase21_status_text": "BLOCKED",
+    "phase": "phase43.fresh_checkout_verifier.v1"
+  },
+  "ok": true,
+  "summary": "phase43 fresh-checkout: presence_ok=True hash_ok=True p42_ok=True boundary_ok=True phase21_ok=True",
+  "written_at": 1779847664.2049384
+}

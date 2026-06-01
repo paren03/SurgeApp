@@ -1,0 +1,236 @@
+{
+  "verification_id": "vfy_1779847493",
+  "created_at": 1779847493.6674228,
+  "phase": "phase40.replay_verifier.v1",
+  "contract": {
+    "contract_id": "rpcontract_1779847493",
+    "created_at": 1779847493.0685558,
+    "phase": "phase40.replay_contract.v1",
+    "replay_id": "replay_1779847493",
+    "source_phase": "phase39",
+    "metadata": {},
+    "required_replay_inputs": [
+      "rehearsal_contract",
+      "umbrella_consent",
+      "stage_receipts",
+      "rehearsal_trace",
+      "rehearsal_recheck",
+      "rehearsal_report",
+      "phase38_governance_artifacts"
+    ],
+    "drift_categories": [
+      "missing_artifact",
+      "hash_chain_drift",
+      "consent_binding_drift",
+      "adapter_allowlist_drift",
+      "governance_doc_drift",
+      "baseline_drift",
+      "phase21_status_drift",
+      "forbidden_boundary_drift",
+      "secret_leakage",
+      "audio_artifact_drift",
+      "rollback_matrix_drift",
+      "commit_safety_drift"
+    ],
+    "forbidden_actions": [
+      "new_adapter_invocation",
+      "generate_audio",
+      "invoke_tts",
+      "run_subprocess",
+      "call_powershell",
+      "call_sapi",
+      "call_piper",
+      "write_audio_file",
+      "clone_voice",
+      "network_call",
+      "open_socket",
+      "multiprocessing",
+      "main_runtime_integration",
+      "production_db_modification",
+      "corpus_import",
+      "production_signing_secret_storage",
+      "git_commit_of_signing_secret",
+      "program_s_modification",
+      "tier_probe_attestation_modification",
+      "worker_or_luna_modules_modification"
+    ],
+    "rehearsal_dry_run_only": true,
+    "new_adapter_invocation_forbidden": true,
+    "production_db_must_remain_unchanged": true,
+    "notes": [
+      "Replay re-derives hashes and compares against stored evidence; it does NOT invoke adapters.",
+      "All reads are bounded and local.",
+      "Drift detection is read-only."
+    ]
+  },
+  "artifacts_summary": {
+    "ok": true,
+    "summary": "phase40 loader: loaded=5 stage_receipts=10 missing=0 rejected=0",
+    "sizes_bytes": {
+      "rehearsal_contract": 6164,
+      "umbrella_consent": 860,
+      "rehearsal_trace": 15720,
+      "rehearsal_recheck": 1065,
+      "rehearsal_report": 26306
+    },
+    "phase": "phase40.replay_loader.v1"
+  },
+  "trace_replay": {
+    "replay_id": "trplay_1779847493",
+    "created_at": 1779847493.0694935,
+    "phase": "phase40.trace_replayer.v1",
+    "rederived_receipt_count": 10,
+    "stored_receipt_count": 10,
+    "chain_count_ok": true,
+    "rederived_receipt_hash_chain": [
+      "471ef49b8ad47ee59c6538cb5c470e7546e83f7306c33c248cea75e5d31ac49a",
+      "387979c895f23307e8c81e26802b40d40b5eec58e457f70ab0623f476c955db5",
+      "1159ac9ff2332ec33554706a6e55e8806c073a0a5e566da15908ff08d337de36",
+      "249799170c61127f74b4a1b00915045664421ae8662413bb170c02bff10606e8",
+      "69dc316446bfe7d83a6201da2bb57267d523d79381c0150d916ea146cc86caca",
+      "56e69d8cbaa41f0caf9aa2f7e419d8ab3fef99d652755a8ef6aacff44e9e51bb",
+      "98df73cf9c6c5b18f656704c6e9b3e5f0667380d12ef0682945230c70791c655",
+      "36829553ad740a5d38c087a4ef56218b49668585b227ec5622a2a9ba55788912",
+      "1df3ff2fff21d7bba074cd1b460c93b955ed5b73589b6f21c7b6f0f3c5d4ba1b",
+      "cc492a427cf47940e5e3cdff7e438df706fe0c6b409b1c4e1cf50b0f3d789437"
+    ],
+    "rederived_root_hash": "b22bd86e340a3cdb1685897c5a9181bce2b50e4bc8b0d6c5777b8fdf1ef37eeb",
+    "stored_root_hash": "b22bd86e340a3cdb1685897c5a9181bce2b50e4bc8b0d6c5777b8fdf1ef37eeb",
+    "tampering_check": {
+      "ok": true,
+      "reasons": [],
+      "rederived_root_hash": "b22bd86e340a3cdb1685897c5a9181bce2b50e4bc8b0d6c5777b8fdf1ef37eeb",
+      "stored_root_hash": "b22bd86e340a3cdb1685897c5a9181bce2b50e4bc8b0d6c5777b8fdf1ef37eeb",
+      "chain_matches_loaded_receipts": true,
+      "chain_matches_inline_receipts": true,
+      "bad_receipts": [],
+      "phase": "phase40.trace_replayer.v1"
+    },
+    "ok": true
+  },
+  "drift": {
+    "drift_id": "drift_1779847493",
+    "created_at": 1779847493.6674228,
+    "phase": "phase40.drift_detector.v1",
+    "checks_run": [
+      "missing_artifact",
+      "consent_binding_drift",
+      "adapter_allowlist_drift",
+      "governance_doc_drift",
+      "baseline_drift",
+      "phase21_status_drift",
+      "forbidden_boundary_drift",
+      "secret_audio_command_drift"
+    ],
+    "results": [
+      {
+        "category": "missing_artifact",
+        "drifted": false,
+        "severity": "pass",
+        "missing": [],
+        "rejected": []
+      },
+      {
+        "category": "consent_binding_drift",
+        "drifted": false,
+        "severity": "pass",
+        "expected_binding_hash": "c6e7d03f9c4d5bc54c096977c1a536ddb49c18ced217320ba9d276cd08649793",
+        "stored_binding_hash": "c6e7d03f9c4d5bc54c096977c1a536ddb49c18ced217320ba9d276cd08649793"
+      },
+      {
+        "category": "adapter_allowlist_drift",
+        "drifted": false,
+        "severity": "pass",
+        "current": [
+          "bilingual_segment_metadata_adapter",
+          "dummy_metadata_adapter",
+          "prosody_density_metadata_adapter",
+          "safety_redaction_trace_metadata_adapter"
+        ],
+        "stored": [
+          "bilingual_segment_metadata_adapter",
+          "dummy_metadata_adapter",
+          "prosody_density_metadata_adapter",
+          "safety_redaction_trace_metadata_adapter"
+        ]
+      },
+      {
+        "category": "governance_doc_drift",
+        "drifted": false,
+        "severity": "pass",
+        "ledger_latest_phase": 37
+      },
+      {
+        "category": "baseline_drift",
+        "drifted": false,
+        "severity": "pass",
+        "observed": {
+          "english_words": 2814,
+          "russian_words": 2518,
+          "russian_phrases": 35,
+          "bilingual_concepts": 26,
+          "bilingual_entry_links": 52,
+          "live_pack_manifests": 90
+        },
+        "expected": {
+          "english_words": 2814,
+          "russian_words": 2518,
+          "russian_phrases": 35,
+          "bilingual_concepts": 26,
+          "bilingual_entry_links": 52,
+          "live_pack_manifests": 90
+        },
+        "drifts": []
+      },
+      {
+        "category": "phase21_status_drift",
+        "drifted": false,
+        "severity": "pass",
+        "phase21_status_text": "BLOCKED",
+        "english_incoming_filenames": [],
+        "russian_incoming_filenames": [],
+        "note": "Phase 21 incoming files are NOT imported by Phase 40. Operator must run Phase 21 explicitly."
+      },
+      {
+        "category": "forbidden_boundary_drift",
+        "drifted": false,
+        "severity": "pass",
+        "blocked_count": 17,
+        "adapter_count": 4
+      },
+      {
+        "category": "secret_audio_command_drift",
+        "drifted": false,
+        "severity": "pass",
+        "audio_hits": [],
+        "secret_hits": [],
+        "runtime_flag_hits": []
+      }
+    ],
+    "fail_count": 0,
+    "warn_count": 0,
+    "pass_count": 8,
+    "ok": true
+  },
+  "status": "ok",
+  "fail_count": 0,
+  "warn_count": 0,
+  "baseline_observed": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "baseline_drifts": [],
+  "phase21_status_text": "BLOCKED",
+  "phase21_drifted": false,
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Verification is read-only.",
+    "No adapters were invoked.",
+    "No subprocess / network / audio activity."
+  ],
+  "written_at": 1779847494.8044212
+}

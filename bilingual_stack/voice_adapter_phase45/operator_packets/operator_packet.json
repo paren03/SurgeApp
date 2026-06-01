@@ -1,0 +1,73 @@
+{
+  "packet_id": "p45pkt_1779847536",
+  "created_at": 1779847536.5954583,
+  "phase": "phase45.operator_packet.v1",
+  "phase45_status": "ok",
+  "source_phases": [
+    "phase42",
+    "phase43",
+    "phase44"
+  ],
+  "contract_id": "p45contract_1779847536",
+  "archive_id": "p45arc_1779847536_bdcb709ea1",
+  "manifest_id": "p45man_1779847536_ec6b98b51b",
+  "ledger_id": "p45chain_1779847536_d379d61069",
+  "artifact_count": 25,
+  "phase_counts": {
+    "phase42": 8,
+    "phase43": 8,
+    "phase44": 9
+  },
+  "chain_of_trust_status": "ok",
+  "manifest_verification_status": "ok",
+  "archive_verification_status": "ok",
+  "verification_breakdown": {
+    "presence_ok": true,
+    "hash_ok": true,
+    "chain_ok": true,
+    "boundary_ok": true,
+    "phase21_ok": true,
+    "no_runtime_state_ok": true
+  },
+  "tamper_suite_summary": {
+    "ok": true,
+    "case_count": 13,
+    "detected_count": 13,
+    "undetected_count": 0
+  },
+  "no_runtime_state_dependency_status": "ok",
+  "excluded_artifacts_summary": {
+    "missing": [],
+    "excluded_keys": []
+  },
+  "phase21_import_status": {
+    "status_text": "BLOCKED",
+    "note": "Phase 45 NEVER imports corpus files; status is reported only."
+  },
+  "production_baseline_expected": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_in_archive": true,
+    "no_production_db_read_in_archive": true
+  },
+  "rollback_readiness": "Delete the 10 Phase 45 files (9 modules + harness + report) and the 12 sub-folders under bilingual_stack/voice_adapter_phase45/. Phase 27-44 remain green.",
+  "next_recommended_phase": "Phase 46 cross-archive long-horizon timeline OR Phase 41a continuity-ledger.",
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Packet carries no operator_id, no signing material, no raw transcript, no audio, no command fields.",
+    "Phase 21 import remains BLOCKED unless operator explicitly stages corpus files AND runs Phase 21 separately."
+  ],
+  "written_at": 1779847536.6632502
+}

@@ -1,0 +1,44 @@
+{
+  "manifest_id": "p47man_1779847664_509231c944",
+  "created_at": 1779847664.3034492,
+  "phase": "phase47.federation_manifest.v1",
+  "federation_id": "p47g_1779847664_6279e364fa",
+  "checkout_count": 2,
+  "checkout_ids": [
+    "checkout_1_765767f4",
+    "checkout_2_efb55adb"
+  ],
+  "timeline_root_hashes": {
+    "checkout_1_765767f4": "1de2fa4e03c76f109f8bdf45daa19e3a18a5ddcfa1c278c352228833eef1ee24",
+    "checkout_2_efb55adb": "19286e324ef2a07b24dd70c8c6cb1b1c62d9db6798cc85a3625727850d742f12"
+  },
+  "imported_package_hashes": {
+    "checkout_1_765767f4": "387aaaa885b8669ea9a7f4d3179d0fe76b262a9a6968e96f072d77cad6059403",
+    "checkout_2_efb55adb": "a84f1d6238b96610891ba1abbff6a058f4aa86f8af32145a0db8a74f32ee7384"
+  },
+  "federation_root_hash": "f34726872fbbfa49810a373284fdfea09675d1a47bde3bf7993b37dfd21d4691",
+  "phase21_status_history": {
+    "checkout_1_765767f4": "BLOCKED",
+    "checkout_2_efb55adb": "BLOCKED"
+  },
+  "adapter_allowlist_history": {
+    "checkout_1_765767f4": 5,
+    "checkout_2_efb55adb": 5
+  },
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_in_federation": true,
+    "no_production_db_read_in_federation": true
+  },
+  "manifest_root_hash": "6a5bf8bf61ef7a2d8811696227581775605ef2484e932121b843ab30f8ebba7e",
+  "notes": [
+    "Manifest is content-addressed over checkout ids + timeline roots + package hashes + federation root.",
+    "Phase 21 status carried; never unblocked."
+  ],
+  "written_at": 1779847664.312451
+}

@@ -1,0 +1,36 @@
+{
+  "recheck_id": "rrchk_1779847487",
+  "created_at": 1779847487.6136978,
+  "phase": "phase39.governance_recheck.v1",
+  "trace_id": "rtrace_1779847487",
+  "adapter_allowlist": [
+    "dummy_metadata_adapter",
+    "bilingual_segment_metadata_adapter",
+    "prosody_density_metadata_adapter",
+    "safety_redaction_trace_metadata_adapter"
+  ],
+  "all_receipts_within_allowlist": true,
+  "all_receipts_metadata_only": true,
+  "secret_leakage_ok": true,
+  "bad_adapter_entries": [],
+  "bad_runtime_entries": [],
+  "phase37_metadata_only_detail": {
+    "ok": true,
+    "bad": [],
+    "phase": "phase37.governance_recheck.v1"
+  },
+  "phase37_secret_leakage_detail": {
+    "ok": true,
+    "leaks": [],
+    "phase": "phase37.governance_recheck.v1"
+  },
+  "phase37_allowed_adapters_detail": {
+    "ok": true,
+    "bad": [],
+    "phase": "phase37.governance_recheck.v1"
+  },
+  "summary": "phase39 recheck: receipts=10 allowlist_ok=True metadata_only_ok=True secret_ok=True",
+  "ok": true,
+  "reasons": [],
+  "written_at": 1779847487.616696
+}

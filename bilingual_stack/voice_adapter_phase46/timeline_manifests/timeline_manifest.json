@@ -1,0 +1,49 @@
+{
+  "manifest_id": "p46man_1779847555_13a49b388b",
+  "created_at": 1779847555.4227164,
+  "phase": "phase46.timeline_manifest.v1",
+  "timeline_id": "p46_1779847553_fb8b09ffab",
+  "archive_count": 3,
+  "ordered_captured_ids": [
+    "p46cap_1779847553_ea6ba3a08d",
+    "p46cap_1779847554_c1a65768fb",
+    "p46cap_1779847555_bf061d6abc"
+  ],
+  "captured_sha_dict": {
+    "p46cap_1779847553_ea6ba3a08d": "2a489ef9b5fc25449ba6d2fda6635fcebe68f8c6e434860ac8ba0f66aba3b4d7",
+    "p46cap_1779847554_c1a65768fb": "6477fe467a32b88318d6050290d0bf6fd746eef3e661ff291fb13825bf9514dd",
+    "p46cap_1779847555_bf061d6abc": "b6f74edbc3bf14f4cf28eb78033c0f75a12ba5dfc99df11f7744280bc97fb91d"
+  },
+  "archive_id_dict": {
+    "p46cap_1779847553_ea6ba3a08d": "p45arc_1779847553_58a3bfe7ba",
+    "p46cap_1779847554_c1a65768fb": "p45arc_1779847554_307c4017f2",
+    "p46cap_1779847555_bf061d6abc": "p45arc_1779847555_7b76f5446b"
+  },
+  "archive_created_at_dict": {
+    "p46cap_1779847553_ea6ba3a08d": 1779847553.1078973,
+    "p46cap_1779847554_c1a65768fb": 1779847554.2655098,
+    "p46cap_1779847555_bf061d6abc": 1779847555.4192088
+  },
+  "chain_link_count": 2,
+  "chain_link_hashes": [
+    "b7a4b93d37b7abe9031c77aaf04adaa260c7196515ad00e0aa1c77ec34a02e49",
+    "4b542b71d09d5ceca30be17f4b8ced87616375288a3f61ee8b4aaf84a9a34757"
+  ],
+  "phase21_status": "BLOCKED",
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_in_timeline": true,
+    "no_production_db_read_in_timeline": true
+  },
+  "manifest_root_hash": "b4f6242ce9a5c445ebabcfc9dd9a76b826751f111f661d6613588a4bffdb03ae",
+  "notes": [
+    "Manifest is content-addressed over the captured-archive SHA dict + chain link hashes.",
+    "Phase 21 status carried; never unblocked."
+  ],
+  "written_at": 1779847555.5293686
+}

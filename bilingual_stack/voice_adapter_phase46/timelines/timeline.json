@@ -1,0 +1,148 @@
+{
+  "timeline_id": "p46_1779847553_fb8b09ffab",
+  "created_at": 1779847555.4227164,
+  "phase": "phase46.timeline_builder.v1",
+  "source_phase": "phase45",
+  "archive_count": 3,
+  "ordered_archives": [
+    {
+      "captured_id": "p46cap_1779847553_ea6ba3a08d",
+      "captured_sha256": "2a489ef9b5fc25449ba6d2fda6635fcebe68f8c6e434860ac8ba0f66aba3b4d7",
+      "archive_id": "p45arc_1779847553_58a3bfe7ba",
+      "archive_created_at": 1779847553.1078973,
+      "phase": "phase45.archive_builder.v1",
+      "source_phases": [
+        "phase42",
+        "phase43",
+        "phase44"
+      ],
+      "phase_counts": {
+        "phase42": 8,
+        "phase43": 8,
+        "phase44": 9
+      },
+      "artifact_count": 25,
+      "artifact_hashes_root": "0362e02def8bb605faa126021d6cdd40599a9f9fa646559aec48513984b34c44",
+      "phase21_status_text": "BLOCKED",
+      "boundary_summary": {
+        "no_audio": true,
+        "no_tts": true,
+        "no_subprocess": true,
+        "no_network": true,
+        "no_multiprocessing": true,
+        "no_main_runtime_integration": true,
+        "no_adapter_invocation_in_archive": true,
+        "no_production_db_read_in_archive": true
+      }
+    },
+    {
+      "captured_id": "p46cap_1779847554_c1a65768fb",
+      "captured_sha256": "6477fe467a32b88318d6050290d0bf6fd746eef3e661ff291fb13825bf9514dd",
+      "archive_id": "p45arc_1779847554_307c4017f2",
+      "archive_created_at": 1779847554.2655098,
+      "phase": "phase45.archive_builder.v1",
+      "source_phases": [
+        "phase42",
+        "phase43",
+        "phase44"
+      ],
+      "phase_counts": {
+        "phase42": 8,
+        "phase43": 8,
+        "phase44": 9
+      },
+      "artifact_count": 25,
+      "artifact_hashes_root": "3c1eecfa05cf4c894e31473f39c0f1f4bc6ada803efaaa6d001723da7c33337c",
+      "phase21_status_text": "BLOCKED",
+      "boundary_summary": {
+        "no_audio": true,
+        "no_tts": true,
+        "no_subprocess": true,
+        "no_network": true,
+        "no_multiprocessing": true,
+        "no_main_runtime_integration": true,
+        "no_adapter_invocation_in_archive": true,
+        "no_production_db_read_in_archive": true
+      }
+    },
+    {
+      "captured_id": "p46cap_1779847555_bf061d6abc",
+      "captured_sha256": "b6f74edbc3bf14f4cf28eb78033c0f75a12ba5dfc99df11f7744280bc97fb91d",
+      "archive_id": "p45arc_1779847555_7b76f5446b",
+      "archive_created_at": 1779847555.4192088,
+      "phase": "phase45.archive_builder.v1",
+      "source_phases": [
+        "phase42",
+        "phase43",
+        "phase44"
+      ],
+      "phase_counts": {
+        "phase42": 8,
+        "phase43": 8,
+        "phase44": 9
+      },
+      "artifact_count": 25,
+      "artifact_hashes_root": "efb6c6bee776cb16d436877d3708524afff90b06b23e2ccd20c6b902e681bcee",
+      "phase21_status_text": "BLOCKED",
+      "boundary_summary": {
+        "no_audio": true,
+        "no_tts": true,
+        "no_subprocess": true,
+        "no_network": true,
+        "no_multiprocessing": true,
+        "no_main_runtime_integration": true,
+        "no_adapter_invocation_in_archive": true,
+        "no_production_db_read_in_archive": true
+      }
+    }
+  ],
+  "chain_links": [
+    {
+      "index": 1,
+      "from_captured_id": "p46cap_1779847553_ea6ba3a08d",
+      "to_captured_id": "p46cap_1779847554_c1a65768fb",
+      "from_archive_id": "p45arc_1779847553_58a3bfe7ba",
+      "to_archive_id": "p45arc_1779847554_307c4017f2",
+      "delta_seconds": 1.1576125621795654,
+      "monotonic_ok": true,
+      "archive_ids_distinct": true,
+      "phase21_intact": true,
+      "boundary_intact": true,
+      "link_hash": "b7a4b93d37b7abe9031c77aaf04adaa260c7196515ad00e0aa1c77ec34a02e49",
+      "ok": true
+    },
+    {
+      "index": 2,
+      "from_captured_id": "p46cap_1779847554_c1a65768fb",
+      "to_captured_id": "p46cap_1779847555_bf061d6abc",
+      "from_archive_id": "p45arc_1779847554_307c4017f2",
+      "to_archive_id": "p45arc_1779847555_7b76f5446b",
+      "delta_seconds": 1.1536989212036133,
+      "monotonic_ok": true,
+      "archive_ids_distinct": true,
+      "phase21_intact": true,
+      "boundary_intact": true,
+      "link_hash": "4b542b71d09d5ceca30be17f4b8ced87616375288a3f61ee8b4aaf84a9a34757",
+      "ok": true
+    }
+  ],
+  "timeline_root_hash": "bc231d4583bf653dbc9be5d43e3a9ce8a6643637536e3c6676103c31206ea969",
+  "phase21_status_text": "BLOCKED",
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_in_timeline": true,
+    "no_production_db_read_in_timeline": true
+  },
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Timeline orders Phase 45 archives by monotonic created_at.",
+    "Each archive's boundary_summary must keep no_adapter_invocation_in_archive=True.",
+    "Each archive's Phase 21 status must remain BLOCKED or STAGED_AWAITING_OPERATOR."
+  ],
+  "written_at": 1779847555.5293686
+}

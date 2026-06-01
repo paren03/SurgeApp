@@ -1,0 +1,75 @@
+{
+  "manifest_id": "p43man_1779779050_0135fa6049",
+  "created_at": 1779779050.217208,
+  "phase": "phase43.bundle_manifest.v1",
+  "bundle_id": "p43bndl_1779779050_fa724d0309",
+  "source_phase": "phase42",
+  "artifact_count": 8,
+  "artifact_hashes": {
+    "phase42_audit_contract": "ed525b295fad895df9dd51a200dfd9cf100d5daee4ced25ab07e92872e41eb92",
+    "phase42_trace_batch": "a6eb94bcd0b8116addc5a49220d0316ba32d1f87d4f9a717db5e24e8d135361b",
+    "phase42_coherence_audit": "ce78fa66ff9e9e4dbfb0b1b5726eda2d67e1b2790987cdb859c0c6cf47ad8c19",
+    "phase42_replay_matrix": "790c5ae157a6b4c00474bb741cc357572fe86b013e3710d94a74114230e4fb4d",
+    "phase42_drift_stability_matrix": "e4357f7b2a55900061ee27188004a858a84190c568a1b45154735f714eeb53e8",
+    "phase42_operator_packet": "7fecdbed054017591b679661c88e0bb99189eabac881d31968fc3b71b027b758",
+    "phase42_operator_markdown": "2c4900a62cdf5c609d2c7be2873c25cf6908c78560c3dd20850b99e70a508ce0",
+    "phase42_report": "25f15de54065e63ffbe9aeacac954ee061cf01fcacf972e3bca74438089ec197"
+  },
+  "artifact_sizes": {
+    "phase42_audit_contract": 1751,
+    "phase42_trace_batch": 13707,
+    "phase42_coherence_audit": 1784,
+    "phase42_replay_matrix": 6683,
+    "phase42_drift_stability_matrix": 1475,
+    "phase42_operator_packet": 3010,
+    "phase42_operator_markdown": 960,
+    "phase42_report": 11182
+  },
+  "excluded_patterns": [
+    "*.sqlite",
+    "*.sqlite3",
+    "*.db",
+    "*.wav",
+    "*.mp3",
+    "*.ogg",
+    "*.flac",
+    "*.m4a",
+    "*.aac",
+    "*.opus",
+    "backups/",
+    "synthetic_million/",
+    "quality_samples/",
+    "pilot_imports/",
+    "checkpoints/",
+    "local_secret_handoff/",
+    "corpus_sources/english/incoming/",
+    "corpus_sources/russian/incoming/",
+    ".claude/"
+  ],
+  "phase21_status": "BLOCKED",
+  "production_baseline_summary": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_reinvocation_in_bundle": true,
+    "no_production_db_in_bundle": true
+  },
+  "manifest_root_hash": "2dd11aa5c3c4ecc9dc7e636dec21ea833a516ffa24dbd252996f66a4449a6728",
+  "notes": [
+    "Manifest is content-addressed by manifest_root_hash over artifact hashes.",
+    "No raw content in manifest.",
+    "Phase 21 status carried, not unblocked."
+  ],
+  "written_at": 1779779050.222211
+}

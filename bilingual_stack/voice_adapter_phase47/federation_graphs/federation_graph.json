@@ -1,0 +1,102 @@
+{
+  "graph_id": "p47g_1779847664_6279e364fa",
+  "created_at": 1779847664.3034492,
+  "phase": "phase47.federation_graph.v1",
+  "checkout_count": 2,
+  "checkout_nodes": [
+    {
+      "checkout_id": "checkout_1_765767f4",
+      "package_id": "p47pkg_1779847661_ad7946891f",
+      "timeline_id": "p46_1779847659_6eb6c8cbe7",
+      "manifest_id": "p46man_1779847661_37b4b63a24",
+      "timeline_root_hash": "1de2fa4e03c76f109f8bdf45daa19e3a18a5ddcfa1c278c352228833eef1ee24",
+      "manifest_root_hash": "3a58762de9328505189b9f43e6a42ac07618ab76e6fbf0ab23bee8188909031b",
+      "package_hash": "387aaaa885b8669ea9a7f4d3179d0fe76b262a9a6968e96f072d77cad6059403",
+      "phase21_status_text": "BLOCKED",
+      "adapter_allowlist_count": 5,
+      "boundary_summary": {
+        "no_audio": true,
+        "no_tts": true,
+        "no_subprocess": true,
+        "no_network": true,
+        "no_multiprocessing": true,
+        "no_main_runtime_integration": true,
+        "no_adapter_invocation_in_timeline": true,
+        "no_production_db_read_in_timeline": true
+      }
+    },
+    {
+      "checkout_id": "checkout_2_efb55adb",
+      "package_id": "p47pkg_1779847664_ad9147956c",
+      "timeline_id": "p46_1779847661_21805c0d4d",
+      "manifest_id": "p46man_1779847664_b98a743db5",
+      "timeline_root_hash": "19286e324ef2a07b24dd70c8c6cb1b1c62d9db6798cc85a3625727850d742f12",
+      "manifest_root_hash": "9a21e0a81b58919f884e5f26bd9009a2646ba791f283dfc125ff66148fe7c2ce",
+      "package_hash": "a84f1d6238b96610891ba1abbff6a058f4aa86f8af32145a0db8a74f32ee7384",
+      "phase21_status_text": "BLOCKED",
+      "adapter_allowlist_count": 5,
+      "boundary_summary": {
+        "no_audio": true,
+        "no_tts": true,
+        "no_subprocess": true,
+        "no_network": true,
+        "no_multiprocessing": true,
+        "no_main_runtime_integration": true,
+        "no_adapter_invocation_in_timeline": true,
+        "no_production_db_read_in_timeline": true
+      }
+    }
+  ],
+  "timeline_root_hashes": {
+    "checkout_1_765767f4": "1de2fa4e03c76f109f8bdf45daa19e3a18a5ddcfa1c278c352228833eef1ee24",
+    "checkout_2_efb55adb": "19286e324ef2a07b24dd70c8c6cb1b1c62d9db6798cc85a3625727850d742f12"
+  },
+  "timeline_manifest_hashes": {
+    "checkout_1_765767f4": "3a58762de9328505189b9f43e6a42ac07618ab76e6fbf0ab23bee8188909031b",
+    "checkout_2_efb55adb": "9a21e0a81b58919f884e5f26bd9009a2646ba791f283dfc125ff66148fe7c2ce"
+  },
+  "package_hashes": {
+    "checkout_1_765767f4": "387aaaa885b8669ea9a7f4d3179d0fe76b262a9a6968e96f072d77cad6059403",
+    "checkout_2_efb55adb": "a84f1d6238b96610891ba1abbff6a058f4aa86f8af32145a0db8a74f32ee7384"
+  },
+  "edges": [
+    {
+      "index": 1,
+      "from_checkout_id": "checkout_1_765767f4",
+      "to_checkout_id": "checkout_2_efb55adb",
+      "from_timeline_root": "1de2fa4e03c76f109f8bdf45daa19e3a18a5ddcfa1c278c352228833eef1ee24",
+      "to_timeline_root": "19286e324ef2a07b24dd70c8c6cb1b1c62d9db6798cc85a3625727850d742f12",
+      "edge_hash": "dea8df23d3df9691ae33450557580f810e1897a83aa65e544bdd6c735c3e1bef",
+      "ok": true
+    }
+  ],
+  "federation_root_hash": "f34726872fbbfa49810a373284fdfea09675d1a47bde3bf7993b37dfd21d4691",
+  "phase21_status_summary": {
+    "checkout_1_765767f4": "BLOCKED",
+    "checkout_2_efb55adb": "BLOCKED"
+  },
+  "adapter_allowlist_summary": {
+    "checkout_1_765767f4": 5,
+    "checkout_2_efb55adb": 5
+  },
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_in_federation": true,
+    "no_production_db_read_in_federation": true,
+    "per_checkout_boundary_intact": {
+      "checkout_1_765767f4": true,
+      "checkout_2_efb55adb": true
+    }
+  },
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Graph chains checkouts in import order; federation_root_hash is content-addressed.",
+    "checkout_ids must be distinct."
+  ],
+  "written_at": 1779847664.3114495
+}

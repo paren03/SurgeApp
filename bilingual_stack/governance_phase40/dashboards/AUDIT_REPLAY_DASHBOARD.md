@@ -1,0 +1,33 @@
+# Phase 40 - Operator Audit-Replay Dashboard
+_Generated at 1779847495._
+- **Phase 40 replay status:** ok
+- **Source phase:** phase39
+- **Trace hash status:** match
+- **Drift count:** fail=0 warn=0 pass=8
+- **Baseline status:** ok
+- **Phase 21 import status:** BLOCKED
+- **Adapter allowlist:** 4 of 4
+- **Allowed adapters:**
+  - `dummy_metadata_adapter`
+  - `bilingual_segment_metadata_adapter`
+  - `prosody_density_metadata_adapter`
+  - `safety_redaction_trace_metadata_adapter`
+- **Forbidden boundaries preserved:**
+  - audio_generation
+  - tts_invocation
+  - subprocess_execution
+  - powershell_invocation
+  - sapi_invocation
+  - piper_invocation
+  - audio_file_write
+  - network_call
+  - socket_open
+  - multiprocessing
+  - main_runtime_integration
+  - program_s_modification
+  - tier_probe_attestation_modification
+  - worker_or_luna_modules_modification
+  - production_signing_secret_storage
+  - git_commit_of_signing_secret
+  - new_adapter_invocation
+- **Next recommended phase:** Phase G fifth metadata-only adapter OR Phase 41 cross-machine witness portability harness

@@ -1,0 +1,37 @@
+# Phase 45 - Multi-Bundle Chain-of-Trust Dashboard
+_Generated at 1779847536._
+- **Phase 45 archive status:** ok
+- **Source phases:** ['phase42', 'phase43', 'phase44']
+- **Artifact count:** 25
+- **Chain-of-trust status:** ok
+- **Manifest verification:** ok
+- **Archive verification:** ok
+- **Tamper suite:** ok=True detected=13/13
+- **No-runtime-state status:** ok
+- **Phase 21 import status:** BLOCKED
+- **Adapter allowlist:** 5 of 5
+- **Forbidden boundaries preserved:**
+  - audio_generation
+  - tts_invocation
+  - subprocess_execution
+  - powershell_invocation
+  - sapi_invocation
+  - piper_invocation
+  - audio_file_write
+  - network_call
+  - socket_open
+  - multiprocessing
+  - main_runtime_integration
+  - program_s_modification
+  - tier_probe_attestation_modification
+  - worker_or_luna_modules_modification
+  - production_signing_secret_storage
+  - git_commit_of_signing_secret
+  - new_adapter_invocation
+  - adapter_invocation_in_archive
+  - adapter_reinvocation_in_verifier
+  - production_db_read_in_verifier
+  - corpus_import
+  - broken_chain_order
+  - tampered_artifact_hash
+- **Next recommended phase:** Phase 46 cross-archive long-horizon timeline OR Phase 41a continuity-ledger.

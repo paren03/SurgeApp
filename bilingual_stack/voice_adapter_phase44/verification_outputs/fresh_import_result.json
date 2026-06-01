@@ -1,0 +1,33 @@
+{
+  "verification_id": "p44fcv_1779847664",
+  "created_at": 1779847664.2249413,
+  "phase": "phase44.fresh_import_verifier.v1",
+  "presence_check": {
+    "ok": true,
+    "missing": [],
+    "present_count": 5,
+    "phase": "phase44.fresh_import_verifier.v1"
+  },
+  "hash_check": {
+    "ok": true,
+    "mismatches": [],
+    "phase": "phase44.fresh_import_verifier.v1"
+  },
+  "boundary_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase44.fresh_import_verifier.v1"
+  },
+  "phase21_check": {
+    "ok": true,
+    "phase21_status_text": "BLOCKED",
+    "phase": "phase44.fresh_import_verifier.v1"
+  },
+  "no_runtime_state_check": {
+    "ok": true,
+    "phase": "phase44.fresh_import_verifier.v1"
+  },
+  "ok": true,
+  "summary": "phase44 fresh-import: presence_ok=True hash_ok=True boundary_ok=True phase21_ok=True no_runtime_state_ok=True",
+  "written_at": 1779847664.2769392
+}

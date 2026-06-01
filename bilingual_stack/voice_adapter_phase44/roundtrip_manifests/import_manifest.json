@@ -1,0 +1,42 @@
+{
+  "import_manifest_id": "p44man_1779847664_d807c56af4",
+  "created_at": 1779847664.2209384,
+  "phase": "phase44.import_manifest.v1",
+  "import_id": "p44import_1779847664_c368f0a932",
+  "source_bundle_id": "p43bndl_1779847664_ef3c92d601",
+  "imported_artifact_count": 5,
+  "imported_artifact_hashes": {
+    "portable_bundle": "425c0d01c4d48ecf5975cc7894aa880fa1d6826819ec8fb87a404afbd6effecb",
+    "bundle_manifest": "ad1a7c8647b2a5d48107b002c9cc9a0cd37221005e46675b192d97d3d0967302",
+    "source_operator_packet": "e58ced06031a6808a2f59d28c00d5298659fb1228c4bc1a736c32758adc1f9c0",
+    "source_status_dashboard": "71bb117bffa9d1077bb6355810231663e9201c50c2630c492d58aec434c6685b",
+    "source_phase43_report": "8203b1ba47523de7027a6e17e3c342cb259701bed81365a235e5a9b71e7c4035"
+  },
+  "imported_artifact_sizes": {
+    "portable_bundle": 52276,
+    "bundle_manifest": 2662,
+    "source_operator_packet": 2146,
+    "source_status_dashboard": 1842,
+    "source_phase43_report": 10467
+  },
+  "source_manifest_root_hash": "ffda86129273e5b542773de1647f343731459d8aa68b86acb478823ddd483f14",
+  "import_manifest_root_hash": "b98ac0741cecb9b2b2882e137b544ee6a7d746064e3f0aa405ab1d71e2d6aa96",
+  "source_phase": "phase43",
+  "phase21_status": "BLOCKED",
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_on_import": true,
+    "no_production_db_read_on_import": true
+  },
+  "notes": [
+    "Import manifest is content-addressed.",
+    "Source root hash is rederived from the imported portable_bundle file.",
+    "Phase 21 status carried; never unblocked."
+  ],
+  "written_at": 1779847664.2769392
+}

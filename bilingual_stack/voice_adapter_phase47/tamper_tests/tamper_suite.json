@@ -1,0 +1,78 @@
+{
+  "suite_id": "p47tamper_1779847664",
+  "created_at": 1779847664.3104508,
+  "phase": "phase47.tamper_suite.v1",
+  "case_count": 13,
+  "detected_count": 13,
+  "undetected_count": 0,
+  "results": [
+    {
+      "case": "duplicate_checkout_id",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "timeline_root_hash_mutation",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "federation_root_hash_mutation",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "imported_package_hash_mutation",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "missing_checkout_node",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "adapter_count_mutation",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "phase21_status_unexpected",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_audio_flag",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_secret_field",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_command_field",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_runtime_db_reference",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "production_db_read_claim",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "adapter_invocation_claim",
+      "applied": true,
+      "detected": true
+    }
+  ],
+  "ok": true,
+  "summary": "phase47 tamper suite: cases=13 detected=13 undetected=0",
+  "written_at": 1779847664.3144507
+}

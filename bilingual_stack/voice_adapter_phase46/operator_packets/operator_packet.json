@@ -1,0 +1,54 @@
+{
+  "packet_id": "p46pkt_1779847555",
+  "created_at": 1779847555.4267244,
+  "phase": "phase46.operator_packet.v1",
+  "phase46_status": "ok",
+  "source_phase": "phase45",
+  "contract_id": "p46contract_1779847553",
+  "timeline_id": "p46_1779847553_fb8b09ffab",
+  "manifest_id": "p46man_1779847555_13a49b388b",
+  "archive_count": 3,
+  "monotonic_ordering_status": "ok",
+  "chain_integrity_status": "ok",
+  "manifest_verification_status": "ok",
+  "long_horizon_verification_status": "ok",
+  "verification_breakdown": {
+    "monotonic_ok": true,
+    "unique_ids_ok": true,
+    "chain_ok": true,
+    "boundary_ok": true,
+    "phase21_ok": true,
+    "no_runtime_state_ok": true,
+    "root_hash_ok": true,
+    "manifest_ok": true
+  },
+  "tamper_suite_summary": {
+    "ok": true,
+    "case_count": 12,
+    "detected_count": 12,
+    "undetected_count": 0
+  },
+  "no_runtime_state_dependency_status": "ok",
+  "phase21_import_status": {
+    "status_text": "BLOCKED",
+    "note": "Phase 46 NEVER imports corpus files; status is reported only."
+  },
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_in_timeline": true,
+    "no_production_db_read_in_timeline": true
+  },
+  "rollback_readiness": "Delete the 10 Phase 46 files (9 modules + harness + report) and the 11 sub-folders under bilingual_stack/voice_adapter_phase46/. Phase 27-45 remain green.",
+  "next_recommended_phase": "Phase 47 cross-checkout federated timeline OR Phase 41a continuity-ledger.",
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Packet carries no operator_id, no signing material, no raw transcript, no audio, no command fields.",
+    "Phase 21 import remains BLOCKED unless operator explicitly stages corpus files AND runs Phase 21 separately."
+  ],
+  "written_at": 1779847555.585736
+}

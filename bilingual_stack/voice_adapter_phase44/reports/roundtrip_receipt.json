@@ -1,0 +1,43 @@
+{
+  "receipt_id": "p44rcpt_1779847664",
+  "created_at": 1779847664.2749395,
+  "phase": "phase44.roundtrip_receipt.v1",
+  "source_phase": "phase43",
+  "import_status": "ok",
+  "source_bundle_hash_summary": {
+    "source_manifest_root_hash": "ffda86129273e5b542773de1647f343731459d8aa68b86acb478823ddd483f14",
+    "source_bundle_id": "p43bndl_1779847664_ef3c92d601"
+  },
+  "import_manifest_hash_summary": {
+    "import_manifest_root_hash": "b98ac0741cecb9b2b2882e137b544ee6a7d746064e3f0aa405ab1d71e2d6aa96",
+    "imported_artifact_count": 5
+  },
+  "fresh_verification_status": "ok",
+  "tamper_suite_status": {
+    "ok": true,
+    "case_count": 8,
+    "detected_count": 8,
+    "undetected_count": 0
+  },
+  "artifact_count": 5,
+  "excluded_artifacts_summary": {
+    "missing": [],
+    "rejected": []
+  },
+  "no_runtime_db_dependency": true,
+  "no_adapter_reinvocation": true,
+  "no_audio": true,
+  "no_tts": true,
+  "no_subprocess": true,
+  "no_network": true,
+  "no_multiprocessing": true,
+  "phase21_status": "BLOCKED",
+  "rollback_readiness": "Delete the 10 Phase 44 files (9 modules + harness + report) and the 12 sub-folders under bilingual_stack/voice_adapter_phase44/. Phase 27-43 remain green.",
+  "next_recommended_phase": "Phase 45 multi-bundle archive + chain-of-trust verification OR Phase 41a continuity-ledger.",
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Receipt is content-summary only; no raw artifact bodies.",
+    "Phase 21 import remains BLOCKED unless operator runs Phase 21 separately."
+  ],
+  "written_at": 1779847664.2789392
+}

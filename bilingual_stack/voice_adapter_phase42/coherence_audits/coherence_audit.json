@@ -1,0 +1,59 @@
+{
+  "audit_id": "p42coh_1779847525",
+  "created_at": 1779847525.663849,
+  "phase": "phase42.coherence_auditor.v1",
+  "trace_count": 8,
+  "adapter_coverage": {
+    "category": "adapter_coverage",
+    "ok": true,
+    "success_adapter_count": 5,
+    "covered_in_success": [
+      "bilingual_segment_metadata_adapter",
+      "dummy_metadata_adapter",
+      "memory_continuity_audit_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter"
+    ],
+    "missing_in_success": [],
+    "unexpected_in_success": [],
+    "all_observed_adapters": [
+      "bilingual_segment_metadata_adapter",
+      "dummy_metadata_adapter",
+      "memory_continuity_audit_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter"
+    ]
+  },
+  "status_coherence": {
+    "category": "status_coherence",
+    "ok": true,
+    "mismatches": [],
+    "refusal_or_block_with_signed_pipeline": []
+  },
+  "evidence_coherence": {
+    "category": "evidence_coherence",
+    "ok": true,
+    "missing_signed_evidence": [],
+    "missing_witness_export": [],
+    "missing_exchange": []
+  },
+  "replay_projection_coherence": {
+    "category": "replay_projection_coherence",
+    "ok": true,
+    "missing_projection": [],
+    "bad_trace_hash": []
+  },
+  "memory_privacy": {
+    "category": "memory_privacy",
+    "ok": true,
+    "failures": []
+  },
+  "boundary_preservation": {
+    "category": "boundary_preservation",
+    "ok": true,
+    "failures": []
+  },
+  "ok": true,
+  "summary": "phase42 coherence audit: traces=8 adapter_coverage_ok=True status_ok=True evidence_ok=True projection_ok=True memory_privacy_ok=True boundary_ok=True",
+  "written_at": 1779847526.2723212
+}

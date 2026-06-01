@@ -1,0 +1,67 @@
+{
+  "drift_id": "p47drift_1779847664",
+  "created_at": 1779847664.304452,
+  "phase": "phase47.drift_detector.v1",
+  "checks": [
+    {
+      "category": "checkout_count_drift",
+      "drifted": false,
+      "severity": "pass",
+      "graph_count": 2,
+      "manifest_count": 2,
+      "imported_count": 2
+    },
+    {
+      "category": "timeline_root_drift",
+      "drifted": false,
+      "severity": "pass",
+      "expected": {
+        "checkout_1_765767f4": "1de2fa4e03c76f109f8bdf45daa19e3a18a5ddcfa1c278c352228833eef1ee24",
+        "checkout_2_efb55adb": "19286e324ef2a07b24dd70c8c6cb1b1c62d9db6798cc85a3625727850d742f12"
+      },
+      "observed": {
+        "checkout_1_765767f4": "1de2fa4e03c76f109f8bdf45daa19e3a18a5ddcfa1c278c352228833eef1ee24",
+        "checkout_2_efb55adb": "19286e324ef2a07b24dd70c8c6cb1b1c62d9db6798cc85a3625727850d742f12"
+      }
+    },
+    {
+      "category": "adapter_allowlist_drift",
+      "drifted": false,
+      "severity": "pass",
+      "drifts": []
+    },
+    {
+      "category": "baseline_claim_drift",
+      "drifted": false,
+      "severity": "pass",
+      "drifts": []
+    },
+    {
+      "category": "phase21_status_drift",
+      "drifted": false,
+      "severity": "pass",
+      "drifts_fail": [],
+      "drifts_warn": [],
+      "english_incoming_filenames": [],
+      "russian_incoming_filenames": []
+    },
+    {
+      "category": "boundary_drift",
+      "drifted": false,
+      "severity": "pass",
+      "drifts": []
+    },
+    {
+      "category": "secret_audio_command_drift",
+      "drifted": false,
+      "severity": "pass",
+      "hits": []
+    }
+  ],
+  "fail_count": 0,
+  "warn_count": 0,
+  "pass_count": 7,
+  "ok": true,
+  "summary": "phase47 drift: fail=0 warn=0 pass=7",
+  "written_at": 1779847664.3134503
+}

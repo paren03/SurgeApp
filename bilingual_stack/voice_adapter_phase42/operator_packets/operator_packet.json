@@ -1,0 +1,100 @@
+{
+  "packet_id": "p42pkt_1779847526",
+  "created_at": 1779847526.2383206,
+  "phase": "phase42.operator_packet.v1",
+  "audit_status": "ok",
+  "scenario_coverage": {
+    "scenario_count": 8,
+    "scenario_ids": [
+      "P42-S01",
+      "P42-S02",
+      "P42-S03",
+      "P42-S04",
+      "P42-S05",
+      "P42-S06",
+      "P42-S07",
+      "P42-S08"
+    ],
+    "required_count_observed": 8
+  },
+  "adapter_coverage": {
+    "required_count": 5,
+    "covered_in_success": [
+      "bilingual_segment_metadata_adapter",
+      "dummy_metadata_adapter",
+      "memory_continuity_audit_metadata_adapter",
+      "prosody_density_metadata_adapter",
+      "safety_redaction_trace_metadata_adapter"
+    ],
+    "missing_in_success": [],
+    "adapter_distribution": {
+      "dummy_metadata_adapter": 1,
+      "bilingual_segment_metadata_adapter": 4,
+      "prosody_density_metadata_adapter": 1,
+      "safety_redaction_trace_metadata_adapter": 1,
+      "memory_continuity_audit_metadata_adapter": 1
+    }
+  },
+  "status_summary": {
+    "trace_count": 8,
+    "ok_count": 6,
+    "refused_count": 1,
+    "kill_switch_blocked_count": 1
+  },
+  "evidence_summary": {
+    "signed_evidence_missing": [],
+    "witness_export_missing": [],
+    "exchange_missing": []
+  },
+  "replay_matrix_summary": {
+    "projection_count": 6,
+    "compatibility_status": "ok",
+    "matrix_id": "p42mat_1779847525"
+  },
+  "drift_stability_summary": {
+    "fail_count": 0,
+    "warn_count": 0,
+    "pass_count": 4,
+    "matrix_id": "p42drift_1779847526"
+  },
+  "memory_privacy_summary": {
+    "ok": true,
+    "failures": []
+  },
+  "production_baseline_summary": {
+    "expected": {
+      "english_words": 2814,
+      "russian_words": 2518,
+      "russian_phrases": 35,
+      "bilingual_concepts": 26,
+      "bilingual_entry_links": 52,
+      "live_pack_manifests": 90
+    },
+    "observed": {
+      "english_words": 2814,
+      "russian_words": 2518,
+      "russian_phrases": 35,
+      "bilingual_concepts": 26,
+      "bilingual_entry_links": 52,
+      "live_pack_manifests": 90
+    },
+    "drifts": []
+  },
+  "phase21_import_status": {
+    "status_text": "BLOCKED",
+    "drifted": false,
+    "note": "Phase 42 NEVER imports corpus files; status is reported only."
+  },
+  "boundary_preservation_summary": {
+    "ok": true,
+    "failures": []
+  },
+  "rollback_readiness": "Delete the 9 Phase 42 files (8 modules + harness + report) and the 12 sub-folders under bilingual_stack/voice_adapter_phase42/. Phase 27-41 remain green.",
+  "next_recommended_phase": "Phase 43 multi-machine continuity portability harness OR Phase 41a continuity-ledger.",
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Packet carries no operator_id, no signing material, no raw transcript, no audio, no command fields.",
+    "Phase 21 import remains BLOCKED unless operator explicitly stages corpus files AND runs Phase 21 separately."
+  ],
+  "written_at": 1779847526.2773194
+}

@@ -1,0 +1,56 @@
+{
+  "matrix_id": "p42drift_1779847526",
+  "created_at": 1779847526.2383206,
+  "phase": "phase42.drift_stability_matrix.v1",
+  "trace_count": 8,
+  "coherence_audit_ok": true,
+  "replay_matrix_compatibility": "ok",
+  "adapter_selection_drift": {
+    "category": "adapter_selection_drift",
+    "drifted": false,
+    "severity": "pass",
+    "failures": []
+  },
+  "baseline_drift": {
+    "category": "baseline_drift",
+    "drifted": false,
+    "severity": "pass",
+    "observed": {
+      "english_words": 2814,
+      "russian_words": 2518,
+      "russian_phrases": 35,
+      "bilingual_concepts": 26,
+      "bilingual_entry_links": 52,
+      "live_pack_manifests": 90
+    },
+    "expected": {
+      "english_words": 2814,
+      "russian_words": 2518,
+      "russian_phrases": 35,
+      "bilingual_concepts": 26,
+      "bilingual_entry_links": 52,
+      "live_pack_manifests": 90
+    },
+    "drifts": []
+  },
+  "boundary_drift": {
+    "category": "boundary_drift",
+    "drifted": false,
+    "severity": "pass",
+    "failures": []
+  },
+  "phase21_status_drift": {
+    "category": "phase21_status_drift",
+    "drifted": false,
+    "severity": "pass",
+    "phase21_status_text": "BLOCKED",
+    "english_incoming_filenames": [],
+    "russian_incoming_filenames": []
+  },
+  "fail_count": 0,
+  "warn_count": 0,
+  "pass_count": 4,
+  "ok": true,
+  "summary": "phase42 drift: fail=0 warn=0 pass=4",
+  "written_at": 1779847526.2763197
+}

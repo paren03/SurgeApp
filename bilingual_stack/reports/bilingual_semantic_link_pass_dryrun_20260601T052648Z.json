@@ -1,0 +1,19 @@
+{
+  "ts": "2026-06-01T05:26:18Z",
+  "threshold": 0.55,
+  "model": "paraphrase-multilingual-MiniLM-L12-v2",
+  "en_unlinked_count": 423,
+  "ru_unlinked_count": 213,
+  "report_version": 1,
+  "model_load_s": 5.01,
+  "embed_s": 3.09,
+  "ok": true,
+  "dry_run": true,
+  "created_concepts": 0,
+  "would_create_concepts": 92,
+  "would_create_entry_links": 184,
+  "candidates_above_threshold": 122,
+  "register_skip": 5,
+  "duplicate_en_skip": 25,
+  "elapsed_s": 30.156
+}

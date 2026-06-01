@@ -1,0 +1,59 @@
+{
+  "contract_id": "p42contract_1779847523",
+  "created_at": 1779847523.3197165,
+  "phase": "phase42.audit_contract.v1",
+  "audit_id": "p42_1779847523_6d6062ffd6",
+  "scenario_count": 8,
+  "metadata": {},
+  "required_scenarios": [
+    "simple_english",
+    "russian_first",
+    "mixed_code_switch",
+    "high_prosody",
+    "safety_redaction",
+    "memory_continuity",
+    "approve_false_refusal",
+    "kill_switch_refusal"
+  ],
+  "required_adapter_coverage": [
+    "dummy_metadata_adapter",
+    "bilingual_segment_metadata_adapter",
+    "prosody_density_metadata_adapter",
+    "safety_redaction_trace_metadata_adapter",
+    "memory_continuity_audit_metadata_adapter"
+  ],
+  "forbidden_actions": [
+    "new_adapter_invocation",
+    "generate_audio",
+    "invoke_tts",
+    "run_subprocess",
+    "call_powershell",
+    "call_sapi",
+    "call_piper",
+    "write_audio_file",
+    "clone_voice",
+    "network_call",
+    "open_socket",
+    "multiprocessing",
+    "main_runtime_integration",
+    "production_db_modification",
+    "corpus_import",
+    "production_signing_secret_storage",
+    "git_commit_of_signing_secret",
+    "program_s_modification",
+    "tier_probe_attestation_modification",
+    "worker_or_luna_modules_modification",
+    "raw_transcript_exposure",
+    "sensitive_fact_exposure"
+  ],
+  "rehearsal_dry_run_only": true,
+  "new_adapter_invocation_forbidden": true,
+  "production_db_must_remain_unchanged": true,
+  "phase21_must_remain_blocked_unless_staged": true,
+  "notes": [
+    "Bounded multi-trace coherence audit.",
+    "Read-only over production DBs.",
+    "No new adapters; the five Phase 41 adapters are the only callable surface."
+  ],
+  "written_at": 1779847526.2393217
+}

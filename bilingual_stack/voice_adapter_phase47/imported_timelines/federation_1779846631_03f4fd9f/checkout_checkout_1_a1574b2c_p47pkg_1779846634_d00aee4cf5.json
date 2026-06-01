@@ -1,0 +1,51 @@
+{
+  "checkout_id": "checkout_1_a1574b2c",
+  "package_id": "p47pkg_1779846634_d00aee4cf5",
+  "created_at": 1779846634.1021225,
+  "phase": "phase47.timeline_importer.v1",
+  "source_phase": "phase46",
+  "timeline_id": "p46_1779846631_a3f56aaa26",
+  "timeline_root_hash": "2bb3032399c0d060da7ef75d13e0f05321181c73e06e9c3f77c4458be5a59340",
+  "archive_count": 3,
+  "manifest_id": "p46man_1779846634_d687552841",
+  "manifest_root_hash": "d6330b26e44213440c9fcc790c999cd534543bfda8eb7056e5e37705aa3e5727",
+  "verification_ok": true,
+  "tamper_suite_ok": true,
+  "tamper_detected_count": 12,
+  "tamper_case_count": 12,
+  "phase21_status_text": "BLOCKED",
+  "boundary_summary": {
+    "no_audio": true,
+    "no_tts": true,
+    "no_subprocess": true,
+    "no_network": true,
+    "no_multiprocessing": true,
+    "no_main_runtime_integration": true,
+    "no_adapter_invocation_in_timeline": true,
+    "no_production_db_read_in_timeline": true
+  },
+  "operator_packet_status": "ok",
+  "dashboard_status": "ok",
+  "adapter_allowlist_count": 5,
+  "adapter_allowlist": [
+    "dummy_metadata_adapter",
+    "bilingual_segment_metadata_adapter",
+    "prosody_density_metadata_adapter",
+    "safety_redaction_trace_metadata_adapter",
+    "memory_continuity_audit_metadata_adapter"
+  ],
+  "production_baseline_expected": {
+    "english_words": 2814,
+    "russian_words": 2518,
+    "russian_phrases": 35,
+    "bilingual_concepts": 26,
+    "bilingual_entry_links": 52,
+    "live_pack_manifests": 90
+  },
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Package snapshots Phase 46 timeline + manifest + verification summary only.",
+    "No inline transcripts; no signing material; no operator_id."
+  ],
+  "package_hash": "3289793f06d1daf9d877fce1c06b20d92a5a6492d6f9262c56be137bbecffe11"
+}

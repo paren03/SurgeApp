@@ -1,0 +1,137 @@
+{
+  "ts": "2026-06-01T02:39:03Z",
+  "version": 1,
+  "backend_status": {
+    "ok": true,
+    "backend": {
+      "pymorphy3_available": true,
+      "pymorphy2_available": false,
+      "nltk_available": true,
+      "wordfreq_available": true,
+      "active_backend": "pymorphy3"
+    },
+    "checked_at": 1780281543.919952
+  },
+  "backend_detection": {
+    "pymorphy3_available": true,
+    "pymorphy2_available": false,
+    "nltk_available": true,
+    "wordfreq_available": true,
+    "active_backend": "pymorphy3"
+  },
+  "entry_audit": {
+    "ok": true,
+    "rows_inspected": 500,
+    "missing_lemma": 0,
+    "missing_pos": 0,
+    "limit_used": 500,
+    "samples": [
+      {
+        "word": "друг",
+        "lemma": "друг",
+        "pos": "noun"
+      },
+      {
+        "word": "вместе",
+        "lemma": "вместе",
+        "pos": "adverb"
+      },
+      {
+        "word": "вопрос",
+        "lemma": "вопрос",
+        "pos": "noun"
+      },
+      {
+        "word": "решить",
+        "lemma": "решить",
+        "pos": "verb"
+      },
+      {
+        "word": "ответ",
+        "lemma": "ответ",
+        "pos": "noun"
+      },
+      {
+        "word": "помнить",
+        "lemma": "помнить",
+        "pos": "verb"
+      },
+      {
+        "word": "утро",
+        "lemma": "утро",
+        "pos": "noun"
+      },
+      {
+        "word": "начинать",
+        "lemma": "начинать",
+        "pos": "verb"
+      },
+      {
+        "word": "слушать",
+        "lemma": "слушать",
+        "pos": "verb"
+      },
+      {
+        "word": "вечер",
+        "lemma": "вечер",
+        "pos": "noun"
+      },
+      {
+        "word": "интересно",
+        "lemma": "интересный",
+        "pos": "adverb"
+      },
+      {
+        "word": "тихо",
+        "lemma": "тихий",
+        "pos": "adverb"
+      },
+      {
+        "word": "заканчивать",
+        "lemma": "заканчивать",
+        "pos": "verb"
+      },
+      {
+        "word": "повторяемость_эксперимента",
+        "lemma": "повторяемость эксперимента",
+        "pos": "phrase"
+      },
+      {
+        "word": "научный_метод",
+        "lemma": "научный метод",
+        "pos": "phrase"
+      },
+      {
+        "word": "калибровка_прибора",
+        "lemma": "калибровка прибора",
+        "pos": "phrase"
+      },
+      {
+        "word": "погрешность_измерения",
+        "lemma": "погрешность измерения",
+        "pos": "phrase"
+      },
+      {
+        "word": "гипотеза_исследования",
+        "lemma": "гипотеза исследования",
+        "pos": "phrase"
+      },
+      {
+        "word": "препринт",
+        "lemma": "препринт",
+        "pos": "noun"
+      },
+      {
+        "word": "научное_рецензирование",
+        "lemma": "научное рецензирование",
+        "pos": "phrase"
+      }
+    ]
+  },
+  "missing_lemmas_count": 0,
+  "missing_lemmas_sample": [],
+  "missing_pos_count": 0,
+  "missing_pos_sample": [],
+  "repair_proposals_count": 0,
+  "repair_proposals_sample": []
+}

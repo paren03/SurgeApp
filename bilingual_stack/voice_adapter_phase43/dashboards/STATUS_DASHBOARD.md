@@ -1,0 +1,35 @@
+# Phase 43 - Cross-Machine Portability Dashboard
+_Generated at 1779847664._
+- **Phase 43 portability status:** ok
+- **Source phase:** phase42
+- **Artifact count:** 8
+- **Hash verification status:** ok
+- **Fresh-checkout verification:** ok
+- **Excluded artifact status:** ok
+- **No-runtime-DB status:** ok
+- **No-audio status:** ok
+- **No-secret-leakage status:** ok
+- **Phase 21 import status:** BLOCKED
+- **Adapter allowlist:** 5 of 5
+- **Forbidden boundaries preserved:**
+  - audio_generation
+  - tts_invocation
+  - subprocess_execution
+  - powershell_invocation
+  - sapi_invocation
+  - piper_invocation
+  - audio_file_write
+  - network_call
+  - socket_open
+  - multiprocessing
+  - main_runtime_integration
+  - program_s_modification
+  - tier_probe_attestation_modification
+  - worker_or_luna_modules_modification
+  - production_signing_secret_storage
+  - git_commit_of_signing_secret
+  - new_adapter_invocation
+  - adapter_reinvocation_on_fresh_checkout
+  - production_db_read_in_fresh_checkout
+  - corpus_import
+- **Next recommended phase:** Phase 44 cross-machine bundle import + fresh-checkout regression OR Phase 41a continuity-ledger.

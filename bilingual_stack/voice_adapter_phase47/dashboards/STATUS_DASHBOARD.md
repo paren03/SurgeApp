@@ -1,0 +1,42 @@
+# Phase 47 - Cross-Checkout Federated Timeline Dashboard
+_Generated at 1779847664._
+- **Phase 47 status:** ok
+- **Source phase:** phase46
+- **Checkout count:** 2
+- **Federation root status:** match
+- **Imported timeline verification:** ok
+- **Graph verification:** ok
+- **Manifest verification:** ok
+- **Drift status:** fail=0 warn=0 pass=7
+- **Tamper suite:** ok=True detected=13/13
+- **No-runtime-state status:** ok
+- **Phase 21 import status:** BLOCKED
+- **Adapter allowlist:** 5 of 5
+- **Forbidden boundaries preserved:**
+  - audio_generation
+  - tts_invocation
+  - subprocess_execution
+  - powershell_invocation
+  - sapi_invocation
+  - piper_invocation
+  - audio_file_write
+  - network_call
+  - socket_open
+  - multiprocessing
+  - main_runtime_integration
+  - program_s_modification
+  - tier_probe_attestation_modification
+  - worker_or_luna_modules_modification
+  - production_signing_secret_storage
+  - git_commit_of_signing_secret
+  - new_adapter_invocation
+  - adapter_invocation_in_federation
+  - adapter_reinvocation_in_verifier
+  - production_db_read_in_verifier
+  - corpus_import
+  - duplicate_checkout_id
+  - tampered_timeline_root_hash
+  - tampered_federation_root_hash
+  - path_traversal
+  - url_scheme_path
+- **Next recommended phase:** Phase 48 federation portability snapshot OR Phase 41a continuity-ledger.

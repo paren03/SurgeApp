@@ -1,0 +1,38 @@
+{
+  "verification_id": "p45ver_1779847536",
+  "created_at": 1779847536.5089536,
+  "phase": "phase45.archive_verifier.v1",
+  "presence_check": {
+    "ok": true,
+    "missing": [],
+    "present_count": 25,
+    "phase": "phase45.archive_verifier.v1"
+  },
+  "hash_check": {
+    "ok": true,
+    "mismatches": [],
+    "phase": "phase45.archive_verifier.v1"
+  },
+  "chain_integrity_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase45.archive_verifier.v1"
+  },
+  "boundary_check": {
+    "ok": true,
+    "reasons": [],
+    "phase": "phase45.archive_verifier.v1"
+  },
+  "phase21_check": {
+    "ok": true,
+    "phase21_status_text": "BLOCKED",
+    "phase": "phase45.archive_verifier.v1"
+  },
+  "no_runtime_state_check": {
+    "ok": true,
+    "phase": "phase45.archive_verifier.v1"
+  },
+  "ok": true,
+  "summary": "phase45 verify: presence_ok=True hash_ok=True chain_ok=True boundary_ok=True phase21_ok=True no_runtime_state_ok=True",
+  "written_at": 1779847536.6622512
+}

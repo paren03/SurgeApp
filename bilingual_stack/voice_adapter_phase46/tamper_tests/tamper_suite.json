@@ -1,0 +1,73 @@
+{
+  "suite_id": "p46tamper_1779847555",
+  "created_at": 1779847555.4267244,
+  "phase": "phase46.tamper_suite.v1",
+  "case_count": 12,
+  "detected_count": 12,
+  "undetected_count": 0,
+  "results": [
+    {
+      "case": "break_monotonic_order",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "duplicate_archive_id",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "modified_captured_sha",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "missing_chain_link",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "tamper_timeline_root_hash",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "phase21_status_unexpected_at_archive",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "phase21_status_unexpected_at_timeline",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "boundary_violation_per_archive_audio",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "boundary_violation_timeline_adapter",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_secret_field_in_timeline",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_command_field_in_timeline",
+      "applied": true,
+      "detected": true
+    },
+    {
+      "case": "injected_runtime_db_capture_path",
+      "applied": true,
+      "detected": true
+    }
+  ],
+  "ok": true,
+  "summary": "phase46 tamper suite: cases=12 detected=12 undetected=0",
+  "written_at": 1779847555.5847006
+}

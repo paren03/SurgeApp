@@ -1,0 +1,69 @@
+{
+  "suite_id": "p44tamper_1779847664",
+  "created_at": 1779847664.2749395,
+  "phase": "phase44.tamper_suite.v1",
+  "case_count": 8,
+  "detected_count": 8,
+  "undetected_count": 0,
+  "results": [
+    {
+      "case": "missing_replay_matrix",
+      "applied": true,
+      "fresh_ok": false,
+      "detected": true,
+      "fresh_summary": "phase44 fresh-import: presence_ok=True hash_ok=False boundary_ok=True phase21_ok=True no_runtime_state_ok=True"
+    },
+    {
+      "case": "modified_operator_packet_hash",
+      "applied": true,
+      "fresh_ok": false,
+      "detected": true,
+      "fresh_summary": "phase44 fresh-import: presence_ok=True hash_ok=False boundary_ok=True phase21_ok=True no_runtime_state_ok=True"
+    },
+    {
+      "case": "injected_audio_flag",
+      "applied": true,
+      "fresh_ok": false,
+      "detected": true,
+      "fresh_summary": "phase44 fresh-import: presence_ok=True hash_ok=False boundary_ok=False phase21_ok=True no_runtime_state_ok=True"
+    },
+    {
+      "case": "injected_secret_field",
+      "applied": true,
+      "fresh_ok": false,
+      "detected": true,
+      "fresh_summary": "phase44 fresh-import: presence_ok=True hash_ok=False boundary_ok=False phase21_ok=True no_runtime_state_ok=True"
+    },
+    {
+      "case": "injected_command_field",
+      "applied": true,
+      "fresh_ok": false,
+      "detected": true,
+      "fresh_summary": "phase44 fresh-import: presence_ok=True hash_ok=False boundary_ok=False phase21_ok=True no_runtime_state_ok=True"
+    },
+    {
+      "case": "injected_runtime_db_reference",
+      "applied": true,
+      "fresh_ok": false,
+      "detected": true,
+      "fresh_summary": "phase44 fresh-import: presence_ok=True hash_ok=False boundary_ok=False phase21_ok=True no_runtime_state_ok=False"
+    },
+    {
+      "case": "phase21_status_unexpected",
+      "applied": true,
+      "fresh_ok": false,
+      "detected": true,
+      "fresh_summary": "phase44 fresh-import: presence_ok=True hash_ok=False boundary_ok=False phase21_ok=False no_runtime_state_ok=True"
+    },
+    {
+      "case": "adapter_reinvocation_claim",
+      "applied": true,
+      "fresh_ok": false,
+      "detected": true,
+      "fresh_summary": "phase44 fresh-import: presence_ok=True hash_ok=False boundary_ok=False phase21_ok=True no_runtime_state_ok=True"
+    }
+  ],
+  "ok": true,
+  "summary": "phase44 tamper suite: cases=8 detected=8 undetected=0",
+  "written_at": 1779847664.277939
+}

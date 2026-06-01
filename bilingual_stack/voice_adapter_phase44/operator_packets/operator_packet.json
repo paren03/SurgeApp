@@ -1,0 +1,52 @@
+{
+  "packet_id": "p44pkt_1779847664",
+  "created_at": 1779847664.2749395,
+  "phase": "phase44.operator_packet.v1",
+  "phase44_status": "ok",
+  "source_phase": "phase43",
+  "contract_id": "p44contract_1779847664",
+  "import_id": "p44import_1779847664_c368f0a932",
+  "import_simulation_status": "ok",
+  "artifact_import_summary": {
+    "imported_count": 5,
+    "missing": [],
+    "rejected": [],
+    "workspace_dir": "D:\\SurgeApp\\.claude\\worktrees\\strange-lumiere-5d0fc5\\bilingual_stack\\voice_adapter_phase44\\fresh_checkout_simulation\\workspace_1779847664_d0b3e523\\artifacts"
+  },
+  "fresh_verification_status": "ok",
+  "fresh_check_breakdown": {
+    "presence_ok": true,
+    "hash_ok": true,
+    "boundary_ok": true,
+    "phase21_ok": true,
+    "no_runtime_state_ok": true
+  },
+  "tamper_suite_summary": {
+    "ok": true,
+    "case_count": 8,
+    "detected_count": 8,
+    "undetected_count": 0
+  },
+  "roundtrip_receipt_summary": {
+    "receipt_id": "p44rcpt_1779847664",
+    "import_status": "ok",
+    "fresh_verification_status": "ok"
+  },
+  "no_runtime_state_dependency_status": "ok",
+  "excluded_artifacts_summary": {
+    "missing": [],
+    "rejected": []
+  },
+  "phase21_import_status": {
+    "status_text": "BLOCKED",
+    "note": "Phase 44 NEVER imports corpus files."
+  },
+  "rollback_readiness": "Delete the 10 Phase 44 files (9 modules + harness + report) and the 12 sub-folders under bilingual_stack/voice_adapter_phase44/. Phase 27-43 remain green.",
+  "next_recommended_phase": "Phase 45 multi-bundle archive + chain-of-trust verification OR Phase 41a continuity-ledger.",
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Packet carries no operator_id, no signing material, no raw transcript, no audio, no command fields.",
+    "Phase 21 import remains BLOCKED unless operator explicitly stages corpus files AND runs Phase 21 separately."
+  ],
+  "written_at": 1779847664.2789392
+}

@@ -1,0 +1,183 @@
+{
+  "ts": "2026-06-01T02:38:40Z",
+  "ok": true,
+  "mode": "batch",
+  "ranks_per_category": 500,
+  "candidate_pool": 500,
+  "created_concepts": 1909,
+  "created_entry_links": 3818,
+  "skipped_register": 8,
+  "skipped_duplicate": 1271,
+  "per_category": {
+    "core_vocabulary": {
+      "linked": 71,
+      "skipped_register": 0,
+      "skipped_duplicate": 21,
+      "en_pool": 93,
+      "ru_pool": 92,
+      "ranks_scanned": 92
+    },
+    "slang_street_talk": {
+      "linked": 175,
+      "skipped_register": 8,
+      "skipped_duplicate": 35,
+      "en_pool": 222,
+      "ru_pool": 218,
+      "ranks_scanned": 218
+    },
+    "idioms_phrases": {
+      "linked": 12,
+      "skipped_register": 0,
+      "skipped_duplicate": 47,
+      "en_pool": 59,
+      "ru_pool": 419,
+      "ranks_scanned": 59
+    },
+    "professions_jobs": {
+      "linked": 213,
+      "skipped_register": 0,
+      "skipped_duplicate": 41,
+      "en_pool": 272,
+      "ru_pool": 254,
+      "ranks_scanned": 254
+    },
+    "trades_construction": {
+      "linked": 166,
+      "skipped_register": 0,
+      "skipped_duplicate": 87,
+      "en_pool": 253,
+      "ru_pool": 256,
+      "ranks_scanned": 253
+    },
+    "science_math": {
+      "linked": 108,
+      "skipped_register": 0,
+      "skipped_duplicate": 32,
+      "en_pool": 154,
+      "ru_pool": 140,
+      "ranks_scanned": 140
+    },
+    "medicine_health": {
+      "linked": 51,
+      "skipped_register": 0,
+      "skipped_duplicate": 77,
+      "en_pool": 132,
+      "ru_pool": 128,
+      "ranks_scanned": 128
+    },
+    "law_government": {
+      "linked": 115,
+      "skipped_register": 0,
+      "skipped_duplicate": 100,
+      "en_pool": 215,
+      "ru_pool": 230,
+      "ranks_scanned": 215
+    },
+    "business_finance": {
+      "linked": 59,
+      "skipped_register": 0,
+      "skipped_duplicate": 121,
+      "en_pool": 180,
+      "ru_pool": 183,
+      "ranks_scanned": 180
+    },
+    "coding_technology": {
+      "linked": 48,
+      "skipped_register": 0,
+      "skipped_duplicate": 72,
+      "en_pool": 120,
+      "ru_pool": 124,
+      "ranks_scanned": 120
+    },
+    "poetry_literary": {
+      "linked": 214,
+      "skipped_register": 0,
+      "skipped_duplicate": 28,
+      "en_pool": 245,
+      "ru_pool": 242,
+      "ranks_scanned": 242
+    },
+    "philosophy_abstract": {
+      "linked": 148,
+      "skipped_register": 0,
+      "skipped_duplicate": 122,
+      "en_pool": 281,
+      "ru_pool": 270,
+      "ranks_scanned": 270
+    },
+    "art_music_culture": {
+      "linked": 70,
+      "skipped_register": 0,
+      "skipped_duplicate": 85,
+      "en_pool": 160,
+      "ru_pool": 155,
+      "ranks_scanned": 155
+    },
+    "history_geography": {
+      "linked": 59,
+      "skipped_register": 0,
+      "skipped_duplicate": 96,
+      "en_pool": 163,
+      "ru_pool": 155,
+      "ranks_scanned": 155
+    },
+    "psychology_education": {
+      "linked": 66,
+      "skipped_register": 0,
+      "skipped_duplicate": 81,
+      "en_pool": 157,
+      "ru_pool": 147,
+      "ranks_scanned": 147
+    },
+    "mechanics_transportation": {
+      "linked": 74,
+      "skipped_register": 0,
+      "skipped_duplicate": 67,
+      "en_pool": 163,
+      "ru_pool": 141,
+      "ranks_scanned": 141
+    },
+    "food_home_daily_life": {
+      "linked": 129,
+      "skipped_register": 0,
+      "skipped_duplicate": 40,
+      "en_pool": 169,
+      "ru_pool": 172,
+      "ranks_scanned": 169
+    },
+    "regional_dialect": {
+      "linked": 39,
+      "skipped_register": 0,
+      "skipped_duplicate": 70,
+      "en_pool": 112,
+      "ru_pool": 109,
+      "ranks_scanned": 109
+    },
+    "formal_informal_speech": {
+      "linked": 90,
+      "skipped_register": 0,
+      "skipped_duplicate": 22,
+      "en_pool": 112,
+      "ru_pool": 112,
+      "ranks_scanned": 112
+    },
+    "voice_personality": {
+      "linked": 2,
+      "skipped_register": 0,
+      "skipped_duplicate": 14,
+      "en_pool": 52,
+      "ru_pool": 16,
+      "ranks_scanned": 16
+    },
+    "recognition_only_sensitive": {
+      "linked": 0,
+      "skipped_register": 0,
+      "skipped_duplicate": 13,
+      "en_pool": 13,
+      "ru_pool": 18,
+      "ranks_scanned": 13
+    }
+  },
+  "elapsed_s": 3.265,
+  "report_version": 1
+}

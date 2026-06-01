@@ -1,0 +1,20 @@
+{
+  "consent_id": "rconsent_1779847484",
+  "created_at": 1779847484.1751783,
+  "phase": "phase39.consent_orchestrator.v1",
+  "status": "ok",
+  "operator_id_hash": "829be59401fff987f04078ad66bae07c6418559621a402fc5354d716b98c7d30",
+  "scenario_count": 10,
+  "nonce": "df3c6f92460b7a77e3b02fe4e5b0e788",
+  "bound_at": 1779847484,
+  "expiry_at": 1779848084,
+  "binding_hash": "c6e7d03f9c4d5bc54c096977c1a536ddb49c18ced217320ba9d276cd08649793",
+  "rehearsal_dry_run_only": true,
+  "notes": [
+    "Umbrella consent records operator's one-shot authorization for the whole rehearsal pass.",
+    "Per-scenario Phase 29 consent tokens are issued internally by the Phase 37 pipeline.",
+    "No raw operator_id is carried; only its SHA-256 hash.",
+    "No production secret is stored; nonce is fresh per call."
+  ],
+  "written_at": 1779847487.6146975
+}
