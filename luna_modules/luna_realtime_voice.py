@@ -295,19 +295,21 @@ def transcribe_audio_blob(audio_bytes: bytes, mime: str = "audio/webm") -> Dict[
                 "error": f"whisper model failed to load: {_WHISPER_INIT_ERR or 'unknown'}"}
 
     t0 = time.time()
-    # 2026-06-02: language auto-detect so Luna understands BOTH English and
-    # Russian speech. Was hardcoded language="en" which silently garbled any
-    # Russian the operator spoke. Setting language=None lets Whisper detect
-    # the spoken language per-utterance (EN or RU). Operator can force a
-    # single language via LUNA_STT_LANGUAGE env var if auto-detect ever
-    # mis-fires on short utterances.
-    _stt_lang = os.environ.get("LUNA_STT_LANGUAGE", "").strip() or None
+    # 2026-06-02 (REVISED): default to English. Full auto-detect (language=None)
+    # was misfiring to Chinese on short/accented clips, making Luna speak
+    # Chinese and emit "no speech detected". English is the reliable default.
+    # For Russian, the operator sets LUNA_STT_LANGUAGE=ru (deliberate toggle)
+    # — far more reliable than letting Whisper guess among 99 languages.
+    # Future: constrain detection to the EN/RU pair only.
+    _stt_lang = os.environ.get("LUNA_STT_LANGUAGE", "").strip() or "en"
+    if _stt_lang not in ("en", "ru"):
+        _stt_lang = "en"   # never let it pick zh/etc
     try:
         segments, info = _WHISPER_MODEL.transcribe(  # type: ignore[union-attr]
             tmp_path,
             beam_size=1,
             vad_filter=True,
-            language=_stt_lang,   # None = auto-detect EN/RU
+            language=_stt_lang,   # "en" default, "ru" via env — never auto
         )
         text = " ".join(seg.text.strip() for seg in segments).strip()
     except Exception as exc:  # noqa: BLE001
