@@ -114,8 +114,13 @@ TICK_BUDGET_S = 30.0         # the tick itself must finish within this
 # /api/health responses. These two triggers + soft auto-disable cooldown
 # close that gap.
 DASHBOARD_PORT = 8765
-CLOSE_WAIT_WARN = 5          # log warn at this many CLOSE_WAIT sockets
-CLOSE_WAIT_BOUNCE_THRESHOLD = 10   # auto-bounce above this
+CLOSE_WAIT_WARN = 20         # log warn at this many CLOSE_WAIT sockets
+CLOSE_WAIT_BOUNCE_THRESHOLD = 60   # auto-bounce above this
+# Raised 2026-06-02: original threshold of 10 was far too sensitive.
+# A browser dashboard with SSE streams + polling + diagnostic HTTP calls
+# routinely reaches 20-35 CLOSE_WAIT sockets in normal operation. Real
+# socket-pile leaks historically hit 90-200+. New threshold of 60 catches
+# real leaks while tolerating normal browser activity.
 LATENCY_SLOW_MS = 3000       # /api/health >= this counts as "slow"
 SLOW_FAIL_THRESHOLD = 3      # consecutive slow responses before bounce
 AUTO_DISABLE_COOLDOWN_S = 6 * 3600   # soft auto-disable: re-enable after 6h
