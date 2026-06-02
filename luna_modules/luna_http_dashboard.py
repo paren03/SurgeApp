@@ -9490,6 +9490,38 @@ def _chat_handle_send(handler: BaseHTTPRequestHandler) -> None:
                 # normal worker queue below. Never block chat on the brain.
                 pass
 
+        # =====================================================================
+        # LIVE CONVERSATION FAST PATH (2026-06-02)
+        # =====================================================================
+        # Route all conversational messages directly to the sovereign 8B GPU
+        # brain via cognitive_operator_controls.luna_conversation_turn(). This
+        # returns a proper Luna reply and triggers server-side voice synthesis
+        # (XTTS clone) so the operator can both see AND hear the response.
+        # The browser's fast_path=True / answer= path renders the text
+        # immediately without polling the worker queue at all.
+        #
+        # Attachments still go to the worker (vision processing). Any failure
+        # silently falls through to the slow path so chat never hard-breaks.
+        if message and not attachments_in:
+            try:
+                from luna_modules import cognitive_operator_controls as _conv_oc  # type: ignore
+                _conv_result = _conv_oc.luna_conversation_turn(message)
+                _conv_text = str(_conv_result.get("text") or "").strip()
+                if _conv_text:
+                    _send_json(handler, HTTPStatus.OK, {
+                        "ok": True,
+                        "task_id": task_id,
+                        "ack": "Luna replied",
+                        "perm_mode": perm,
+                        "fast_path": True,
+                        "answer": _conv_text,
+                        "trace_id": trace_id,
+                    })
+                    return
+            except Exception:  # noqa: BLE001
+                # Live path failed → fall through to slow worker queue
+                pass
+
         # Slow path: queue a task file for worker.py to pick up.
         payload = {
             "id": task_id,
