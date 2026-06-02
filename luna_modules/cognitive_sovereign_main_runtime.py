@@ -84,11 +84,13 @@ def _resolved_model_name() -> str:
 # with headroom (measured +4.8 GB into ~5.5 GB free). n_ctx kept modest to
 # bound KV-cache VRAM. Operator flips cognitive_main_gpu_llamacpp_enabled.
 _GPU_NGL = -1
-_GPU_N_CTX = 32768  # max confirmed on RTX 2080 8 GB (probed 2026-06-01)
-                     # 32K tokens = 4 GB KV cache; model weights ~4.8 GB → ~8.8 GB
-                     # total, which fits because Windows+CUDA pre-allocates less
-                     # than the full 8 GB nominal. Probe: 8192/16384/24576/32768
-                     # all load and generate correctly at full GPU offload.
+_GPU_N_CTX = 8192   # safe max when XTTS voice clone also runs on GPU
+                     # Revised 2026-06-02: 32768 was proven to fit the brain
+                     # ALONE (4.8 GB weights + 4 GB KV = 8.8 GB) but XTTS
+                     # voice model adds ~2 GB VRAM → total 10.8 GB → hard
+                     # GPU OOM crash on RTX 2080 8 GB. Safe budget:
+                     #   brain weights 4.8 GB + KV@8192 1.0 GB = 5.8 GB
+                     #   + XTTS ~1.5 GB = 7.3 GB → fits with headroom.
 
 
 def _gpu_n_ctx() -> int:
