@@ -238,7 +238,7 @@ from luna_modules.luna_paths import (
 )
 
 _NO_WINDOW: int = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
-SELF_UPGRADE_ENGINE_VERSION = 11
+SELF_UPGRADE_ENGINE_VERSION = 25
 
 def _pythonw_exe() -> str:
     """Return a real (non-stub) pythonw executable for subprocess smoke boots.
@@ -1703,6 +1703,20 @@ def apply_staged_upgrade(target_path: Path, staged_file: Path, proposal_dir: Pat
     return deployment
 
 def determine_deployment_decision(target_file: str, safe_count: int) -> str:
+    # Phase 12: delegate to cognitive_meta_decision when enabled.
+    # Inline fallback preserved verbatim below for fail-open behaviour.
+    try:
+        from luna_modules import cognitive_meta_decision as _cmd
+        if _cmd.is_enabled():
+            return _cmd.classify_deployment_decision(
+                target_file,
+                safe_count,
+                is_structural=structural_target(target_file),
+                caller_hint="worker.determine_deployment_decision",
+            )
+    except Exception:
+        pass
+    # Inline fallback (Phase 12 flag off OR cognitive_meta_decision raised)
     if safe_count <= 0:
         return "SERGE_ALERT"
     if structural_target(target_file):
@@ -2032,14 +2046,32 @@ def review_acquisitions() -> Dict[str, Any]:
     return {"ok": True, "path": str(out), "count": len(receipts)}
 
 def score_decision_candidate(candidate: Dict[str, Any]) -> Dict[str, Any]:
-    impact = int(candidate.get("impact", 1))
-    risk = int(candidate.get("risk", 1))
-    effort = int(candidate.get("effort", 1))
-    confidence = int(candidate.get("confidence", 1))
-    candidate["score"] = impact * 3 + confidence * 2 - risk * 2 - effort
-    return candidate
+    # 2026-05-19 Phase 11: scoring formula migrated to
+    # luna_modules.cognitive_decision_scoring. The cognitive layer
+    # now owns this decision + records it for audit. On any failure
+    # we fall back to the inline formula so behavior is preserved
+    # end-to-end (identical math).
+    try:
+        from luna_modules import cognitive_decision_scoring as _cds
+        return _cds.score_candidate(
+            candidate,
+            caller_hint="worker.score_decision_candidate",
+        )
+    except Exception:  # noqa: BLE001
+        # Fail-open: inline fallback formula identical to pre-Phase-11
+        impact = int(candidate.get("impact", 1))
+        risk = int(candidate.get("risk", 1))
+        effort = int(candidate.get("effort", 1))
+        confidence = int(candidate.get("confidence", 1))
+        candidate["score"] = impact * 3 + confidence * 2 - risk * 2 - effort
+        return candidate
 
 def build_decision_candidates() -> List[Dict[str, Any]]:
+    # Phase 15 brain centralization: runtime keeps the I/O of reading
+    # the signals from disk + counters; the CATALOG of candidate actions
+    # and the IMPACT-BOOST RULES are now owned by
+    # cognitive_meta_decision. Inline fallback below preserves behavior
+    # exactly if the cognitive layer is unavailable or disabled.
     receipts = safe_read_json(ACQUISITION_RECEIPTS_PATH, default={"receipts": []}).get("receipts", [])
     pending_approvals = count_pending_approvals()
     task_memory = safe_read_json(LUNA_TASK_MEMORY_PATH, default={})
@@ -2048,6 +2080,22 @@ def build_decision_candidates() -> List[Dict[str, Any]]:
     oversized_logs = int(((specialist.get("Logic") or {}).get("oversized_logs")) or 0)
     auto_apply_ready = int(((specialist.get("Innovation") or {}).get("auto_apply_ready")) or 0)
     proposals = [p for p in LOGIC_UPDATES_DIR.iterdir() if p.is_dir()] if LOGIC_UPDATES_DIR.exists() else []
+    signals = {
+        "failures":          failures,
+        "pending_approvals": pending_approvals,
+        "receipts":          len(receipts) if isinstance(receipts, list) else 0,
+        "proposals":         len(proposals),
+        "oversized_logs":    oversized_logs,
+        "auto_apply_ready":  auto_apply_ready,
+    }
+    try:
+        from luna_modules import cognitive_meta_decision as _cmd
+        if _cmd.is_enabled():
+            return _cmd.build_decision_candidates_from_signals(
+                signals, caller_hint="worker.build_decision_candidates")
+    except Exception:
+        pass
+    # Inline fallback (Phase 15 flag off OR cognitive_meta_decision raised)
     candidates = [
         {"action": "compact_memory", "label": "Compact memory window", "impact": 2 if failures > 20 else 1, "risk": 1, "effort": 1, "confidence": 4},
         {"action": "rotate_logs", "label": "Rotate stale logs", "impact": 4 if oversized_logs else 1, "risk": 1, "effort": 1, "confidence": 5},
@@ -2092,12 +2140,57 @@ def execute_controlled_decision(action: str) -> Dict[str, Any]:
     return {"ok": False, "detail": "unsupported controlled action"}
 
 def run_meta_decision(task: Dict[str, Any]) -> str:
+    # Phase 12: SELECTION + EXECUTION-THRESHOLD delegated to
+    # cognitive_meta_decision.select_meta_decision when enabled;
+    # EXECUTION + persistence + report formatting stay in runtime.
+    # Inline fallback preserved.
     task_id = task.get("id", "unknown_task")
     auto_execute = bool(task.get("auto_execute", True))
-    candidates = sorted(build_decision_candidates(), key=lambda item: item.get("score", -999), reverse=True)
-    selected = candidates[0] if candidates else {"action": "hold", "label": "Hold position", "score": 0}
-    execution = execute_controlled_decision(selected.get("action", "")) if auto_execute and selected.get("score", 0) >= 4 else {"ok": False, "detail": "autonomy threshold not met"}
-    record = {"ts": now_iso(), "task_id": task_id, "selected_action": selected.get("action", "hold"), "score": selected.get("score", 0), "candidates": candidates[:5], "auto_execute": auto_execute, "execution": execution}
+    candidates_unsorted = build_decision_candidates()
+    selection_explanation = ""
+    cognitive_succeeded = False
+    selected: Dict[str, Any] = {"action": "hold", "label": "Hold position", "score": 0}
+    should_execute = False
+    candidates = sorted(
+        candidates_unsorted,
+        key=lambda item: item.get("score", -999),
+        reverse=True,
+    )
+    try:
+        from luna_modules import cognitive_meta_decision as _cmd
+        if _cmd.is_enabled():
+            selection = _cmd.select_meta_decision(
+                candidates_unsorted,
+                auto_execute=auto_execute,
+                caller_hint="worker.run_meta_decision",
+            )
+            selected = selection.get("selected_candidate") or selected
+            should_execute = bool(selection.get("should_execute"))
+            selection_explanation = str(selection.get("reason_for_decision") or "")
+            cognitive_succeeded = True
+    except Exception:
+        cognitive_succeeded = False
+    if not cognitive_succeeded:
+        selected = candidates[0] if candidates else {
+            "action": "hold", "label": "Hold position", "score": 0}
+        should_execute = auto_execute and selected.get("score", 0) >= 4
+        selection_explanation = "inline_fallback"
+
+    if should_execute:
+        execution = execute_controlled_decision(selected.get("action", ""))
+    else:
+        execution = {"ok": False, "detail": "autonomy threshold not met"}
+
+    record = {
+        "ts": now_iso(),
+        "task_id": task_id,
+        "selected_action": selected.get("action", "hold"),
+        "score": selected.get("score", 0),
+        "candidates": candidates[:5],
+        "auto_execute": auto_execute,
+        "execution": execution,
+        "selection_explanation": selection_explanation,
+    }
     persist_decision_record(record)
     lines = [
         "[LUNA META DECISION ENGINE]",
@@ -2105,6 +2198,7 @@ def run_meta_decision(task: Dict[str, Any]) -> str:
         f"selected_action : {selected.get('action', 'hold')}",
         f"label           : {selected.get('label', '')}",
         f"score           : {selected.get('score', 0)}",
+        f"selection_via   : {selection_explanation or 'cognitive_meta_decision'}",
         "",
         "--- Candidate Ranking ---",
     ]
@@ -2579,10 +2673,41 @@ def _resolve_system_action_operation(operation: str, prompt: str) -> str:
             return resolved
     return ""
 
+# 2026-06-01 Worker disk-thrash fix. WinSW-managed Windows services
+# (LunaQdrantServer / LunaSemanticMemory / LunaTemporalServer /
+# LunaTemporalWorker / LunaWatchdog / LunaDashboard) hold their .out.log /
+# .err.log / .wrapper.log files with exclusive Windows handles. Worker.py
+# CANNOT copy or truncate them — shutil.copy2() fails with PermissionDenied,
+# the file STAYS over the stale-log threshold, and _maintain_low_risk_state()
+# re-flags it as "stale" on every supervisor cycle. Observed live (PID 44168):
+# 107 GB read / 92,206 read ops in 1h48m, ~50% of one core constantly,
+# 17 MB/s sustained disk reads — all from re-attempting rotation on the same
+# locked WinSW logs. Skip them in BOTH the detector and the rotator.
+_WINSW_LOG_SUFFIXES = (".out.log", ".err.log", ".wrapper.log")
+
+
+def _is_winsw_log(log_path: "Path") -> bool:
+    """True if log_path is owned by a Windows WinSW service that holds an
+    exclusive file handle on it. Such logs cannot be rotated from worker.py
+    and re-attempting wastes huge disk I/O."""
+    try:
+        name = log_path.name.lower()
+    except Exception:  # noqa: BLE001
+        return False
+    return any(name.endswith(suf) for suf in _WINSW_LOG_SUFFIXES)
+
+
 def _rotate_logs_action() -> str:
     ARCHIVE_LOGS_DIR.mkdir(parents=True, exist_ok=True)
     archived: List[str] = []
+    skipped_winsw = 0
     for log_path in LOGS_DIR.glob("*.log"):
+        if _is_winsw_log(log_path):
+            # WinSW holds an exclusive handle — copy2/truncate would fail
+            # with PermissionDenied. Skip silently; the service owns the
+            # file's lifecycle. Counted for observability.
+            skipped_winsw += 1
+            continue
         try:
             archive_name = f"{log_path.stem}_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}{log_path.suffix}"
             archive_path = ARCHIVE_LOGS_DIR / archive_name
@@ -2592,7 +2717,7 @@ def _rotate_logs_action() -> str:
         except Exception as exc:
             _diag(f"rotate_logs failed for {log_path}: {exc}")
     append_codex_note("Autonomous maintenance", f"Rotated {len(archived)} log files into {ARCHIVE_LOGS_DIR}.")
-    lines = ["action  : rotate_logs", f"rotated : {len(archived)}", f"archive : {ARCHIVE_LOGS_DIR}", "status  : SUCCESS"]
+    lines = ["action  : rotate_logs", f"rotated : {len(archived)}", f"skipped_winsw : {skipped_winsw}", f"archive : {ARCHIVE_LOGS_DIR}", "status  : SUCCESS"]
     if archived:
         lines += ["files   :", *[f"  {item}" for item in archived[:8]]]
     return system_action_report(lines)
@@ -2815,6 +2940,15 @@ def _notify_self_upgrade(source: str, detail: str) -> None:
 
 
 def _autonomy_cycle_due(state: Dict[str, Any]) -> bool:
+    # 2026-06-02: operator kill-switch for ALL background autonomy. If
+    # memory/kill_switches/luna_autonomy.disabled exists, autonomy cycles
+    # NEVER run — Luna only acts when the operator interacts. Set after
+    # repeated background-work crashes. Delete the flag to re-enable.
+    try:
+        if (PROJECT_DIR / "memory" / "kill_switches" / "luna_autonomy.disabled").exists():
+            return False
+    except Exception:
+        pass
     last_run = str(state.get("last_cycle_at") or "").strip()
     if not last_run:
         return True
@@ -2922,7 +3056,18 @@ def _maintain_low_risk_state() -> None:
         speak("I found low-risk cleanup in memory and compacted the recent history window.", mood="caring")
         run_system_action({"operation": "compact_memory"})
         return
-    stale_logs = [log_path for log_path in LOGS_DIR.glob("*.log") if log_path != WORKER_LOG_PATH and log_path.stat().st_size > 512_000]
+    # 2026-06-01: skip WinSW-owned logs (their service holds an exclusive
+    # handle, copy2 always fails with PermissionDenied) — otherwise these
+    # files stay flagged as stale forever and the rotator re-tries on every
+    # supervisor cycle, observed as 100+ GB read in 2 hours. Also raise
+    # threshold from 512 KB to 5 MB so normal-traffic logs don't trigger a
+    # full file copy every minute.
+    stale_logs = [
+        log_path for log_path in LOGS_DIR.glob("*.log")
+        if log_path != WORKER_LOG_PATH
+        and not _is_winsw_log(log_path)
+        and log_path.stat().st_size > 5 * 1024 * 1024
+    ]
     if stale_logs:
         speak("I found low-risk cleanup in the logs directory and rotated stale logs.", mood="caring")
         run_system_action({"operation": "rotate_logs"})
@@ -2930,6 +3075,13 @@ def _maintain_low_risk_state() -> None:
         speak("Verification cache is healthy. My local logs look clean.", mood="steady")
 
 def _maybe_run_unattended_cycle(state: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    # 2026-06-02: operator kill-switch for background self-edits. Same flag
+    # as the autonomy cycle. When present, Luna does NO unattended self-editing.
+    try:
+        if (PROJECT_DIR / "memory" / "kill_switches" / "luna_autonomy.disabled").exists():
+            return None
+    except Exception:
+        pass
     if not can_proceed_with_evolution():
         _diag("[METACOG] _maybe_run_unattended_cycle: evolution integrity gate blocked the cycle.")
         return None
@@ -3429,6 +3581,66 @@ def _tick_omega_plus_snapshot(last_snapshot: float, interval_seconds: float) -> 
         pass
     return last_snapshot
 
+def _tick_dashboard_warden(last_run: float, interval_seconds: float) -> float:
+    """Run the dashboard memory-leak warden on an interval. Never raises.
+
+    Calls luna_dashboard_warden.tick() which surveys the dashboard
+    listener's RAM and /api/health latency and bounces if the
+    leak/wedge thresholds trip. The tick is internally time-bounded;
+    this wrapper only enforces the interval gate.
+    """
+    try:
+        import time as _t
+        now = _t.time()
+        if (now - last_run) < interval_seconds:
+            return last_run
+        from luna_modules import luna_dashboard_warden as _wd
+        result = _wd.tick()
+        verdict = (result or {}).get("verdict", "?")
+        if verdict in ("bounced", "bounce_failed", "warned", "error"):
+            try:
+                _diag(f"dashboard_warden tick verdict={verdict} "
+                      f"reason={(result or {}).get('reason','')[:120]}")
+            except Exception:
+                pass
+        return now
+    except Exception:
+        return last_run
+
+_LUNA_VAULT_LAST_TICK = 0.0
+_LUNA_VAULT_INTERVAL_S = 300.0  # 5 min — keeps Obsidian State.md fresh without thrash
+
+def _tick_luna_vault_state() -> None:
+    """Refresh Luna's Obsidian vault State.md on a 5-minute interval. NEVER raises.
+
+    Pushes a tight snapshot (mode, state, phase, last_message, task_id,
+    queue depth) from heartbeat_payload() into the vault so the
+    human-readable Luna/State.md stays fresh during long autonomous runs.
+    The vault helper itself is no-op-on-error; this wrapper double-guards.
+    """
+    global _LUNA_VAULT_LAST_TICK
+    try:
+        import time as _t
+        now = _t.time()
+        if (now - _LUNA_VAULT_LAST_TICK) < _LUNA_VAULT_INTERVAL_S:
+            return
+        from luna_modules import luna_vault as _lv
+        hb = heartbeat_payload()
+        _lv.update_state(
+            mode=hb.get("worker_mode", hb.get("mode", "normal")),
+            state=hb.get("state", "?"),
+            phase=hb.get("phase", "?"),
+            last_message=str(hb.get("last_message", ""))[:120],
+            task_id=hb.get("task_id", ""),
+            ts=hb.get("ts", ""),
+            pid=hb.get("pid", ""),
+            queue_depth=hb.get("queue_depth", 0),
+            active_count=hb.get("active_count", 0),
+        )
+        _LUNA_VAULT_LAST_TICK = now
+    except Exception:
+        pass
+
 def _ensure_heartbeat_thread(hb_thread: threading.Thread) -> threading.Thread:
     if hb_thread.is_alive():
         return hb_thread
@@ -3537,20 +3749,22 @@ def _poll_active_tasks() -> Tuple[bool, bool]:
             return claimed_any, False
     return claimed_any, True
 
-def _run_worker_cycle(hb_thread: threading.Thread, omega_plus_last: float, omega_plus_interval_s: float) -> Tuple[threading.Thread, float, bool]:
+def _run_worker_cycle(hb_thread: threading.Thread, omega_plus_last: float, omega_plus_interval_s: float, dashboard_warden_last: float = 0.0, dashboard_warden_interval_s: float = 120.0) -> Tuple[threading.Thread, float, float, bool]:
     ensure_recent_worker_heartbeat("main-loop")
     omega_plus_last = _tick_omega_plus_snapshot(omega_plus_last, omega_plus_interval_s)
+    dashboard_warden_last = _tick_dashboard_warden(dashboard_warden_last, dashboard_warden_interval_s)
+    _tick_luna_vault_state()
     hb_thread = _ensure_heartbeat_thread(hb_thread)
     refresh_worker_lock()
     claimed_any, should_continue = _poll_active_tasks()
     if not should_continue:
-        return hb_thread, omega_plus_last, False
+        return hb_thread, omega_plus_last, dashboard_warden_last, False
     if not claimed_any:
         ensure_recent_worker_heartbeat("idle-loop")
         time.sleep(0.20)
     else:
         time.sleep(0.05)
-    return hb_thread, omega_plus_last, True
+    return hb_thread, omega_plus_last, dashboard_warden_last, True
 
 def _handle_worker_loop_exception(loop_exc: Exception) -> None:
     _diag(f"worker main loop recovered from exception: {loop_exc}")
@@ -3583,9 +3797,11 @@ def worker_loop() -> None:
     try:
         omega_plus_last = 0.0
         omega_plus_interval_s = 60.0
+        dashboard_warden_last = 0.0
+        dashboard_warden_interval_s = 120.0
         while not CORE_STATE.stop_requested:
             try:
-                hb_thread, omega_plus_last, should_continue = _run_worker_cycle(hb_thread, omega_plus_last, omega_plus_interval_s)
+                hb_thread, omega_plus_last, dashboard_warden_last, should_continue = _run_worker_cycle(hb_thread, omega_plus_last, omega_plus_interval_s, dashboard_warden_last, dashboard_warden_interval_s)
                 if not should_continue:
                     return
             except Exception as loop_exc:
@@ -3705,25 +3921,44 @@ def update_long_horizon_context(reason: str, decision_summary: str = "", soverei
     return state
 
 def simulation_forecast(candidate: Dict[str, Any]) -> Dict[str, Any]:
-    target_file = str(candidate.get("target_file") or "")
-    target_path = Path(target_file) if target_file else None
-    core_target = bool(target_path and str(target_path) in CORE_STRUCTURAL_FILES)
-    impact = int(candidate.get("impact", 3))
-    effort = int(candidate.get("effort", 1))
-    confidence = float(candidate.get("confidence", 0.75))
-    risk = 3 if core_target else int(candidate.get("risk", 1))
-    approved = (not core_target and confidence >= 0.70 and risk <= 1) or (core_target and confidence >= 0.95 and risk == 0)
-    forecast = {
-        "ts": now_iso(),
-        "candidate": candidate,
-        "core_target": core_target,
-        "predicted_risk": risk,
-        "predicted_effort": effort,
-        "predicted_impact": impact,
-        "confidence": confidence,
-        "approved": approved,
-        "summary": "approved for sovereign auto-apply" if approved else "staged only or reject",
-    }
+    # Phase 12: REASONING (predict + approval) delegated to
+    # cognitive_meta_decision when enabled; the persistence I/O below
+    # stays in runtime. Inline fallback preserved verbatim so behaviour
+    # is fail-open.
+    forecast: Optional[Dict[str, Any]] = None
+    try:
+        from luna_modules import cognitive_meta_decision as _cmd
+        if _cmd.is_enabled():
+            forecast = _cmd.forecast_candidate(
+                candidate,
+                core_structural_files=CORE_STRUCTURAL_FILES,
+                caller_hint="worker.simulation_forecast",
+            )
+            # Re-stamp ts with worker.now_iso so downstream consumers see
+            # the same timestamp format they did before migration.
+            forecast["ts"] = now_iso()
+    except Exception:
+        forecast = None
+    if forecast is None:
+        target_file = str(candidate.get("target_file") or "")
+        target_path = Path(target_file) if target_file else None
+        core_target = bool(target_path and str(target_path) in CORE_STRUCTURAL_FILES)
+        impact = int(candidate.get("impact", 3))
+        effort = int(candidate.get("effort", 1))
+        confidence = float(candidate.get("confidence", 0.75))
+        risk = 3 if core_target else int(candidate.get("risk", 1))
+        approved = (not core_target and confidence >= 0.70 and risk <= 1) or (core_target and confidence >= 0.95 and risk == 0)
+        forecast = {
+            "ts": now_iso(),
+            "candidate": candidate,
+            "core_target": core_target,
+            "predicted_risk": risk,
+            "predicted_effort": effort,
+            "predicted_impact": impact,
+            "confidence": confidence,
+            "approved": approved,
+            "summary": "approved for sovereign auto-apply" if approved else "staged only or reject",
+        }
     payload = safe_read_json(SIMULATION_FORECASTS_PATH, default={"forecasts": []})
     payload.setdefault("forecasts", []).append(forecast)
     payload["forecasts"] = payload["forecasts"][-100:]
@@ -4060,6 +4295,18 @@ def _audit(event: Dict[str, Any]) -> None:
         pass
 
 def budget_score(action: str, impact: int, effort: int, risk: int, confidence: float) -> Dict[str, Any]:
+    # Phase 12: delegate to cognitive_meta_decision when enabled.
+    # Inline fallback preserved verbatim below for fail-open behaviour.
+    try:
+        from luna_modules import cognitive_meta_decision as _cmd
+        if _cmd.is_enabled():
+            return _cmd.budget_score(
+                action, impact, effort, risk, confidence,
+                caller_hint="worker.budget_score",
+            )
+    except Exception:
+        pass
+    # Inline fallback (Phase 12 flag off OR cognitive_meta_decision raised)
     value = max(0, int(impact)) * 3 + int(round(float(confidence) * 10))
     cost = max(0, int(effort)) * 2 + max(0, int(risk)) * 3
     score = value - cost
@@ -7736,6 +7983,16 @@ def load_api_vault() -> Dict[str, str]:
         key, value = line.split("=", 1)
         key = key.strip()
         value = value.strip()
+        # Defensive: the file's own comments say "[ ... ] is a placeholder
+        # the loader skips" -- enforce that here. Also auto-strip a real
+        # key the operator pasted with surrounding brackets, so a malformed
+        # "[ sk-or-v1-... ]" line still produces a usable key instead of a
+        # 401 from every provider.
+        if value.startswith("[") and value.endswith("]"):
+            inner = value[1:-1].strip()
+            if (not inner) or ("ENTER" in inner.upper()):
+                continue
+            value = inner
         if key:
             payload[key] = value
     posture = {
@@ -8420,11 +8677,30 @@ def _build_personal_messages(prompt_text: str, task: Optional[Dict[str, Any]] = 
         # is the guaranteed fallback.
         pass
 
+    # 2026-05-11 Serge Memory OS: build a relevance-ranked memory block
+    # (Serge's standing preferences + personality profile + retrieved
+    # snippets + recent timeline events). Capped at 8000 chars and
+    # secret-redacted. Wrapped in try/except so any failure falls back
+    # to an empty memory block; the rest of system_text is unchanged.
+    # See memory/luna_memory_os_report.md for the architecture.
+    memory_block = ""
+    try:
+        from luna_modules.luna_memory_os import build_memory_context as _luna_mem_ctx
+        memory_block = _luna_mem_ctx(prompt_text or "", max_chars=8000) or ""
+    except Exception:
+        memory_block = ""
+
+    memory_section = (
+        f"\n\nLuna Memory OS context:\n{memory_block}\n"
+        if memory_block.strip() else ""
+    )
+
     system_text = (
         "You are Luna. You are Serge's witty, warm, concise personal AI companion. "
         "Answer naturally, like a sharp mix of Grok and ChatGPT. Stay brief, smart, and useful. "
         "Use the tool-first result when it exists instead of narrating that you could go check something later.\n\n"
-        f"Core prompt:\n{core_prompt}\n\n"
+        f"Core prompt:\n{core_prompt}\n"
+        f"{memory_section}\n"
         f"Serge journal:\n{journal_blob or '- none yet'}\n\n"
         f"Long-term memory:\n{long_term_facts or '- none yet'}\n\n"
         f"Recent chat history:\n{history_blob or '- none yet'}\n\n"
@@ -10322,22 +10598,27 @@ def generate_luna_chat_response(prompt_text: str, task: Optional[Dict[str, Any]]
 
 def run_chat_response(task: Dict[str, Any]) -> str:
     prompt_text = str(task.get("prompt") or "").strip()
-    # 2026-05-10 chat-command-dispatch hook (Serge approved this single
-    # additive call inside worker.py; everything else is in
-    # luna_modules/luna_command_interpreter.py and the OpenCode worker
-    # queue). Activated by the LUNA_INTERPRET_COMMANDS=1 env var only;
-    # the legacy path is the unconditional fallback for ANY exception
-    # from the new code so a bug in the interpreter cannot break chat.
-    #
-    # Effect: when the user types "fix the live map" or
-    # "have Vega review the dashboard", the prompt is parsed by
-    # luna_command_interpreter.interpret_prompt and (if a queue_for_vega
-    # intent is detected) a Vega task is appended to
-    # memory/opencode/luna_opencode_worker_queue.json and the chat
-    # response is the interpreter's short prose confirmation. Status
-    # queries fall through to legacy. Forbidden targets (worker.py,
-    # kill switch, old terminals, broad live-apply) are refused with
-    # a clear "inviolate floor" message before any queue mutation.
+    # 2026-05-12 Luna One-Brain Unification per Serge:
+    # The single user-facing answer authority is now luna_core_brain.answer().
+    # It owns tier-question detection (audit-guarded, never falls through
+    # to the LLM), the intent router (delegated to live_chat_brain), and
+    # the active-phrase guard that prevents "TIER <N> ACTIVE" from ever
+    # leaking out while the proof chain is unverified.
+    # On any failure, the legacy interpreter + LLM fallback still runs.
+    try:
+        if prompt_text:
+            from luna_modules.luna_core_brain import answer as _luna_core_answer
+            _brain_result = _luna_core_answer(prompt_text)
+            if isinstance(_brain_result, dict) and _brain_result.get("handled"):
+                _ans = _brain_result.get("answer") or ""
+                if _ans:
+                    return _ans
+    except Exception:
+        # Core Brain failure -> legacy chain runs unchanged.
+        pass
+    # 2026-05-10 chat-command-dispatch hook (legacy interpreter path).
+    # Activated by LUNA_INTERPRET_COMMANDS=1; the legacy LLM path is the
+    # unconditional fallback for any exception from this block.
     try:
         if os.environ.get("LUNA_INTERPRET_COMMANDS") == "1" and prompt_text:
             from luna_modules.luna_command_interpreter import (
@@ -10362,6 +10643,21 @@ def run_chat_response(task: Dict[str, Any]) -> str:
                 # actual ps1 / flag-write. The interpreter never runs
                 # destructive commands itself.
                 return _plan.get("prose_response") or "(planned)"
+            # 2026-05-11 Serge: three new intents added in
+            # luna_command_interpreter.py. Each does its own work inside
+            # the interpreter (saves a preference / queries tier truth /
+            # queries model hierarchy) and produces a fully-formed
+            # prose_response. We just surface it. Doing this avoids
+            # routing memory/preference / tier-status / model-hierarchy
+            # questions through the LLM where they would surface the
+            # "No grounded status command matched" message Serge flagged.
+            if _intent in (
+                "save_preference",
+                "tier_status_query",
+                "model_hierarchy_query",
+                "upgrade_adoption_query",
+            ):
+                return _plan.get("prose_response") or "(handled)"
             # Any other intent (status_report / chat_only): fall through
             # to legacy chat handler unchanged.
     except Exception:
@@ -10370,7 +10666,23 @@ def run_chat_response(task: Dict[str, Any]) -> str:
         # swallowed so chat stays responsive even if the new module
         # has a bug; debug logs would already show import errors.
         pass
-    return generate_luna_chat_response(prompt_text, task)
+    # Brain hook moved ABOVE the interpreter (see top of run_chat_response).
+    _llm_answer = generate_luna_chat_response(prompt_text, task)
+    # 2026-05-12 Tier 160 post-LLM canned-only guard. If the LLM emits
+    # only banned canned phrases (e.g. "Luna online, Serge. Sovereign,
+    # awake, and evolving."), rewrite to a useful "missed context"
+    # nudge that reads recent chat history. Any failure -> raw LLM
+    # output is returned unchanged.
+    try:
+        from luna_modules.luna_live_chat_brain import (
+            is_canned_only as _luna_is_canned_only,
+            rewrite_canned_only_answer as _luna_rewrite_canned,
+        )
+        if _luna_is_canned_only(_llm_answer):
+            return _luna_rewrite_canned(prompt_text, _llm_answer)
+    except Exception:
+        pass
+    return _llm_answer
 
 
 def execute_autonomous_code_evolution():
