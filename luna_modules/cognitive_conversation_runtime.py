@@ -510,6 +510,11 @@ def _speak_ack(text: str) -> Dict[str, Any]:
     voice); falls back to the live V3 path. NEVER raises."""
     if not text:
         return {"ok": False, "reason": "empty_ack_text", "audible": False}
+    # 2026-06-02: operator-presence gate. Stay SILENT if the Command Center
+    # is closed / idle (no recent operator turn). Background work is unaffected.
+    _pres = _safe("luna_modules.cognitive_operator_presence")
+    if _pres is not None and not _pres.may_speak_aloud():
+        return {"ok": True, "audible": False, "reason": "operator_absent_silent"}
     # Fast path: instant cloned ack clip (his voice, no synth wait).
     if _fixed_cloned_acks_enabled():
         wav = _next_cloned_ack_wav()
@@ -570,6 +575,11 @@ def _speak_main_reply(text: str, *, want_premium: bool) -> Dict[str, Any]:
 
     NEVER raises.
     """
+    # 2026-06-02: operator-presence gate — stay SILENT if Command Center
+    # is closed / idle (no recent operator turn). Brain work is unaffected.
+    _pres = _safe("luna_modules.cognitive_operator_presence")
+    if _pres is not None and not _pres.may_speak_aloud():
+        return {"ok": True, "audible": False, "reason": "operator_absent_silent"}
     v3 = _safe("luna_modules.cognitive_luna_voice_v3")
     if v3 is None:
         return {"ok": False, "reason": "v3_missing", "audible": False}
@@ -999,6 +1009,15 @@ def handle_turn(text: str, *,
     turn_id = f"convo-{int(time.time() * 1000)}-{uuid.uuid4().hex[:8]}"
     captured = _now_iso()
     started = time.time()
+
+    # 2026-06-02: a real conversation turn means the operator is present at the
+    # open Command Center. Mark presence so this turn's voice is allowed to
+    # play. When no turns happen (Command Center closed), presence goes stale
+    # and the voice gate keeps Luna silent.
+    if allow_audible:
+        _pres0 = _safe("luna_modules.cognitive_operator_presence")
+        if _pres0 is not None:
+            _pres0.mark_present()
 
     if not _is_enabled():
         rec = {"ok": False, "reason": "conversation_runtime_disabled",
