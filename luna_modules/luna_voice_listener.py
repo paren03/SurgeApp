@@ -57,11 +57,11 @@ class VoiceListener:
         from faster_whisper import WhisperModel
         logger.info("Loading Whisper tiny (wake word)...")
         self._whisper_tiny = WhisperModel(
-            WHISPER_TINY_MODEL, device="cuda", compute_type="float16"
+            WHISPER_TINY_MODEL, device="cpu", compute_type="int8"
         )
         logger.info("Loading Whisper base (transcription)...")
         self._whisper_small = WhisperModel(
-            WHISPER_SMALL_MODEL, device="cuda", compute_type="float16"
+            WHISPER_SMALL_MODEL, device="cpu", compute_type="int8"
         )
         logger.info("Whisper models loaded.")
 
