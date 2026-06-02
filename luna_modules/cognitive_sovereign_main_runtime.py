@@ -52,7 +52,13 @@ DEFAULT_MODEL_DIR = os.path.join(PROJECT_ROOT, "local_models")
 # in feature_flags.json to the old name.
 DEFAULT_MODEL_NAME = "hermes3-8b-llama3.1.gguf"
 LEGACY_MODEL_NAME = "qwen2.5-coder-7b-instruct.gguf"
-DEFAULT_N_THREADS = 8
+DEFAULT_N_THREADS = 14   # 2026-06-02: raised 8->14. Host has 16 cores; the
+                          # brain runs on CPU (gpu_llamacpp disabled to avoid
+                          # GPU OOM), so CPU thread count directly bounds reply
+                          # speed. 14 uses most cores while leaving 2 for the OS
+                          # + voice services. ~1.5-1.7x faster generation, zero
+                          # crash risk (CPU-only change). Tunable via the
+                          # n_threads constructor arg if contention appears.
 DEFAULT_MAX_TOKENS = 80
 DEFAULT_TIMEOUT_S = 60.0
 DEFAULT_TEMPERATURE = 0.7
