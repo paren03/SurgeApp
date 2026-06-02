@@ -84,13 +84,16 @@ def _resolved_model_name() -> str:
 # with headroom (measured +4.8 GB into ~5.5 GB free). n_ctx kept modest to
 # bound KV-cache VRAM. Operator flips cognitive_main_gpu_llamacpp_enabled.
 _GPU_NGL = -1
-_GPU_N_CTX = 8192   # safe max when XTTS voice clone also runs on GPU
-                     # Revised 2026-06-02: 32768 was proven to fit the brain
-                     # ALONE (4.8 GB weights + 4 GB KV = 8.8 GB) but XTTS
-                     # voice model adds ~2 GB VRAM → total 10.8 GB → hard
-                     # GPU OOM crash on RTX 2080 8 GB. Safe budget:
-                     #   brain weights 4.8 GB + KV@8192 1.0 GB = 5.8 GB
-                     #   + XTTS ~1.5 GB = 7.3 GB → fits with headroom.
+_GPU_N_CTX = 4096   # CONSERVATIVE safe default — brain + XTTS voice coexist
+                     # Revised 2026-06-02 (2nd pass, after 2 hard crashes):
+                     # 32768 fits the brain ALONE (8.8 GB) but crashes when
+                     # XTTS voice is also resident. Even 8192 left only ~470 MiB
+                     # headroom in live testing (GPU already at 1.9 GB from voice
+                     # services before the brain loads). 4096 is the safe floor:
+                     #   live VRAM 1.9 GB + brain 4.8 GB + KV@4096 0.5 GB = 7.2 GB
+                     #   → ~980 MiB headroom on the 8 GB RTX 2080. No crash.
+                     # Operator can raise via cognitive_main_gpu_n_ctx flag once
+                     # sequential model-load ordering is added.
 
 
 def _gpu_n_ctx() -> int:
