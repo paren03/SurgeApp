@@ -94,19 +94,36 @@ _GPU_N_CTX = 8192   # safe max when XTTS voice clone also runs on GPU
 
 
 def _gpu_n_ctx() -> int:
-    """Live context-window size for the GPU main brain. Flag-tunable
-    (cognitive_main_gpu_n_ctx, default 4096). Bigger = more of the conversation
-    held in active attention, but more VRAM (KV cache ~128 KB/token on this 8B).
-    If a larger ctx doesn't fit GPU, the existing load path auto-falls back to
-    CPU (safe, slower). Floor 512."""
+    """Live context-window size for the GPU main brain.
+
+    Reads the requested value from the flag (cognitive_main_gpu_n_ctx,
+    default 8192) then passes it through the VRAM guard which caps it to
+    whatever actually fits given current GPU memory usage. This prevents
+    OOM crashes when other models (XTTS voice clone etc.) are also in VRAM.
+
+    The guard checks free VRAM RIGHT NOW, subtracts the brain weights (~4.9 GB)
+    and a safety headroom (800 MB), and computes the KV-cache budget from the
+    remainder. On an RTX 2080 8 GB with XTTS loaded, this typically yields
+    8192–16384 tokens of safe context. Without XTTS, up to 24576.
+
+    If the VRAM query fails (no GPU or no pynvml), returns the flag value
+    unchanged — the existing CPU-fallback in the load path handles OOM."""
     ff = _safe_import("luna_modules.cognitive_feature_flags")
-    if ff is None:
-        return _GPU_N_CTX
+    requested = _GPU_N_CTX
+    if ff is not None:
+        try:
+            v = int(ff.read_flags().get("cognitive_main_gpu_n_ctx", _GPU_N_CTX))
+            requested = v if v >= 512 else _GPU_N_CTX
+        except Exception:  # noqa: BLE001
+            pass
+    # Pass through the VRAM guard — caps to what actually fits right now.
     try:
-        v = int(ff.read_flags().get("cognitive_main_gpu_n_ctx", _GPU_N_CTX))
-        return v if v >= 512 else _GPU_N_CTX
+        vg = _safe_import("luna_modules.cognitive_vram_guard")
+        if vg is not None:
+            return vg.safe_n_ctx(requested)
     except Exception:  # noqa: BLE001
-        return _GPU_N_CTX
+        pass
+    return requested
 
 
 def _gpu_llamacpp_enabled() -> bool:
