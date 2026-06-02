@@ -9506,7 +9506,13 @@ def _chat_handle_send(handler: BaseHTTPRequestHandler) -> None:
             try:
                 from luna_modules import cognitive_operator_controls as _conv_oc  # type: ignore
                 _conv_result = _conv_oc.luna_conversation_turn(message)
-                _conv_text = str(_conv_result.get("text") or "").strip()
+                # handle_turn returns {"main_reply": {"text": "..."}, ...}
+                # OR {"text": "..."} depending on the operator wrapper depth.
+                _main = _conv_result.get("main_reply") or {}
+                _conv_text = (
+                    str(_main.get("text") or "")
+                    or str(_conv_result.get("text") or "")
+                ).strip()
                 if _conv_text:
                     _send_json(handler, HTTPStatus.OK, {
                         "ok": True,
