@@ -7014,12 +7014,38 @@ class LunaDashboardHandler(BaseHTTPRequestHandler):
         """Defensive close: a Ctrl+F5'd socket raises during
         ``StreamRequestHandler.finish()`` when it flushes ``wfile``. Swallow
         the socket-died family so the per-request thread exits cleanly
-        instead of propagating to ``handle_error``."""
+        instead of propagating to ``handle_error``.
+
+        2026-06-02 socket-pile fix: explicitly shutdown + close the kernel
+        socket after super().finish() runs. The stdlib path leaves the
+        underlying ``self.connection`` reachable from the thread frame
+        until GC eventually releases it — on Windows that's slow enough
+        that 90 sockets pile in CLOSE_WAIT within 90 sec under heavy
+        browser polling. Explicit shutdown(SHUT_RDWR) sends FIN in both
+        directions immediately, transitioning CLOSE_WAIT -> LAST_ACK ->
+        CLOSED at kernel speed. Combined with the existing
+        Connection: close + close_connection=True on every response,
+        this should kill the socket-pile bounces.
+        """
         try:
             super().finish()
         except _SOCKET_DIED:
             pass
         except Exception:  # noqa: BLE001
+            pass
+        # Force kernel-level close — independent of GC timing.
+        try:
+            import socket as _socket
+            try:
+                self.connection.shutdown(_socket.SHUT_RDWR)
+            except (_SOCKET_DIED, OSError, AttributeError):
+                # Socket already half-closed / already shut / no connection.
+                pass
+            try:
+                self.connection.close()
+            except (_SOCKET_DIED, OSError, AttributeError):
+                pass
+        except Exception:  # noqa: BLE001 — finish() must never raise
             pass
 
     def handle_one_request(self) -> None:
