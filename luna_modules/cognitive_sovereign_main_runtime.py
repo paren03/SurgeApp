@@ -116,13 +116,11 @@ def _gpu_n_ctx() -> int:
             requested = v if v >= 512 else _GPU_N_CTX
         except Exception:  # noqa: BLE001
             pass
-    # Pass through the VRAM guard — caps to what actually fits right now.
-    try:
-        vg = _safe_import("luna_modules.cognitive_vram_guard")
-        if vg is not None:
-            return vg.safe_n_ctx(requested)
-    except Exception:  # noqa: BLE001
-        pass
+    # VRAM guard is opt-in only — NOT called automatically here.
+    # pynvml.nvmlInit() can hang after a hard GPU crash/reboot, which
+    # would cause the dashboard to fail to start. The guard is available
+    # as cognitive_vram_guard.safe_n_ctx() for manual operator use or
+    # future integration once the GPU driver has stabilised.
     return requested
 
 
