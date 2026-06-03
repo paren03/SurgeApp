@@ -37,8 +37,10 @@ SILENCE_FRAMES    = 22      # frames of silence = end of speech (~660ms, was 900
 MAX_SPEECH_FRAMES = int(MAX_SPEECH_SEC * 1000 / FRAME_DURATION_MS)  # hard cap
 QUEUE_MAX_FRAMES  = 120     # ~3.6s of audio — bound the backlog so it can't spiral
 
-WHISPER_TINY_MODEL  = "tiny"   # wake word detection — fastest
-WHISPER_SMALL_MODEL = "base"   # full transcription — more accurate
+WHISPER_TINY_MODEL  = "tiny"            # wake-word detection — fast first-pass filter
+WHISPER_SMALL_MODEL = "large-v3-turbo"  # command transcription — accurate multilingual
+                                        # (verified: hears Russian "Луна" correctly where
+                                        # base heard "Уна"; int8 ≈ 1.5 GB, ~0.3s on GPU)
 
 
 def _whisper_device():
@@ -56,7 +58,7 @@ def _whisper_device():
             lib = pathlib.Path(torch.__file__).parent / "lib"
             if lib.exists():
                 os.add_dll_directory(str(lib))
-            return "cuda", "float16"
+            return "cuda", "int8"   # int8 keeps large-v3-turbo at ~1.5 GB VRAM
     except Exception as e:
         logger.warning(f"GPU Whisper unavailable ({e}); using CPU")
     return "cpu", "int8"
