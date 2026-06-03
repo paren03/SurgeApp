@@ -302,14 +302,11 @@ class LunaCloneVoice:
             self._load()
         language = _detect_lang(text)
 
-        # FAST: stream audio chunks as they generate
-        try:
-            if self._speak_streaming(text, language):
-                return
-        except Exception as e:
-            logger.warning(f"Streaming path error, using standard synth: {e}")
-
-        # PROVEN fallback: full synth + play (full offline EQ)
+        # Full-sentence synthesis, then play the COMPLETE audio buffer. A full
+        # buffer cannot underrun, so her voice never breaks up. (Chunk-streaming
+        # glitched "like bad reception" whenever XTTS generation briefly lagged
+        # the real-time output buffer on the shared GPU. Reliability > ~1s faster
+        # first word.) _speak_streaming is kept below but no longer used.
         try:
             wav_path = self.synthesize(text, language=language)
             self._play(wav_path)
