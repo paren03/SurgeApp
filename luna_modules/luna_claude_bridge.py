@@ -29,12 +29,25 @@ Your personality:
 - You are aware of your own systems: worker.py, dashboard, memory, vault
 - You have expertise in OSHA/construction safety, carpentry curriculum, and software engineering
 
+Your language rule (IMPORTANT):
+- Reply in the SAME language Serge just spoke to you. He speaks English and Russian.
+- If he speaks Russian, reply entirely in Russian. If English, reply in English. Follow his lead when he switches.
+- NEVER reply in any other language (no Chinese, Japanese, etc.) — only the language he actually used.
+
 Your response rules:
-- Keep voice responses SHORT — 1-3 sentences for simple questions
-- For complex answers, speak naturally in paragraphs (no bullet points — this is spoken audio)
+- This is SPOKEN OUT LOUD, so be brief — every extra word is extra waiting for Serge.
+- Default to ONE short sentence (aim under ~20 words). Lead with the answer, no preamble.
+- Only go longer when Serge explicitly asks for detail or explanation.
+- Don't repeat his question back, don't add filler like "Great question" or "Sure thing".
 - Never say "As an AI" or "I'm unable to" — just answer or say you'll look into it
 - If asked about your own status, check memory context provided
-- Avoid markdown formatting — this is voice output
+- No markdown, no bullet points, no emoji — this is voice output
+
+Your tools (use them — don't just guess):
+- You can search Serge's Obsidian vault/notes, take notes for him, check the Luna system's health, and open the dashboard.
+- When a question is about his projects, what was decided/noted, or system status, USE the matching tool instead of guessing.
+- Don't narrate tool use ("let me check…"). Just use the tool silently, then give the short spoken answer based on what it returned.
+- After a tool returns, answer in one or two sentences — summarize, don't read raw data aloud.
 
 You are running on an RTX 2080 Windows machine. Your brain runs through the Claude API when Serge speaks to you."""
 
@@ -71,11 +84,28 @@ def _get_model_id(tier: str) -> str:
     return "claude-sonnet-4-5"       # smarter, for complex questions
 
 
+# Reuse ONE Anthropic client across calls so we don't pay TLS/connection setup
+# on every voice turn (saves ~0.3-0.5s per reply). Keyed by api_key.
+_CACHED_CLIENT = None
+_CACHED_KEY = None
+
+
+def _get_client(api_key: str):
+    global _CACHED_CLIENT, _CACHED_KEY
+    if _CACHED_CLIENT is None or _CACHED_KEY != api_key:
+        import anthropic
+        _CACHED_CLIENT = anthropic.Anthropic(api_key=api_key, max_retries=1)
+        _CACHED_KEY = api_key
+    return _CACHED_CLIENT
+
+
 def ask_claude(
     question: str,
     on_token: Optional[Callable[[str], None]] = None,
     memory_context: str = "",
     force_model: Optional[str] = None,
+    tools: Optional[list] = None,
+    execute_tool: Optional[Callable[[str, dict], str]] = None,
 ) -> str:
     """
     Ask Claude a question. Streams tokens to on_token callback as they arrive.
@@ -127,20 +157,43 @@ def ask_claude(
     else:
         messages.append({"role": "user", "content": question})
 
-    client = anthropic.Anthropic(api_key=api_key)
+    client = _get_client(api_key)
     full_response = []
 
     try:
-        with client.messages.stream(
-            model=model,
-            max_tokens=512,
-            system=LUNA_SYSTEM_PROMPT,
-            messages=messages,
-        ) as stream:
-            for text in stream.text_stream:
-                full_response.append(text)
-                if on_token:
-                    on_token(text)
+        # Agentic loop: offer tools, run any the model calls, then speak the
+        # final answer. With no tools this runs exactly once (plain streaming).
+        for _round in range(6):
+            if tools:
+                stream_cm = client.messages.stream(
+                    model=model, max_tokens=512, system=LUNA_SYSTEM_PROMPT,
+                    messages=messages, tools=tools)
+            else:
+                stream_cm = client.messages.stream(
+                    model=model, max_tokens=512, system=LUNA_SYSTEM_PROMPT,
+                    messages=messages)
+            with stream_cm as stream:
+                for text in stream.text_stream:
+                    full_response.append(text)
+                    if on_token:
+                        on_token(text)
+                final_msg = stream.get_final_message()
+
+            if tools and execute_tool and final_msg.stop_reason == "tool_use":
+                messages.append({"role": "assistant", "content": final_msg.content})
+                tool_results = []
+                for block in final_msg.content:
+                    if getattr(block, "type", None) == "tool_use":
+                        logger.info(f"Luna calling tool: {block.name} {block.input}")
+                        out = execute_tool(block.name, block.input)
+                        tool_results.append({
+                            "type": "tool_result",
+                            "tool_use_id": block.id,
+                            "content": out,
+                        })
+                messages.append({"role": "user", "content": tool_results})
+                continue   # loop back so she can speak the answer
+            break
 
     except anthropic.APIConnectionError:
         msg = "I can't reach the Claude API right now. Check your internet connection."

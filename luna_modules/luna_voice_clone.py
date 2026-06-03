@@ -90,6 +90,57 @@ def _luna_eq(wav, sr):
         return wav
 
 
+def _detect_lang(text: str) -> str:
+    """
+    Pick the XTTS synthesis language from the text itself.
+
+    Restricted ON PURPOSE to Serge's two languages (English + Russian) so the
+    old random Chinese/Japanese bug can never come back: anything that isn't
+    Cyrillic is synthesized as English.
+    """
+    for ch in text:
+        if "Ѐ" <= ch <= "ӿ":     # Cyrillic block → Russian
+            return "ru"
+    return "en"
+
+
+class _LunaEQStream:
+    """
+    Streaming version of _luna_eq. Same corrective curve (matches Luna's real
+    voice profile), but carries each filter's state across chunks so there are
+    NO clicks/ticks at chunk boundaries — her voice stays smooth while we play
+    audio as it streams out of the model.
+    """
+
+    def __init__(self, sr):
+        import scipy.signal as sig
+        self.sr = sr
+        self.sos_low = sig.butter(2, 300, btype="low", fs=sr, output="sos")
+        bw = 1100 / 1.2
+        lo, hi = max(20, 1100 - bw / 2), min(sr / 2 - 1, 1100 + bw / 2)
+        self.sos_peak = sig.butter(2, [lo, hi], btype="band", fs=sr, output="sos")
+        self.sos_high = sig.butter(2, 7500, btype="high", fs=sr, output="sos")
+        # start every filter from rest (zero initial conditions)
+        self.zi_low = sig.sosfilt_zi(self.sos_low) * 0.0
+        self.zi_peak = sig.sosfilt_zi(self.sos_peak) * 0.0
+        self.zi_high = sig.sosfilt_zi(self.sos_high) * 0.0
+        self.g_low = 10 ** (-3.0 / 20)
+        self.g_peak = 10 ** (2.5 / 20)
+        self.g_high = 10 ** (4.0 / 20)
+
+    def process(self, w):
+        import numpy as np
+        import scipy.signal as sig
+        yl, self.zi_low = sig.sosfilt(self.sos_low, w, zi=self.zi_low)
+        w = w + (self.g_low - 1) * yl
+        yp, self.zi_peak = sig.sosfilt(self.sos_peak, w, zi=self.zi_peak)
+        w = w + (self.g_peak - 1) * yp
+        yh, self.zi_high = sig.sosfilt(self.sos_high, w, zi=self.zi_high)
+        w = w + (self.g_high - 1) * yh
+        # fixed headroom (NO per-chunk normalize → avoids volume pumping)
+        return np.clip(w * 0.95, -1.0, 1.0).astype("float32")
+
+
 def _patch_torchaudio_soundfile():
     """
     torchaudio 2.x defaults to torchcodec (needs FFmpeg). Replace torchaudio.load
@@ -176,15 +227,19 @@ class LunaCloneVoice:
             logger.error(f"Failed to load XTTS-v2: {e}")
             self._tts = None
 
-    def synthesize(self, text: str, out_path: str = "") -> str:
+    def synthesize(self, text: str, out_path: str = "", language: str = None) -> str:
         """
         Generate speech in Luna's cloned voice. Returns path to WAV file.
         Uses the cached voice fingerprint (fast path) when available.
+
+        language: "en"/"ru"; auto-detected from the text when None.
         """
         if self._tts is None:
             self._load()
         if self._tts is None:
             raise RuntimeError("XTTS-v2 not available")
+
+        lang = language or _detect_lang(text)
 
         if not out_path:
             fd, out_path = tempfile.mkstemp(suffix=".wav", prefix="luna_clone_")
@@ -195,7 +250,7 @@ class LunaCloneVoice:
             import soundfile as sf
             out = self._model.inference(
                 text,
-                LANGUAGE,
+                lang,
                 self._gpt_cond_latent,
                 self._speaker_embedding,
                 temperature=VOICE_TUNING["temperature"],
@@ -220,7 +275,7 @@ class LunaCloneVoice:
         self._tts.tts_to_file(
             text=text,
             speaker_wav=self._refs,
-            language=LANGUAGE,
+            language=lang,
             file_path=out_path,
             temperature=VOICE_TUNING["temperature"],
             length_penalty=VOICE_TUNING["length_penalty"],
@@ -233,11 +288,30 @@ class LunaCloneVoice:
         return out_path
 
     def speak(self, text: str):
-        """Generate + play Luna's cloned voice immediately."""
+        """
+        Speak text in Luna's cloned voice immediately.
+
+        Tries the STREAMING path first (she begins talking in ~0.5s instead of
+        waiting ~2s for the whole sentence) — same model, same voice, just
+        played as it's generated. If streaming isn't available or errors, falls
+        back to the proven full-synth path so she always speaks.
+        """
         if not text.strip():
             return
+        if self._tts is None:
+            self._load()
+        language = _detect_lang(text)
+
+        # FAST: stream audio chunks as they generate
         try:
-            wav_path = self.synthesize(text)
+            if self._speak_streaming(text, language):
+                return
+        except Exception as e:
+            logger.warning(f"Streaming path error, using standard synth: {e}")
+
+        # PROVEN fallback: full synth + play (full offline EQ)
+        try:
+            wav_path = self.synthesize(text, language=language)
             self._play(wav_path)
             try:
                 os.remove(wav_path)
@@ -246,6 +320,52 @@ class LunaCloneVoice:
         except Exception as e:
             logger.error(f"Clone speak failed: {e}")
             raise
+
+    def _speak_streaming(self, text: str, language: str) -> bool:
+        """
+        Stream synthesis: play audio chunks the moment XTTS produces them.
+        Returns True if it played audio, False to fall back to full synth.
+        Needs the cached voice fingerprint (the fast path).
+        """
+        if self._model is None or self._gpt_cond_latent is None:
+            return False
+        import numpy as np
+        import sounddevice as sd
+
+        eq = _LunaEQStream(24000) if APPLY_LUNA_EQ else None
+        stream = sd.OutputStream(samplerate=24000, channels=1, dtype="float32")
+        stream.start()
+        try:
+            chunks = self._model.inference_stream(
+                text,
+                language,
+                self._gpt_cond_latent,
+                self._speaker_embedding,
+                stream_chunk_size=20,
+                temperature=VOICE_TUNING["temperature"],
+                length_penalty=VOICE_TUNING["length_penalty"],
+                repetition_penalty=VOICE_TUNING["repetition_penalty"],
+                top_k=VOICE_TUNING["top_k"],
+                top_p=VOICE_TUNING["top_p"],
+                speed=VOICE_TUNING["speed"],
+            )
+            got_audio = False
+            for chunk in chunks:
+                if hasattr(chunk, "cpu"):
+                    chunk = chunk.cpu().numpy()
+                chunk = np.asarray(chunk, dtype="float32").reshape(-1)
+                if chunk.size == 0:
+                    continue
+                if eq is not None:
+                    chunk = eq.process(chunk)
+                stream.write(chunk.reshape(-1, 1))
+                got_audio = True
+            return got_audio
+        finally:
+            import time as _t
+            _t.sleep(0.2)        # let the buffer drain so her last word isn't clipped
+            stream.stop()
+            stream.close()
 
     def _play(self, wav_path: str):
         """Play a WAV file through the default audio device."""

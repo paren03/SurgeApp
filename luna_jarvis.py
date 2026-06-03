@@ -38,6 +38,11 @@ if str(SURGE_ROOT) not in sys.path:
     sys.path.insert(0, str(SURGE_ROOT))
 
 from luna_modules.luna_claude_bridge import ask_claude
+from luna_modules import luna_jarvis_tools as jt   # her "hands" (vault, notes, status)
+
+# Active voice listener (set in run_voice_mode). Used to mute the mic while Luna
+# is speaking so she never transcribes her own voice (the freeze/echo fix).
+_LISTENER = None
 
 
 # ── TTS: use Luna's existing voice runtime ────────────────────────────────────
@@ -196,8 +201,15 @@ def process_query(text: str, tts: StreamingTTS) -> bool:
 
     logger.info("Sending to Claude...")
     t0 = time.time()
-    ask_claude(text, on_token=on_token, memory_context=ctx)
-    tts.flush()
+    if _LISTENER is not None:
+        _LISTENER.mute()        # she's about to talk — stop hearing herself
+    try:
+        ask_claude(text, on_token=on_token, memory_context=ctx,
+                   tools=jt.TOOLS, execute_tool=jt.execute_tool)
+        tts.flush()
+    finally:
+        if _LISTENER is not None:
+            _LISTENER.unmute()  # drain her own audio + resume listening
     logger.info(f"Response complete in {time.time()-t0:.2f}s")
     return False
 
@@ -206,21 +218,27 @@ def process_query(text: str, tts: StreamingTTS) -> bool:
 
 def run_voice_mode():
     """Full voice mode: microphone → wake word → STT → Claude → TTS."""
+    global _LISTENER
     from luna_modules.luna_voice_listener import VoiceListener
 
     tts = StreamingTTS()
     listener = VoiceListener()
+    _LISTENER = listener   # let process_query mute the mic while she speaks
 
     logger.info("Loading speech recognition models (first run downloads ~150MB)...")
     speak("Loading voice models. One moment.")
     listener.load_models()
     listener.start_stream()
+    listener.mute()        # mic is open — don't capture our own greeting
     speak("Jarvis mode active. Say Hey Luna to activate me.")
+    listener.unmute()      # drop the greeting echo, start listening clean
 
     stop_event = threading.Event()
 
     def on_wake(text):
-        speak("Yes?")
+        # No spoken "Yes?" ack — her actual reply is the acknowledgment.
+        # (Saves a whole synth+playback cycle → noticeably faster.)
+        pass
 
     def on_transcription(command):
         should_stop = process_query(command, tts)
