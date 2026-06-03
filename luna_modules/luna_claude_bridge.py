@@ -44,8 +44,10 @@ Your response rules:
 - No markdown, no bullet points, no emoji — this is voice output
 
 Your tools (use them — don't just guess):
-- You can search Serge's Obsidian vault/notes, take notes for him, check the Luna system's health, and open the dashboard.
-- When a question is about his projects, what was decided/noted, or system status, USE the matching tool instead of guessing.
+- Search Serge's vault/notes, take notes, check Luna system health, open the dashboard, get the time/date, and (with confirmation) restart the dashboard.
+- When a question is about his projects, what was decided/noted, system status, or the current time/date, USE the matching tool instead of guessing.
+- For the time or date, ALWAYS call get_datetime — you do not know the real current time otherwise.
+- Before RESTARTING the dashboard, confirm with Serge first ("want me to restart it?") and only call restart_dashboard after he says yes. Opening the dashboard needs no confirmation.
 - Don't narrate tool use ("let me check…"). Just use the tool silently, then give the short spoken answer based on what it returned.
 - After a tool returns, answer in one or two sentences — summarize, don't read raw data aloud.
 
@@ -106,6 +108,7 @@ def ask_claude(
     force_model: Optional[str] = None,
     tools: Optional[list] = None,
     execute_tool: Optional[Callable[[str, dict], str]] = None,
+    history: Optional[list] = None,
 ) -> str:
     """
     Ask Claude a question. Streams tokens to on_token callback as they arrive.
@@ -147,8 +150,8 @@ def ask_claude(
     model = _get_model_id(tier)
     logger.info(f"Routing to {model} (tier={tier})")
 
-    # Build messages
-    messages = []
+    # Build messages: prior conversation (rolling history) + this turn
+    messages = list(history or [])
     if memory_context:
         messages.append({
             "role": "user",

@@ -44,6 +44,11 @@ from luna_modules import luna_jarvis_tools as jt   # her "hands" (vault, notes, 
 # is speaking so she never transcribes her own voice (the freeze/echo fix).
 _LISTENER = None
 
+# Rolling conversation memory — the last few turns so she has context across
+# questions ("and what about that one?"). Cleared at the start of each session.
+_HISTORY = []
+_HISTORY_MAX = 12   # keep the last 6 user+assistant exchanges
+
 
 # ── TTS: use Luna's existing voice runtime ────────────────────────────────────
 def speak(text: str):
@@ -203,13 +208,20 @@ def process_query(text: str, tts: StreamingTTS) -> bool:
     t0 = time.time()
     if _LISTENER is not None:
         _LISTENER.mute()        # she's about to talk — stop hearing herself
+    reply = ""
     try:
-        ask_claude(text, on_token=on_token, memory_context=ctx,
-                   tools=jt.TOOLS, execute_tool=jt.execute_tool)
+        reply = ask_claude(text, on_token=on_token, memory_context=ctx,
+                           tools=jt.TOOLS, execute_tool=jt.execute_tool,
+                           history=_HISTORY)
         tts.flush()
     finally:
         if _LISTENER is not None:
             _LISTENER.unmute()  # drain her own audio + resume listening
+    # Remember this exchange (clean turns only) so she has context next time.
+    if reply and reply.strip():
+        _HISTORY.append({"role": "user", "content": text})
+        _HISTORY.append({"role": "assistant", "content": reply})
+        del _HISTORY[:-_HISTORY_MAX]   # keep only the most recent turns
     logger.info(f"Response complete in {time.time()-t0:.2f}s")
     return False
 
@@ -224,6 +236,7 @@ def run_voice_mode():
     tts = StreamingTTS()
     listener = VoiceListener()
     _LISTENER = listener   # let process_query mute the mic while she speaks
+    _HISTORY.clear()       # fresh conversation memory for this session
 
     logger.info("Loading speech recognition models (first run downloads ~150MB)...")
     speak("Loading voice models. One moment.")
@@ -265,6 +278,7 @@ def run_voice_mode():
 
 def run_text_mode():
     """Keyboard input mode — test Claude + TTS without microphone."""
+    _HISTORY.clear()       # fresh conversation memory for this session
     tts = StreamingTTS()
     speak("Jarvis text mode active. Type your questions. Type 'quit' to exit.")
     print("\n[JARVIS TEXT MODE] Type questions below. Ctrl+C to quit.\n")

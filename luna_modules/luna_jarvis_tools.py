@@ -73,16 +73,27 @@ TOOLS = [
     {
         "name": "luna_action",
         "description": (
-            "Perform a safe Luna action. Supported: 'open_dashboard' (open the "
-            "dashboard in the browser). Use when he asks to open/show the dashboard."
+            "Perform a Luna action. 'open_dashboard' opens it in the browser (safe). "
+            "'restart_dashboard' restarts the dashboard via the warden (reversible, "
+            "rate-limited) - ALWAYS confirm with Serge first before calling restart."
         ),
         "input_schema": {
             "type": "object",
             "properties": {
-                "action": {"type": "string", "enum": ["open_dashboard"]}
+                "action": {"type": "string",
+                           "enum": ["open_dashboard", "restart_dashboard"]}
             },
             "required": ["action"],
         },
+    },
+    {
+        "name": "get_datetime",
+        "description": (
+            "Get the current local date and time. Use whenever Serge asks the "
+            "time, the date, the day of the week, or anything time-relative "
+            "('what's today', 'what time is it')."
+        ),
+        "input_schema": {"type": "object", "properties": {}},
     },
 ]
 
@@ -182,7 +193,26 @@ def _luna_action(action: str) -> str:
             return "Opened the dashboard in your browser."
         except Exception as e:
             return f"Couldn't open the dashboard: {e}"
+    if action == "restart_dashboard":
+        # Reuse the warden's own tested bounce (kills + relaunches the dashboard,
+        # and is rate-limited to a safe max per 24h so a misfire can't spiral).
+        try:
+            from luna_modules.luna_dashboard_warden import bounce_now
+            r = bounce_now(reason="voice_request")
+            if r.get("ok"):
+                return "Dashboard restarted."
+            if r.get("skipped") == "24h_cap":
+                return "I've hit the daily restart limit, so I left the dashboard alone."
+            return ("Tried to restart the dashboard but it didn't confirm "
+                    f"({r.get('error') or r.get('skipped') or 'unknown'}).")
+        except Exception as e:
+            return f"Couldn't restart the dashboard: {e}"
     return f"That action ('{action}') isn't available."
+
+
+def _get_datetime() -> str:
+    now = datetime.datetime.now()
+    return now.strftime("It's %A, %B %d, %Y, %I:%M %p.")
 
 
 _DISPATCH = {
@@ -190,6 +220,7 @@ _DISPATCH = {
     "add_vault_note": lambda inp: _add_vault_note(inp.get("note", "")),
     "luna_status":    lambda inp: _luna_status(),
     "luna_action":    lambda inp: _luna_action(inp.get("action", "")),
+    "get_datetime":   lambda inp: _get_datetime(),
 }
 
 
