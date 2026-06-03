@@ -207,9 +207,22 @@ class VoiceListener:
         """
         model = self._whisper_tiny if model_size == "tiny" else self._whisper_small
         if language is None:
-            # Restrict to Serge's two languages. Plain auto-detect was guessing
-            # Hindi/etc. on short accented clips and producing garbage. Force EN
-            # AND RU, then keep whichever transcription is more confident.
+            # Decide en vs ru by Whisper's ACOUSTIC language detection, but
+            # constrained to Serge's two languages (ignores Hindi/etc.). This is
+            # more reliable than comparing forced-transcription confidence, which
+            # mis-heard short Russian ("Который сейчас час?") as English.
+            probs = {}
+            try:
+                _gen, info = model.transcribe(audio_np, language=None, beam_size=1)
+                probs = {l: p for l, p in (getattr(info, "all_language_probs", None) or [])}
+            except Exception:
+                probs = {}
+            if probs.get("ru", 0.0) or probs.get("en", 0.0):
+                # ties -> Russian (Serge's concern was RU being missed)
+                lang = "ru" if probs.get("ru", 0.0) >= probs.get("en", 0.0) else "en"
+                segs, _ = model.transcribe(audio_np, language=lang, beam_size=1)
+                return " ".join(s.text for s in segs).strip().lower()
+            # Fallback (no detection probs): force EN and RU, keep the more confident.
             best_text, best_score = "", -1e9
             for lang in ("en", "ru"):
                 segs, _ = model.transcribe(audio_np, language=lang, beam_size=1)
