@@ -22,9 +22,16 @@ VAULT_ROOT   = Path(r"C:\Users\paren\Documents\Obsidian Vault")
 SESSIONS_DIR = VAULT_ROOT / "20 Sessions"
 SURGE_ROOT   = Path(r"D:\SurgeApp")
 
-# Optional extra docs root (e.g. OSHA / carpentry curriculum). Set later once we
-# know where Serge keeps them; None = search the vault only.
-MATERIALS_ROOT = None
+# Curriculum decks (PowerPoint) are indexed to fast-searchable TEXT in this cache,
+# so voice search stays quick (no live .pptx parsing per query). Re-run
+# rebuild_curriculum_cache() after editing the decks to refresh.
+CURRICULUM_CACHE = SURGE_ROOT / "memory" / "curriculum_cache"
+CURRICULUM_DECKS = [
+    # Canonical curriculum decks. Add Serge's real ones here, then rebuild.
+    Path(r"C:\n8n-run\pptx-workflow\osha-v2\out\OSHA-Intro-Student-Presentation-V5.pptx"),
+]
+# search_vault also reads this cache (.txt) so she can answer from the decks.
+MATERIALS_ROOT = CURRICULUM_CACHE
 
 _NO_WINDOW = 0x08000000  # CREATE_NO_WINDOW — never flash a console (popup-safe)
 
@@ -213,6 +220,39 @@ def _luna_action(action: str) -> str:
 def _get_datetime() -> str:
     now = datetime.datetime.now()
     return now.strftime("It's %A, %B %d, %Y, %I:%M %p.")
+
+
+def rebuild_curriculum_cache() -> str:
+    """
+    Extract the text from every deck in CURRICULUM_DECKS into the curriculum
+    cache as .txt (one file per deck). Re-run after editing the decks. Keeping
+    a text cache means voice search never has to parse PowerPoint live.
+    """
+    try:
+        from pptx import Presentation
+    except Exception as e:
+        return f"python-pptx not installed ({e}); can't read decks."
+    CURRICULUM_CACHE.mkdir(parents=True, exist_ok=True)
+    built = []
+    for deck in CURRICULUM_DECKS:
+        if not deck.exists():
+            built.append(f"{deck.name}: MISSING")
+            continue
+        try:
+            prs = Presentation(str(deck))
+            lines = [f"# Curriculum source: {deck.name}"]
+            for i, slide in enumerate(prs.slides, 1):
+                for shape in slide.shapes:
+                    if getattr(shape, "has_text_frame", False):
+                        txt = shape.text_frame.text.strip()
+                        if txt:
+                            lines.append(f"[slide {i}] {txt}")
+            (CURRICULUM_CACHE / (deck.stem + ".txt")).write_text(
+                "\n".join(lines), encoding="utf-8")
+            built.append(f"{deck.name}: {len(prs.slides)} slides")
+        except Exception as e:
+            built.append(f"{deck.name}: FAILED ({e})")
+    return "Curriculum cache rebuilt -> " + "; ".join(built)
 
 
 _DISPATCH = {
