@@ -22,16 +22,14 @@ VAULT_ROOT   = Path(r"C:\Users\paren\Documents\Obsidian Vault")
 SESSIONS_DIR = VAULT_ROOT / "20 Sessions"
 SURGE_ROOT   = Path(r"D:\SurgeApp")
 
-# Curriculum decks (PowerPoint) are indexed to fast-searchable TEXT in this cache,
-# so voice search stays quick (no live .pptx parsing per query). Re-run
-# rebuild_curriculum_cache() after editing the decks to refresh.
+# Optional extra docs root for search_vault. Deliberately NOT wired to the
+# Skywork/pptx-workflow slides — those decks are owned by a separate session, so
+# Luna stays out of that path. To index your OWN docs later, drop .md/.txt files
+# in a folder and point MATERIALS_ROOT at it (or list non-slides decks in
+# CURRICULUM_DECKS and run rebuild_curriculum_cache()). Vault-only by default.
 CURRICULUM_CACHE = SURGE_ROOT / "memory" / "curriculum_cache"
-CURRICULUM_DECKS = [
-    # Canonical curriculum decks. Add Serge's real ones here, then rebuild.
-    Path(r"C:\n8n-run\pptx-workflow\osha-v2\out\OSHA-Intro-Student-Presentation-V5.pptx"),
-]
-# search_vault also reads this cache (.txt) so she can answer from the decks.
-MATERIALS_ROOT = CURRICULUM_CACHE
+CURRICULUM_DECKS = []     # no slides wired (Serge's pptx is another session's)
+MATERIALS_ROOT = None     # vault-only search
 
 _NO_WINDOW = 0x08000000  # CREATE_NO_WINDOW — never flash a console (popup-safe)
 
