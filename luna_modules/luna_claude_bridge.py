@@ -166,14 +166,22 @@ def ask_claude(
     try:
         # Agentic loop: offer tools, run any the model calls, then speak the
         # final answer. With no tools this runs exactly once (plain streaming).
+        # Prompt caching: the system prompt + tool schemas are identical every
+        # turn, so mark them ephemeral-cacheable. Within the 5-min TTL, repeat
+        # turns reuse the cache → cheaper input tokens + faster first token.
+        system_blocks = [{"type": "text", "text": LUNA_SYSTEM_PROMPT,
+                          "cache_control": {"type": "ephemeral"}}]
         for _round in range(6):
+            # The cache_control on system_blocks caches the whole prefix (tools +
+            # system, per API order), so plain tools= is correct — verified the
+            # 2nd turn reads ~1263 cached tokens.
             if tools:
                 stream_cm = client.messages.stream(
-                    model=model, max_tokens=512, system=LUNA_SYSTEM_PROMPT,
+                    model=model, max_tokens=512, system=system_blocks,
                     messages=messages, tools=tools)
             else:
                 stream_cm = client.messages.stream(
-                    model=model, max_tokens=512, system=LUNA_SYSTEM_PROMPT,
+                    model=model, max_tokens=512, system=system_blocks,
                     messages=messages)
             with stream_cm as stream:
                 for text in stream.text_stream:
