@@ -209,6 +209,13 @@ def process_query(text: str, tts: StreamingTTS) -> bool:
     if not text.strip():
         return False
 
+    # Ignore noise/garble: need at least 2 real letters (EN or RU), else it's
+    # not a real command — don't waste a Claude turn on mis-transcribed noise.
+    import re
+    if len(re.sub(r"[^a-zA-Zа-яА-Я0-9]", "", text)) < 2:
+        logger.info(f"Ignoring noise (not a real command): {text!r}")
+        return False
+
     logger.info(f"Processing: '{text}'")
 
     # Check local commands

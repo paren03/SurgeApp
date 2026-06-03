@@ -29,7 +29,8 @@ FRAME_DURATION_MS = 30      # WebRTC VAD frame size (10, 20, or 30 ms)
 FRAME_SIZE        = int(SAMPLE_RATE * FRAME_DURATION_MS / 1000)  # 480 samples
 VAD_AGGRESSIVENESS = 2      # 0-3 (3 = most aggressive filtering)
 
-WAKE_WORDS        = ["luna", "hey luna", "luna.", "hey luna."]
+WAKE_WORDS        = ["luna", "hey luna", "luna.", "hey luna.",
+                     "луна", "привет луна", "эй луна"]   # + Russian forms
 PRE_SPEECH_FRAMES = 10      # frames to keep before speech starts (300ms)
 MAX_SPEECH_SEC    = 8       # stop recording after this many seconds (was 15)
 SILENCE_FRAMES    = 22      # frames of silence = end of speech (~660ms, was 900)
@@ -205,6 +206,21 @@ class VoiceListener:
         Russian or English and she transcribes whichever he used.
         """
         model = self._whisper_tiny if model_size == "tiny" else self._whisper_small
+        if language is None:
+            # Restrict to Serge's two languages. Plain auto-detect was guessing
+            # Hindi/etc. on short accented clips and producing garbage. Force EN
+            # AND RU, then keep whichever transcription is more confident.
+            best_text, best_score = "", -1e9
+            for lang in ("en", "ru"):
+                segs, _ = model.transcribe(audio_np, language=lang, beam_size=1)
+                segs = list(segs)
+                if not segs:
+                    continue
+                score = sum(s.avg_logprob for s in segs) / len(segs)
+                if score > best_score:
+                    best_text = " ".join(s.text for s in segs).strip()
+                    best_score = score
+            return best_text.lower()
         segments, _ = model.transcribe(audio_np, language=language, beam_size=1)
         return " ".join(seg.text for seg in segments).strip().lower()
 
@@ -250,8 +266,8 @@ class VoiceListener:
 
             audio_np = self._audio_to_float(pcm)
 
-            # Fast tiny-model check: is this a wake word?
-            tiny_text = self._transcribe(audio_np, "tiny")
+            # Fast tiny-model check: is this a wake word? (en/ru so Russian "Луна" wakes her)
+            tiny_text = self._transcribe(audio_np, "tiny", language=None)
             logger.debug(f"[tiny] heard: '{tiny_text}'")
 
             if not self._check_wake_word(tiny_text):
