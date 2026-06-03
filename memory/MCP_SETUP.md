@@ -10,17 +10,17 @@
 | **sequential-thinking** | stdio (npx) | ✓ Connected | Structured multi-step reasoning for complex builds/debugging |
 | **memory** | stdio (npx) | ✓ Connected | Persistent knowledge graph across sessions → `D:\SurgeApp\memory\luna_knowledge_graph.json` |
 | **playwright** | stdio (npx) | ✓ Connected | Live browser automation — research, scraping, dashboard testing, screenshot-compare. Chromium installed. |
-| **github** | http (OAuth) | ⏳ Needs login | Repo management — issues, PRs, push, for `github.com/paren03/SurgeApp` |
+| **github** | stdio (token) | ✓ Connected | Repo management — issues, PRs, push, for `github.com/paren03/SurgeApp`. Uses the `gh` CLI token (no manual OAuth needed). |
 | fal-ai | http | ✓ Connected | (pre-existing) AI image generation |
 
-## ⚠️ One Action Needed — Activate GitHub
+## GitHub — Fully Wired (no action needed)
 
-GitHub uses OAuth (no token to paste). To activate:
-
-1. In Claude Code, type: **`/mcp`**
-2. Select **github** → **Authenticate**
-3. A browser opens → log in to GitHub → approve
-4. Done — I can then manage your repo directly
+GitHub MCP now connects automatically using your `gh` CLI token
+(`GITHUB_PERSONAL_ACCESS_TOKEN` in the config). The original remote
+Copilot-OAuth endpoint was swapped for the token-based stdio server
+because it couldn't be activated without a manual `/mcp` login.
+If the `gh` token ever expires, re-run `gh auth login`, then refresh the
+token in the config with `gh auth token`.
 
 ## Important: Restart to Use Them
 
