@@ -138,12 +138,25 @@ def _search_vault(query: str, max_hits: int = 3) -> str:
                     snippet = " ".join(lines[max(0, i - 1):i + 2]).strip()
                     break
             hits.append((score, doc.name, snippet[:300]))
-        if not hits:
-            return f"I couldn't find anything in your notes about '{query}'."
         hits.sort(reverse=True)
-        return "Found in your notes:\n" + "\n".join(
-            f"[{name}] {snip}" for _, name, snip in hits[:max_hits]
-        )
+        keyword_lines = [f"[{name}] {snip}" for _, name, snip in hits[:2]]
+        # Semantic recall (matches by MEANING, not just keywords). ONNX/CPU,
+        # additive — falls back to keyword-only if the index is unavailable.
+        semantic_lines = []
+        try:
+            from luna_modules.luna_jarvis_memory import semantic_search
+            semantic_lines = semantic_search(query, k=3)
+        except Exception as e:
+            logger.warning(f"semantic recall unavailable: {e}")
+        merged, seen = [], set()
+        for line in semantic_lines + keyword_lines:   # meaning first, then exact
+            if line[:80] in seen:
+                continue
+            seen.add(line[:80])
+            merged.append(line)
+        if not merged:
+            return f"I couldn't find anything in your notes about '{query}'."
+        return "Found in your notes:\n" + "\n".join(merged[:4])
     except Exception as e:
         return f"Vault search failed: {e}"
 
