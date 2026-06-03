@@ -101,6 +101,21 @@ def _get_client(api_key: str):
     return _CACHED_CLIENT
 
 
+def _try_offline(question, on_token, history, memory_context):
+    """
+    Last-resort local fallback when the Claude API can't be reached.
+    Returns the local model's reply, or "" if Ollama is also unavailable.
+    Keeps Luna talking offline instead of going mute.
+    """
+    try:
+        from luna_modules.luna_offline_fallback import ask_local
+        return ask_local(question, on_token=on_token,
+                         history=history, memory_context=memory_context)
+    except Exception as e:
+        logger.error(f"Offline fallback unavailable: {e}")
+        return ""
+
+
 def ask_claude(
     question: str,
     on_token: Optional[Callable[[str], None]] = None,
@@ -207,20 +222,29 @@ def ask_claude(
             break
 
     except anthropic.APIConnectionError:
-        msg = "I can't reach the Claude API right now. Check your internet connection."
-        logger.error(msg)
+        logger.warning("Claude API unreachable — trying local offline fallback")
+        local = _try_offline(question, on_token, history, memory_context)
+        if local:
+            return local
+        msg = "I can't reach the cloud and have no local model running."
         if on_token:
             on_token(msg)
         return msg
     except anthropic.AuthenticationError:
-        msg = "Authentication failed. The API key may be invalid."
-        logger.error(msg)
+        logger.warning("Claude auth failed — trying local offline fallback")
+        local = _try_offline(question, on_token, history, memory_context)
+        if local:
+            return local
+        msg = "Authentication failed and no local model is available."
         if on_token:
             on_token(msg)
         return msg
     except Exception as e:
+        logger.error(f"Claude error ({e}) — trying local offline fallback")
+        local = _try_offline(question, on_token, history, memory_context)
+        if local:
+            return local
         msg = f"Error contacting Claude: {e}"
-        logger.error(msg)
         if on_token:
             on_token(msg)
         return msg
