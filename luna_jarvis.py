@@ -22,13 +22,17 @@ import argparse
 from pathlib import Path
 
 # ── Setup logging ─────────────────────────────────────────────────────────────
+# Always log to file. Add a console handler ONLY when we have a real stdout —
+# when launched hidden via pythonw.exe (always-on mode) sys.stdout is None, and
+# writing to it would crash. Same trap as the other launcher chain files.
+Path(r"D:\SurgeApp\logs").mkdir(parents=True, exist_ok=True)
+_log_handlers = [logging.FileHandler(Path(r"D:\SurgeApp\logs\luna_jarvis.log"), encoding="utf-8")]
+if sys.stdout is not None:
+    _log_handlers.append(logging.StreamHandler(sys.stdout))
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    handlers=[
-        logging.FileHandler(Path(r"D:\SurgeApp\logs\luna_jarvis.log"), encoding="utf-8"),
-        logging.StreamHandler(sys.stdout),
-    ]
+    handlers=_log_handlers,
 )
 logger = logging.getLogger("luna.jarvis")
 
@@ -48,6 +52,22 @@ _LISTENER = None
 # questions ("and what about that one?"). Cleared at the start of each session.
 _HISTORY = []
 _HISTORY_MAX = 12   # keep the last 6 user+assistant exchanges
+
+# Always-on (Jarvis) controls.
+_SINGLETON = None   # named-mutex handle held for process lifetime (one instance)
+KILL_SWITCH = SURGE_ROOT / "memory" / "kill_switches" / "jarvis.disabled"
+
+
+def _acquire_singleton() -> bool:
+    """Windows named mutex: True if we got it, False if another Luna holds it."""
+    global _SINGLETON
+    try:
+        import ctypes
+        _SINGLETON = ctypes.windll.kernel32.CreateMutexW(
+            None, False, "Local\\LunaJarvisVoice_v1")
+        return ctypes.windll.kernel32.GetLastError() != 183  # ERROR_ALREADY_EXISTS
+    except Exception:
+        return True   # if the mutex API fails, don't block startup
 
 
 # ── TTS: use Luna's existing voice runtime ────────────────────────────────────
@@ -74,7 +94,7 @@ def speak(text: str):
         return
     except Exception as e:
         logger.error(f"TTS fallback failed: {e}")
-        print(f"[LUNA SAYS] {text}")
+        logger.info(f"[LUNA SAYS] {text}")   # no print() — pythonw stdout is None
 
 
 # ── Streaming TTS buffer ──────────────────────────────────────────────────────
@@ -231,6 +251,14 @@ def process_query(text: str, tts: StreamingTTS) -> bool:
 def run_voice_mode():
     """Full voice mode: microphone → wake word → STT → Claude → TTS."""
     global _LISTENER
+    # Always-on guards: honor the kill-switch, and only one instance at a time.
+    if KILL_SWITCH.exists():
+        logger.info("Jarvis kill-switch present — not starting "
+                    "(delete memory/kill_switches/jarvis.disabled to re-enable).")
+        return
+    if not _acquire_singleton():
+        logger.info("Another Luna Jarvis is already running — exiting this instance.")
+        return
     from luna_modules.luna_voice_listener import VoiceListener
 
     tts = StreamingTTS()
@@ -247,6 +275,16 @@ def run_voice_mode():
     listener.unmute()      # drop the greeting echo, start listening clean
 
     stop_event = threading.Event()
+
+    def _killswitch_watcher():
+        # Graceful off: when Serge flips the kill-switch, shut down within ~3s.
+        while not stop_event.is_set():
+            if KILL_SWITCH.exists():
+                logger.info("Kill-switch set — shutting down Jarvis.")
+                stop_event.set()
+                break
+            time.sleep(3)
+    threading.Thread(target=_killswitch_watcher, daemon=True).start()
 
     def on_wake(text):
         # No spoken "Yes?" ack — her actual reply is the acknowledgment.
